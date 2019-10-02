@@ -1,0 +1,39 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.meftaul.aurum"
+    },
+    "jhipsterVersion": "6.3.1",
+    "applicationType": "monolith",
+    "baseName": "aurum",
+    "packageName": "com.meftaul.aurum",
+    "packageFolder": "com/meftaul/aurum",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "mysql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "gradle",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "ODMyZmYyMDNkYzAwMjIyOTYzMDdhM2EzMGJkMzhmYjQ2ODAxNGUzNzYyYTEyNTg5NTY0YjE3OWRhOGJiOGM5NTI5MWI0NjVjMmMzOWZmMDMwMmRiMTU2NGRhOWIyZDZlYTI2MmExNTZkMTFkZmZkYzY5OGNlNzRjNDI3YjZiZTY=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "angularX",
+    "clientTheme": "flatly",
+    "clientThemeVariant": "dark",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "blueprints": []
+  }
+}
