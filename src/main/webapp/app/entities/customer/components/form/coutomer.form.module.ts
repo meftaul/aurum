@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,14 +12,11 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { AurumSharedModule } from 'app/shared/shared.module';
 
-import { TransactionComponent } from './components/transaction.component';
-import { TRANSACTION_ROUTE } from './transaction.routes';
-import { AurumCustomerFormModule } from './../customer/components/form/coutomer.form.module';
+import { CustomerFormComponent } from './customer.form.component';
 
 @NgModule({
   imports: [
     AurumSharedModule,
-    RouterModule.forChild([TRANSACTION_ROUTE]),
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -29,10 +25,10 @@ import { AurumCustomerFormModule } from './../customer/components/form/coutomer.
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
-    MatSelectModule,
-    AurumCustomerFormModule
+    MatSelectModule
   ],
-  declarations: [TransactionComponent],
-  providers: [MatDatepickerModule]
+  declarations: [CustomerFormComponent],
+  providers: [MatDatepickerModule],
+  exports: [MatDatepickerModule, CustomerFormComponent]
 })
-export class AurumTransactionModule {}
+export class AurumCustomerFormModule {}

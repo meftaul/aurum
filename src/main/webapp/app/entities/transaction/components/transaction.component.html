@@ -31,50 +31,12 @@
                         <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
                         <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
                     </mat-form-field>
-
-                    <!--<mat-form-field>
-                        <mat-select placeholder="Select">
-                            <mat-option value="option">Option</mat-option>
-                        </mat-select>
-                    </mat-form-field>-->
                 </form>
             </mat-card>
         </div>
 
         <div class="col-md-6 m-0 p-0">
-            <mat-card style="margin-left: 5px;">
-                <mat-card-title>Customer Information:</mat-card-title>
-                <form [formGroup]="customerForm" class="row">
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Name" formControlName="name">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Mobile Number" formControlName="mobileNumber">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Address 1" formControlName="address1">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Address 2" formControlName="address2">
-                    </mat-form-field>
-
-                    <!--<mat-form-field>
-                        <mat-select placeholder="Select">
-                            <mat-option value="option">Option</mat-option>
-                        </mat-select>
-                    </mat-form-field>-->
-                </form>
-                <div>
-                    <button type="button" class="btn btn-primary float-right" style="margin-left: 2px;"
-                            (click)="saveCustomer()">Save
-                    </button>
-                    <button type="button" class="btn btn-primary float-right" style="margin-left: 2px;"
-                            (click)="saveCustomer()">Update
-                    </button>
-                    <button type="button" class="btn btn-primary float-right" (click)="editCustomer()">Edit</button>
-                </div>
-                <div class="clearfix"></div>
-            </mat-card>
+            <jhi-aurum-customer-form [customerId]="customerID"></jhi-aurum-customer-form>
         </div>
 
     </div>
@@ -192,4 +154,5 @@
             </table>
         </mat-card>
     </div>
+
 </div>
