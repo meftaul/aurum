@@ -1,0 +1,218 @@
+package com.meftaul.aurum.domain;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import com.meftaul.aurum.domain.enumeration.VoucherStatus;
+
+/**
+ * A Voucher.
+ */
+@Entity
+@Table(name = "voucher")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class Voucher implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "voucher_no")
+    private String voucherNo;
+
+    @Column(name = "customer_id")
+    private Long customerId;
+
+    @NotNull
+    @Column(name = "calculated_total_amount", precision = 21, scale = 2, nullable = false)
+    private BigDecimal calculatedTotalAmount;
+
+    @Column(name = "vat", precision = 21, scale = 2)
+    private BigDecimal vat;
+
+    @Column(name = "disount_amount", precision = 21, scale = 2)
+    private BigDecimal disountAmount;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private VoucherStatus status;
+
+    @NotNull
+    @Column(name = "total_payable_amount", precision = 21, scale = 2, nullable = false)
+    private BigDecimal totalPayableAmount;
+
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
+
+    @NotNull
+    @Column(name = "added_by", nullable = false)
+    private String addedBy;
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getVoucherNo() {
+        return voucherNo;
+    }
+
+    public Voucher voucherNo(String voucherNo) {
+        this.voucherNo = voucherNo;
+        return this;
+    }
+
+    public void setVoucherNo(String voucherNo) {
+        this.voucherNo = voucherNo;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public Voucher customerId(Long customerId) {
+        this.customerId = customerId;
+        return this;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public BigDecimal getCalculatedTotalAmount() {
+        return calculatedTotalAmount;
+    }
+
+    public Voucher calculatedTotalAmount(BigDecimal calculatedTotalAmount) {
+        this.calculatedTotalAmount = calculatedTotalAmount;
+        return this;
+    }
+
+    public void setCalculatedTotalAmount(BigDecimal calculatedTotalAmount) {
+        this.calculatedTotalAmount = calculatedTotalAmount;
+    }
+
+    public BigDecimal getVat() {
+        return vat;
+    }
+
+    public Voucher vat(BigDecimal vat) {
+        this.vat = vat;
+        return this;
+    }
+
+    public void setVat(BigDecimal vat) {
+        this.vat = vat;
+    }
+
+    public BigDecimal getDisountAmount() {
+        return disountAmount;
+    }
+
+    public Voucher disountAmount(BigDecimal disountAmount) {
+        this.disountAmount = disountAmount;
+        return this;
+    }
+
+    public void setDisountAmount(BigDecimal disountAmount) {
+        this.disountAmount = disountAmount;
+    }
+
+    public VoucherStatus getStatus() {
+        return status;
+    }
+
+    public Voucher status(VoucherStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(VoucherStatus status) {
+        this.status = status;
+    }
+
+    public BigDecimal getTotalPayableAmount() {
+        return totalPayableAmount;
+    }
+
+    public Voucher totalPayableAmount(BigDecimal totalPayableAmount) {
+        this.totalPayableAmount = totalPayableAmount;
+        return this;
+    }
+
+    public void setTotalPayableAmount(BigDecimal totalPayableAmount) {
+        this.totalPayableAmount = totalPayableAmount;
+    }
+
+    public LocalDate getDateCreated() {
+        return dateCreated;
+    }
+
+    public Voucher dateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
+        return this;
+    }
+
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getAddedBy() {
+        return addedBy;
+    }
+
+    public Voucher addedBy(String addedBy) {
+        this.addedBy = addedBy;
+        return this;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
+    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Voucher)) {
+            return false;
+        }
+        return id != null && id.equals(((Voucher) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
+    @Override
+    public String toString() {
+        return "Voucher{" +
+            "id=" + getId() +
+            ", voucherNo='" + getVoucherNo() + "'" +
+            ", customerId=" + getCustomerId() +
+            ", calculatedTotalAmount=" + getCalculatedTotalAmount() +
+            ", vat=" + getVat() +
+            ", disountAmount=" + getDisountAmount() +
+            ", status='" + getStatus() + "'" +
+            ", totalPayableAmount=" + getTotalPayableAmount() +
+            ", dateCreated='" + getDateCreated() + "'" +
+            ", addedBy='" + getAddedBy() + "'" +
+            "}";
+    }
+}

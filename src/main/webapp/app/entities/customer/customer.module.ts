@@ -1,24 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-
 import { AurumSharedModule } from 'app/shared/shared.module';
+import { CustomerComponent } from './customer.component';
+import { CustomerDetailComponent } from './customer-detail.component';
+import { CustomerUpdateComponent } from './customer-update.component';
+import { CustomerDeletePopupComponent, CustomerDeleteDialogComponent } from './customer-delete-dialog.component';
+import { customerRoute, customerPopupRoute } from './customer.route';
 
-import { CustomerComponent } from './components/customer.component';
+const ENTITY_STATES = [...customerRoute, ...customerPopupRoute];
 
 @NgModule({
-  imports: [
-    AurumSharedModule,
-    // RouterModule.forChild([ CUSTOMER_ROUTE]),
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule
+  imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    CustomerComponent,
+    CustomerDetailComponent,
+    CustomerUpdateComponent,
+    CustomerDeleteDialogComponent,
+    CustomerDeletePopupComponent
   ],
-  declarations: [CustomerComponent],
-  providers: [],
-  exports: [CustomerComponent]
+  entryComponents: [CustomerDeleteDialogComponent]
 })
 export class AurumCustomerModule {}
