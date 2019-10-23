@@ -38,6 +38,6 @@
     "service": "serviceImpl",
     "entityTableName": "customer",
     "databaseType": "sql",
-    "jpaMetamodelFiltering": false,
+    "jpaMetamodelFiltering": true,
     "pagination": "pagination"
 }

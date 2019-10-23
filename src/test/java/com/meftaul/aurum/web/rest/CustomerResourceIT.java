@@ -5,6 +5,8 @@ import com.meftaul.aurum.domain.Customer;
 import com.meftaul.aurum.repository.CustomerRepository;
 import com.meftaul.aurum.service.CustomerService;
 import com.meftaul.aurum.web.rest.errors.ExceptionTranslator;
+import com.meftaul.aurum.service.dto.CustomerCriteria;
+import com.meftaul.aurum.service.CustomerQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,6 +62,9 @@ public class CustomerResourceIT {
     private CustomerService customerService;
 
     @Autowired
+    private CustomerQueryService customerQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -81,7 +86,7 @@ public class CustomerResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final CustomerResource customerResource = new CustomerResource(customerService);
+        final CustomerResource customerResource = new CustomerResource(customerService, customerQueryService);
         this.restCustomerMockMvc = MockMvcBuilders.standaloneSetup(customerResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -226,6 +231,332 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
             .andExpect(jsonPath("$.totalPoint").value(DEFAULT_TOTAL_POINT.intValue()));
     }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByFirstNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where firstName equals to DEFAULT_FIRST_NAME
+        defaultCustomerShouldBeFound("firstName.equals=" + DEFAULT_FIRST_NAME);
+
+        // Get all the customerList where firstName equals to UPDATED_FIRST_NAME
+        defaultCustomerShouldNotBeFound("firstName.equals=" + UPDATED_FIRST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByFirstNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where firstName in DEFAULT_FIRST_NAME or UPDATED_FIRST_NAME
+        defaultCustomerShouldBeFound("firstName.in=" + DEFAULT_FIRST_NAME + "," + UPDATED_FIRST_NAME);
+
+        // Get all the customerList where firstName equals to UPDATED_FIRST_NAME
+        defaultCustomerShouldNotBeFound("firstName.in=" + UPDATED_FIRST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByFirstNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where firstName is not null
+        defaultCustomerShouldBeFound("firstName.specified=true");
+
+        // Get all the customerList where firstName is null
+        defaultCustomerShouldNotBeFound("firstName.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByLastNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where lastName equals to DEFAULT_LAST_NAME
+        defaultCustomerShouldBeFound("lastName.equals=" + DEFAULT_LAST_NAME);
+
+        // Get all the customerList where lastName equals to UPDATED_LAST_NAME
+        defaultCustomerShouldNotBeFound("lastName.equals=" + UPDATED_LAST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByLastNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where lastName in DEFAULT_LAST_NAME or UPDATED_LAST_NAME
+        defaultCustomerShouldBeFound("lastName.in=" + DEFAULT_LAST_NAME + "," + UPDATED_LAST_NAME);
+
+        // Get all the customerList where lastName equals to UPDATED_LAST_NAME
+        defaultCustomerShouldNotBeFound("lastName.in=" + UPDATED_LAST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByLastNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where lastName is not null
+        defaultCustomerShouldBeFound("lastName.specified=true");
+
+        // Get all the customerList where lastName is null
+        defaultCustomerShouldNotBeFound("lastName.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByPhoneIsEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where phone equals to DEFAULT_PHONE
+        defaultCustomerShouldBeFound("phone.equals=" + DEFAULT_PHONE);
+
+        // Get all the customerList where phone equals to UPDATED_PHONE
+        defaultCustomerShouldNotBeFound("phone.equals=" + UPDATED_PHONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByPhoneIsInShouldWork() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where phone in DEFAULT_PHONE or UPDATED_PHONE
+        defaultCustomerShouldBeFound("phone.in=" + DEFAULT_PHONE + "," + UPDATED_PHONE);
+
+        // Get all the customerList where phone equals to UPDATED_PHONE
+        defaultCustomerShouldNotBeFound("phone.in=" + UPDATED_PHONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByPhoneIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where phone is not null
+        defaultCustomerShouldBeFound("phone.specified=true");
+
+        // Get all the customerList where phone is null
+        defaultCustomerShouldNotBeFound("phone.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByEmailIsEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where email equals to DEFAULT_EMAIL
+        defaultCustomerShouldBeFound("email.equals=" + DEFAULT_EMAIL);
+
+        // Get all the customerList where email equals to UPDATED_EMAIL
+        defaultCustomerShouldNotBeFound("email.equals=" + UPDATED_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByEmailIsInShouldWork() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where email in DEFAULT_EMAIL or UPDATED_EMAIL
+        defaultCustomerShouldBeFound("email.in=" + DEFAULT_EMAIL + "," + UPDATED_EMAIL);
+
+        // Get all the customerList where email equals to UPDATED_EMAIL
+        defaultCustomerShouldNotBeFound("email.in=" + UPDATED_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByEmailIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where email is not null
+        defaultCustomerShouldBeFound("email.specified=true");
+
+        // Get all the customerList where email is null
+        defaultCustomerShouldNotBeFound("email.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByAddressIsEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where address equals to DEFAULT_ADDRESS
+        defaultCustomerShouldBeFound("address.equals=" + DEFAULT_ADDRESS);
+
+        // Get all the customerList where address equals to UPDATED_ADDRESS
+        defaultCustomerShouldNotBeFound("address.equals=" + UPDATED_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByAddressIsInShouldWork() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where address in DEFAULT_ADDRESS or UPDATED_ADDRESS
+        defaultCustomerShouldBeFound("address.in=" + DEFAULT_ADDRESS + "," + UPDATED_ADDRESS);
+
+        // Get all the customerList where address equals to UPDATED_ADDRESS
+        defaultCustomerShouldNotBeFound("address.in=" + UPDATED_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByAddressIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where address is not null
+        defaultCustomerShouldBeFound("address.specified=true");
+
+        // Get all the customerList where address is null
+        defaultCustomerShouldNotBeFound("address.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint equals to DEFAULT_TOTAL_POINT
+        defaultCustomerShouldBeFound("totalPoint.equals=" + DEFAULT_TOTAL_POINT);
+
+        // Get all the customerList where totalPoint equals to UPDATED_TOTAL_POINT
+        defaultCustomerShouldNotBeFound("totalPoint.equals=" + UPDATED_TOTAL_POINT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsInShouldWork() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint in DEFAULT_TOTAL_POINT or UPDATED_TOTAL_POINT
+        defaultCustomerShouldBeFound("totalPoint.in=" + DEFAULT_TOTAL_POINT + "," + UPDATED_TOTAL_POINT);
+
+        // Get all the customerList where totalPoint equals to UPDATED_TOTAL_POINT
+        defaultCustomerShouldNotBeFound("totalPoint.in=" + UPDATED_TOTAL_POINT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint is not null
+        defaultCustomerShouldBeFound("totalPoint.specified=true");
+
+        // Get all the customerList where totalPoint is null
+        defaultCustomerShouldNotBeFound("totalPoint.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint is greater than or equal to DEFAULT_TOTAL_POINT
+        defaultCustomerShouldBeFound("totalPoint.greaterThanOrEqual=" + DEFAULT_TOTAL_POINT);
+
+        // Get all the customerList where totalPoint is greater than or equal to UPDATED_TOTAL_POINT
+        defaultCustomerShouldNotBeFound("totalPoint.greaterThanOrEqual=" + UPDATED_TOTAL_POINT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint is less than or equal to DEFAULT_TOTAL_POINT
+        defaultCustomerShouldBeFound("totalPoint.lessThanOrEqual=" + DEFAULT_TOTAL_POINT);
+
+        // Get all the customerList where totalPoint is less than or equal to SMALLER_TOTAL_POINT
+        defaultCustomerShouldNotBeFound("totalPoint.lessThanOrEqual=" + SMALLER_TOTAL_POINT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsLessThanSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint is less than DEFAULT_TOTAL_POINT
+        defaultCustomerShouldNotBeFound("totalPoint.lessThan=" + DEFAULT_TOTAL_POINT);
+
+        // Get all the customerList where totalPoint is less than UPDATED_TOTAL_POINT
+        defaultCustomerShouldBeFound("totalPoint.lessThan=" + UPDATED_TOTAL_POINT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint is greater than DEFAULT_TOTAL_POINT
+        defaultCustomerShouldNotBeFound("totalPoint.greaterThan=" + DEFAULT_TOTAL_POINT);
+
+        // Get all the customerList where totalPoint is greater than SMALLER_TOTAL_POINT
+        defaultCustomerShouldBeFound("totalPoint.greaterThan=" + SMALLER_TOTAL_POINT);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultCustomerShouldBeFound(String filter) throws Exception {
+        restCustomerMockMvc.perform(get("/api/customers?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(customer.getId().intValue())))
+            .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
+            .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
+            .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE)))
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
+            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)))
+            .andExpect(jsonPath("$.[*].totalPoint").value(hasItem(DEFAULT_TOTAL_POINT.intValue())));
+
+        // Check, that the count call also returns 1
+        restCustomerMockMvc.perform(get("/api/customers/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultCustomerShouldNotBeFound(String filter) throws Exception {
+        restCustomerMockMvc.perform(get("/api/customers?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restCustomerMockMvc.perform(get("/api/customers/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

@@ -3,6 +3,8 @@ package com.meftaul.aurum.web.rest;
 import com.meftaul.aurum.domain.Customer;
 import com.meftaul.aurum.service.CustomerService;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
+import com.meftaul.aurum.service.dto.CustomerCriteria;
+import com.meftaul.aurum.service.CustomerQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -41,8 +43,11 @@ public class CustomerResource {
 
     private final CustomerService customerService;
 
-    public CustomerResource(CustomerService customerService) {
+    private final CustomerQueryService customerQueryService;
+
+    public CustomerResource(CustomerService customerService, CustomerQueryService customerQueryService) {
         this.customerService = customerService;
+        this.customerQueryService = customerQueryService;
     }
 
     /**
@@ -91,14 +96,27 @@ public class CustomerResource {
 
      * @param pageable the pagination information.
 
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
      */
     @GetMapping("/customers")
-    public ResponseEntity<List<Customer>> getAllCustomers(Pageable pageable) {
-        log.debug("REST request to get a page of Customers");
-        Page<Customer> page = customerService.findAll(pageable);
+    public ResponseEntity<List<Customer>> getAllCustomers(CustomerCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Customers by criteria: {}", criteria);
+        Page<Customer> page = customerQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+    * {@code GET  /customers/count} : count all the customers.
+    *
+    * @param criteria the criteria which the requested entities should match.
+    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+    */
+    @GetMapping("/customers/count")
+    public ResponseEntity<Long> countCustomers(CustomerCriteria criteria) {
+        log.debug("REST request to count Customers by criteria: {}", criteria);
+        return ResponseEntity.ok().body(customerQueryService.countByCriteria(criteria));
     }
 
     /**
