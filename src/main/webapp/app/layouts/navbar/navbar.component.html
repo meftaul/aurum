@@ -28,6 +28,12 @@
                 </a>
                 <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
                     <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
+                    <li>
+                        <a *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']" class="dropdown-item" routerLink="entity/transactions" routerLinkActive="active" (click)="collapseNavbar()">
+                            <fa-icon icon="wallet" fixedWidth="true"></fa-icon>
+                            <span>Transaction</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
