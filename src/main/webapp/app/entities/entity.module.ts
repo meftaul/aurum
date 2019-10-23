@@ -11,6 +11,10 @@ import { RouterModule } from '@angular/router';
       {
         path: 'voucher',
         loadChildren: () => import('./voucher/voucher.module').then(m => m.AurumVoucherModule)
+      },
+      {
+        path: 'transaction-history',
+        loadChildren: () => import('./transaction-history/transaction-history.module').then(m => m.AurumTransactionHistoryModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

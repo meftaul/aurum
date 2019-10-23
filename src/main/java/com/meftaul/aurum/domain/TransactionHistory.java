@@ -1,0 +1,169 @@
+package com.meftaul.aurum.domain;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+
+/**
+ * A TransactionHistory.
+ */
+@Entity
+@Table(name = "transaction_history")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class TransactionHistory implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    @Column(name = "voucher_no", nullable = false)
+    private String voucherNo;
+
+    @NotNull
+    @Column(name = "amount", precision = 21, scale = 2, nullable = false)
+    private BigDecimal amount;
+
+    @NotNull
+    @Column(name = "date_created", nullable = false)
+    private LocalDate dateCreated;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tag", nullable = false)
+    private TransactionStatus tag;
+
+    @NotNull
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
+
+    @NotNull
+    @Column(name = "added_by", nullable = false)
+    private String addedBy;
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getVoucherNo() {
+        return voucherNo;
+    }
+
+    public TransactionHistory voucherNo(String voucherNo) {
+        this.voucherNo = voucherNo;
+        return this;
+    }
+
+    public void setVoucherNo(String voucherNo) {
+        this.voucherNo = voucherNo;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public TransactionHistory amount(BigDecimal amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public LocalDate getDateCreated() {
+        return dateCreated;
+    }
+
+    public TransactionHistory dateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
+        return this;
+    }
+
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public TransactionStatus getTag() {
+        return tag;
+    }
+
+    public TransactionHistory tag(TransactionStatus tag) {
+        this.tag = tag;
+        return this;
+    }
+
+    public void setTag(TransactionStatus tag) {
+        this.tag = tag;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public TransactionHistory customerId(Long customerId) {
+        this.customerId = customerId;
+        return this;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getAddedBy() {
+        return addedBy;
+    }
+
+    public TransactionHistory addedBy(String addedBy) {
+        this.addedBy = addedBy;
+        return this;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
+    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TransactionHistory)) {
+            return false;
+        }
+        return id != null && id.equals(((TransactionHistory) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
+    @Override
+    public String toString() {
+        return "TransactionHistory{" +
+            "id=" + getId() +
+            ", voucherNo='" + getVoucherNo() + "'" +
+            ", amount=" + getAmount() +
+            ", dateCreated='" + getDateCreated() + "'" +
+            ", tag='" + getTag() + "'" +
+            ", customerId=" + getCustomerId() +
+            ", addedBy='" + getAddedBy() + "'" +
+            "}";
+    }
+}
