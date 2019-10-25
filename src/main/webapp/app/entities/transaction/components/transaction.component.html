@@ -4,7 +4,7 @@
             <form class="">
                 <mat-form-field class="col-md-4">
                     <input matInput placeholder="Search customer" [(ngModel)]="customerID"
-                           [ngModelOptions]="{standalone: true}">
+                        [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
             </form>
@@ -23,63 +23,6 @@
                         <input matInput placeholder="Box No" formControlName="boxNo">
                     </mat-form-field>
                     <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Karat Type" formControlName="karatType">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
-                               formControlName="deliveryDate" readonly>
-                        <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
-                        <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
-                    </mat-form-field>
-                </form>
-            </mat-card>
-        </div>
-
-        <div class="col-md-6 m-0 p-0">
-            <jhi-aurum-customer-form [customerId]="customerID"></jhi-aurum-customer-form>
-        </div>
-
-    </div>
-
-    <div class="row" style="margin-top: 15px;">
-        <mat-card class="col-md-12">
-            <mat-card-title>Billing Information:</mat-card-title>
-            <table mat-table [dataSource]="billingInfos" class="col-md-12">
-                <!-- Position Column -->
-                <ng-container matColumnDef="index">
-                    <th mat-header-cell *matHeaderCellDef> No.</th>
-                    <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
-                </ng-container>
-                <!-- Name Column -->
-                <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> Name</th>
-                    <td mat-cell *matCellDef="let element"> {{element.name}}</td>
-                </ng-container>
-
-                <!-- Weight Column -->
-                <ng-container matColumnDef="weight">
-                    <th mat-header-cell *matHeaderCellDef> Weight</th>
-                    <td mat-cell *matCellDef="let element"> {{element.weight}}</td>
-                </ng-container>
-
-                <!-- Symbol Column -->
-                <ng-container matColumnDef="symbol">
-                    <th mat-header-cell *matHeaderCellDef> Symbol</th>
-                    <td mat-cell *matCellDef="let element"> {{element.symbol}}</td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedBillingInfoColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedBillingInfoColumns;"></tr>
-            </table>
-        </mat-card>
-    </div>
-
-    <div class="row" style="margin-top: 15px;">
-        <div class="col-md-12 m-0 p-0">
-            <mat-card>
-                <mat-card-title>Service Entry For X-Ray:</mat-card-title>
-                <div class="row">
-                    <mat-form-field class="col-md-6">
                         <mat-select placeholder="Select Item">
                             <mat-option *ngFor="let item of itemNames" [value]="item.value">
                                 {{item.viewValue}}
@@ -95,15 +38,60 @@
                     <mat-form-field class="col-md-6">
                         <input matInput placeholder="Weight(gram)">
                     </mat-form-field>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-primary float-right" (click)="editCustomer()" style="margin-left: 2px;">Cancel</button>
-                    <button type="button" class="btn btn-primary float-right" (click)="saveCustomer()">Add</button>
-                </div>
-                <div class="clearfix"></div>
-
+                    <mat-form-field class="col-md-6">
+                        <input matInput placeholder="Karat Type" formControlName="karatType">
+                    </mat-form-field>
+                    <mat-form-field class="col-md-6">
+                        <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
+                            formControlName="deliveryDate" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
+                        <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary float-right" (click)="editCustomer()"
+                            style="margin-left: 2px;">Cancel</button>
+                        <button type="button" class="btn btn-primary float-right" (click)="saveCustomer()">Add</button>
+                    </div>
+                    <!-- <div class="clearfix"></div> -->
+                </form>
             </mat-card>
         </div>
+
+        <div class="col-md-6 m-0 p-0">
+            <!-- <jhi-aurum-customer-form [customerId]="customerID"></jhi-aurum-customer-form> -->
+            <mat-card style="margin-right: 5px;">
+                <mat-card-title>Customer Information:</mat-card-title>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>First Name</td>
+                            <td>{{customer?.firstName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>{{customer?.lastName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td>{{customer?.phone}}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>{{customer?.email}}</td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>{{customer?.address}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Point</td>
+                            <td>{{customer?.totalPoint}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </mat-card>
+        </div>
+
     </div>
 
     <div class="row" style="margin-top: 15px;">
@@ -144,8 +132,12 @@
                 <ng-container matColumnDef="action">
                     <th mat-header-cell *matHeaderCellDef style="width: 140px;"> Action</th>
                     <td mat-cell *matCellDef="let i = index;">
-                        <button mat-mini-fab (click)="editCustomer()" style="margin-right: 5px;"><mat-icon>edit</mat-icon></button>
-                        <button mat-mini-fab (click)="editCustomer()"><mat-icon>delete</mat-icon></button>
+                        <button mat-mini-fab (click)="editCustomer()" style="margin-right: 5px;">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-mini-fab (click)="editCustomer()">
+                            <mat-icon>delete</mat-icon>
+                        </button>
                     </td>
                 </ng-container>
 
@@ -154,5 +146,73 @@
             </table>
         </mat-card>
     </div>
+
+    <div class="row" style="margin-top: 15px;">
+        <mat-card class="col-md-12">
+            <mat-card-title>Billing Information:</mat-card-title>
+            <table mat-table [dataSource]="billingInfos" class="col-md-12">
+                <!-- Position Column -->
+                <ng-container matColumnDef="index">
+                    <th mat-header-cell *matHeaderCellDef> No.</th>
+                    <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Name</th>
+                    <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+                </ng-container>
+
+                <!-- Weight Column -->
+                <ng-container matColumnDef="weight">
+                    <th mat-header-cell *matHeaderCellDef> Weight</th>
+                    <td mat-cell *matCellDef="let element"> {{element.weight}}</td>
+                </ng-container>
+
+                <!-- Symbol Column -->
+                <ng-container matColumnDef="symbol">
+                    <th mat-header-cell *matHeaderCellDef> Symbol</th>
+                    <td mat-cell *matCellDef="let element"> {{element.symbol}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedBillingInfoColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedBillingInfoColumns;"></tr>
+            </table>
+        </mat-card>
+    </div>
+
+    <!-- <div class="row" style="margin-top: 15px;">
+        <div class="col-md-12 m-0 p-0">
+            <mat-card>
+                <mat-card-title>Service Entry For X-Ray:</mat-card-title>
+                <div class="row">
+                    <mat-form-field class="col-md-6">
+                        <mat-select placeholder="Select Item">
+                            <mat-option *ngFor="let item of itemNames" [value]="item.value">
+                                {{item.viewValue}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="col-md-6">
+                        <input matInput placeholder="Quantity">
+                    </mat-form-field>
+                    <mat-form-field class="col-md-6">
+                        <input matInput placeholder="Weight(Tola)">
+                    </mat-form-field>
+                    <mat-form-field class="col-md-6">
+                        <input matInput placeholder="Weight(gram)">
+                    </mat-form-field>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary float-right" (click)="editCustomer()"
+                        style="margin-left: 2px;">Cancel</button>
+                    <button type="button" class="btn btn-primary float-right" (click)="saveCustomer()">Add</button>
+                </div>
+                <div class="clearfix"></div>
+
+            </mat-card>
+        </div>
+    </div> -->
+
+
 
 </div>
