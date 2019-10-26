@@ -15,7 +15,6 @@ import { AurumSharedModule } from 'app/shared/shared.module';
 
 import { TransactionComponent } from './components/transaction.component';
 import { TRANSACTION_ROUTE } from './transaction.routes';
-import { AurumCustomerFormModule } from './../customer/components/form/coutomer.form.module';
 
 @NgModule({
   imports: [
@@ -29,8 +28,7 @@ import { AurumCustomerFormModule } from './../customer/components/form/coutomer.
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
-    MatSelectModule,
-    AurumCustomerFormModule
+    MatSelectModule
   ],
   declarations: [TransactionComponent],
   providers: [MatDatepickerModule]

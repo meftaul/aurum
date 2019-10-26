@@ -25,7 +25,7 @@ describe('Service Tests', () => {
       httpMock = injector.get(HttpTestingController);
       currentDate = moment();
 
-      elemDefault = new TransactionHistory(0, 'AAAAAAA', 0, currentDate, TransactionStatus.RECEIEVE, 0, 'AAAAAAA');
+      elemDefault = new TransactionHistory(0, 'AAAAAAA', 0, currentDate, TransactionStatus.RECEIVE, 0, 'AAAAAAA');
     });
 
     describe('Service methods', () => {

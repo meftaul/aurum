@@ -5,7 +5,6 @@ import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.service.TransactionHistoryService;
 import com.meftaul.aurum.web.rest.errors.ExceptionTranslator;
-import com.meftaul.aurum.service.dto.TransactionHistoryCriteria;
 import com.meftaul.aurum.service.TransactionHistoryQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +50,7 @@ public class TransactionHistoryResourceIT {
     private static final LocalDate UPDATED_DATE_CREATED = LocalDate.now(ZoneId.systemDefault());
     private static final LocalDate SMALLER_DATE_CREATED = LocalDate.ofEpochDay(-1L);
 
-    private static final TransactionStatus DEFAULT_TAG = TransactionStatus.RECEIEVE;
+    private static final TransactionStatus DEFAULT_TAG = TransactionStatus.RECEIVE;
     private static final TransactionStatus UPDATED_TAG = TransactionStatus.VAT;
 
     private static final Long DEFAULT_CUSTOMER_ID = 1L;
@@ -308,7 +307,7 @@ public class TransactionHistoryResourceIT {
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getTransactionHistory() throws Exception {

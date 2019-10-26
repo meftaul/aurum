@@ -15,7 +15,7 @@ export const adminState: Routes = [
   {
     path: 'user-management',
     data: {
-      authorities: ['ROLE_ADMIN']
+      authorities: ['ROLE_ADMIN', 'ROLE_MANAGER']
     },
     canActivate: [UserRouteAccessService],
     loadChildren: () => import('./user-management/user-management.module').then(m => m.UserManagementModule)
