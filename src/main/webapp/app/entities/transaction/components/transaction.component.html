@@ -7,211 +7,266 @@
                         [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
+                <button type="button" class="btn btn-primary" (click)="createCustomer()">Create Customer</button>
+                <jhi-alert></jhi-alert>
             </form>
         </mat-card>
     </div>
 
-    <div class="row" style="margin-top: 15px;">
-        <div class="col-md-6 m-0 p-0">
-            <mat-card style="margin-right: 5px;">
-                <mat-card-title>X-Ray Invoice Information:</mat-card-title>
-                <form [formGroup]="transactionForm" class="row">
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Voucher No" formControlName="voucherNo">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Box No" formControlName="boxNo">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <mat-select placeholder="Select Item">
-                            <mat-option *ngFor="let item of itemNames" [value]="item.value">
-                                {{item.viewValue}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Quantity">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Weight(Tola)">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Weight(gram)">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Karat Type" formControlName="karatType">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
-                            formControlName="deliveryDate" readonly>
-                        <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
-                        <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
-                    </mat-form-field>
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-primary float-right" (click)="editCustomer()"
-                            style="margin-left: 2px;">Cancel</button>
-                        <button type="button" class="btn btn-primary float-right" (click)="saveCustomer()">Add</button>
-                    </div>
-                    <!-- <div class="clearfix"></div> -->
-                </form>
-            </mat-card>
+    <div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="col-md-6 m-0 p-0">
+                <mat-card style="margin-right: 5px;">
+                    <mat-card-title>Invoice Information:</mat-card-title>
+                    <form [formGroup]="aurumServiceForm" class="row">
+                        <!-- <mat-form-field class="col-md-6">
+                                <input matInput placeholder="Voucher No" formControlName="voucherNo">
+                            </mat-form-field>
+                            <mat-form-field class="col-md-6">
+                                <input matInput placeholder="Box No" formControlName="boxNumber">
+                            </mat-form-field> -->
+                        <mat-form-field class="col-md-6">
+                            <mat-select placeholder="Select Service" formControlName="serviceType">
+                                <mat-option *ngFor="let item of itemNames" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <mat-select placeholder="Select Item" formControlName="itemName">
+                                <mat-option *ngFor="let item of itemNames" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Quantity" formControlName="quantity">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Rate" formControlName="rate">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Karat Type" formControlName="karatType">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Weight(Tola)" formControlName="weight">
+                        </mat-form-field>
+                        <!-- <mat-form-field class="col-md-6">
+                                <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
+                                    formControlName="deliveryDate" readonly>
+                                <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
+                                <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
+                            </mat-form-field> -->
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary float-right" (click)="resetForm()"
+                                style="margin-left: 2px;">Clear</button>
+                            <button type="button" class="btn btn-primary float-right"
+                                (click)="addService()">Add</button>
+                        </div>
+                        <!-- <div class="clearfix"></div> -->
+                    </form>
+                </mat-card>
+            </div>
+
+            <div class="col-md-6 m-0 p-0">
+                <!-- <jhi-aurum-customer-form [customerId]="customerID"></jhi-aurum-customer-form> -->
+                <mat-card style="margin-right: 5px;">
+                    <mat-card-title>Customer Information:</mat-card-title>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>Name</td>
+                                <td>{{customer?.firstName}} {{customer?.lastName}}</td>
+                            </tr>
+                            <tr>
+                                <td>Phone</td>
+                                <td>{{customer?.phone}}</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>{{customer?.email}}</td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                <td>{{customer?.address}}</td>
+                            </tr>
+                            <tr>
+                                <td>Total Point</td>
+                                <td>{{customer?.totalPoint}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </mat-card>
+            </div>
+
         </div>
 
-        <div class="col-md-6 m-0 p-0">
-            <!-- <jhi-aurum-customer-form [customerId]="customerID"></jhi-aurum-customer-form> -->
-            <mat-card style="margin-right: 5px;">
-                <mat-card-title>Customer Information:</mat-card-title>
-                <table class="table table-striped">
-                    <tbody>
-                        <tr>
-                            <td>First Name</td>
-                            <td>{{customer?.firstName}}</td>
-                        </tr>
-                        <tr>
-                            <td>Last Name</td>
-                            <td>{{customer?.lastName}}</td>
-                        </tr>
-                        <tr>
-                            <td>Phone</td>
-                            <td>{{customer?.phone}}</td>
-                        </tr>
-                        <tr>
-                            <td>Email</td>
-                            <td>{{customer?.email}}</td>
-                        </tr>
-                        <tr>
-                            <td>Address</td>
-                            <td>{{customer?.address}}</td>
-                        </tr>
-                        <tr>
-                            <td>Total Point</td>
-                            <td>{{customer?.totalPoint}}</td>
-                        </tr>
-                    </tbody>
+        <div class="row" style="margin-top: 15px;">
+            <mat-card class="col-md-12">
+                <mat-card-title>Services Served:</mat-card-title>
+                <table mat-table [dataSource]="aurumServices" class="col-md-12">
+                    <ng-container matColumnDef="index">
+                        <th mat-header-cell *matHeaderCellDef> No.</th>
+                        <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="serviceType">
+                        <th mat-header-cell *matHeaderCellDef> Service Type</th>
+                        <td mat-cell *matCellDef="let element"> {{element.serviceType}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="itemName">
+                        <th mat-header-cell *matHeaderCellDef> Item Name</th>
+                        <td mat-cell *matCellDef="let element"> {{element.itemName}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="karetType">
+                        <th mat-header-cell *matHeaderCellDef> Karat Type</th>
+                        <td mat-cell *matCellDef="let element"> {{element.karetType}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantity">
+                        <th mat-header-cell *matHeaderCellDef> Quantity</th>
+                        <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="weight">
+                        <th mat-header-cell *matHeaderCellDef> Weight(Tola)</th>
+                        <td mat-cell *matCellDef="let element"> {{element.weight}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="rate">
+                        <th mat-header-cell *matHeaderCellDef> Rate</th>
+                        <td mat-cell *matCellDef="let element"> {{element.rate}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="amount">
+                        <th mat-header-cell *matHeaderCellDef> Amount</th>
+                        <td mat-cell *matCellDef="let element"> {{element.amount}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                        <th mat-header-cell *matHeaderCellDef style="width: 140px;"> Action</th>
+                        <td mat-cell *matCellDef="let i = index;">
+                            <button mat-mini-fab (click)="editService()" style="margin-right: 5px;">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-mini-fab (click)="deleteService()">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="serviceListColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: serviceListColumns;"></tr>
                 </table>
             </mat-card>
         </div>
 
-    </div>
+        <div class="row" style="margin-top: 15px;">
+            <mat-card class="col-md-12">
+                <mat-card-title>Billing Information:</mat-card-title>
+                <form [formGroup]="voucherForm">
+                    <!-- <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>Box Number</td>
+                                <td>
+                                    <mat-form-field>
+                                        <input matInput placeholder="Box Number" formControlName="boxNumber">
+                                    </mat-form-field>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table> -->
 
-    <div class="row" style="margin-top: 15px;">
-        <mat-card class="col-md-12">
-            <mat-card-title>Services Served:</mat-card-title>
-            <table mat-table [dataSource]="serviceList" class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <mat-form-field class="col-md-6">
+                                <input matInput placeholder="Box Number" formControlName="boxNumber">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">Calculated Amount</div>
+                                <div class="col-md-6">
+                                    <span>{{calculateTotalAmount}}</span>
+                                    <!-- <mat-form-field>
+                                        <input matInput placeholder="Calculated Total Amount"
+                                            formControlName="calculatedTotalAmount" readonly>
+                                    </mat-form-field> -->
+                                </div>
+                            </div>
 
-                <ng-container matColumnDef="index">
-                    <th mat-header-cell *matHeaderCellDef> No.</th>
-                    <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
-                </ng-container>
+                            <div class="row">
+                                <div class="col-md-6">Vat</div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Vat" formControlName="vat"
+                                            (input)="onVatValueChange($event)">
+                                    </mat-form-field>
+                                </div>
+                            </div>
 
-                <ng-container matColumnDef="itemName">
-                    <th mat-header-cell *matHeaderCellDef> Item Name</th>
-                    <td mat-cell *matCellDef="let element"> {{element.itemName}}</td>
-                </ng-container>
+                            <hr>
 
-                <ng-container matColumnDef="quantity">
-                    <th mat-header-cell *matHeaderCellDef> Quantity</th>
-                    <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
-                </ng-container>
+                            <div class="row">
+                                <div class="col-md-6">Total Amount</div>
+                                <div class="col-md-6">
+                                    <span>{{totalAmount}}</span>
+                                    <!-- <mat-form-field>
+                                        <input matInput value="{{ calculatedTotalAmount + vat }}" readonly>
+                                    </mat-form-field> -->
+                                </div>
+                            </div>
 
-                <ng-container matColumnDef="weightGm">
-                    <th mat-header-cell *matHeaderCellDef> Weight(gm)</th>
-                    <td mat-cell *matCellDef="let element"> {{element.weightGm}}</td>
-                </ng-container>
+                            <div class="row">
+                                <div class="col-md-6">Discount</div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Disount Amount" formControlName="disountAmount"
+                                            (input)="onDiscountValueChange($event)">
+                                    </mat-form-field>
+                                </div>
+                            </div>
 
-                <ng-container matColumnDef="rate">
-                    <th mat-header-cell *matHeaderCellDef> Rate</th>
-                    <td mat-cell *matCellDef="let element"> {{element.rate}}</td>
-                </ng-container>
+                            <hr>
 
-                <ng-container matColumnDef="amount">
-                    <th mat-header-cell *matHeaderCellDef> Amount</th>
-                    <td mat-cell *matCellDef="let element"> {{element.amount}}</td>
-                </ng-container>
+                            <div class="row">
+                                <div class="col-md-6">Total Payable Amount</div>
+                                <div class="col-md-6">
+                                    <span>{{payableTotalAmount}}</span>
+                                    <!-- <mat-form-field>
+                                        <input matInput placeholder="Total Payable Amount"
+                                            formControlName="totalPayableAmount" readonly>
+                                    </mat-form-field> -->
+                                </div>
+                            </div>
 
-                <ng-container matColumnDef="action">
-                    <th mat-header-cell *matHeaderCellDef style="width: 140px;"> Action</th>
-                    <td mat-cell *matCellDef="let i = index;">
-                        <button mat-mini-fab (click)="editCustomer()" style="margin-right: 5px;">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-mini-fab (click)="editCustomer()">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </td>
-                </ng-container>
+                        </div>
+                    </div>
 
-                <tr mat-header-row *matHeaderRowDef="serviceListColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: serviceListColumns;"></tr>
-            </table>
-        </mat-card>
-    </div>
-
-    <div class="row" style="margin-top: 15px;">
-        <mat-card class="col-md-12">
-            <mat-card-title>Billing Information:</mat-card-title>
-            <table mat-table [dataSource]="billingInfos" class="col-md-12">
-                <!-- Position Column -->
-                <ng-container matColumnDef="index">
-                    <th mat-header-cell *matHeaderCellDef> No.</th>
-                    <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
-                </ng-container>
-                <!-- Name Column -->
-                <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> Name</th>
-                    <td mat-cell *matCellDef="let element"> {{element.name}}</td>
-                </ng-container>
-
-                <!-- Weight Column -->
-                <ng-container matColumnDef="weight">
-                    <th mat-header-cell *matHeaderCellDef> Weight</th>
-                    <td mat-cell *matCellDef="let element"> {{element.weight}}</td>
-                </ng-container>
-
-                <!-- Symbol Column -->
-                <ng-container matColumnDef="symbol">
-                    <th mat-header-cell *matHeaderCellDef> Symbol</th>
-                    <td mat-cell *matCellDef="let element"> {{element.symbol}}</td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedBillingInfoColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedBillingInfoColumns;"></tr>
-            </table>
-        </mat-card>
-    </div>
-
-    <!-- <div class="row" style="margin-top: 15px;">
-        <div class="col-md-12 m-0 p-0">
-            <mat-card>
-                <mat-card-title>Service Entry For X-Ray:</mat-card-title>
-                <div class="row">
-                    <mat-form-field class="col-md-6">
-                        <mat-select placeholder="Select Item">
-                            <mat-option *ngFor="let item of itemNames" [value]="item.value">
-                                {{item.viewValue}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Quantity">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Weight(Tola)">
-                    </mat-form-field>
-                    <mat-form-field class="col-md-6">
-                        <input matInput placeholder="Weight(gram)">
-                    </mat-form-field>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-primary float-right" (click)="editCustomer()"
-                        style="margin-left: 2px;">Cancel</button>
-                    <button type="button" class="btn btn-primary float-right" (click)="saveCustomer()">Add</button>
-                </div>
-                <div class="clearfix"></div>
-
+                    <div class="row">
+                        <!-- <mat-form-field class="col-md-6">
+                                                <mat-select placeholder="Select Service" formControlName="status">
+                                                    <mat-option *ngFor="let item of voucherStatus" [value]="item.value">
+                                                        {{item.viewValue}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field> -->
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary float-right" (click)="makePayment()"
+                                style="margin-left: 2px;">Make
+                                Payment</button>
+                            <button type="button" class="btn btn-primary float-right" (click)="cancel()">Cancel</button>
+                        </div>
+                    </div>
+                </form>
             </mat-card>
         </div>
-    </div> -->
+    </div>
 
 
 
