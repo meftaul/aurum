@@ -73,6 +73,13 @@ public class VoucherResourceIT {
     private static final String DEFAULT_ADDED_BY = "AAAAAAAAAA";
     private static final String UPDATED_ADDED_BY = "BBBBBBBBBB";
 
+    private static final String DEFAULT_BOX_NUMBER = "AAAAAAAAAA";
+    private static final String UPDATED_BOX_NUMBER = "BBBBBBBBBB";
+
+    private static final LocalDate DEFAULT_DELIVERY_DATE = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_DELIVERY_DATE = LocalDate.now(ZoneId.systemDefault());
+    private static final LocalDate SMALLER_DELIVERY_DATE = LocalDate.ofEpochDay(-1L);
+
     @Autowired
     private VoucherRepository voucherRepository;
 
@@ -129,7 +136,9 @@ public class VoucherResourceIT {
             .status(DEFAULT_STATUS)
             .totalPayableAmount(DEFAULT_TOTAL_PAYABLE_AMOUNT)
             .dateCreated(DEFAULT_DATE_CREATED)
-            .addedBy(DEFAULT_ADDED_BY);
+            .addedBy(DEFAULT_ADDED_BY)
+            .boxNumber(DEFAULT_BOX_NUMBER)
+            .deliveryDate(DEFAULT_DELIVERY_DATE);
         return voucher;
     }
     /**
@@ -148,7 +157,9 @@ public class VoucherResourceIT {
             .status(UPDATED_STATUS)
             .totalPayableAmount(UPDATED_TOTAL_PAYABLE_AMOUNT)
             .dateCreated(UPDATED_DATE_CREATED)
-            .addedBy(UPDATED_ADDED_BY);
+            .addedBy(UPDATED_ADDED_BY)
+            .boxNumber(UPDATED_BOX_NUMBER)
+            .deliveryDate(UPDATED_DELIVERY_DATE);
         return voucher;
     }
 
@@ -181,6 +192,8 @@ public class VoucherResourceIT {
         assertThat(testVoucher.getTotalPayableAmount()).isEqualTo(DEFAULT_TOTAL_PAYABLE_AMOUNT);
         assertThat(testVoucher.getDateCreated()).isEqualTo(DEFAULT_DATE_CREATED);
         assertThat(testVoucher.getAddedBy()).isEqualTo(DEFAULT_ADDED_BY);
+        assertThat(testVoucher.getBoxNumber()).isEqualTo(DEFAULT_BOX_NUMBER);
+        assertThat(testVoucher.getDeliveryDate()).isEqualTo(DEFAULT_DELIVERY_DATE);
     }
 
     @Test
@@ -294,7 +307,9 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].totalPayableAmount").value(hasItem(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
-            .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY.toString())));
+            .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY.toString())))
+            .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER.toString())))
+            .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())));
     }
     
     @Test
@@ -316,7 +331,9 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.totalPayableAmount").value(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue()))
             .andExpect(jsonPath("$.dateCreated").value(DEFAULT_DATE_CREATED.toString()))
-            .andExpect(jsonPath("$.addedBy").value(DEFAULT_ADDED_BY.toString()));
+            .andExpect(jsonPath("$.addedBy").value(DEFAULT_ADDED_BY.toString()))
+            .andExpect(jsonPath("$.boxNumber").value(DEFAULT_BOX_NUMBER.toString()))
+            .andExpect(jsonPath("$.deliveryDate").value(DEFAULT_DELIVERY_DATE.toString()));
     }
 
     @Test
@@ -987,6 +1004,137 @@ public class VoucherResourceIT {
         // Get all the voucherList where addedBy is null
         defaultVoucherShouldNotBeFound("addedBy.specified=false");
     }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByBoxNumberIsEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where boxNumber equals to DEFAULT_BOX_NUMBER
+        defaultVoucherShouldBeFound("boxNumber.equals=" + DEFAULT_BOX_NUMBER);
+
+        // Get all the voucherList where boxNumber equals to UPDATED_BOX_NUMBER
+        defaultVoucherShouldNotBeFound("boxNumber.equals=" + UPDATED_BOX_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByBoxNumberIsInShouldWork() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where boxNumber in DEFAULT_BOX_NUMBER or UPDATED_BOX_NUMBER
+        defaultVoucherShouldBeFound("boxNumber.in=" + DEFAULT_BOX_NUMBER + "," + UPDATED_BOX_NUMBER);
+
+        // Get all the voucherList where boxNumber equals to UPDATED_BOX_NUMBER
+        defaultVoucherShouldNotBeFound("boxNumber.in=" + UPDATED_BOX_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByBoxNumberIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where boxNumber is not null
+        defaultVoucherShouldBeFound("boxNumber.specified=true");
+
+        // Get all the voucherList where boxNumber is null
+        defaultVoucherShouldNotBeFound("boxNumber.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate equals to DEFAULT_DELIVERY_DATE
+        defaultVoucherShouldBeFound("deliveryDate.equals=" + DEFAULT_DELIVERY_DATE);
+
+        // Get all the voucherList where deliveryDate equals to UPDATED_DELIVERY_DATE
+        defaultVoucherShouldNotBeFound("deliveryDate.equals=" + UPDATED_DELIVERY_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsInShouldWork() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate in DEFAULT_DELIVERY_DATE or UPDATED_DELIVERY_DATE
+        defaultVoucherShouldBeFound("deliveryDate.in=" + DEFAULT_DELIVERY_DATE + "," + UPDATED_DELIVERY_DATE);
+
+        // Get all the voucherList where deliveryDate equals to UPDATED_DELIVERY_DATE
+        defaultVoucherShouldNotBeFound("deliveryDate.in=" + UPDATED_DELIVERY_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate is not null
+        defaultVoucherShouldBeFound("deliveryDate.specified=true");
+
+        // Get all the voucherList where deliveryDate is null
+        defaultVoucherShouldNotBeFound("deliveryDate.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate is greater than or equal to DEFAULT_DELIVERY_DATE
+        defaultVoucherShouldBeFound("deliveryDate.greaterThanOrEqual=" + DEFAULT_DELIVERY_DATE);
+
+        // Get all the voucherList where deliveryDate is greater than or equal to UPDATED_DELIVERY_DATE
+        defaultVoucherShouldNotBeFound("deliveryDate.greaterThanOrEqual=" + UPDATED_DELIVERY_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate is less than or equal to DEFAULT_DELIVERY_DATE
+        defaultVoucherShouldBeFound("deliveryDate.lessThanOrEqual=" + DEFAULT_DELIVERY_DATE);
+
+        // Get all the voucherList where deliveryDate is less than or equal to SMALLER_DELIVERY_DATE
+        defaultVoucherShouldNotBeFound("deliveryDate.lessThanOrEqual=" + SMALLER_DELIVERY_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsLessThanSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate is less than DEFAULT_DELIVERY_DATE
+        defaultVoucherShouldNotBeFound("deliveryDate.lessThan=" + DEFAULT_DELIVERY_DATE);
+
+        // Get all the voucherList where deliveryDate is less than UPDATED_DELIVERY_DATE
+        defaultVoucherShouldBeFound("deliveryDate.lessThan=" + UPDATED_DELIVERY_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate is greater than DEFAULT_DELIVERY_DATE
+        defaultVoucherShouldNotBeFound("deliveryDate.greaterThan=" + DEFAULT_DELIVERY_DATE);
+
+        // Get all the voucherList where deliveryDate is greater than SMALLER_DELIVERY_DATE
+        defaultVoucherShouldBeFound("deliveryDate.greaterThan=" + SMALLER_DELIVERY_DATE);
+    }
+
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -1003,7 +1151,9 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].totalPayableAmount").value(hasItem(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
-            .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)));
+            .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)))
+            .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER)))
+            .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())));
 
         // Check, that the count call also returns 1
         restVoucherMockMvc.perform(get("/api/vouchers/count?sort=id,desc&" + filter))
@@ -1059,7 +1209,9 @@ public class VoucherResourceIT {
             .status(UPDATED_STATUS)
             .totalPayableAmount(UPDATED_TOTAL_PAYABLE_AMOUNT)
             .dateCreated(UPDATED_DATE_CREATED)
-            .addedBy(UPDATED_ADDED_BY);
+            .addedBy(UPDATED_ADDED_BY)
+            .boxNumber(UPDATED_BOX_NUMBER)
+            .deliveryDate(UPDATED_DELIVERY_DATE);
 
         restVoucherMockMvc.perform(put("/api/vouchers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -1079,6 +1231,8 @@ public class VoucherResourceIT {
         assertThat(testVoucher.getTotalPayableAmount()).isEqualTo(UPDATED_TOTAL_PAYABLE_AMOUNT);
         assertThat(testVoucher.getDateCreated()).isEqualTo(UPDATED_DATE_CREATED);
         assertThat(testVoucher.getAddedBy()).isEqualTo(UPDATED_ADDED_BY);
+        assertThat(testVoucher.getBoxNumber()).isEqualTo(UPDATED_BOX_NUMBER);
+        assertThat(testVoucher.getDeliveryDate()).isEqualTo(UPDATED_DELIVERY_DATE);
     }
 
     @Test

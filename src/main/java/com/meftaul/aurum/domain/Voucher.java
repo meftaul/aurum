@@ -57,6 +57,12 @@ public class Voucher implements Serializable {
     @Column(name = "added_by", nullable = false)
     private String addedBy;
 
+    @Column(name = "box_number")
+    private String boxNumber;
+
+    @Column(name = "delivery_date")
+    private LocalDate deliveryDate;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -182,6 +188,32 @@ public class Voucher implements Serializable {
     public void setAddedBy(String addedBy) {
         this.addedBy = addedBy;
     }
+
+    public String getBoxNumber() {
+        return boxNumber;
+    }
+
+    public Voucher boxNumber(String boxNumber) {
+        this.boxNumber = boxNumber;
+        return this;
+    }
+
+    public void setBoxNumber(String boxNumber) {
+        this.boxNumber = boxNumber;
+    }
+
+    public LocalDate getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public Voucher deliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
+        return this;
+    }
+
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -213,6 +245,8 @@ public class Voucher implements Serializable {
             ", totalPayableAmount=" + getTotalPayableAmount() +
             ", dateCreated='" + getDateCreated() + "'" +
             ", addedBy='" + getAddedBy() + "'" +
+            ", boxNumber='" + getBoxNumber() + "'" +
+            ", deliveryDate='" + getDeliveryDate() + "'" +
             "}";
     }
 }

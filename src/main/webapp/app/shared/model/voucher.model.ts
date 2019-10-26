@@ -12,6 +12,8 @@ export interface IVoucher {
   totalPayableAmount?: number;
   dateCreated?: Moment;
   addedBy?: string;
+  boxNumber?: string;
+  deliveryDate?: Moment;
 }
 
 export class Voucher implements IVoucher {
@@ -25,6 +27,8 @@ export class Voucher implements IVoucher {
     public status?: VoucherStatus,
     public totalPayableAmount?: number,
     public dateCreated?: Moment,
-    public addedBy?: string
+    public addedBy?: string,
+    public boxNumber?: string,
+    public deliveryDate?: Moment
   ) {}
 }

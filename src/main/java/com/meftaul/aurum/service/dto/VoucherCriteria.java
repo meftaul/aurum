@@ -65,6 +65,10 @@ public class VoucherCriteria implements Serializable, Criteria {
 
     private StringFilter addedBy;
 
+    private StringFilter boxNumber;
+
+    private LocalDateFilter deliveryDate;
+
     public VoucherCriteria(){
     }
 
@@ -79,6 +83,8 @@ public class VoucherCriteria implements Serializable, Criteria {
         this.totalPayableAmount = other.totalPayableAmount == null ? null : other.totalPayableAmount.copy();
         this.dateCreated = other.dateCreated == null ? null : other.dateCreated.copy();
         this.addedBy = other.addedBy == null ? null : other.addedBy.copy();
+        this.boxNumber = other.boxNumber == null ? null : other.boxNumber.copy();
+        this.deliveryDate = other.deliveryDate == null ? null : other.deliveryDate.copy();
     }
 
     @Override
@@ -166,6 +172,22 @@ public class VoucherCriteria implements Serializable, Criteria {
         this.addedBy = addedBy;
     }
 
+    public StringFilter getBoxNumber() {
+        return boxNumber;
+    }
+
+    public void setBoxNumber(StringFilter boxNumber) {
+        this.boxNumber = boxNumber;
+    }
+
+    public LocalDateFilter getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(LocalDateFilter deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -186,7 +208,9 @@ public class VoucherCriteria implements Serializable, Criteria {
             Objects.equals(status, that.status) &&
             Objects.equals(totalPayableAmount, that.totalPayableAmount) &&
             Objects.equals(dateCreated, that.dateCreated) &&
-            Objects.equals(addedBy, that.addedBy);
+            Objects.equals(addedBy, that.addedBy) &&
+            Objects.equals(boxNumber, that.boxNumber) &&
+            Objects.equals(deliveryDate, that.deliveryDate);
     }
 
     @Override
@@ -201,7 +225,9 @@ public class VoucherCriteria implements Serializable, Criteria {
         status,
         totalPayableAmount,
         dateCreated,
-        addedBy
+        addedBy,
+        boxNumber,
+        deliveryDate
         );
     }
 
@@ -218,6 +244,8 @@ public class VoucherCriteria implements Serializable, Criteria {
                 (totalPayableAmount != null ? "totalPayableAmount=" + totalPayableAmount + ", " : "") +
                 (dateCreated != null ? "dateCreated=" + dateCreated + ", " : "") +
                 (addedBy != null ? "addedBy=" + addedBy + ", " : "") +
+                (boxNumber != null ? "boxNumber=" + boxNumber + ", " : "") +
+                (deliveryDate != null ? "deliveryDate=" + deliveryDate + ", " : "") +
             "}";
     }
 
