@@ -27,7 +27,7 @@
         {
             "fieldName": "tag",
             "fieldType": "TransactionStatus",
-            "fieldValues": "RECEIEVE,VAT,REFUND,DISCOUNT",
+            "fieldValues": "RECEIVE,VAT,REFUND,DISCOUNT",
             "fieldValidateRules": [
                 "required"
             ]

@@ -1,5 +1,5 @@
 export const enum TransactionStatus {
-  RECEIEVE = 'RECEIEVE',
+  RECEIVE = 'RECEIVE',
   VAT = 'VAT',
   REFUND = 'REFUND',
   DISCOUNT = 'DISCOUNT'
