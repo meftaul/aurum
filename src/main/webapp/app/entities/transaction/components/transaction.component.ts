@@ -8,6 +8,8 @@ import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 import { CustomerService } from 'app/entities/customer/customer.service';
 import { IVoucher, Voucher } from 'app/shared/model/voucher.model';
 import { IAurumService, AurumService } from 'app/shared/model/aurum-service.model';
+import * as moment from 'moment';
+import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
 
 @Component({
   selector: 'jhi-aurum-transaction',
@@ -64,13 +66,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   prepareVoucherForm() {
     this.voucherForm = this.formBuilder.group({
-      voucherNo: ['', [Validators.required]],
+      voucherNo: [''],
       boxNumber: ['', [Validators.required]],
-      deliveryDate: ['', [Validators.required]],
-      calculatedTotalAmount: [0, [Validators.required]],
+      deliveryDate: [''],
+      calculatedTotalAmount: [0],
       disountAmount: [0, [Validators.required]],
       vat: [0, [Validators.required]],
-      totalPayableAmount: [0, [Validators.required]]
+      totalPayableAmount: [0]
       // status: ['', [Validators.required]],
 
       // amount: ['', [Validators.required]],
@@ -153,7 +155,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.voucherForm.controls.vat.valueChanges.subscribe(value => {
       if (value) {
         this.totalAmount = this.calculateTotalAmount + +value;
-        const discount = this.voucherForm.controls.disountAmount ? +this.voucherForm.controls.disountAmount : 0;
+        const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
         this.payableTotalAmount = this.totalAmount - discount;
       } else {
         this.totalAmount = this.calculateTotalAmount + 0;
@@ -166,7 +168,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   onDiscountValueChange(event) {
     this.voucherForm.controls.disountAmount.valueChanges.subscribe(value => {
       if (value) {
-        const discount = this.voucherForm.controls.disountAmount ? +this.voucherForm.controls.disountAmount : 0;
+        const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
         this.payableTotalAmount = this.totalAmount - discount;
       } else {
         this.payableTotalAmount = this.totalAmount - 0;
@@ -186,11 +188,21 @@ export class TransactionComponent implements OnInit, OnDestroy {
     // this.aurumServices.map(service => {
     //   cTotalAmount += service.amount;
     // })
+    voucherTemp.voucherNo = moment().toString();
+    voucherTemp.customerId = +this.customerID;
     voucherTemp.boxNumber = this.voucherForm.controls.boxNumber.value;
-    voucherTemp.calculatedTotalAmount = cTotalAmount;
+    voucherTemp.calculatedTotalAmount = this.calculateTotalAmount;
     voucherTemp.disountAmount = this.voucherForm.controls.disountAmount.value;
     voucherTemp.vat = this.voucherForm.controls.vat.value;
-    voucherTemp.totalPayableAmount = cTotalAmount + +this.voucherForm.controls.vat.value - +this.voucherForm.controls.disountAmount.value;
+    voucherTemp.totalPayableAmount = this.payableTotalAmount;
+    voucherTemp.aurumServices = this.aurumServices;
+    voucherTemp.deliveryDate = moment();
+    voucherTemp.status = VoucherStatus.PAID;
+    voucherTemp.addedBy = 'admin';
+
+    this.transactionService.create(voucherTemp).subscribe(data => {
+      this.jhiAlertService.success('success');
+    });
   }
 
   cancel() {}

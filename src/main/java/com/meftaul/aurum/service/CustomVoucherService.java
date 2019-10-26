@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,18 +44,18 @@ public class CustomVoucherService {
             savedVoucher.addAurumService(s);
         }
 
-        createTxnHistory(savedVoucher, savedVoucher.getTotalPayableAmount());
+        createTxnHistory(savedVoucher, savedVoucher.getTotalPayableAmount(), TransactionStatus.RECEIVE);
         if (savedVoucher.getVat() != null) {
-            createTxnHistory(savedVoucher, savedVoucher.getVat());
+            createTxnHistory(savedVoucher, savedVoucher.getVat(), TransactionStatus.VAT);
         }
         if (savedVoucher.getDisountAmount() != null) {
-            createTxnHistory(savedVoucher, savedVoucher.getDisountAmount());
+            createTxnHistory(savedVoucher, savedVoucher.getDisountAmount(), TransactionStatus.DISCOUNT);
         }
 
         return voucherRepository.save(savedVoucher);
     }
 
-    private TransactionHistory createTxnHistory(Voucher voucher, BigDecimal amount) {
+    private TransactionHistory createTxnHistory(Voucher voucher, BigDecimal amount, TransactionStatus tag) {
 
         TransactionHistory transactionHistory = new TransactionHistory();
 
@@ -63,6 +64,7 @@ public class CustomVoucherService {
         transactionHistory.setDateCreated(LocalDate.now());
         transactionHistory.setCustomerId(voucher.getCustomerId());
         transactionHistory.setVoucherNo(voucher.getVoucherNo());
+        transactionHistory.setTag(tag);
 
         transactionHistory.setAmount(amount);
 
