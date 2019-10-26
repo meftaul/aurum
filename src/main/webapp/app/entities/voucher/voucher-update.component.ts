@@ -16,6 +16,7 @@ import { VoucherService } from './voucher.service';
 export class VoucherUpdateComponent implements OnInit {
   isSaving: boolean;
   dateCreatedDp: any;
+  deliveryDateDp: any;
 
   editForm = this.fb.group({
     id: [],
@@ -27,7 +28,9 @@ export class VoucherUpdateComponent implements OnInit {
     status: [null, [Validators.required]],
     totalPayableAmount: [null, [Validators.required]],
     dateCreated: [],
-    addedBy: [null, [Validators.required]]
+    addedBy: [null, [Validators.required]],
+    boxNumber: [],
+    deliveryDate: []
   });
 
   constructor(protected voucherService: VoucherService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
@@ -50,7 +53,9 @@ export class VoucherUpdateComponent implements OnInit {
       status: voucher.status,
       totalPayableAmount: voucher.totalPayableAmount,
       dateCreated: voucher.dateCreated,
-      addedBy: voucher.addedBy
+      addedBy: voucher.addedBy,
+      boxNumber: voucher.boxNumber,
+      deliveryDate: voucher.deliveryDate
     });
   }
 
@@ -80,7 +85,9 @@ export class VoucherUpdateComponent implements OnInit {
       status: this.editForm.get(['status']).value,
       totalPayableAmount: this.editForm.get(['totalPayableAmount']).value,
       dateCreated: this.editForm.get(['dateCreated']).value,
-      addedBy: this.editForm.get(['addedBy']).value
+      addedBy: this.editForm.get(['addedBy']).value,
+      boxNumber: this.editForm.get(['boxNumber']).value,
+      deliveryDate: this.editForm.get(['deliveryDate']).value
     };
   }
 

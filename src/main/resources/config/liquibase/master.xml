@@ -17,6 +17,8 @@
     <include file="config/liquibase/changelog/20191023070656_added_entity_Customer.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191023082216_added_entity_Voucher.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191023084044_added_entity_TransactionHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20191026063357_added_entity_AurumService.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20191026063357_added_entity_constraints_AurumService.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

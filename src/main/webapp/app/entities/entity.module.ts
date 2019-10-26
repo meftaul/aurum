@@ -24,6 +24,10 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
       {
         path: 'transaction-history',
         loadChildren: () => import('./transaction-history/transaction-history.module').then(m => m.AurumTransactionHistoryModule)
+      },
+      {
+        path: 'aurum-service',
+        loadChildren: () => import('./aurum-service/aurum-service.module').then(m => m.AurumAurumServiceModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

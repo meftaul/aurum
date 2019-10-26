@@ -25,14 +25,15 @@ describe('Service Tests', () => {
       httpMock = injector.get(HttpTestingController);
       currentDate = moment();
 
-      elemDefault = new Voucher(0, 'AAAAAAA', 0, 0, 0, 0, VoucherStatus.PAID, 0, currentDate, 'AAAAAAA');
+      elemDefault = new Voucher(0, 'AAAAAAA', 0, 0, 0, 0, VoucherStatus.PAID, 0, currentDate, 'AAAAAAA', 'AAAAAAA', currentDate);
     });
 
     describe('Service methods', () => {
       it('should find an element', () => {
         const returnedFromService = Object.assign(
           {
-            dateCreated: currentDate.format(DATE_FORMAT)
+            dateCreated: currentDate.format(DATE_FORMAT),
+            deliveryDate: currentDate.format(DATE_FORMAT)
           },
           elemDefault
         );
@@ -50,13 +51,15 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             id: 0,
-            dateCreated: currentDate.format(DATE_FORMAT)
+            dateCreated: currentDate.format(DATE_FORMAT),
+            deliveryDate: currentDate.format(DATE_FORMAT)
           },
           elemDefault
         );
         const expected = Object.assign(
           {
-            dateCreated: currentDate
+            dateCreated: currentDate,
+            deliveryDate: currentDate
           },
           returnedFromService
         );
@@ -80,14 +83,17 @@ describe('Service Tests', () => {
             status: 'BBBBBB',
             totalPayableAmount: 1,
             dateCreated: currentDate.format(DATE_FORMAT),
-            addedBy: 'BBBBBB'
+            addedBy: 'BBBBBB',
+            boxNumber: 'BBBBBB',
+            deliveryDate: currentDate.format(DATE_FORMAT)
           },
           elemDefault
         );
 
         const expected = Object.assign(
           {
-            dateCreated: currentDate
+            dateCreated: currentDate,
+            deliveryDate: currentDate
           },
           returnedFromService
         );
@@ -111,13 +117,16 @@ describe('Service Tests', () => {
             status: 'BBBBBB',
             totalPayableAmount: 1,
             dateCreated: currentDate.format(DATE_FORMAT),
-            addedBy: 'BBBBBB'
+            addedBy: 'BBBBBB',
+            boxNumber: 'BBBBBB',
+            deliveryDate: currentDate.format(DATE_FORMAT)
           },
           elemDefault
         );
         const expected = Object.assign(
           {
-            dateCreated: currentDate
+            dateCreated: currentDate,
+            deliveryDate: currentDate
           },
           returnedFromService
         );

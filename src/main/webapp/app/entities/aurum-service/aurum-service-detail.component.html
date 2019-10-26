@@ -1,0 +1,61 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="aurumService">
+            <h2><span>Aurum Service</span> {{aurumService.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Service Type</span></dt>
+                <dd>
+                    <span>{{aurumService.serviceType}}</span>
+                </dd>
+                <dt><span>Item Name</span></dt>
+                <dd>
+                    <span>{{aurumService.itemName}}</span>
+                </dd>
+                <dt><span>Quantity</span></dt>
+                <dd>
+                    <span>{{aurumService.quantity}}</span>
+                </dd>
+                <dt><span>Weight</span></dt>
+                <dd>
+                    <span>{{aurumService.weight}}</span>
+                </dd>
+                <dt><span>Rate</span></dt>
+                <dd>
+                    <span>{{aurumService.rate}}</span>
+                </dd>
+                <dt><span>Amount</span></dt>
+                <dd>
+                    <span>{{aurumService.amount}}</span>
+                </dd>
+                <dt><span>Karet Type</span></dt>
+                <dd>
+                    <span>{{aurumService.karetType}}</span>
+                </dd>
+                <dt><span>Service Name</span></dt>
+                <dd>
+                    <span>{{aurumService.serviceName}}</span>
+                </dd>
+                <dt><span>Voucher</span></dt>
+                <dd>
+                    <div *ngIf="aurumService.voucher">
+                        <a [routerLink]="['/voucher', aurumService.voucher?.id, 'view']">{{aurumService.voucher?.voucherNo}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/aurum-service', aurumService.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

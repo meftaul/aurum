@@ -52,7 +52,8 @@ export class VoucherService {
 
   protected convertDateFromClient(voucher: IVoucher): IVoucher {
     const copy: IVoucher = Object.assign({}, voucher, {
-      dateCreated: voucher.dateCreated != null && voucher.dateCreated.isValid() ? voucher.dateCreated.format(DATE_FORMAT) : null
+      dateCreated: voucher.dateCreated != null && voucher.dateCreated.isValid() ? voucher.dateCreated.format(DATE_FORMAT) : null,
+      deliveryDate: voucher.deliveryDate != null && voucher.deliveryDate.isValid() ? voucher.deliveryDate.format(DATE_FORMAT) : null
     });
     return copy;
   }
@@ -60,6 +61,7 @@ export class VoucherService {
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
       res.body.dateCreated = res.body.dateCreated != null ? moment(res.body.dateCreated) : null;
+      res.body.deliveryDate = res.body.deliveryDate != null ? moment(res.body.deliveryDate) : null;
     }
     return res;
   }
@@ -68,6 +70,7 @@ export class VoucherService {
     if (res.body) {
       res.body.forEach((voucher: IVoucher) => {
         voucher.dateCreated = voucher.dateCreated != null ? moment(voucher.dateCreated) : null;
+        voucher.deliveryDate = voucher.deliveryDate != null ? moment(voucher.deliveryDate) : null;
       });
     }
     return res;

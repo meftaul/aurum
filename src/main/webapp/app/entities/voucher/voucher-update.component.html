@@ -93,6 +93,20 @@
                         </small>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_boxNumber">Box Number</label>
+                    <input type="text" class="form-control" name="boxNumber" id="field_boxNumber"
+                           formControlName="boxNumber"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_deliveryDate">Delivery Date</label>
+                    <div class="input-group">
+                        <input id="field_deliveryDate" type="text" class="form-control" name="deliveryDate" ngbDatepicker  #deliveryDateDp="ngbDatepicker" formControlName="deliveryDate"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="deliveryDateDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
 
             </div>
             <div>

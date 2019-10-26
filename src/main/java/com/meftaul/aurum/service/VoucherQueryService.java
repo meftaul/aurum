@@ -112,6 +112,16 @@ public class VoucherQueryService extends QueryService<Voucher> {
             if (criteria.getAddedBy() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getAddedBy(), Voucher_.addedBy));
             }
+            if (criteria.getBoxNumber() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getBoxNumber(), Voucher_.boxNumber));
+            }
+            if (criteria.getDeliveryDate() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getDeliveryDate(), Voucher_.deliveryDate));
+            }
+            if (criteria.getAurumServiceId() != null) {
+                specification = specification.and(buildSpecification(criteria.getAurumServiceId(),
+                    root -> root.join(Voucher_.aurumServices, JoinType.LEFT).get(AurumService_.id)));
+            }
         }
         return specification;
     }

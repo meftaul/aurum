@@ -1,7 +1,14 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "aurumService",
+            "otherEntityName": "aurumService",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "voucher"
+        }
+    ],
     "fields": [
         {
             "fieldName": "voucherNo",
@@ -51,6 +58,14 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "boxNumber",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "deliveryDate",
+            "fieldType": "LocalDate"
         }
     ],
     "changelogDate": "20191023082216",

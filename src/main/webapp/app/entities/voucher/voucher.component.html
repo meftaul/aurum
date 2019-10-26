@@ -27,6 +27,8 @@
             <th jhiSortBy="totalPayableAmount"><span>Total Payable Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="dateCreated"><span>Date Created</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="addedBy"><span>Added By</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="boxNumber"><span>Box Number</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="deliveryDate"><span>Delivery Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -42,6 +44,8 @@
                 <td>{{voucher.totalPayableAmount}}</td>
                 <td>{{voucher.dateCreated | date:'mediumDate'}}</td>
                 <td>{{voucher.addedBy}}</td>
+                <td>{{voucher.boxNumber}}</td>
+                <td>{{voucher.deliveryDate | date:'mediumDate'}}</td>
                 <td class="text-right">
                     <div class="btn-group">
                         <button type="submit"
