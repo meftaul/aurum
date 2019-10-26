@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -42,17 +43,18 @@ public class CustomVoucherService {
             savedVoucher.addAurumService(s);
         }
 
-
-
+        createTxnHistory(savedVoucher, savedVoucher.getTotalPayableAmount());
         if (savedVoucher.getVat() != null) {
-
+            createTxnHistory(savedVoucher, savedVoucher.getVat());
         }
-
+        if (savedVoucher.getDisountAmount() != null) {
+            createTxnHistory(savedVoucher, savedVoucher.getDisountAmount());
+        }
 
         return voucherRepository.save(savedVoucher);
     }
 
-    private TransactionHistory getTxnHistory(Voucher voucher) {
+    private TransactionHistory createTxnHistory(Voucher voucher, BigDecimal amount) {
 
         TransactionHistory transactionHistory = new TransactionHistory();
 
@@ -62,7 +64,9 @@ public class CustomVoucherService {
         transactionHistory.setCustomerId(voucher.getCustomerId());
         transactionHistory.setVoucherNo(voucher.getVoucherNo());
 
-        return transactionHistory;
+        transactionHistory.setAmount(amount);
+
+        return transactionHistoryRepository.save(transactionHistory);
 
     }
 
