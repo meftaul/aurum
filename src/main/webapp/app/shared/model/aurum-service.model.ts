@@ -1,3 +1,5 @@
+import { IVoucher } from 'app/shared/model/voucher.model';
+
 export interface IAurumService {
   id?: number;
   serviceType?: string;
@@ -8,6 +10,7 @@ export interface IAurumService {
   amount?: number;
   karetType?: string;
   serviceName?: string;
+  voucher?: IVoucher;
 }
 
 export class AurumService implements IAurumService {
@@ -20,6 +23,7 @@ export class AurumService implements IAurumService {
     public rate?: number,
     public amount?: number,
     public karetType?: string,
-    public serviceName?: string
+    public serviceName?: string,
+    public voucher?: IVoucher
   ) {}
 }

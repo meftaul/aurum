@@ -1,11 +1,11 @@
 id;voucher_no;customer_id;calculated_total_amount;vat;disount_amount;status;total_payable_amount;date_created;added_by;box_number;delivery_date
-1;mobile Fish;77969;59865;59685;15601;PAID;60111;2019-10-26;deposit Tasty Metal Bacon Implementation;Chips;2019-10-26
-2;methodology Albania;43194;2306;29122;52477;CANCEL;23277;2019-10-25;bluetooth;syndicate;2019-10-25
+1;mobile Fish;77969;59865;59685;15601;CANCEL;60111;2019-10-26;deposit Tasty Metal Bacon Implementation;Chips;2019-10-26
+2;methodology Albania;43194;2306;29122;52477;PAID;23277;2019-10-25;bluetooth;syndicate;2019-10-25
 3;Canyon HDD;68030;17052;45049;6505;CANCEL;96563;2019-10-25;envisioneer Music Public-key;infomediaries;2019-10-26
-4;Buckinghamshire Games;90932;39106;25877;18223;DUE;20794;2019-10-25;Chair Facilitator;Views e-enable Communications;2019-10-25
-5;archive Georgia Aruba;96117;32533;84453;38867;DUE;28093;2019-10-25;bifurcated scalable;Small;2019-10-25
+4;Buckinghamshire Games;90932;39106;25877;18223;CANCEL;20794;2019-10-25;Chair Facilitator;Views e-enable Communications;2019-10-25
+5;archive Georgia Aruba;96117;32533;84453;38867;PAID;28093;2019-10-25;bifurcated scalable;Small;2019-10-25
 6;index orange;552;1407;81546;19884;PAID;92630;2019-10-25;Frozen IB;Highway Ergonomic;2019-10-25
-7;Lempira;66592;72960;59129;63755;CANCEL;47221;2019-10-25;Developer;synthesize Idaho compress;2019-10-25
-8;Poland;42754;11089;2541;43933;CANCEL;89576;2019-10-25;knowledge base Buckinghamshire;Concrete Investment Account Saint Lucia;2019-10-26
+7;Lempira;66592;72960;59129;63755;DUE;47221;2019-10-25;Developer;synthesize Idaho compress;2019-10-25
+8;Poland;42754;11089;2541;43933;DUE;89576;2019-10-25;knowledge base Buckinghamshire;Concrete Investment Account Saint Lucia;2019-10-26
 9;Brand;59886;28975;69478;16122;PAID;87146;2019-10-25;mint green e-business EXE;back-end;2019-10-25
 10;support Gorgeous;22793;64769;42710;52;DUE;53408;2019-10-25;magenta Concrete;User-centric Gloves;2019-10-26

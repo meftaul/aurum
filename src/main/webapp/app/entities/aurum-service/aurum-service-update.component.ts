@@ -5,8 +5,12 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { JhiAlertService } from 'ng-jhipster';
 import { IAurumService, AurumService } from 'app/shared/model/aurum-service.model';
 import { AurumServiceService } from './aurum-service.service';
+import { IVoucher } from 'app/shared/model/voucher.model';
+import { VoucherService } from 'app/entities/voucher/voucher.service';
 
 @Component({
   selector: 'jhi-aurum-service-update',
@@ -14,6 +18,8 @@ import { AurumServiceService } from './aurum-service.service';
 })
 export class AurumServiceUpdateComponent implements OnInit {
   isSaving: boolean;
+
+  vouchers: IVoucher[];
 
   editForm = this.fb.group({
     id: [],
@@ -24,16 +30,30 @@ export class AurumServiceUpdateComponent implements OnInit {
     rate: [],
     amount: [],
     karetType: [],
-    serviceName: []
+    serviceName: [],
+    voucher: []
   });
 
-  constructor(protected aurumServiceService: AurumServiceService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(
+    protected jhiAlertService: JhiAlertService,
+    protected aurumServiceService: AurumServiceService,
+    protected voucherService: VoucherService,
+    protected activatedRoute: ActivatedRoute,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit() {
     this.isSaving = false;
     this.activatedRoute.data.subscribe(({ aurumService }) => {
       this.updateForm(aurumService);
     });
+    this.voucherService
+      .query()
+      .pipe(
+        filter((mayBeOk: HttpResponse<IVoucher[]>) => mayBeOk.ok),
+        map((response: HttpResponse<IVoucher[]>) => response.body)
+      )
+      .subscribe((res: IVoucher[]) => (this.vouchers = res), (res: HttpErrorResponse) => this.onError(res.message));
   }
 
   updateForm(aurumService: IAurumService) {
@@ -46,7 +66,8 @@ export class AurumServiceUpdateComponent implements OnInit {
       rate: aurumService.rate,
       amount: aurumService.amount,
       karetType: aurumService.karetType,
-      serviceName: aurumService.serviceName
+      serviceName: aurumService.serviceName,
+      voucher: aurumService.voucher
     });
   }
 
@@ -75,7 +96,8 @@ export class AurumServiceUpdateComponent implements OnInit {
       rate: this.editForm.get(['rate']).value,
       amount: this.editForm.get(['amount']).value,
       karetType: this.editForm.get(['karetType']).value,
-      serviceName: this.editForm.get(['serviceName']).value
+      serviceName: this.editForm.get(['serviceName']).value,
+      voucher: this.editForm.get(['voucher']).value
     };
   }
 
@@ -90,5 +112,12 @@ export class AurumServiceUpdateComponent implements OnInit {
 
   protected onSaveError() {
     this.isSaving = false;
+  }
+  protected onError(errorMessage: string) {
+    this.jhiAlertService.error(errorMessage, null, null);
+  }
+
+  trackVoucherById(index: number, item: IVoucher) {
+    return item.id;
   }
 }

@@ -1,4 +1,5 @@
 package com.meftaul.aurum.domain;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -44,6 +45,10 @@ public class AurumService implements Serializable {
 
     @Column(name = "service_name")
     private String serviceName;
+
+    @ManyToOne
+    @JsonIgnoreProperties("aurumServices")
+    private Voucher voucher;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -156,6 +161,19 @@ public class AurumService implements Serializable {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public Voucher getVoucher() {
+        return voucher;
+    }
+
+    public AurumService voucher(Voucher voucher) {
+        this.voucher = voucher;
+        return this;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

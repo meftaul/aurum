@@ -37,6 +37,12 @@
                 <dd>
                     <span>{{aurumService.serviceName}}</span>
                 </dd>
+                <dt><span>Voucher</span></dt>
+                <dd>
+                    <div *ngIf="aurumService.voucher">
+                        <a [routerLink]="['/voucher', aurumService.voucher?.id, 'view']">{{aurumService.voucher?.voucherNo}}</a>
+                    </div>
+                </dd>
             </dl>
 
             <button type="submit"

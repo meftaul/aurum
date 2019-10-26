@@ -69,6 +69,8 @@ public class VoucherCriteria implements Serializable, Criteria {
 
     private LocalDateFilter deliveryDate;
 
+    private LongFilter aurumServiceId;
+
     public VoucherCriteria(){
     }
 
@@ -85,6 +87,7 @@ public class VoucherCriteria implements Serializable, Criteria {
         this.addedBy = other.addedBy == null ? null : other.addedBy.copy();
         this.boxNumber = other.boxNumber == null ? null : other.boxNumber.copy();
         this.deliveryDate = other.deliveryDate == null ? null : other.deliveryDate.copy();
+        this.aurumServiceId = other.aurumServiceId == null ? null : other.aurumServiceId.copy();
     }
 
     @Override
@@ -188,6 +191,14 @@ public class VoucherCriteria implements Serializable, Criteria {
         this.deliveryDate = deliveryDate;
     }
 
+    public LongFilter getAurumServiceId() {
+        return aurumServiceId;
+    }
+
+    public void setAurumServiceId(LongFilter aurumServiceId) {
+        this.aurumServiceId = aurumServiceId;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -210,7 +221,8 @@ public class VoucherCriteria implements Serializable, Criteria {
             Objects.equals(dateCreated, that.dateCreated) &&
             Objects.equals(addedBy, that.addedBy) &&
             Objects.equals(boxNumber, that.boxNumber) &&
-            Objects.equals(deliveryDate, that.deliveryDate);
+            Objects.equals(deliveryDate, that.deliveryDate) &&
+            Objects.equals(aurumServiceId, that.aurumServiceId);
     }
 
     @Override
@@ -227,7 +239,8 @@ public class VoucherCriteria implements Serializable, Criteria {
         dateCreated,
         addedBy,
         boxNumber,
-        deliveryDate
+        deliveryDate,
+        aurumServiceId
         );
     }
 
@@ -246,6 +259,7 @@ public class VoucherCriteria implements Serializable, Criteria {
                 (addedBy != null ? "addedBy=" + addedBy + ", " : "") +
                 (boxNumber != null ? "boxNumber=" + boxNumber + ", " : "") +
                 (deliveryDate != null ? "deliveryDate=" + deliveryDate + ", " : "") +
+                (aurumServiceId != null ? "aurumServiceId=" + aurumServiceId + ", " : "") +
             "}";
     }
 

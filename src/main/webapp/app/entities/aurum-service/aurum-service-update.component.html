@@ -50,6 +50,13 @@
                            formControlName="serviceName"/>
                 </div>
 
+                <div class="form-group">
+                    <label class="form-control-label" for="field_voucher">Voucher</label>
+                    <select class="form-control" id="field_voucher" name="voucher" formControlName="voucher">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="voucherOption.id === editForm.get('voucher').value?.id ? editForm.get('voucher').value : voucherOption" *ngFor="let voucherOption of vouchers; trackBy: trackVoucherById">{{voucherOption.voucherNo}}</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">

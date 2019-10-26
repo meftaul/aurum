@@ -8,6 +8,8 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.meftaul.aurum.domain.enumeration.VoucherStatus;
 
@@ -62,6 +64,10 @@ public class Voucher implements Serializable {
 
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
+
+    @OneToMany(mappedBy = "voucher")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<AurumService> aurumServices = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -213,6 +219,31 @@ public class Voucher implements Serializable {
 
     public void setDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public Set<AurumService> getAurumServices() {
+        return aurumServices;
+    }
+
+    public Voucher aurumServices(Set<AurumService> aurumServices) {
+        this.aurumServices = aurumServices;
+        return this;
+    }
+
+    public Voucher addAurumService(AurumService aurumService) {
+        this.aurumServices.add(aurumService);
+        aurumService.setVoucher(this);
+        return this;
+    }
+
+    public Voucher removeAurumService(AurumService aurumService) {
+        this.aurumServices.remove(aurumService);
+        aurumService.setVoucher(null);
+        return this;
+    }
+
+    public void setAurumServices(Set<AurumService> aurumServices) {
+        this.aurumServices = aurumServices;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

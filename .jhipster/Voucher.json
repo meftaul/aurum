@@ -1,7 +1,14 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "aurumService",
+            "otherEntityName": "aurumService",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "voucher"
+        }
+    ],
     "fields": [
         {
             "fieldName": "voucherNo",

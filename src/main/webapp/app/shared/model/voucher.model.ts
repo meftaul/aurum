@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { IAurumService } from 'app/shared/model/aurum-service.model';
 import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
 
 export interface IVoucher {
@@ -14,6 +15,7 @@ export interface IVoucher {
   addedBy?: string;
   boxNumber?: string;
   deliveryDate?: Moment;
+  aurumServices?: IAurumService[];
 }
 
 export class Voucher implements IVoucher {
@@ -29,6 +31,7 @@ export class Voucher implements IVoucher {
     public dateCreated?: Moment,
     public addedBy?: string,
     public boxNumber?: string,
-    public deliveryDate?: Moment
+    public deliveryDate?: Moment,
+    public aurumServices?: IAurumService[]
   ) {}
 }

@@ -26,6 +26,7 @@
             <th jhiSortBy="amount"><span>Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="karetType"><span>Karet Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="serviceName"><span>Service Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="voucher.voucherNo"><span>Voucher</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -40,6 +41,11 @@
                 <td>{{aurumService.amount}}</td>
                 <td>{{aurumService.karetType}}</td>
                 <td>{{aurumService.serviceName}}</td>
+                <td>
+                    <div *ngIf="aurumService.voucher">
+                        <a [routerLink]="['/voucher', aurumService.voucher?.id, 'view' ]" >{{aurumService.voucher?.voucherNo}}</a>
+                    </div>
+                </td>
                 <td class="text-right">
                     <div class="btn-group">
                         <button type="submit"

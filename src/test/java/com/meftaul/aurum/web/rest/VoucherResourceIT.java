@@ -2,6 +2,7 @@ package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.AurumApp;
 import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.domain.AurumService;
 import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.service.VoucherService;
 import com.meftaul.aurum.web.rest.errors.ExceptionTranslator;
@@ -1133,6 +1134,26 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where deliveryDate is greater than SMALLER_DELIVERY_DATE
         defaultVoucherShouldBeFound("deliveryDate.greaterThan=" + SMALLER_DELIVERY_DATE);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllVouchersByAurumServiceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+        AurumService aurumService = AurumServiceResourceIT.createEntity(em);
+        em.persist(aurumService);
+        em.flush();
+        voucher.addAurumService(aurumService);
+        voucherRepository.saveAndFlush(voucher);
+        Long aurumServiceId = aurumService.getId();
+
+        // Get all the voucherList where aurumService equals to aurumServiceId
+        defaultVoucherShouldBeFound("aurumServiceId.equals=" + aurumServiceId);
+
+        // Get all the voucherList where aurumService equals to aurumServiceId + 1
+        defaultVoucherShouldNotBeFound("aurumServiceId.equals=" + (aurumServiceId + 1));
     }
 
     /**
