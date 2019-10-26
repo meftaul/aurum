@@ -6,8 +6,8 @@ import { TransactionService } from '../services/service-api/transaction.service'
 import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 import { CustomerService } from 'app/entities/customer/customer.service';
-import { IVoucher, Voucher } from 'app/shared/model/voucher.model';
-import { IAurumService, AurumService } from 'app/shared/model/aurum-service.model';
+import { Voucher } from 'app/shared/model/voucher.model';
+import { AurumService } from 'app/shared/model/aurum-service.model';
 import * as moment from 'moment';
 import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
 
@@ -19,7 +19,6 @@ import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.mode
 export class TransactionComponent implements OnInit, OnDestroy {
   customerID: string;
   customer: ICustomer;
-  // customer: ICustomer = { 'id': 1, 'firstName': 'Garnett', 'lastName': 'asdf', 'phone': '123456789', 'email': 'asdf@mail.com', 'totalPoint': 1000 };
   voucherForm: FormGroup;
   aurumServiceForm: FormGroup;
 
@@ -27,6 +26,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   calculateTotalAmount = 0;
   totalAmount = 0;
   payableTotalAmount = 0;
+  amountDue = 0;
 
   eventSubscriber: Subscription;
 
@@ -48,7 +48,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ];
 
   serviceListColumns: string[] = ['index', 'serviceType', 'itemName', 'karetType', 'quantity', 'weight', 'rate', 'amount', 'action'];
-  serviceList: any[] = [{ itemName: 'Anklet', quantity: 2, weightGm: 15, rate: 100, amount: 2000 }];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -68,20 +67,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.voucherForm = this.formBuilder.group({
       voucherNo: [''],
       boxNumber: ['', [Validators.required]],
-      deliveryDate: [''],
+      deliveryDate: ['', [Validators.required]],
       calculatedTotalAmount: [0],
       disountAmount: [0, [Validators.required]],
       vat: [0, [Validators.required]],
       totalPayableAmount: [0]
       // status: ['', [Validators.required]],
-
-      // amount: ['', [Validators.required]],
-      // serviceType: ['', [Validators.required]],
-      // itemName: ['', [Validators.required]],
-      // karatType: ['', [Validators.required]],
-      // rate: ['', [Validators.required]],
-      // quantity: ['', [Validators.required]],
-      // weight: ['', [Validators.required]],
     });
   }
 
@@ -123,12 +114,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   addService() {
-    this.calculateTotalAmount = 0;
     this.aurumServiceForm.markAllAsTouched();
     if (this.aurumServiceForm.invalid) {
       this.jhiAlertService.warning('error');
       return;
     }
+
     const aurumServiceTemp = new AurumService();
     aurumServiceTemp.serviceType = this.aurumServiceForm.controls.serviceType.value;
     aurumServiceTemp.itemName = this.aurumServiceForm.controls.itemName.value;
@@ -139,17 +130,30 @@ export class TransactionComponent implements OnInit, OnDestroy {
     aurumServiceTemp.weight = this.aurumServiceForm.controls.weight.value;
 
     this.aurumServices = [aurumServiceTemp, ...this.aurumServices];
-    if (this.aurumServices.length !== 0) {
-      this.aurumServices.map(service => {
-        this.calculateTotalAmount += service.amount;
-        this.payableTotalAmount += service.amount;
-      });
-    }
+    this.calculateTotalServiceCharge(this.aurumServices);
+    this.resetServiceForm();
   }
 
   editService() {}
 
-  deleteService() {}
+  deleteService(index) {
+    this.aurumServices.splice(index, 1);
+    this.aurumServices = [...this.aurumServices];
+    this.calculateTotalServiceCharge(this.aurumServices);
+  }
+
+  calculateTotalServiceCharge(serviceList: AurumService[]) {
+    this.calculateTotalAmount = 0;
+    this.payableTotalAmount = 0;
+    this.amountDue = 0;
+    if (serviceList.length !== 0) {
+      serviceList.map(service => {
+        this.calculateTotalAmount += service.amount;
+        this.payableTotalAmount += service.amount;
+        this.amountDue += service.amount;
+      });
+    }
+  }
 
   onVatValueChange(event) {
     this.voucherForm.controls.vat.valueChanges.subscribe(value => {
@@ -157,10 +161,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.totalAmount = this.calculateTotalAmount + +value;
         const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
         this.payableTotalAmount = this.totalAmount - discount;
+        this.amountDue = this.totalAmount - discount;
       } else {
         this.totalAmount = this.calculateTotalAmount + 0;
         const discount = this.voucherForm.controls.disountAmount ? +this.voucherForm.controls.disountAmount : 0;
         this.payableTotalAmount = this.totalAmount - discount;
+        this.amountDue = this.totalAmount - discount;
       }
     });
   }
@@ -170,8 +176,20 @@ export class TransactionComponent implements OnInit, OnDestroy {
       if (value) {
         const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
         this.payableTotalAmount = this.totalAmount - discount;
+        this.amountDue = this.totalAmount - discount;
       } else {
         this.payableTotalAmount = this.totalAmount - 0;
+        this.amountDue = this.totalAmount - 0;
+      }
+    });
+  }
+
+  onTotalPayableValueChange(event) {
+    this.voucherForm.controls.totalPayableAmount.valueChanges.subscribe(value => {
+      if (value) {
+        this.amountDue = this.payableTotalAmount - +value;
+      } else {
+        this.amountDue = this.payableTotalAmount - 0;
       }
     });
   }
@@ -184,30 +202,40 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
 
     const voucherTemp = new Voucher();
-    const cTotalAmount = 0;
-    // this.aurumServices.map(service => {
-    //   cTotalAmount += service.amount;
-    // })
     voucherTemp.voucherNo = moment().toString();
     voucherTemp.customerId = +this.customerID;
     voucherTemp.boxNumber = this.voucherForm.controls.boxNumber.value;
     voucherTemp.calculatedTotalAmount = this.calculateTotalAmount;
     voucherTemp.disountAmount = this.voucherForm.controls.disountAmount.value;
     voucherTemp.vat = this.voucherForm.controls.vat.value;
-    voucherTemp.totalPayableAmount = this.payableTotalAmount;
+    voucherTemp.totalPayableAmount = this.voucherForm.controls.totalPayableAmount.value;
     voucherTemp.aurumServices = this.aurumServices;
-    voucherTemp.deliveryDate = moment();
-    voucherTemp.status = VoucherStatus.PAID;
+    voucherTemp.deliveryDate = this.voucherForm.controls.deliveryDate.value; // moment()
+    if (this.payableTotalAmount === +this.voucherForm.controls.totalPayableAmount.value) voucherTemp.status = VoucherStatus.PAID;
+    else voucherTemp.status = VoucherStatus.DUE;
+    // voucherTemp.status = VoucherStatus.PAID;
     voucherTemp.addedBy = 'admin';
 
     this.transactionService.create(voucherTemp).subscribe(data => {
       this.jhiAlertService.success('success');
+      this.resetVoucherForm();
     });
   }
 
-  cancel() {}
+  resetVoucherForm() {
+    this.voucherForm.reset();
+    this.resetServiceForm();
+    this.aurumServices = [];
+    this.calculateTotalAmount = 0;
+    this.totalAmount = 0;
+    this.payableTotalAmount = 0;
+    this.amountDue = 0;
+    this.customer = null;
+  }
 
-  resetForm() {}
+  resetServiceForm() {
+    this.aurumServiceForm.reset();
+  }
 
   ngOnDestroy() {
     // this.eventManager.destroy(this.eventSubscriber);

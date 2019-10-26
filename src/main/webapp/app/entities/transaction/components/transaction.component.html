@@ -19,12 +19,6 @@
                 <mat-card style="margin-right: 5px;">
                     <mat-card-title>Invoice Information:</mat-card-title>
                     <form [formGroup]="aurumServiceForm" class="row">
-                        <!-- <mat-form-field class="col-md-6">
-                                <input matInput placeholder="Voucher No" formControlName="voucherNo">
-                            </mat-form-field>
-                            <mat-form-field class="col-md-6">
-                                <input matInput placeholder="Box No" formControlName="boxNumber">
-                            </mat-form-field> -->
                         <mat-form-field class="col-md-6">
                             <mat-select placeholder="Select Service" formControlName="serviceType">
                                 <mat-option *ngFor="let item of itemNames" [value]="item.value">
@@ -51,19 +45,12 @@
                         <mat-form-field class="col-md-6">
                             <input matInput placeholder="Weight(Tola)" formControlName="weight">
                         </mat-form-field>
-                        <!-- <mat-form-field class="col-md-6">
-                                <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
-                                    formControlName="deliveryDate" readonly>
-                                <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
-                                <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
-                            </mat-form-field> -->
                         <div class="col-md-12">
-                            <button type="button" class="btn btn-primary float-right" (click)="resetForm()"
+                            <button type="button" class="btn btn-primary float-right" (click)="resetServiceForm()"
                                 style="margin-left: 2px;">Clear</button>
                             <button type="button" class="btn btn-primary float-right"
                                 (click)="addService()">Add</button>
                         </div>
-                        <!-- <div class="clearfix"></div> -->
                     </form>
                 </mat-card>
             </div>
@@ -148,10 +135,10 @@
                     <ng-container matColumnDef="action">
                         <th mat-header-cell *matHeaderCellDef style="width: 140px;"> Action</th>
                         <td mat-cell *matCellDef="let i = index;">
-                            <button mat-mini-fab (click)="editService()" style="margin-right: 5px;">
+                            <!-- <button mat-mini-fab (click)="editService()" style="margin-right: 5px;">
                                 <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-mini-fab (click)="deleteService()">
+                            </button> -->
+                            <button mat-mini-fab (click)="deleteService(i)">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </td>
@@ -182,8 +169,14 @@
 
                     <div class="row">
                         <div class="col-md-4">
-                            <mat-form-field class="col-md-6">
+                            <mat-form-field class="col-md-12">
                                 <input matInput placeholder="Box Number" formControlName="boxNumber">
+                            </mat-form-field>
+                            <mat-form-field class="col-md-12">
+                                <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
+                                    formControlName="deliveryDate" readonly>
+                                <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
+                                <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
                             </mat-form-field>
                         </div>
                         <div class="col-md-8">
@@ -236,10 +229,22 @@
                                 <div class="col-md-6">Total Payable Amount</div>
                                 <div class="col-md-6">
                                     <span>{{payableTotalAmount}}</span>
-                                    <!-- <mat-form-field>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">Paid Amount</div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
                                         <input matInput placeholder="Total Payable Amount"
-                                            formControlName="totalPayableAmount" readonly>
-                                    </mat-form-field> -->
+                                            formControlName="totalPayableAmount" (input)="onTotalPayableValueChange($event)">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">Amount Due</div>
+                                <div class="col-md-6">
+                                    <span>{{amountDue}}</span>
                                 </div>
                             </div>
 
@@ -260,7 +265,8 @@
                             <button type="button" class="btn btn-primary float-right" (click)="makePayment()"
                                 style="margin-left: 2px;">Make
                                 Payment</button>
-                            <button type="button" class="btn btn-primary float-right" (click)="cancel()">Cancel</button>
+                            <button type="button" class="btn btn-primary float-right"
+                                (click)="resetVoucherForm()">Cancel</button>
                         </div>
                     </div>
                 </form>
