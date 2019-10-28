@@ -18,7 +18,7 @@ export class RateUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     rateType: [],
-    unitPrice: []
+    unitPrice: [null, [Validators.min(0)]]
   });
 
   constructor(protected rateService: RateService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}

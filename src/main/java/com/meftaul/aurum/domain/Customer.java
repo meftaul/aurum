@@ -37,6 +37,7 @@ public class Customer implements Serializable {
     @Column(name = "address")
     private String address;
 
+    @Min(value = 0L)
     @Column(name = "total_point")
     private Long totalPoint;
 

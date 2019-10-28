@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -52,7 +53,7 @@ public class KaratResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/karats")
-    public ResponseEntity<Karat> createKarat(@RequestBody Karat karat) throws URISyntaxException {
+    public ResponseEntity<Karat> createKarat(@Valid @RequestBody Karat karat) throws URISyntaxException {
         log.debug("REST request to save Karat : {}", karat);
         if (karat.getId() != null) {
             throw new BadRequestAlertException("A new karat cannot already have an ID", ENTITY_NAME, "idexists");
@@ -73,7 +74,7 @@ public class KaratResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/karats")
-    public ResponseEntity<Karat> updateKarat(@RequestBody Karat karat) throws URISyntaxException {
+    public ResponseEntity<Karat> updateKarat(@Valid @RequestBody Karat karat) throws URISyntaxException {
         log.debug("REST request to update Karat : {}", karat);
         if (karat.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

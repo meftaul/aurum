@@ -18,7 +18,7 @@ export class KaratUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     karatType: [],
-    purityPercent: []
+    purityPercent: [null, [Validators.min(0)]]
   });
 
   constructor(protected karatService: KaratService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}

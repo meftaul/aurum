@@ -21,15 +21,27 @@
         },
         {
             "fieldName": "quantity",
-            "fieldType": "Integer"
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "weight",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "rate",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "amount",
@@ -54,11 +66,19 @@
         },
         {
             "fieldName": "alloyQuantity",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "serviceCharge",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
         }
     ],
     "changelogDate": "20191026063357",

@@ -38,9 +38,9 @@ public class RateResourceIT {
     private static final String DEFAULT_RATE_TYPE = "AAAAAAAAAA";
     private static final String UPDATED_RATE_TYPE = "BBBBBBBBBB";
 
-    private static final BigDecimal DEFAULT_UNIT_PRICE = new BigDecimal(1);
-    private static final BigDecimal UPDATED_UNIT_PRICE = new BigDecimal(2);
-    private static final BigDecimal SMALLER_UNIT_PRICE = new BigDecimal(1 - 1);
+    private static final BigDecimal DEFAULT_UNIT_PRICE = new BigDecimal(0);
+    private static final BigDecimal UPDATED_UNIT_PRICE = new BigDecimal(1);
+    private static final BigDecimal SMALLER_UNIT_PRICE = new BigDecimal(0 - 1);
 
     @Autowired
     private RateRepository rateRepository;

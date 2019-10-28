@@ -9,7 +9,11 @@
         },
         {
             "fieldName": "unitPrice",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         }
     ],
     "changelogDate": "20191028092823",

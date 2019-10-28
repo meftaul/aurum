@@ -38,9 +38,9 @@ public class KaratResourceIT {
     private static final String DEFAULT_KARAT_TYPE = "AAAAAAAAAA";
     private static final String UPDATED_KARAT_TYPE = "BBBBBBBBBB";
 
-    private static final BigDecimal DEFAULT_PURITY_PERCENT = new BigDecimal(1);
-    private static final BigDecimal UPDATED_PURITY_PERCENT = new BigDecimal(2);
-    private static final BigDecimal SMALLER_PURITY_PERCENT = new BigDecimal(1 - 1);
+    private static final BigDecimal DEFAULT_PURITY_PERCENT = new BigDecimal(0);
+    private static final BigDecimal UPDATED_PURITY_PERCENT = new BigDecimal(1);
+    private static final BigDecimal SMALLER_PURITY_PERCENT = new BigDecimal(0 - 1);
 
     @Autowired
     private KaratRepository karatRepository;

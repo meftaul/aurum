@@ -22,7 +22,7 @@ export class CustomerUpdateComponent implements OnInit {
     phone: [null, [Validators.required]],
     email: [],
     address: [],
-    totalPoint: []
+    totalPoint: [null, [Validators.min(0)]]
   });
 
   constructor(protected customerService: CustomerService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}

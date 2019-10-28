@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -52,7 +53,7 @@ public class RateResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/rates")
-    public ResponseEntity<Rate> createRate(@RequestBody Rate rate) throws URISyntaxException {
+    public ResponseEntity<Rate> createRate(@Valid @RequestBody Rate rate) throws URISyntaxException {
         log.debug("REST request to save Rate : {}", rate);
         if (rate.getId() != null) {
             throw new BadRequestAlertException("A new rate cannot already have an ID", ENTITY_NAME, "idexists");
@@ -73,7 +74,7 @@ public class RateResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/rates")
-    public ResponseEntity<Rate> updateRate(@RequestBody Rate rate) throws URISyntaxException {
+    public ResponseEntity<Rate> updateRate(@Valid @RequestBody Rate rate) throws URISyntaxException {
         log.debug("REST request to update Rate : {}", rate);
         if (rate.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

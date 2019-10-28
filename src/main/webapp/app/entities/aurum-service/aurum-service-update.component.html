@@ -23,16 +23,46 @@
                     <label class="form-control-label" for="field_quantity">Quantity</label>
                     <input type="number" class="form-control" name="quantity" id="field_quantity"
                            formControlName="quantity"/>
+                    <div *ngIf="editForm.get('quantity').invalid && (editForm.get('quantity').dirty || editForm.get('quantity').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('quantity').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('quantity')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_weight">Weight</label>
                     <input type="number" class="form-control" name="weight" id="field_weight"
                            formControlName="weight"/>
+                    <div *ngIf="editForm.get('weight').invalid && (editForm.get('weight').dirty || editForm.get('weight').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('weight').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('weight')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_rate">Rate</label>
                     <input type="number" class="form-control" name="rate" id="field_rate"
                            formControlName="rate"/>
+                    <div *ngIf="editForm.get('rate').invalid && (editForm.get('rate').dirty || editForm.get('rate').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('rate').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('rate')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_amount">Amount</label>
@@ -66,11 +96,31 @@
                     <label class="form-control-label" for="field_alloyQuantity">Alloy Quantity</label>
                     <input type="number" class="form-control" name="alloyQuantity" id="field_alloyQuantity"
                            formControlName="alloyQuantity"/>
+                    <div *ngIf="editForm.get('alloyQuantity').invalid && (editForm.get('alloyQuantity').dirty || editForm.get('alloyQuantity').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('alloyQuantity').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('alloyQuantity')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_serviceCharge">Service Charge</label>
                     <input type="number" class="form-control" name="serviceCharge" id="field_serviceCharge"
                            formControlName="serviceCharge"/>
+                    <div *ngIf="editForm.get('serviceCharge').invalid && (editForm.get('serviceCharge').dirty || editForm.get('serviceCharge').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('serviceCharge').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('serviceCharge')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
 
                 <div class="form-group">

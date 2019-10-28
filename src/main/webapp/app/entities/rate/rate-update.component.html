@@ -18,6 +18,16 @@
                     <label class="form-control-label" for="field_unitPrice">Unit Price</label>
                     <input type="number" class="form-control" name="unitPrice" id="field_unitPrice"
                            formControlName="unitPrice"/>
+                    <div *ngIf="editForm.get('unitPrice').invalid && (editForm.get('unitPrice').dirty || editForm.get('unitPrice').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('unitPrice').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('unitPrice')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
 
             </div>

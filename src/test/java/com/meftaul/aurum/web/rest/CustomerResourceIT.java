@@ -51,9 +51,9 @@ public class CustomerResourceIT {
     private static final String DEFAULT_ADDRESS = "AAAAAAAAAA";
     private static final String UPDATED_ADDRESS = "BBBBBBBBBB";
 
-    private static final Long DEFAULT_TOTAL_POINT = 1L;
-    private static final Long UPDATED_TOTAL_POINT = 2L;
-    private static final Long SMALLER_TOTAL_POINT = 1L - 1L;
+    private static final Long DEFAULT_TOTAL_POINT = 0L;
+    private static final Long UPDATED_TOTAL_POINT = 1L;
+    private static final Long SMALLER_TOTAL_POINT = 0L - 1L;
 
     @Autowired
     private CustomerRepository customerRepository;

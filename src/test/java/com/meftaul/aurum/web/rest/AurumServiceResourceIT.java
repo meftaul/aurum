@@ -42,17 +42,17 @@ public class AurumServiceResourceIT {
     private static final String DEFAULT_ITEM_NAME = "AAAAAAAAAA";
     private static final String UPDATED_ITEM_NAME = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_QUANTITY = 1;
-    private static final Integer UPDATED_QUANTITY = 2;
-    private static final Integer SMALLER_QUANTITY = 1 - 1;
+    private static final Integer DEFAULT_QUANTITY = 0;
+    private static final Integer UPDATED_QUANTITY = 1;
+    private static final Integer SMALLER_QUANTITY = 0 - 1;
 
-    private static final BigDecimal DEFAULT_WEIGHT = new BigDecimal(1);
-    private static final BigDecimal UPDATED_WEIGHT = new BigDecimal(2);
-    private static final BigDecimal SMALLER_WEIGHT = new BigDecimal(1 - 1);
+    private static final BigDecimal DEFAULT_WEIGHT = new BigDecimal(0);
+    private static final BigDecimal UPDATED_WEIGHT = new BigDecimal(1);
+    private static final BigDecimal SMALLER_WEIGHT = new BigDecimal(0 - 1);
 
-    private static final BigDecimal DEFAULT_RATE = new BigDecimal(1);
-    private static final BigDecimal UPDATED_RATE = new BigDecimal(2);
-    private static final BigDecimal SMALLER_RATE = new BigDecimal(1 - 1);
+    private static final BigDecimal DEFAULT_RATE = new BigDecimal(0);
+    private static final BigDecimal UPDATED_RATE = new BigDecimal(1);
+    private static final BigDecimal SMALLER_RATE = new BigDecimal(0 - 1);
 
     private static final BigDecimal DEFAULT_AMOUNT = new BigDecimal(1);
     private static final BigDecimal UPDATED_AMOUNT = new BigDecimal(2);
@@ -70,13 +70,13 @@ public class AurumServiceResourceIT {
     private static final Alloy DEFAULT_ADDED_ALLOY = Alloy.AU;
     private static final Alloy UPDATED_ADDED_ALLOY = Alloy.SI;
 
-    private static final BigDecimal DEFAULT_ALLOY_QUANTITY = new BigDecimal(1);
-    private static final BigDecimal UPDATED_ALLOY_QUANTITY = new BigDecimal(2);
-    private static final BigDecimal SMALLER_ALLOY_QUANTITY = new BigDecimal(1 - 1);
+    private static final BigDecimal DEFAULT_ALLOY_QUANTITY = new BigDecimal(0);
+    private static final BigDecimal UPDATED_ALLOY_QUANTITY = new BigDecimal(1);
+    private static final BigDecimal SMALLER_ALLOY_QUANTITY = new BigDecimal(0 - 1);
 
-    private static final BigDecimal DEFAULT_SERVICE_CHARGE = new BigDecimal(1);
-    private static final BigDecimal UPDATED_SERVICE_CHARGE = new BigDecimal(2);
-    private static final BigDecimal SMALLER_SERVICE_CHARGE = new BigDecimal(1 - 1);
+    private static final BigDecimal DEFAULT_SERVICE_CHARGE = new BigDecimal(0);
+    private static final BigDecimal UPDATED_SERVICE_CHARGE = new BigDecimal(1);
+    private static final BigDecimal SMALLER_SERVICE_CHARGE = new BigDecimal(0 - 1);
 
     @Autowired
     private AurumServiceRepository aurumServiceRepository;

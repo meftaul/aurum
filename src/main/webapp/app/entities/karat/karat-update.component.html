@@ -18,6 +18,16 @@
                     <label class="form-control-label" for="field_purityPercent">Purity Percent</label>
                     <input type="number" class="form-control" name="purityPercent" id="field_purityPercent"
                            formControlName="purityPercent"/>
+                    <div *ngIf="editForm.get('purityPercent').invalid && (editForm.get('purityPercent').dirty || editForm.get('purityPercent').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('purityPercent').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('purityPercent')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
 
             </div>

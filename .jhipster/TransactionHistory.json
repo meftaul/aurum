@@ -15,7 +15,8 @@
             "fieldType": "BigDecimal",
             "fieldValidateRules": [
                 "required"
-            ]
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "dateCreated",

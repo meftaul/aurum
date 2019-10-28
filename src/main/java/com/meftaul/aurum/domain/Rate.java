@@ -3,6 +3,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -24,6 +25,7 @@ public class Rate implements Serializable {
     @Column(name = "rate_type")
     private String rateType;
 
+    @DecimalMin(value = "0")
     @Column(name = "unit_price", precision = 21, scale = 2)
     private BigDecimal unitPrice;
 

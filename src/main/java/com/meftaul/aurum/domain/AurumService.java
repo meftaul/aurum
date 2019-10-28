@@ -4,6 +4,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -30,12 +31,15 @@ public class AurumService implements Serializable {
     @Column(name = "item_name")
     private String itemName;
 
+    @Min(value = 0)
     @Column(name = "quantity")
     private Integer quantity;
 
+    @DecimalMin(value = "0")
     @Column(name = "weight", precision = 21, scale = 2)
     private BigDecimal weight;
 
+    @DecimalMin(value = "0")
     @Column(name = "rate", precision = 21, scale = 2)
     private BigDecimal rate;
 
@@ -55,9 +59,11 @@ public class AurumService implements Serializable {
     @Column(name = "added_alloy")
     private Alloy addedAlloy;
 
+    @DecimalMin(value = "0")
     @Column(name = "alloy_quantity", precision = 21, scale = 2)
     private BigDecimal alloyQuantity;
 
+    @DecimalMin(value = "0")
     @Column(name = "service_charge", precision = 21, scale = 2)
     private BigDecimal serviceCharge;
 

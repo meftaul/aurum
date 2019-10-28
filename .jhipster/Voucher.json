@@ -23,15 +23,18 @@
             "fieldType": "BigDecimal",
             "fieldValidateRules": [
                 "required"
-            ]
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "vat",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "disountAmount",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "status",

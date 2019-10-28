@@ -25,16 +25,16 @@ export class AurumServiceUpdateComponent implements OnInit {
     id: [],
     serviceType: [],
     itemName: [],
-    quantity: [],
-    weight: [],
-    rate: [],
+    quantity: [null, [Validators.min(0)]],
+    weight: [null, [Validators.min(0)]],
+    rate: [null, [Validators.min(0)]],
     amount: [],
     serviceName: [],
     karatType: [],
     expectedKaratType: [],
     addedAlloy: [],
-    alloyQuantity: [],
-    serviceCharge: [],
+    alloyQuantity: [null, [Validators.min(0)]],
+    serviceCharge: [null, [Validators.min(0)]],
     voucher: []
   });
 
