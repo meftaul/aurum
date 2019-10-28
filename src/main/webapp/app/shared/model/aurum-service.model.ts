@@ -8,8 +8,8 @@ export interface IAurumService {
   weight?: number;
   rate?: number;
   amount?: number;
-  karetType?: string;
   serviceName?: string;
+  karatType?: string;
   voucher?: IVoucher;
 }
 
@@ -22,8 +22,8 @@ export class AurumService implements IAurumService {
     public weight?: number,
     public rate?: number,
     public amount?: number,
-    public karetType?: string,
     public serviceName?: string,
+    public karatType?: string,
     public voucher?: IVoucher
   ) {}
 }

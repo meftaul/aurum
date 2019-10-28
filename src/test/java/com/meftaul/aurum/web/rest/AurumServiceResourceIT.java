@@ -57,11 +57,11 @@ public class AurumServiceResourceIT {
     private static final BigDecimal UPDATED_AMOUNT = new BigDecimal(2);
     private static final BigDecimal SMALLER_AMOUNT = new BigDecimal(1 - 1);
 
-    private static final String DEFAULT_KARET_TYPE = "AAAAAAAAAA";
-    private static final String UPDATED_KARET_TYPE = "BBBBBBBBBB";
-
     private static final String DEFAULT_SERVICE_NAME = "AAAAAAAAAA";
     private static final String UPDATED_SERVICE_NAME = "BBBBBBBBBB";
+
+    private static final String DEFAULT_KARAT_TYPE = "AAAAAAAAAA";
+    private static final String UPDATED_KARAT_TYPE = "BBBBBBBBBB";
 
     @Autowired
     private AurumServiceRepository aurumServiceRepository;
@@ -114,8 +114,8 @@ public class AurumServiceResourceIT {
             .weight(DEFAULT_WEIGHT)
             .rate(DEFAULT_RATE)
             .amount(DEFAULT_AMOUNT)
-            .karetType(DEFAULT_KARET_TYPE)
-            .serviceName(DEFAULT_SERVICE_NAME);
+            .serviceName(DEFAULT_SERVICE_NAME)
+            .karatType(DEFAULT_KARAT_TYPE);
         return aurumService;
     }
     /**
@@ -132,8 +132,8 @@ public class AurumServiceResourceIT {
             .weight(UPDATED_WEIGHT)
             .rate(UPDATED_RATE)
             .amount(UPDATED_AMOUNT)
-            .karetType(UPDATED_KARET_TYPE)
-            .serviceName(UPDATED_SERVICE_NAME);
+            .serviceName(UPDATED_SERVICE_NAME)
+            .karatType(UPDATED_KARAT_TYPE);
         return aurumService;
     }
 
@@ -163,8 +163,8 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getWeight()).isEqualTo(DEFAULT_WEIGHT);
         assertThat(testAurumService.getRate()).isEqualTo(DEFAULT_RATE);
         assertThat(testAurumService.getAmount()).isEqualTo(DEFAULT_AMOUNT);
-        assertThat(testAurumService.getKaretType()).isEqualTo(DEFAULT_KARET_TYPE);
         assertThat(testAurumService.getServiceName()).isEqualTo(DEFAULT_SERVICE_NAME);
+        assertThat(testAurumService.getKaratType()).isEqualTo(DEFAULT_KARAT_TYPE);
     }
 
     @Test
@@ -204,8 +204,8 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.intValue())))
             .andExpect(jsonPath("$.[*].rate").value(hasItem(DEFAULT_RATE.intValue())))
             .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
-            .andExpect(jsonPath("$.[*].karetType").value(hasItem(DEFAULT_KARET_TYPE.toString())))
-            .andExpect(jsonPath("$.[*].serviceName").value(hasItem(DEFAULT_SERVICE_NAME.toString())));
+            .andExpect(jsonPath("$.[*].serviceName").value(hasItem(DEFAULT_SERVICE_NAME.toString())))
+            .andExpect(jsonPath("$.[*].karatType").value(hasItem(DEFAULT_KARAT_TYPE.toString())));
     }
     
     @Test
@@ -225,8 +225,8 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.weight").value(DEFAULT_WEIGHT.intValue()))
             .andExpect(jsonPath("$.rate").value(DEFAULT_RATE.intValue()))
             .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.intValue()))
-            .andExpect(jsonPath("$.karetType").value(DEFAULT_KARET_TYPE.toString()))
-            .andExpect(jsonPath("$.serviceName").value(DEFAULT_SERVICE_NAME.toString()));
+            .andExpect(jsonPath("$.serviceName").value(DEFAULT_SERVICE_NAME.toString()))
+            .andExpect(jsonPath("$.karatType").value(DEFAULT_KARAT_TYPE.toString()));
     }
 
     @Test
@@ -256,8 +256,8 @@ public class AurumServiceResourceIT {
             .weight(UPDATED_WEIGHT)
             .rate(UPDATED_RATE)
             .amount(UPDATED_AMOUNT)
-            .karetType(UPDATED_KARET_TYPE)
-            .serviceName(UPDATED_SERVICE_NAME);
+            .serviceName(UPDATED_SERVICE_NAME)
+            .karatType(UPDATED_KARAT_TYPE);
 
         restAurumServiceMockMvc.perform(put("/api/aurum-services")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -274,8 +274,8 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getWeight()).isEqualTo(UPDATED_WEIGHT);
         assertThat(testAurumService.getRate()).isEqualTo(UPDATED_RATE);
         assertThat(testAurumService.getAmount()).isEqualTo(UPDATED_AMOUNT);
-        assertThat(testAurumService.getKaretType()).isEqualTo(UPDATED_KARET_TYPE);
         assertThat(testAurumService.getServiceName()).isEqualTo(UPDATED_SERVICE_NAME);
+        assertThat(testAurumService.getKaratType()).isEqualTo(UPDATED_KARAT_TYPE);
     }
 
     @Test

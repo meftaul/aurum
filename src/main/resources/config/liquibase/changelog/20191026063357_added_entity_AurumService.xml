@@ -34,10 +34,10 @@
             <column name="amount" type="decimal(21,2)">
                 <constraints nullable="true" />
             </column>
-            <column name="karet_type" type="varchar(255)">
+            <column name="service_name" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="service_name" type="varchar(255)">
+            <column name="karat_type" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
             <column name="voucher_id" type="bigint">
@@ -72,8 +72,8 @@
             <column name="weight" type="numeric"/>
             <column name="rate" type="numeric"/>
             <column name="amount" type="numeric"/>
-            <column name="karet_type" type="string"/>
             <column name="service_name" type="string"/>
+            <column name="karat_type" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>

@@ -47,7 +47,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     { value: 'CANCEL', viewValue: 'CANCEL' }
   ];
 
-  serviceListColumns: string[] = ['index', 'serviceType', 'itemName', 'karetType', 'quantity', 'weight', 'rate', 'amount', 'action'];
+  serviceListColumns: string[] = ['index', 'serviceType', 'itemName', 'karatType', 'quantity', 'weight', 'rate', 'amount', 'action'];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -123,7 +123,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     const aurumServiceTemp = new AurumService();
     aurumServiceTemp.serviceType = this.aurumServiceForm.controls.serviceType.value;
     aurumServiceTemp.itemName = this.aurumServiceForm.controls.itemName.value;
-    aurumServiceTemp.karetType = this.aurumServiceForm.controls.karatType.value;
+    aurumServiceTemp.karatType = this.aurumServiceForm.controls.karatType.value;
     aurumServiceTemp.rate = this.aurumServiceForm.controls.rate.value;
     aurumServiceTemp.quantity = this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.amount = +this.aurumServiceForm.controls.rate.value * +this.aurumServiceForm.controls.quantity.value;

@@ -62,8 +62,8 @@ describe('Service Tests', () => {
             weight: 1,
             rate: 1,
             amount: 1,
-            karetType: 'BBBBBB',
-            serviceName: 'BBBBBB'
+            serviceName: 'BBBBBB',
+            karatType: 'BBBBBB'
           },
           elemDefault
         );
@@ -87,8 +87,8 @@ describe('Service Tests', () => {
             weight: 1,
             rate: 1,
             amount: 1,
-            karetType: 'BBBBBB',
-            serviceName: 'BBBBBB'
+            serviceName: 'BBBBBB',
+            karatType: 'BBBBBB'
           },
           elemDefault
         );

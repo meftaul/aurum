@@ -24,8 +24,8 @@
             <th jhiSortBy="weight"><span>Weight</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="rate"><span>Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="amount"><span>Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="karetType"><span>Karet Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="serviceName"><span>Service Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="karatType"><span>Karat Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="voucher.voucherNo"><span>Voucher</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
@@ -39,8 +39,8 @@
                 <td>{{aurumService.weight}}</td>
                 <td>{{aurumService.rate}}</td>
                 <td>{{aurumService.amount}}</td>
-                <td>{{aurumService.karetType}}</td>
                 <td>{{aurumService.serviceName}}</td>
+                <td>{{aurumService.karatType}}</td>
                 <td>
                     <div *ngIf="aurumService.voucher">
                         <a [routerLink]="['/voucher', aurumService.voucher?.id, 'view' ]" >{{aurumService.voucher?.voucherNo}}</a>

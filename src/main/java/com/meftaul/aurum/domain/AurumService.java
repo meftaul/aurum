@@ -40,11 +40,11 @@ public class AurumService implements Serializable {
     @Column(name = "amount", precision = 21, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "karet_type")
-    private String karetType;
-
     @Column(name = "service_name")
     private String serviceName;
+
+    @Column(name = "karat_type")
+    private String karatType;
 
     @ManyToOne
     @JsonIgnoreProperties("aurumServices")
@@ -137,19 +137,6 @@ public class AurumService implements Serializable {
         this.amount = amount;
     }
 
-    public String getKaretType() {
-        return karetType;
-    }
-
-    public AurumService karetType(String karetType) {
-        this.karetType = karetType;
-        return this;
-    }
-
-    public void setKaretType(String karetType) {
-        this.karetType = karetType;
-    }
-
     public String getServiceName() {
         return serviceName;
     }
@@ -161,6 +148,19 @@ public class AurumService implements Serializable {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public String getKaratType() {
+        return karatType;
+    }
+
+    public AurumService karatType(String karatType) {
+        this.karatType = karatType;
+        return this;
+    }
+
+    public void setKaratType(String karatType) {
+        this.karatType = karatType;
     }
 
     public Voucher getVoucher() {
@@ -203,8 +203,8 @@ public class AurumService implements Serializable {
             ", weight=" + getWeight() +
             ", rate=" + getRate() +
             ", amount=" + getAmount() +
-            ", karetType='" + getKaretType() + "'" +
             ", serviceName='" + getServiceName() + "'" +
+            ", karatType='" + getKaratType() + "'" +
             "}";
     }
 }

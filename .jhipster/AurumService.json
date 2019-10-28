@@ -36,11 +36,11 @@
             "fieldType": "BigDecimal"
         },
         {
-            "fieldName": "karetType",
+            "fieldName": "serviceName",
             "fieldType": "String"
         },
         {
-            "fieldName": "serviceName",
+            "fieldName": "karatType",
             "fieldType": "String"
         }
     ],
