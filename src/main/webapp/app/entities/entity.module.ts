@@ -28,6 +28,14 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
       {
         path: 'aurum-service',
         loadChildren: () => import('./aurum-service/aurum-service.module').then(m => m.AurumAurumServiceModule)
+      },
+      {
+        path: 'rate',
+        loadChildren: () => import('./rate/rate.module').then(m => m.AurumRateModule)
+      },
+      {
+        path: 'karat',
+        loadChildren: () => import('./karat/karat.module').then(m => m.AurumKaratModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

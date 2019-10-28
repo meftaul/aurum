@@ -1,0 +1,23 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "karatType",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "purityPercent",
+            "fieldType": "BigDecimal"
+        }
+    ],
+    "changelogDate": "20191028093117",
+    "dto": "no",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "karat",
+    "databaseType": "sql",
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination"
+}
