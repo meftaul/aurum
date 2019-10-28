@@ -20,8 +20,9 @@
                     <mat-card-title>Invoice Information:</mat-card-title>
                     <form [formGroup]="aurumServiceForm" class="row">
                         <mat-form-field class="col-md-6">
-                            <mat-select placeholder="Select Service" formControlName="serviceType">
-                                <mat-option *ngFor="let item of itemNames" [value]="item.value">
+                            <mat-select placeholder="Select Service" formControlName="serviceType"
+                                (ngModelChange)="serviceTypeChange($event)">
+                                <mat-option *ngFor="let item of aurumServiceDropdownData" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
@@ -37,13 +38,35 @@
                             <input matInput placeholder="Quantity" formControlName="quantity">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
+                            <mat-select placeholder="Select Karat Type" formControlName="karatType">
+                                <mat-option *ngFor="let item of karatList" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                            <!-- <input matInput placeholder="Karat Type" formControlName="karatType"> -->
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
                             <input matInput placeholder="Rate" formControlName="rate">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Karat Type" formControlName="karatType">
+                            <input matInput placeholder="Weight(Gram)" formControlName="weight"
+                                (input)="onWeightValueChange($event)">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Tola)" formControlName="weight">
+                            <input matInput placeholder="Weight(Vori)" formControlName="weightVori"
+                                (ngModelChange)="onWeightVoriValueChange($event)">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Weight(Ana)" formControlName="weightAna"
+                                (ngModelChange)="onWeightAnaValueChange($event)">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Weight(Rotti)" formControlName="weightRotti"
+                                (ngModelChange)="onWeightRottiValueChange($event)">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Weight(Point)" formControlName="weightPoint"
+                                (ngModelChange)="onWeightPointValueChange($event)">
                         </mat-form-field>
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary float-right" (click)="resetServiceForm()"
@@ -237,7 +260,8 @@
                                 <div class="col-md-6">
                                     <mat-form-field>
                                         <input matInput placeholder="Total Payable Amount"
-                                            formControlName="totalPayableAmount" (input)="onTotalPayableValueChange($event)">
+                                            formControlName="totalPayableAmount"
+                                            (input)="onTotalPayableValueChange($event)">
                                     </mat-form-field>
                                 </div>
                             </div>
