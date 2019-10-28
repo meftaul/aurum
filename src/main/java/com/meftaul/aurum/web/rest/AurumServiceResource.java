@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -52,7 +53,7 @@ public class AurumServiceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/aurum-services")
-    public ResponseEntity<AurumService> createAurumService(@RequestBody AurumService aurumService) throws URISyntaxException {
+    public ResponseEntity<AurumService> createAurumService(@Valid @RequestBody AurumService aurumService) throws URISyntaxException {
         log.debug("REST request to save AurumService : {}", aurumService);
         if (aurumService.getId() != null) {
             throw new BadRequestAlertException("A new aurumService cannot already have an ID", ENTITY_NAME, "idexists");
@@ -73,7 +74,7 @@ public class AurumServiceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/aurum-services")
-    public ResponseEntity<AurumService> updateAurumService(@RequestBody AurumService aurumService) throws URISyntaxException {
+    public ResponseEntity<AurumService> updateAurumService(@Valid @RequestBody AurumService aurumService) throws URISyntaxException {
         log.debug("REST request to update AurumService : {}", aurumService);
         if (aurumService.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

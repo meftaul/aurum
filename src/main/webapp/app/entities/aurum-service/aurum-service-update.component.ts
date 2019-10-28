@@ -25,12 +25,16 @@ export class AurumServiceUpdateComponent implements OnInit {
     id: [],
     serviceType: [],
     itemName: [],
-    quantity: [],
-    weight: [],
-    rate: [],
+    quantity: [null, [Validators.min(0)]],
+    weight: [null, [Validators.min(0)]],
+    rate: [null, [Validators.min(0)]],
     amount: [],
-    karetType: [],
     serviceName: [],
+    karatType: [],
+    expectedKaratType: [],
+    addedAlloy: [],
+    alloyQuantity: [null, [Validators.min(0)]],
+    serviceCharge: [null, [Validators.min(0)]],
     voucher: []
   });
 
@@ -65,8 +69,12 @@ export class AurumServiceUpdateComponent implements OnInit {
       weight: aurumService.weight,
       rate: aurumService.rate,
       amount: aurumService.amount,
-      karetType: aurumService.karetType,
       serviceName: aurumService.serviceName,
+      karatType: aurumService.karatType,
+      expectedKaratType: aurumService.expectedKaratType,
+      addedAlloy: aurumService.addedAlloy,
+      alloyQuantity: aurumService.alloyQuantity,
+      serviceCharge: aurumService.serviceCharge,
       voucher: aurumService.voucher
     });
   }
@@ -95,8 +103,12 @@ export class AurumServiceUpdateComponent implements OnInit {
       weight: this.editForm.get(['weight']).value,
       rate: this.editForm.get(['rate']).value,
       amount: this.editForm.get(['amount']).value,
-      karetType: this.editForm.get(['karetType']).value,
       serviceName: this.editForm.get(['serviceName']).value,
+      karatType: this.editForm.get(['karatType']).value,
+      expectedKaratType: this.editForm.get(['expectedKaratType']).value,
+      addedAlloy: this.editForm.get(['addedAlloy']).value,
+      alloyQuantity: this.editForm.get(['alloyQuantity']).value,
+      serviceCharge: this.editForm.get(['serviceCharge']).value,
       voucher: this.editForm.get(['voucher']).value
     };
   }

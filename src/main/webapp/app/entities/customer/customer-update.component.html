@@ -44,6 +44,16 @@
                     <label class="form-control-label" for="field_totalPoint">Total Point</label>
                     <input type="number" class="form-control" name="totalPoint" id="field_totalPoint"
                            formControlName="totalPoint"/>
+                    <div *ngIf="editForm.get('totalPoint').invalid && (editForm.get('totalPoint').dirty || editForm.get('totalPoint').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('totalPoint').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('totalPoint')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
 
             </div>

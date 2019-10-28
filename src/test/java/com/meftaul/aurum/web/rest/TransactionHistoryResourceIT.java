@@ -5,6 +5,7 @@ import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.service.TransactionHistoryService;
 import com.meftaul.aurum.web.rest.errors.ExceptionTranslator;
+import com.meftaul.aurum.service.dto.TransactionHistoryCriteria;
 import com.meftaul.aurum.service.TransactionHistoryQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -307,7 +308,7 @@ public class TransactionHistoryResourceIT {
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY.toString())));
     }
-
+    
     @Test
     @Transactional
     public void getTransactionHistory() throws Exception {

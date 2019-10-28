@@ -24,8 +24,12 @@
             <th jhiSortBy="weight"><span>Weight</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="rate"><span>Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="amount"><span>Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="karetType"><span>Karet Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="serviceName"><span>Service Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="karatType"><span>Karat Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="expectedKaratType"><span>Expected Karat Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="addedAlloy"><span>Added Alloy</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="alloyQuantity"><span>Alloy Quantity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="serviceCharge"><span>Service Charge</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="voucher.voucherNo"><span>Voucher</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
@@ -39,8 +43,12 @@
                 <td>{{aurumService.weight}}</td>
                 <td>{{aurumService.rate}}</td>
                 <td>{{aurumService.amount}}</td>
-                <td>{{aurumService.karetType}}</td>
                 <td>{{aurumService.serviceName}}</td>
+                <td>{{aurumService.karatType}}</td>
+                <td>{{aurumService.expectedKaratType}}</td>
+                <td>{{aurumService.addedAlloy}}</td>
+                <td>{{aurumService.alloyQuantity}}</td>
+                <td>{{aurumService.serviceCharge}}</td>
                 <td>
                     <div *ngIf="aurumService.voucher">
                         <a [routerLink]="['/voucher', aurumService.voucher?.id, 'view' ]" >{{aurumService.voucher?.voucherNo}}</a>

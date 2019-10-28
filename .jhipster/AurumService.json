@@ -21,27 +21,64 @@
         },
         {
             "fieldName": "quantity",
-            "fieldType": "Integer"
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "weight",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "rate",
-            "fieldType": "BigDecimal"
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         },
         {
             "fieldName": "amount",
             "fieldType": "BigDecimal"
         },
         {
-            "fieldName": "karetType",
+            "fieldName": "serviceName",
             "fieldType": "String"
         },
         {
-            "fieldName": "serviceName",
+            "fieldName": "karatType",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "expectedKaratType",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "addedAlloy",
+            "fieldType": "Alloy",
+            "fieldValues": "AU,SI,CU"
+        },
+        {
+            "fieldName": "alloyQuantity",
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "serviceCharge",
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
         }
     ],
     "changelogDate": "20191026063357",

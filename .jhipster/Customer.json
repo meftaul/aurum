@@ -29,7 +29,11 @@
         },
         {
             "fieldName": "totalPoint",
-            "fieldType": "Long"
+            "fieldType": "Long",
+            "fieldValidateRules": [
+              "min"
+            ],
+            "fieldValidateRulesMin": "0"
         }
     ],
     "changelogDate": "20191023070656",

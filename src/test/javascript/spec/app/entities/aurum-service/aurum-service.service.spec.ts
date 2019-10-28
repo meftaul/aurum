@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { take, map } from 'rxjs/operators';
 import { AurumServiceService } from 'app/entities/aurum-service/aurum-service.service';
 import { IAurumService, AurumService } from 'app/shared/model/aurum-service.model';
+import { Alloy } from 'app/shared/model/enumerations/alloy.model';
 
 describe('Service Tests', () => {
   describe('AurumService Service', () => {
@@ -20,7 +21,7 @@ describe('Service Tests', () => {
       service = injector.get(AurumServiceService);
       httpMock = injector.get(HttpTestingController);
 
-      elemDefault = new AurumService(0, 'AAAAAAA', 'AAAAAAA', 0, 0, 0, 0, 'AAAAAAA', 'AAAAAAA');
+      elemDefault = new AurumService(0, 'AAAAAAA', 'AAAAAAA', 0, 0, 0, 0, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', Alloy.AU, 0, 0);
     });
 
     describe('Service methods', () => {
@@ -62,8 +63,12 @@ describe('Service Tests', () => {
             weight: 1,
             rate: 1,
             amount: 1,
-            karetType: 'BBBBBB',
-            serviceName: 'BBBBBB'
+            serviceName: 'BBBBBB',
+            karatType: 'BBBBBB',
+            expectedKaratType: 'BBBBBB',
+            addedAlloy: 'BBBBBB',
+            alloyQuantity: 1,
+            serviceCharge: 1
           },
           elemDefault
         );
@@ -87,8 +92,12 @@ describe('Service Tests', () => {
             weight: 1,
             rate: 1,
             amount: 1,
-            karetType: 'BBBBBB',
-            serviceName: 'BBBBBB'
+            serviceName: 'BBBBBB',
+            karatType: 'BBBBBB',
+            expectedKaratType: 'BBBBBB',
+            addedAlloy: 'BBBBBB',
+            alloyQuantity: 1,
+            serviceCharge: 1
           },
           elemDefault
         );
