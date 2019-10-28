@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.meftaul.aurum.domain.enumeration.Alloy;
 /**
  * Integration tests for the {@link AurumServiceResource} REST controller.
  */
@@ -62,6 +63,20 @@ public class AurumServiceResourceIT {
 
     private static final String DEFAULT_KARAT_TYPE = "AAAAAAAAAA";
     private static final String UPDATED_KARAT_TYPE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_EXPECTED_KARAT_TYPE = "AAAAAAAAAA";
+    private static final String UPDATED_EXPECTED_KARAT_TYPE = "BBBBBBBBBB";
+
+    private static final Alloy DEFAULT_ADDED_ALLOY = Alloy.AU;
+    private static final Alloy UPDATED_ADDED_ALLOY = Alloy.SI;
+
+    private static final BigDecimal DEFAULT_ALLOY_QUANTITY = new BigDecimal(1);
+    private static final BigDecimal UPDATED_ALLOY_QUANTITY = new BigDecimal(2);
+    private static final BigDecimal SMALLER_ALLOY_QUANTITY = new BigDecimal(1 - 1);
+
+    private static final BigDecimal DEFAULT_SERVICE_CHARGE = new BigDecimal(1);
+    private static final BigDecimal UPDATED_SERVICE_CHARGE = new BigDecimal(2);
+    private static final BigDecimal SMALLER_SERVICE_CHARGE = new BigDecimal(1 - 1);
 
     @Autowired
     private AurumServiceRepository aurumServiceRepository;
@@ -115,7 +130,11 @@ public class AurumServiceResourceIT {
             .rate(DEFAULT_RATE)
             .amount(DEFAULT_AMOUNT)
             .serviceName(DEFAULT_SERVICE_NAME)
-            .karatType(DEFAULT_KARAT_TYPE);
+            .karatType(DEFAULT_KARAT_TYPE)
+            .expectedKaratType(DEFAULT_EXPECTED_KARAT_TYPE)
+            .addedAlloy(DEFAULT_ADDED_ALLOY)
+            .alloyQuantity(DEFAULT_ALLOY_QUANTITY)
+            .serviceCharge(DEFAULT_SERVICE_CHARGE);
         return aurumService;
     }
     /**
@@ -133,7 +152,11 @@ public class AurumServiceResourceIT {
             .rate(UPDATED_RATE)
             .amount(UPDATED_AMOUNT)
             .serviceName(UPDATED_SERVICE_NAME)
-            .karatType(UPDATED_KARAT_TYPE);
+            .karatType(UPDATED_KARAT_TYPE)
+            .expectedKaratType(UPDATED_EXPECTED_KARAT_TYPE)
+            .addedAlloy(UPDATED_ADDED_ALLOY)
+            .alloyQuantity(UPDATED_ALLOY_QUANTITY)
+            .serviceCharge(UPDATED_SERVICE_CHARGE);
         return aurumService;
     }
 
@@ -165,6 +188,10 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getAmount()).isEqualTo(DEFAULT_AMOUNT);
         assertThat(testAurumService.getServiceName()).isEqualTo(DEFAULT_SERVICE_NAME);
         assertThat(testAurumService.getKaratType()).isEqualTo(DEFAULT_KARAT_TYPE);
+        assertThat(testAurumService.getExpectedKaratType()).isEqualTo(DEFAULT_EXPECTED_KARAT_TYPE);
+        assertThat(testAurumService.getAddedAlloy()).isEqualTo(DEFAULT_ADDED_ALLOY);
+        assertThat(testAurumService.getAlloyQuantity()).isEqualTo(DEFAULT_ALLOY_QUANTITY);
+        assertThat(testAurumService.getServiceCharge()).isEqualTo(DEFAULT_SERVICE_CHARGE);
     }
 
     @Test
@@ -205,7 +232,11 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.[*].rate").value(hasItem(DEFAULT_RATE.intValue())))
             .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].serviceName").value(hasItem(DEFAULT_SERVICE_NAME.toString())))
-            .andExpect(jsonPath("$.[*].karatType").value(hasItem(DEFAULT_KARAT_TYPE.toString())));
+            .andExpect(jsonPath("$.[*].karatType").value(hasItem(DEFAULT_KARAT_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].expectedKaratType").value(hasItem(DEFAULT_EXPECTED_KARAT_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].addedAlloy").value(hasItem(DEFAULT_ADDED_ALLOY.toString())))
+            .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(DEFAULT_ALLOY_QUANTITY.intValue())))
+            .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(DEFAULT_SERVICE_CHARGE.intValue())));
     }
     
     @Test
@@ -226,7 +257,11 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.rate").value(DEFAULT_RATE.intValue()))
             .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.intValue()))
             .andExpect(jsonPath("$.serviceName").value(DEFAULT_SERVICE_NAME.toString()))
-            .andExpect(jsonPath("$.karatType").value(DEFAULT_KARAT_TYPE.toString()));
+            .andExpect(jsonPath("$.karatType").value(DEFAULT_KARAT_TYPE.toString()))
+            .andExpect(jsonPath("$.expectedKaratType").value(DEFAULT_EXPECTED_KARAT_TYPE.toString()))
+            .andExpect(jsonPath("$.addedAlloy").value(DEFAULT_ADDED_ALLOY.toString()))
+            .andExpect(jsonPath("$.alloyQuantity").value(DEFAULT_ALLOY_QUANTITY.intValue()))
+            .andExpect(jsonPath("$.serviceCharge").value(DEFAULT_SERVICE_CHARGE.intValue()));
     }
 
     @Test
@@ -257,7 +292,11 @@ public class AurumServiceResourceIT {
             .rate(UPDATED_RATE)
             .amount(UPDATED_AMOUNT)
             .serviceName(UPDATED_SERVICE_NAME)
-            .karatType(UPDATED_KARAT_TYPE);
+            .karatType(UPDATED_KARAT_TYPE)
+            .expectedKaratType(UPDATED_EXPECTED_KARAT_TYPE)
+            .addedAlloy(UPDATED_ADDED_ALLOY)
+            .alloyQuantity(UPDATED_ALLOY_QUANTITY)
+            .serviceCharge(UPDATED_SERVICE_CHARGE);
 
         restAurumServiceMockMvc.perform(put("/api/aurum-services")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -276,6 +315,10 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getAmount()).isEqualTo(UPDATED_AMOUNT);
         assertThat(testAurumService.getServiceName()).isEqualTo(UPDATED_SERVICE_NAME);
         assertThat(testAurumService.getKaratType()).isEqualTo(UPDATED_KARAT_TYPE);
+        assertThat(testAurumService.getExpectedKaratType()).isEqualTo(UPDATED_EXPECTED_KARAT_TYPE);
+        assertThat(testAurumService.getAddedAlloy()).isEqualTo(UPDATED_ADDED_ALLOY);
+        assertThat(testAurumService.getAlloyQuantity()).isEqualTo(UPDATED_ALLOY_QUANTITY);
+        assertThat(testAurumService.getServiceCharge()).isEqualTo(UPDATED_SERVICE_CHARGE);
     }
 
     @Test

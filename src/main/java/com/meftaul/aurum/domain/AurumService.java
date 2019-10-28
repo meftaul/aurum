@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.meftaul.aurum.domain.enumeration.Alloy;
+
 /**
  * A AurumService.
  */
@@ -45,6 +47,19 @@ public class AurumService implements Serializable {
 
     @Column(name = "karat_type")
     private String karatType;
+
+    @Column(name = "expected_karat_type")
+    private String expectedKaratType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "added_alloy")
+    private Alloy addedAlloy;
+
+    @Column(name = "alloy_quantity", precision = 21, scale = 2)
+    private BigDecimal alloyQuantity;
+
+    @Column(name = "service_charge", precision = 21, scale = 2)
+    private BigDecimal serviceCharge;
 
     @ManyToOne
     @JsonIgnoreProperties("aurumServices")
@@ -163,6 +178,58 @@ public class AurumService implements Serializable {
         this.karatType = karatType;
     }
 
+    public String getExpectedKaratType() {
+        return expectedKaratType;
+    }
+
+    public AurumService expectedKaratType(String expectedKaratType) {
+        this.expectedKaratType = expectedKaratType;
+        return this;
+    }
+
+    public void setExpectedKaratType(String expectedKaratType) {
+        this.expectedKaratType = expectedKaratType;
+    }
+
+    public Alloy getAddedAlloy() {
+        return addedAlloy;
+    }
+
+    public AurumService addedAlloy(Alloy addedAlloy) {
+        this.addedAlloy = addedAlloy;
+        return this;
+    }
+
+    public void setAddedAlloy(Alloy addedAlloy) {
+        this.addedAlloy = addedAlloy;
+    }
+
+    public BigDecimal getAlloyQuantity() {
+        return alloyQuantity;
+    }
+
+    public AurumService alloyQuantity(BigDecimal alloyQuantity) {
+        this.alloyQuantity = alloyQuantity;
+        return this;
+    }
+
+    public void setAlloyQuantity(BigDecimal alloyQuantity) {
+        this.alloyQuantity = alloyQuantity;
+    }
+
+    public BigDecimal getServiceCharge() {
+        return serviceCharge;
+    }
+
+    public AurumService serviceCharge(BigDecimal serviceCharge) {
+        this.serviceCharge = serviceCharge;
+        return this;
+    }
+
+    public void setServiceCharge(BigDecimal serviceCharge) {
+        this.serviceCharge = serviceCharge;
+    }
+
     public Voucher getVoucher() {
         return voucher;
     }
@@ -205,6 +272,10 @@ public class AurumService implements Serializable {
             ", amount=" + getAmount() +
             ", serviceName='" + getServiceName() + "'" +
             ", karatType='" + getKaratType() + "'" +
+            ", expectedKaratType='" + getExpectedKaratType() + "'" +
+            ", addedAlloy='" + getAddedAlloy() + "'" +
+            ", alloyQuantity=" + getAlloyQuantity() +
+            ", serviceCharge=" + getServiceCharge() +
             "}";
     }
 }

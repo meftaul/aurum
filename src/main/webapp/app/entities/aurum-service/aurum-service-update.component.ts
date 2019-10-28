@@ -31,6 +31,10 @@ export class AurumServiceUpdateComponent implements OnInit {
     amount: [],
     serviceName: [],
     karatType: [],
+    expectedKaratType: [],
+    addedAlloy: [],
+    alloyQuantity: [],
+    serviceCharge: [],
     voucher: []
   });
 
@@ -67,6 +71,10 @@ export class AurumServiceUpdateComponent implements OnInit {
       amount: aurumService.amount,
       serviceName: aurumService.serviceName,
       karatType: aurumService.karatType,
+      expectedKaratType: aurumService.expectedKaratType,
+      addedAlloy: aurumService.addedAlloy,
+      alloyQuantity: aurumService.alloyQuantity,
+      serviceCharge: aurumService.serviceCharge,
       voucher: aurumService.voucher
     });
   }
@@ -97,6 +105,10 @@ export class AurumServiceUpdateComponent implements OnInit {
       amount: this.editForm.get(['amount']).value,
       serviceName: this.editForm.get(['serviceName']).value,
       karatType: this.editForm.get(['karatType']).value,
+      expectedKaratType: this.editForm.get(['expectedKaratType']).value,
+      addedAlloy: this.editForm.get(['addedAlloy']).value,
+      alloyQuantity: this.editForm.get(['alloyQuantity']).value,
+      serviceCharge: this.editForm.get(['serviceCharge']).value,
       voucher: this.editForm.get(['voucher']).value
     };
   }

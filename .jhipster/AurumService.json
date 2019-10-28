@@ -42,6 +42,23 @@
         {
             "fieldName": "karatType",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "expectedKaratType",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "addedAlloy",
+            "fieldType": "Alloy",
+            "fieldValues": "AU,SI,CU"
+        },
+        {
+            "fieldName": "alloyQuantity",
+            "fieldType": "BigDecimal"
+        },
+        {
+            "fieldName": "serviceCharge",
+            "fieldType": "BigDecimal"
         }
     ],
     "changelogDate": "20191026063357",

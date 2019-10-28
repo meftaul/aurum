@@ -1,4 +1,5 @@
 import { IVoucher } from 'app/shared/model/voucher.model';
+import { Alloy } from 'app/shared/model/enumerations/alloy.model';
 
 export interface IAurumService {
   id?: number;
@@ -10,6 +11,10 @@ export interface IAurumService {
   amount?: number;
   serviceName?: string;
   karatType?: string;
+  expectedKaratType?: string;
+  addedAlloy?: Alloy;
+  alloyQuantity?: number;
+  serviceCharge?: number;
   voucher?: IVoucher;
 }
 
@@ -24,6 +29,10 @@ export class AurumService implements IAurumService {
     public amount?: number,
     public serviceName?: string,
     public karatType?: string,
+    public expectedKaratType?: string,
+    public addedAlloy?: Alloy,
+    public alloyQuantity?: number,
+    public serviceCharge?: number,
     public voucher?: IVoucher
   ) {}
 }
