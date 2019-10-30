@@ -14,10 +14,10 @@ import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.mode
 import { KaratService } from 'app/entities/karat/karat.service';
 import { RateService } from 'app/entities/rate/rate.service';
 
-const VORI_TO_GRAM = 11.6638125;
-const ANA_TO_GRAM = 0.72898828125;
-const ROTTI_TO_GRAM = 0.121498046875;
-const POINT_TO_GRAM = 0.0121498046875;
+const VORI_TO_GRAM = 11.6638125; // = 1 vori
+// const ANA_TO_GRAM = 0.72898828125;
+// const ROTTI_TO_GRAM = 0.121498046875;
+// const POINT_TO_GRAM = 0.0121498046875;
 
 @Component({
   selector: 'jhi-aurum-transaction',
@@ -159,10 +159,15 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   serviceTypeChange(event) {
+    // need a service to get rate by service type
     this.rateService.query({ rateType: event }).subscribe(data => {
-      /* eslint-disable no-console */
-      console.log(data);
-      /* eslint-enable no-console */
+      if (data.body && data.body.length !== 0) {
+        const serviceRate = data.body.filter(ser => ser.rateType === event)[0].unitPrice;
+        /* eslint-disable no-console */
+        console.log(serviceRate);
+        /* eslint-enable no-console */
+        this.aurumServiceForm.controls.rate.setValue(serviceRate);
+      }
     });
   }
 
@@ -279,32 +284,25 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  // VORI_TO_GRAM = 11.6638125;
+  // ANA_TO_GRAM = 0.72898828125;
+  // ROTTI_TO_GRAM = 0.121498046875;
+  // POINT_TO_GRAM = 0.0121498046875;
   // ****************************** WEIGHT CALCULATION ****************************** START
   onWeightValueChange(event) {
-    this.aurumServiceForm.controls.weight.valueChanges.subscribe(value => {
-      const wValue = +this.aurumServiceForm.controls.weight.value;
-      this.aurumServiceForm.controls.weightVori.setValue(wValue / VORI_TO_GRAM);
-      this.aurumServiceForm.controls.weightAna.setValue(wValue / ANA_TO_GRAM);
-      this.aurumServiceForm.controls.weightRotti.setValue(wValue / ROTTI_TO_GRAM);
-      this.aurumServiceForm.controls.weightPoint.setValue(wValue / POINT_TO_GRAM);
-    });
+    const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+    // doing some math
+    const voriValue = +(gramValue / VORI_TO_GRAM);
+    const anaValue = +(voriValue % 1).toFixed(7) * 16;
+    const rottiValue = +(anaValue % 1).toFixed(7) * 6;
+    const pointValue = +(rottiValue % 1).toFixed(7) * 100;
+
+    this.aurumServiceForm.controls.weightVori.setValue(Math.floor(voriValue));
+    this.aurumServiceForm.controls.weightAna.setValue(Math.floor(anaValue));
+    this.aurumServiceForm.controls.weightRotti.setValue(Math.floor(rottiValue));
+    this.aurumServiceForm.controls.weightPoint.setValue(Math.floor(pointValue));
   }
 
-  onWeightVoriValueChange(event) {
-    // this.aurumServiceForm.controls.weightVori.valueChanges.subscribe(value => {
-    //   const vValue = +this.aurumServiceForm.controls.weightVori.value;
-    //   this.aurumServiceForm.controls.weight.setValue(vValue * VORI_TO_GRAM);
-    //   this.aurumServiceForm.controls.weightAna.setValue(vValue / ANA_TO_GRAM);
-    //   this.aurumServiceForm.controls.weightRotti.setValue(vValue / ROTTI_TO_GRAM);
-    //   this.aurumServiceForm.controls.weightPoint.setValue(vValue / POINT_TO_GRAM);
-    // });
-  }
-
-  onWeightAnaValueChange(event) {}
-
-  onWeightRottiValueChange(event) {}
-
-  onWeightPointValueChange(event) {}
   // ****************************** WEIGHT CALCULATION ****************************** END
 
   ngOnDestroy() {

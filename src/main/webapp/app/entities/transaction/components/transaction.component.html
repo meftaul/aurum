@@ -53,20 +53,16 @@
                                 (input)="onWeightValueChange($event)">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Vori)" formControlName="weightVori"
-                                (ngModelChange)="onWeightVoriValueChange($event)">
+                            <input matInput placeholder="Weight(Vori)" formControlName="weightVori" readonly>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Ana)" formControlName="weightAna"
-                                (ngModelChange)="onWeightAnaValueChange($event)">
+                            <input matInput placeholder="Weight(Ana)" formControlName="weightAna" readonly>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Rotti)" formControlName="weightRotti"
-                                (ngModelChange)="onWeightRottiValueChange($event)">
+                            <input matInput placeholder="Weight(Rotti)" formControlName="weightRotti" readonly>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Point)" formControlName="weightPoint"
-                                (ngModelChange)="onWeightPointValueChange($event)">
+                            <input matInput placeholder="Weight(Point)" formControlName="weightPoint" readonly>
                         </mat-form-field>
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary float-right" (click)="resetServiceForm()"
