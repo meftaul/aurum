@@ -19,4 +19,6 @@ export const VOUCHER_STATUS = [
   { value: 'CANCEL', viewValue: 'CANCEL' }
 ];
 
+export const ALLOY_TYPE = [{ value: 'CU', viewValue: 'Copper' }, { value: 'SI', viewValue: 'Silver' }, { value: 'AU', viewValue: 'Gold' }];
+
 export const SERVICE_LIST_COLUMNS = ['index', 'serviceType', 'itemName', 'karatType', 'quantity', 'weight', 'rate', 'amount', 'action'];

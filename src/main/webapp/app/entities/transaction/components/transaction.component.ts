@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ICustomer } from 'app/shared/model/customer.model';
 import { TransactionService } from '../services/service-api/transaction.service';
-import { VOUCHER_STATUS, SERVICE_LIST_COLUMNS, AURUM_SERVICE_LIST } from '../services/domain/transaction.models';
+import { VOUCHER_STATUS, SERVICE_LIST_COLUMNS, AURUM_SERVICE_LIST, ALLOY_TYPE } from '../services/domain/transaction.models';
 import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 import { CustomerService } from 'app/entities/customer/customer.service';
@@ -31,11 +31,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
   voucherForm: FormGroup;
   aurumServiceForm: FormGroup;
 
+  showBtnForCalculatedMelting = false;
+
   aurumServiceList: AurumService[] = [];
   calculateTotalAmount = 0;
   totalAmount = 0;
   payableTotalAmount = 0;
   amountDue = 0;
+  selectedServiceCharge = 0;
 
   eventSubscriber: Subscription;
 
@@ -49,6 +52,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   aurumServiceDropdownData: any[] = AURUM_SERVICE_LIST;
   voucherStatus: any[] = VOUCHER_STATUS;
+  alloyTypeList: any[] = ALLOY_TYPE;
   karatList: any[] = [];
   serviceListColumns: string[] = SERVICE_LIST_COLUMNS;
 
@@ -104,6 +108,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
       serviceType: ['', [Validators.required]],
       itemName: ['', [Validators.required]],
       karatType: ['', [Validators.required]],
+      expectedKaratType: [''],
+      addedAlloy: [''],
+      alloyQuantity: [''],
       rate: ['', [Validators.required]],
       quantity: ['', [Validators.required]],
       weight: ['', [Validators.required]],
@@ -128,6 +135,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     aurumServiceTemp.itemName = this.aurumServiceForm.controls.itemName.value;
     aurumServiceTemp.karatType = this.aurumServiceForm.controls.karatType.value;
     aurumServiceTemp.rate = this.aurumServiceForm.controls.rate.value;
+    aurumServiceTemp.serviceCharge = this.selectedServiceCharge;
     aurumServiceTemp.quantity = this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.amount = +this.aurumServiceForm.controls.rate.value * +this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.weight = this.aurumServiceForm.controls.weight.value;
@@ -162,16 +170,21 @@ export class TransactionComponent implements OnInit, OnDestroy {
     // need a service to get rate by service type
     this.rateService.query({ rateType: event }).subscribe(data => {
       if (data.body && data.body.length !== 0) {
-        const serviceRate = data.body.filter(ser => ser.rateType === event)[0].unitPrice;
-        /* eslint-disable no-console */
-        console.log(serviceRate);
-        /* eslint-enable no-console */
-        this.aurumServiceForm.controls.rate.setValue(serviceRate);
+        this.selectedServiceCharge =
+          data.body.filter(ser => ser.rateType === event).length !== 0 ? data.body.filter(ser => ser.rateType === event)[0].unitPrice : 0;
+        this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
+      }
+
+      if (event === 'Calculated Melting') {
+        this.showBtnForCalculatedMelting = true;
+      } else {
+        this.showBtnForCalculatedMelting = false;
       }
     });
   }
 
   resetServiceForm() {
+    this.selectedServiceCharge = 0;
     this.aurumServiceForm.reset();
   }
   // ****************************** AURUM SERVICE ****************************** END

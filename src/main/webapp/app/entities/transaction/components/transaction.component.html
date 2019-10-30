@@ -43,7 +43,23 @@
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
-                            <!-- <input matInput placeholder="Karat Type" formControlName="karatType"> -->
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
+                            <mat-select placeholder="Select Expected Karat Type" formControlName="expectedKaratType">
+                                <mat-option *ngFor="let item of karatList" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
+                            <mat-select placeholder="Select Alloy Type" formControlName="addedAlloy">
+                                <mat-option *ngFor="let item of alloyTypeList" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
+                            <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
                             <input matInput placeholder="Rate" formControlName="rate">
@@ -52,18 +68,20 @@
                             <input matInput placeholder="Weight(Gram)" formControlName="weight"
                                 (input)="onWeightValueChange($event)">
                         </mat-form-field>
-                        <mat-form-field class="col-md-6">
+                        <div class="col-md-12"></div>
+                        <mat-form-field class="col-md-3">
                             <input matInput placeholder="Weight(Vori)" formControlName="weightVori" readonly>
                         </mat-form-field>
-                        <mat-form-field class="col-md-6">
+                        <mat-form-field class="col-md-3">
                             <input matInput placeholder="Weight(Ana)" formControlName="weightAna" readonly>
                         </mat-form-field>
-                        <mat-form-field class="col-md-6">
+                        <mat-form-field class="col-md-3">
                             <input matInput placeholder="Weight(Rotti)" formControlName="weightRotti" readonly>
                         </mat-form-field>
-                        <mat-form-field class="col-md-6">
+                        <mat-form-field class="col-md-3">
                             <input matInput placeholder="Weight(Point)" formControlName="weightPoint" readonly>
                         </mat-form-field>
+
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary float-right" (click)="resetServiceForm()"
                                 style="margin-left: 2px;">Clear</button>
@@ -110,7 +128,7 @@
         <div class="row" style="margin-top: 15px;">
             <mat-card class="col-md-12">
                 <mat-card-title>Services Served:</mat-card-title>
-                <table mat-table [dataSource]="aurumServices" class="col-md-12">
+                <table mat-table [dataSource]="aurumServiceList" class="col-md-12">
                     <ng-container matColumnDef="index">
                         <th mat-header-cell *matHeaderCellDef> No.</th>
                         <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
