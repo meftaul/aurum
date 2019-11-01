@@ -35,38 +35,41 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Weight(Gram)" formControlName="weight"
+                                (input)="onWeightValueChange($event)">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
                             <input matInput placeholder="Quantity" formControlName="quantity">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <mat-select placeholder="Select Karat Type" formControlName="karatType">
+                            <mat-select placeholder="Select Karat Type" formControlName="karatType"
+                                (ngModelChange)="onKaratTypeChange($event)">
                                 <mat-option *ngFor="let item of karatList" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
-                            <mat-select placeholder="Select Expected Karat Type" formControlName="expectedKaratType">
+                            <mat-select placeholder="Select Expected Karat Type" formControlName="expectedKaratType"
+                                (ngModelChange)="onExpectedKaratTypeChange($event)">
                                 <mat-option *ngFor="let item of karatList" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
-                            <mat-select placeholder="Select Alloy Type" formControlName="addedAlloy">
+                            <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
+                            <mat-select placeholder="Select Alloy Type" formControlName="addedAlloy"
+                                (ngModelChange)="onAddedAlloyChange($event)">
                                 <mat-option *ngFor="let item of alloyTypeList" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
-                            <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity">
-                        </mat-form-field>
                         <mat-form-field class="col-md-6">
                             <input matInput placeholder="Rate" formControlName="rate">
-                        </mat-form-field>
-                        <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Gram)" formControlName="weight"
-                                (input)="onWeightValueChange($event)">
                         </mat-form-field>
                         <div class="col-md-12"></div>
                         <mat-form-field class="col-md-3">

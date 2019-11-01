@@ -39,6 +39,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   payableTotalAmount = 0;
   amountDue = 0;
   selectedServiceCharge = 0;
+  karatParcentDifference = 0;
 
   eventSubscriber: Subscription;
 
@@ -54,6 +55,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   voucherStatus: any[] = VOUCHER_STATUS;
   alloyTypeList: any[] = ALLOY_TYPE;
   karatList: any[] = [];
+  rateTypePriceMap: Map<string, number> = new Map();
+  karatTypePercentMap: Map<string, number> = new Map();
   serviceListColumns: string[] = SERVICE_LIST_COLUMNS;
 
   constructor(
@@ -72,6 +75,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     // this.prepareCustomerForm(new Customer());
 
     this.fetchKaratList();
+    this.fetchRateList();
   }
 
   // prepareCustomerForm(customerData: Customer) {
@@ -167,20 +171,20 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   serviceTypeChange(event) {
-    // need a service to get rate by service type
-    this.rateService.query({ rateType: event }).subscribe(data => {
-      if (data.body && data.body.length !== 0) {
-        this.selectedServiceCharge =
-          data.body.filter(ser => ser.rateType === event).length !== 0 ? data.body.filter(ser => ser.rateType === event)[0].unitPrice : 0;
-        this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
-      }
-
-      if (event === 'Calculated Melting') {
-        this.showBtnForCalculatedMelting = true;
-      } else {
-        this.showBtnForCalculatedMelting = false;
-      }
-    });
+    const weightTemp = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
+    if (weightTemp <= 116) {
+      this.selectedServiceCharge = this.rateTypePriceMap.get(event);
+      this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
+    } else {
+      const extraWeightToCharge = +(weightTemp % 116).toFixed(2);
+      this.selectedServiceCharge = this.rateTypePriceMap.get(event) + extraWeightToCharge;
+      this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
+    }
+    if (event === 'Calculated Melting') {
+      this.showBtnForCalculatedMelting = true;
+    } else {
+      this.showBtnForCalculatedMelting = false;
+    }
   }
 
   resetServiceForm() {
@@ -291,7 +295,19 @@ export class TransactionComponent implements OnInit, OnDestroy {
       /* eslint-enable no-console */
       if (data.body && data.body.length !== 0) {
         data.body.map(karat => {
-          this.karatList = [{ value: karat.karatType, viewValue: karat.karatType + '(' + karat.purityPercent + ')' }, ...this.karatList];
+          this.karatList = [{ value: karat.karatType, viewValue: karat.karatType + '(' + karat.purityPercent + '%)' }, ...this.karatList];
+          this.karatTypePercentMap.set(karat.karatType, karat.purityPercent);
+        });
+      }
+    });
+  }
+
+  // GET RATE LIST & MAP RATE_TYPE TO PRICE FROM SERVICE
+  fetchRateList() {
+    this.rateService.query().subscribe(data => {
+      if (data.body && data.body.length !== 0) {
+        data.body.map(rate => {
+          this.rateTypePriceMap.set(rate.rateType, rate.unitPrice);
         });
       }
     });
@@ -314,6 +330,50 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.aurumServiceForm.controls.weightAna.setValue(Math.floor(anaValue));
     this.aurumServiceForm.controls.weightRotti.setValue(Math.floor(rottiValue));
     this.aurumServiceForm.controls.weightPoint.setValue(Math.floor(pointValue));
+
+    const serviceTypeTemp = this.aurumServiceForm.controls.serviceType.value;
+    if (serviceTypeTemp) {
+      if (gramValue <= 116) {
+        this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp);
+        this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
+      } else {
+        const extraWeightToCharge = +(gramValue % 116).toFixed(2);
+        this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp) + extraWeightToCharge;
+        this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
+      }
+    }
+  }
+
+  onKaratTypeChange(event) {
+    if (this.aurumServiceForm.controls.serviceType.value === 'Calculated Melting') {
+      const selectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.karatType.value);
+      if (this.aurumServiceForm.controls.expectedKaratType.value) {
+        const expectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.expectedKaratType.value);
+        this.karatParcentDifference = selectedKaratParcent - expectedKaratParcent;
+        const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+        const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
+        this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
+      }
+    }
+  }
+
+  onExpectedKaratTypeChange(event) {
+    const expectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.expectedKaratType.value);
+    if (this.aurumServiceForm.controls.karatType.value) {
+      const selectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.karatType.value);
+      this.karatParcentDifference = selectedKaratParcent - expectedKaratParcent;
+      const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+      const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
+      this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
+    }
+  }
+
+  onAddedAlloyChange(event) {
+    const alloyRate = this.rateTypePriceMap.get(event);
+    if (this.aurumServiceForm.controls.alloyQuantity.value) {
+      const alloyPrice = alloyRate * +this.aurumServiceForm.controls.alloyQuantity.value;
+      this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge + alloyPrice);
+    }
   }
 
   // ****************************** WEIGHT CALCULATION ****************************** END
