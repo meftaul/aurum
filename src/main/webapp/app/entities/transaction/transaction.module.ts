@@ -15,11 +15,12 @@ import { AurumSharedModule } from 'app/shared/shared.module';
 
 import { TransactionComponent } from './components/transaction.component';
 import { TRANSACTION_ROUTE } from './transaction.routes';
+import { CustomerFormDialogComponent, CustomerFormPopupComponent } from './components/customer-form/customer.form.component';
 
 @NgModule({
   imports: [
     AurumSharedModule,
-    RouterModule.forChild([TRANSACTION_ROUTE]),
+    RouterModule.forChild(TRANSACTION_ROUTE),
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -30,7 +31,8 @@ import { TRANSACTION_ROUTE } from './transaction.routes';
     MatTableModule,
     MatSelectModule
   ],
-  declarations: [TransactionComponent],
-  providers: [MatDatepickerModule]
+  declarations: [TransactionComponent, CustomerFormDialogComponent, CustomerFormPopupComponent],
+  providers: [MatDatepickerModule],
+  entryComponents: [CustomerFormDialogComponent]
 })
 export class AurumTransactionModule {}
