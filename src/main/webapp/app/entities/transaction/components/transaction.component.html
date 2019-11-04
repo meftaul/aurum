@@ -7,7 +7,9 @@
                         [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
-                <button type="button" class="btn btn-primary" (click)="createCustomer()">Create Customer</button>
+                <button type="submit" class="btn btn-primary"
+                    [routerLink]="['/entity/transactions', { outlets: { popup: '/create-customer'} }]"
+                    replaceUrl="true">Create Customer</button>
                 <jhi-alert></jhi-alert>
             </form>
         </mat-card>
@@ -20,8 +22,9 @@
                     <mat-card-title>Invoice Information:</mat-card-title>
                     <form [formGroup]="aurumServiceForm" class="row">
                         <mat-form-field class="col-md-6">
-                            <mat-select placeholder="Select Service" formControlName="serviceType">
-                                <mat-option *ngFor="let item of itemNames" [value]="item.value">
+                            <mat-select placeholder="Select Service" formControlName="serviceType"
+                                (ngModelChange)="serviceTypeChange($event)">
+                                <mat-option *ngFor="let item of aurumServiceDropdownData" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
@@ -34,17 +37,56 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
+                            <input matInput placeholder="Weight(Gram)" formControlName="weight"
+                                (input)="onWeightValueChange($event)">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
                             <input matInput placeholder="Quantity" formControlName="quantity">
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6">
+                            <mat-select placeholder="Select Karat Type" formControlName="karatType"
+                                (ngModelChange)="onKaratTypeChange($event)">
+                                <mat-option *ngFor="let item of karatList" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
+                            <mat-select placeholder="Select Expected Karat Type" formControlName="expectedKaratType"
+                                (ngModelChange)="onExpectedKaratTypeChange($event)">
+                                <mat-option *ngFor="let item of karatList" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
+                            <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
+                            <mat-select placeholder="Select Alloy Type" formControlName="addedAlloy"
+                                (ngModelChange)="onAddedAlloyChange($event)">
+                                <mat-option *ngFor="let item of alloyTypeList" [value]="item.value">
+                                    {{item.viewValue}}
+                                </mat-option>
+                            </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
                             <input matInput placeholder="Rate" formControlName="rate">
                         </mat-form-field>
-                        <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Karat Type" formControlName="karatType">
+                        <div class="col-md-12"></div>
+                        <mat-form-field class="col-md-3">
+                            <input matInput placeholder="Weight(Vori)" formControlName="weightVori" readonly>
                         </mat-form-field>
-                        <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Tola)" formControlName="weight">
+                        <mat-form-field class="col-md-3">
+                            <input matInput placeholder="Weight(Ana)" formControlName="weightAna" readonly>
                         </mat-form-field>
+                        <mat-form-field class="col-md-3">
+                            <input matInput placeholder="Weight(Rotti)" formControlName="weightRotti" readonly>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-3">
+                            <input matInput placeholder="Weight(Point)" formControlName="weightPoint" readonly>
+                        </mat-form-field>
+
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary float-right" (click)="resetServiceForm()"
                                 style="margin-left: 2px;">Clear</button>
@@ -91,7 +133,7 @@
         <div class="row" style="margin-top: 15px;">
             <mat-card class="col-md-12">
                 <mat-card-title>Services Served:</mat-card-title>
-                <table mat-table [dataSource]="aurumServices" class="col-md-12">
+                <table mat-table [dataSource]="aurumServiceList" class="col-md-12">
                     <ng-container matColumnDef="index">
                         <th mat-header-cell *matHeaderCellDef> No.</th>
                         <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
@@ -112,19 +154,19 @@
                         <td mat-cell *matCellDef="let element"> {{element.karatType}}</td>
                     </ng-container>
 
-                    <ng-container matColumnDef="quantity">
-                        <th mat-header-cell *matHeaderCellDef> Quantity</th>
-                        <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
-                    </ng-container>
-
                     <ng-container matColumnDef="weight">
-                        <th mat-header-cell *matHeaderCellDef> Weight(Tola)</th>
+                        <th mat-header-cell *matHeaderCellDef> Weight(Gram)</th>
                         <td mat-cell *matCellDef="let element"> {{element.weight}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="rate">
                         <th mat-header-cell *matHeaderCellDef> Rate</th>
                         <td mat-cell *matCellDef="let element"> {{element.rate}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantity">
+                        <th mat-header-cell *matHeaderCellDef> Quantity</th>
+                        <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="amount">
@@ -135,9 +177,6 @@
                     <ng-container matColumnDef="action">
                         <th mat-header-cell *matHeaderCellDef style="width: 140px;"> Action</th>
                         <td mat-cell *matCellDef="let i = index;">
-                            <!-- <button mat-mini-fab (click)="editService()" style="margin-right: 5px;">
-                                <mat-icon>edit</mat-icon>
-                            </button> -->
                             <button mat-mini-fab (click)="deleteService(i)">
                                 <mat-icon>delete</mat-icon>
                             </button>
@@ -237,7 +276,8 @@
                                 <div class="col-md-6">
                                     <mat-form-field>
                                         <input matInput placeholder="Total Payable Amount"
-                                            formControlName="totalPayableAmount" (input)="onTotalPayableValueChange($event)">
+                                            formControlName="totalPayableAmount"
+                                            (input)="onTotalPayableValueChange($event)">
                                     </mat-form-field>
                                 </div>
                             </div>
