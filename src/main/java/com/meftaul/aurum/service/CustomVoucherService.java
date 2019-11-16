@@ -112,7 +112,7 @@ public class CustomVoucherService {
 
     private String getVoucherNumber(String userId) {
         LocalDate today = LocalDate.now();
-        Long todayCount = this.voucherRepository.countByDateCreated(today);
+        Long todayCount = this.voucherRepository.countByDateCreated(today) + 1;
         return String.valueOf(today.getYear() % 100) + String.valueOf(today.getMonthValue()) + String.valueOf(today.getDayOfMonth()) + String.format("%05d", todayCount);
     }
 
