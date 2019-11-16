@@ -12,7 +12,7 @@ import io.github.jhipster.service.filter.IntegerFilter;
 import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.service.filter.StringFilter;
 import io.github.jhipster.service.filter.BigDecimalFilter;
-import io.github.jhipster.service.filter.LocalDateFilter;
+import io.github.jhipster.service.filter.InstantFilter;
 
 /**
  * Criteria class for the {@link com.meftaul.aurum.domain.TransactionHistory} entity. This class is used
@@ -51,7 +51,7 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
 
     private BigDecimalFilter amount;
 
-    private LocalDateFilter dateCreated;
+    private InstantFilter dateCreated;
 
     private TransactionStatusFilter tag;
 
@@ -101,11 +101,11 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         this.amount = amount;
     }
 
-    public LocalDateFilter getDateCreated() {
+    public InstantFilter getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(LocalDateFilter dateCreated) {
+    public void setDateCreated(InstantFilter dateCreated) {
         this.dateCreated = dateCreated;
     }
 

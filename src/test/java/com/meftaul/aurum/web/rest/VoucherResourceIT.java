@@ -24,8 +24,8 @@ import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.meftaul.aurum.web.rest.TestUtil.createFormattingConversionService;
@@ -67,9 +67,9 @@ public class VoucherResourceIT {
     private static final BigDecimal UPDATED_TOTAL_PAYABLE_AMOUNT = new BigDecimal(2);
     private static final BigDecimal SMALLER_TOTAL_PAYABLE_AMOUNT = new BigDecimal(1 - 1);
 
-    private static final LocalDate DEFAULT_DATE_CREATED = LocalDate.ofEpochDay(0L);
-    private static final LocalDate UPDATED_DATE_CREATED = LocalDate.now(ZoneId.systemDefault());
-    private static final LocalDate SMALLER_DATE_CREATED = LocalDate.ofEpochDay(-1L);
+    private static final Instant DEFAULT_DATE_CREATED = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_DATE_CREATED = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant SMALLER_DATE_CREATED = Instant.ofEpochMilli(-1L);
 
     private static final String DEFAULT_ADDED_BY = "AAAAAAAAAA";
     private static final String UPDATED_ADDED_BY = "BBBBBBBBBB";
@@ -77,9 +77,9 @@ public class VoucherResourceIT {
     private static final String DEFAULT_BOX_NUMBER = "AAAAAAAAAA";
     private static final String UPDATED_BOX_NUMBER = "BBBBBBBBBB";
 
-    private static final LocalDate DEFAULT_DELIVERY_DATE = LocalDate.ofEpochDay(0L);
-    private static final LocalDate UPDATED_DELIVERY_DATE = LocalDate.now(ZoneId.systemDefault());
-    private static final LocalDate SMALLER_DELIVERY_DATE = LocalDate.ofEpochDay(-1L);
+    private static final Instant DEFAULT_DELIVERY_DATE = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_DELIVERY_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant SMALLER_DELIVERY_DATE = Instant.ofEpochMilli(-1L);
 
     @Autowired
     private VoucherRepository voucherRepository;
@@ -916,59 +916,6 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDateCreatedIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where dateCreated is greater than or equal to DEFAULT_DATE_CREATED
-        defaultVoucherShouldBeFound("dateCreated.greaterThanOrEqual=" + DEFAULT_DATE_CREATED);
-
-        // Get all the voucherList where dateCreated is greater than or equal to UPDATED_DATE_CREATED
-        defaultVoucherShouldNotBeFound("dateCreated.greaterThanOrEqual=" + UPDATED_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDateCreatedIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where dateCreated is less than or equal to DEFAULT_DATE_CREATED
-        defaultVoucherShouldBeFound("dateCreated.lessThanOrEqual=" + DEFAULT_DATE_CREATED);
-
-        // Get all the voucherList where dateCreated is less than or equal to SMALLER_DATE_CREATED
-        defaultVoucherShouldNotBeFound("dateCreated.lessThanOrEqual=" + SMALLER_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDateCreatedIsLessThanSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where dateCreated is less than DEFAULT_DATE_CREATED
-        defaultVoucherShouldNotBeFound("dateCreated.lessThan=" + DEFAULT_DATE_CREATED);
-
-        // Get all the voucherList where dateCreated is less than UPDATED_DATE_CREATED
-        defaultVoucherShouldBeFound("dateCreated.lessThan=" + UPDATED_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDateCreatedIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where dateCreated is greater than DEFAULT_DATE_CREATED
-        defaultVoucherShouldNotBeFound("dateCreated.greaterThan=" + DEFAULT_DATE_CREATED);
-
-        // Get all the voucherList where dateCreated is greater than SMALLER_DATE_CREATED
-        defaultVoucherShouldBeFound("dateCreated.greaterThan=" + SMALLER_DATE_CREATED);
-    }
-
-
-    @Test
-    @Transactional
     public void getAllVouchersByAddedByIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
@@ -1083,59 +1030,6 @@ public class VoucherResourceIT {
         // Get all the voucherList where deliveryDate is null
         defaultVoucherShouldNotBeFound("deliveryDate.specified=false");
     }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDeliveryDateIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where deliveryDate is greater than or equal to DEFAULT_DELIVERY_DATE
-        defaultVoucherShouldBeFound("deliveryDate.greaterThanOrEqual=" + DEFAULT_DELIVERY_DATE);
-
-        // Get all the voucherList where deliveryDate is greater than or equal to UPDATED_DELIVERY_DATE
-        defaultVoucherShouldNotBeFound("deliveryDate.greaterThanOrEqual=" + UPDATED_DELIVERY_DATE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDeliveryDateIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where deliveryDate is less than or equal to DEFAULT_DELIVERY_DATE
-        defaultVoucherShouldBeFound("deliveryDate.lessThanOrEqual=" + DEFAULT_DELIVERY_DATE);
-
-        // Get all the voucherList where deliveryDate is less than or equal to SMALLER_DELIVERY_DATE
-        defaultVoucherShouldNotBeFound("deliveryDate.lessThanOrEqual=" + SMALLER_DELIVERY_DATE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDeliveryDateIsLessThanSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where deliveryDate is less than DEFAULT_DELIVERY_DATE
-        defaultVoucherShouldNotBeFound("deliveryDate.lessThan=" + DEFAULT_DELIVERY_DATE);
-
-        // Get all the voucherList where deliveryDate is less than UPDATED_DELIVERY_DATE
-        defaultVoucherShouldBeFound("deliveryDate.lessThan=" + UPDATED_DELIVERY_DATE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDeliveryDateIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where deliveryDate is greater than DEFAULT_DELIVERY_DATE
-        defaultVoucherShouldNotBeFound("deliveryDate.greaterThan=" + DEFAULT_DELIVERY_DATE);
-
-        // Get all the voucherList where deliveryDate is greater than SMALLER_DELIVERY_DATE
-        defaultVoucherShouldBeFound("deliveryDate.greaterThan=" + SMALLER_DELIVERY_DATE);
-    }
-
 
     @Test
     @Transactional

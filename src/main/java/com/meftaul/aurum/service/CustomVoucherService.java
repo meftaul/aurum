@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,7 +71,7 @@ public class CustomVoucherService {
 
         //generate voucher number
         voucher.setVoucherNo(getVoucherNumber(String.valueOf(voucher.getCustomerId())));
-        voucher.setDateCreated(LocalDate.now());
+        voucher.setDateCreated(Instant.now());
 
 
         Voucher savedVoucher = voucherRepository.save(voucher);
@@ -98,7 +99,7 @@ public class CustomVoucherService {
 
         transactionHistory.setAddedBy(SecurityUtils.getCurrentUserLogin().get());
         transactionHistory.setAmount(voucher.getTotalPayableAmount());
-        transactionHistory.setDateCreated(LocalDate.now());
+        transactionHistory.setDateCreated(Instant.now());
         transactionHistory.setCustomerId(voucher.getCustomerId());
         transactionHistory.setVoucherNo(voucher.getVoucherNo());
         transactionHistory.setTag(tag);
@@ -111,7 +112,7 @@ public class CustomVoucherService {
 
     private String getVoucherNumber(String userId) {
         LocalDate today = LocalDate.now();
-        Long todayCount = this.voucherRepository.countByDateCreated(today);
+        Long todayCount = this.voucherRepository.countByDateCreated(today) + 1;
         return String.valueOf(today.getYear() % 100) + String.valueOf(today.getMonthValue()) + String.valueOf(today.getDayOfMonth()) + String.format("%05d", todayCount);
     }
 
