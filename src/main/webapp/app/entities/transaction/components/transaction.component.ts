@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ICustomer } from 'app/shared/model/customer.model';
@@ -17,6 +17,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { ItemService } from 'app/entities/item/item.service';
 import { CustomVoucherDto } from 'app/shared/model/custom.voucher.model';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
@@ -26,12 +27,13 @@ const VORI_TO_GRAM = 11.6638125; // = 1 vori
 @Component({
   selector: 'jhi-aurum-transaction',
   templateUrl: './transaction.component.html',
-  styleUrls: ['./transaction.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./transaction.component.scss']
 })
 export class TransactionComponent implements OnInit, OnDestroy {
   account: Account;
-  customerID: string;
+  customerID: number;
+  cusromerSearchingValue: string;
+  searchCategory: string;
   customer: ICustomer;
   voucherForm: FormGroup;
   aurumServiceForm: FormGroup;
@@ -48,6 +50,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   karatParcentDifference = 0;
 
   eventSubscriber: Subscription;
+
+  searchCategories: any[] = [{ value: 'phone', viewValue: 'Phone Number' }, { value: 'id', viewValue: 'Customer ID' }];
 
   itemNames: any[] = [
     { value: 'Gold X-Ray', viewValue: 'Gold X-Ray' },
@@ -81,7 +85,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.prepareAurumServiceForm();
     this.prepareVoucherForm();
-    // this.prepareCustomerForm(new Customer());
+    this.searchCategory = 'phone';
 
     this.fetchKaratList();
     this.fetchRateList();
@@ -92,26 +96,31 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
-  // prepareCustomerForm(customerData: Customer) {
-  //   this.customerForm = this.formBuilder.group({
-  //     name: [customerData.name, [Validators.required]],
-  //     mobileNumber: [customerData.mobileNumber, [Validators.required]],
-  //     address1: [customerData.address1, [Validators.required]],
-  //     address2: [customerData.address2]
-  //     // rewardPoints: [customerData.rewardPoints, [Validators.required]],
-  //   });
-  // }
-
   // ******************** CUSTOMER ******************** START
   searchCustomer() {
-    this.customerService.find(+this.customerID).subscribe(
-      data => {
-        this.customer = data.body;
-      },
-      error => {
-        this.customer = null;
-      }
-    );
+    if (this.searchCategory === 'id') {
+      this.customerService.find(+this.cusromerSearchingValue).subscribe(
+        data => {
+          this.customer = data.body;
+          this.customerID = this.customer.id;
+        },
+        error => {
+          this.customer = null;
+          this.jhiAlertService.warning('Customer not found.');
+        }
+      );
+    } else {
+      this.customerService.query({ 'phone.equals': this.cusromerSearchingValue }).subscribe(
+        data => {
+          this.customer = data.body[0];
+          this.customerID = this.customer.id;
+        },
+        error => {
+          this.customer = null;
+          this.jhiAlertService.warning('Customer not found.');
+        }
+      );
+    }
   }
 
   createCustomer() {
@@ -293,7 +302,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   makePayment() {
     this.voucherForm.markAllAsTouched();
-    if (this.customerID && this.customerID === null) {
+    if (!this.customerID || this.customerID === 0) {
       this.jhiAlertService.warning('Customer not found.');
       return;
     }
@@ -308,14 +317,22 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     const voucherTemp = new Voucher();
     voucherTemp.voucherNo = moment().toString();
-    voucherTemp.customerId = +this.customerID;
+    voucherTemp.customerId = this.customerID;
     voucherTemp.boxNumber = this.voucherForm.controls.boxNumber.value;
     voucherTemp.calculatedTotalAmount = this.calculateTotalAmount;
     voucherTemp.disountAmount = this.voucherForm.controls.disountAmount.value;
     voucherTemp.vat = this.voucherForm.controls.vat.value;
     voucherTemp.totalPayableAmount = this.payableTotalAmount;
     voucherTemp.aurumServices = this.aurumServiceList;
-    voucherTemp.deliveryDate = this.voucherForm.controls.deliveryDate.value; // moment()
+    // voucherTemp.dateCreated = moment(new Date(), DATE_TIME_FORMAT);
+    voucherTemp.dateCreated =
+      this.voucherForm.controls.deliveryDate.value !== null
+        ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
+        : undefined;
+    voucherTemp.deliveryDate =
+      this.voucherForm.controls.deliveryDate.value !== null
+        ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
+        : undefined;
     if (this.payableTotalAmount === +this.voucherForm.controls.paidAmount.value) voucherTemp.status = VoucherStatus.PAID;
     else voucherTemp.status = VoucherStatus.DUE;
     // voucherTemp.status = VoucherStatus.PAID;
@@ -454,5 +471,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  // Util methods
+  numberOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }

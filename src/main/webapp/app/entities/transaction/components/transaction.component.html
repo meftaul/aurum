@@ -2,9 +2,17 @@
     <div class="row">
         <mat-card class="col-md-12">
             <form class="">
-                <mat-form-field class="col-md-4">
-                    <input type="number" matInput placeholder="Search customer" [(ngModel)]="customerID"
+                <mat-form-field class="col-md-2">
+                    <mat-select placeholder="Select search category" [(ngModel)]="searchCategory"
                         [ngModelOptions]="{standalone: true}">
+                        <mat-option *ngFor="let item of searchCategories" [value]="item.value">
+                            {{item.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col-md-3">
+                    <input type="text" matInput placeholder="Search customer" [(ngModel)]="cusromerSearchingValue"
+                        [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
                 </mat-form-field>
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
                 <button type="submit" class="btn btn-primary"
@@ -212,11 +220,15 @@
                                 <input matInput placeholder="Box Number" formControlName="boxNumber">
                             </mat-form-field>
                             <mat-form-field class="col-md-12">
+                                <input matInput type="datetime-local" name="deliveryDate" formControlName="deliveryDate"
+                                    placeholder="YYYY-MM-DD HH:mm" />
+                            </mat-form-field>
+                            <!-- <mat-form-field class="col-md-12">
                                 <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
                                     formControlName="deliveryDate" readonly>
                                 <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
                                 <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
-                            </mat-form-field>
+                            </mat-form-field> -->
                         </div>
                         <div class="col-md-8">
                             <div class="row">
