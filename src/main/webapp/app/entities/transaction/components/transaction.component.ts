@@ -16,6 +16,7 @@ import { RateService } from 'app/entities/rate/rate.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { ItemService } from 'app/entities/item/item.service';
+import { CustomVoucherDto } from 'app/shared/model/custom.voucher.model';
 
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
@@ -36,6 +37,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   aurumServiceForm: FormGroup;
 
   showBtnForCalculatedMelting = false;
+  vatChecked = false;
 
   aurumServiceList: AurumService[] = [];
   calculateTotalAmount = 0;
@@ -189,6 +191,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   serviceTypeChange(event) {
+    // reset some field
+    this.aurumServiceForm.controls.karatType.setValue(null);
+    this.aurumServiceForm.controls.expectedKaratType.setValue(null);
+    this.aurumServiceForm.controls.alloyQuantity.setValue(null);
+    this.aurumServiceForm.controls.addedAlloy.setValue(null);
+
     const weightTemp = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
     if (weightTemp <= 116) {
       this.selectedServiceCharge = this.rateTypePriceMap.get(event);
@@ -229,6 +237,23 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  onVatCheckboxValueChange(event) {
+    if (event.checked) {
+      const vatTemp = +((this.calculateTotalAmount * 15) / 100).toFixed(2);
+      this.totalAmount = +(this.calculateTotalAmount + vatTemp).toFixed(2);
+      const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
+      this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
+      this.amountDue = +(this.totalAmount - discount).toFixed(2);
+      this.voucherForm.controls.vat.setValue(vatTemp);
+    } else {
+      this.totalAmount = +(this.calculateTotalAmount + 0).toFixed(2);
+      const discount = this.voucherForm.controls.disountAmount ? +this.voucherForm.controls.disountAmount : 0;
+      this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
+      this.amountDue = +(this.totalAmount - discount).toFixed(2);
+      this.voucherForm.controls.vat.setValue(0);
+    }
+  }
+
   onDiscountValueChange(event) {
     this.voucherForm.controls.disountAmount.valueChanges.subscribe(value => {
       if (value) {
@@ -243,7 +268,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   onTotalPayableValueChange(event) {
-    this.voucherForm.controls.totalPayableAmount.valueChanges.subscribe(value => {
+    this.voucherForm.controls.paidAmount.valueChanges.subscribe(value => {
       if (value) {
         this.amountDue = +(this.payableTotalAmount - +value).toFixed(2);
       } else {
@@ -262,13 +287,21 @@ export class TransactionComponent implements OnInit, OnDestroy {
       calculatedTotalAmount: [0],
       disountAmount: [0, [Validators.required]],
       vat: [0, [Validators.required]],
-      totalPayableAmount: [0]
+      paidAmount: [0]
     });
   }
 
   makePayment() {
-    // this.aurumServiceForm.markAllAsTouched();
+    this.voucherForm.markAllAsTouched();
+    if (this.customerID && this.customerID === null) {
+      this.jhiAlertService.warning('Customer not found.');
+      return;
+    }
     if (this.aurumServiceList.length === 0) {
+      this.jhiAlertService.warning('Add atleast one service.');
+      return;
+    }
+    if (this.voucherForm.invalid) {
       this.jhiAlertService.warning('Invalid Data.');
       return;
     }
@@ -280,16 +313,20 @@ export class TransactionComponent implements OnInit, OnDestroy {
     voucherTemp.calculatedTotalAmount = this.calculateTotalAmount;
     voucherTemp.disountAmount = this.voucherForm.controls.disountAmount.value;
     voucherTemp.vat = this.voucherForm.controls.vat.value;
-    voucherTemp.totalPayableAmount = this.voucherForm.controls.totalPayableAmount.value;
+    voucherTemp.totalPayableAmount = this.payableTotalAmount;
     voucherTemp.aurumServices = this.aurumServiceList;
     voucherTemp.deliveryDate = this.voucherForm.controls.deliveryDate.value; // moment()
-    if (this.payableTotalAmount === +this.voucherForm.controls.totalPayableAmount.value) voucherTemp.status = VoucherStatus.PAID;
+    if (this.payableTotalAmount === +this.voucherForm.controls.paidAmount.value) voucherTemp.status = VoucherStatus.PAID;
     else voucherTemp.status = VoucherStatus.DUE;
     // voucherTemp.status = VoucherStatus.PAID;
     voucherTemp.addedBy = this.account.login;
 
-    this.transactionService.create(voucherTemp).subscribe(data => {
-      this.jhiAlertService.success('success');
+    const customVoucherDto = new CustomVoucherDto();
+    customVoucherDto.voucher = voucherTemp;
+    customVoucherDto.paidAmount = +this.voucherForm.controls.paidAmount.value;
+
+    this.transactionService.create(customVoucherDto).subscribe(data => {
+      // this.jhiAlertService.success('success');
       this.resetVoucherForm();
     });
   }
@@ -349,7 +386,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
   // POINT_TO_GRAM = 0.0121498046875;
   // ****************************** WEIGHT CALCULATION ****************************** START
   onWeightValueChange(event) {
-    const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+    // reset some field value
+    this.aurumServiceForm.controls.karatType.setValue(null);
+    this.aurumServiceForm.controls.expectedKaratType.setValue(null);
+    this.aurumServiceForm.controls.alloyQuantity.setValue(null);
+    this.aurumServiceForm.controls.addedAlloy.setValue(null);
+    this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
+
+    const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
     // doing some math
     const voriValue = +(gramValue / VORI_TO_GRAM);
     const anaValue = +(voriValue % 1).toFixed(7) * 16;
@@ -380,7 +424,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       if (this.aurumServiceForm.controls.expectedKaratType.value) {
         const expectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.expectedKaratType.value);
         this.karatParcentDifference = selectedKaratParcent - expectedKaratParcent;
-        const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+        const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
         const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
         this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
       }
@@ -392,7 +436,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (this.aurumServiceForm.controls.karatType.value) {
       const selectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.karatType.value);
       this.karatParcentDifference = selectedKaratParcent - expectedKaratParcent;
-      const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+      const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
       const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
       this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
     }

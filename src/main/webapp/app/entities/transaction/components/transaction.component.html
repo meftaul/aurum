@@ -3,7 +3,7 @@
         <mat-card class="col-md-12">
             <form class="">
                 <mat-form-field class="col-md-4">
-                    <input matInput placeholder="Search customer" [(ngModel)]="customerID"
+                    <input type="number" matInput placeholder="Search customer" [(ngModel)]="customerID"
                         [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
@@ -37,11 +37,11 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Gram)" formControlName="weight"
+                            <input type="number" matInput placeholder="Weight(Gram)" formControlName="weight"
                                 (input)="onWeightValueChange($event)">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Quantity" formControlName="quantity">
+                            <input type="number" matInput placeholder="Quantity" formControlName="quantity">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
                             <mat-select placeholder="Select Karat Type" formControlName="karatType"
@@ -71,7 +71,7 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Rate" formControlName="rate">
+                            <input type="number" matInput placeholder="Rate" formControlName="rate">
                         </mat-form-field>
                         <div class="col-md-12"></div>
                         <mat-form-field class="col-md-3">
@@ -231,11 +231,16 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">Vat</div>
+                                <div class="col-md-6">
+                                    <mat-checkbox [labelPosition]="'after'" (change)="onVatCheckboxValueChange($event)"
+                                        [(ngModel)]="vatChecked" [ngModelOptions]="{standalone: true}">Vat(15%)
+                                    </mat-checkbox>
+                                </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input matInput placeholder="Vat" formControlName="vat"
-                                            (input)="onVatValueChange($event)">
+                                        <input type="number" matInput placeholder="Vat" formControlName="vat"
+                                            (input)="onVatValueChange($event)"
+                                            [attr.disabled]="vatChecked ? 'disabled' : null">
                                     </mat-form-field>
                                 </div>
                             </div>
@@ -256,8 +261,8 @@
                                 <div class="col-md-6">Discount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input matInput placeholder="Disount Amount" formControlName="disountAmount"
-                                            (input)="onDiscountValueChange($event)">
+                                        <input type="number" matInput placeholder="Disount Amount"
+                                            formControlName="disountAmount" (input)="onDiscountValueChange($event)">
                                     </mat-form-field>
                                 </div>
                             </div>
@@ -275,9 +280,8 @@
                                 <div class="col-md-6">Paid Amount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input matInput placeholder="Total Payable Amount"
-                                            formControlName="totalPayableAmount"
-                                            (input)="onTotalPayableValueChange($event)">
+                                        <input type="number" matInput placeholder="Total Payable Amount"
+                                            formControlName="paidAmount" (input)="onTotalPayableValueChange($event)">
                                     </mat-form-field>
                                 </div>
                             </div>

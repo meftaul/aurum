@@ -10,6 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AurumSharedModule } from 'app/shared/shared.module';
 
@@ -29,7 +30,8 @@ import { CustomerFormDialogComponent, CustomerFormPopupComponent } from './compo
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
-    MatSelectModule
+    MatSelectModule,
+    MatCheckboxModule
   ],
   declarations: [TransactionComponent, CustomerFormDialogComponent, CustomerFormPopupComponent],
   providers: [MatDatepickerModule],
