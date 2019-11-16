@@ -49,6 +49,7 @@ public class CacheConfiguration {
             createCache(cm, com.meftaul.aurum.domain.Voucher.class.getName() + ".aurumServices");
             createCache(cm, com.meftaul.aurum.domain.Rate.class.getName());
             createCache(cm, com.meftaul.aurum.domain.Karat.class.getName());
+            createCache(cm, com.meftaul.aurum.domain.Item.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

@@ -20,6 +20,7 @@
     <include file="config/liquibase/changelog/20191026063357_added_entity_AurumService.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191028092823_added_entity_Rate.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191028093117_added_entity_Karat.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20191116044840_added_entity_Item.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20191026063357_added_entity_constraints_AurumService.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
