@@ -45,7 +45,20 @@ public class CustomVoucherService {
         voucherViewerDto.setVoucherInfo(voucher);
         voucherViewerDto.setTxnHistory(txnHistory);
 
+        BigDecimal sum = BigDecimal.ZERO;
         //calculate due amount
+        if (txnHistory.size() > 0) {
+            for (TransactionHistory singleTxnHistory : txnHistory) {
+                if (singleTxnHistory.getTag().equals(TransactionStatus.RECEIVE)) {
+                    sum = sum.add(singleTxnHistory.getAmount());
+                }
+            }
+        }
+
+        BigDecimal due = voucher.getTotalPayableAmount().subtract(sum);
+
+        voucherViewerDto.setTotalAmount(voucher.getTotalPayableAmount());
+        voucherViewerDto.setDueAmount(due);
 
         return Optional.of(voucherViewerDto);
     }
