@@ -52,8 +52,8 @@ export class VoucherService {
 
   protected convertDateFromClient(voucher: IVoucher): IVoucher {
     const copy: IVoucher = Object.assign({}, voucher, {
-      dateCreated: voucher.dateCreated != null && voucher.dateCreated.isValid() ? voucher.dateCreated.format(DATE_FORMAT) : null,
-      deliveryDate: voucher.deliveryDate != null && voucher.deliveryDate.isValid() ? voucher.deliveryDate.format(DATE_FORMAT) : null
+      dateCreated: voucher.dateCreated != null && voucher.dateCreated.isValid() ? voucher.dateCreated.toJSON() : null,
+      deliveryDate: voucher.deliveryDate != null && voucher.deliveryDate.isValid() ? voucher.deliveryDate.toJSON() : null
     });
     return copy;
   }

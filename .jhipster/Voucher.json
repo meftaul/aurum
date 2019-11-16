@@ -53,7 +53,7 @@
         },
         {
             "fieldName": "dateCreated",
-            "fieldType": "LocalDate"
+            "fieldType": "Instant"
         },
         {
             "fieldName": "addedBy",
@@ -68,7 +68,7 @@
         },
         {
             "fieldName": "deliveryDate",
-            "fieldType": "LocalDate"
+            "fieldType": "Instant"
         }
     ],
     "changelogDate": "20191023082216",

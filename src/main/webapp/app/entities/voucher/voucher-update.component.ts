@@ -6,6 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { IVoucher, Voucher } from 'app/shared/model/voucher.model';
 import { VoucherService } from './voucher.service';
 
@@ -15,8 +16,6 @@ import { VoucherService } from './voucher.service';
 })
 export class VoucherUpdateComponent implements OnInit {
   isSaving: boolean;
-  dateCreatedDp: any;
-  deliveryDateDp: any;
 
   editForm = this.fb.group({
     id: [],
@@ -52,10 +51,10 @@ export class VoucherUpdateComponent implements OnInit {
       disountAmount: voucher.disountAmount,
       status: voucher.status,
       totalPayableAmount: voucher.totalPayableAmount,
-      dateCreated: voucher.dateCreated,
+      dateCreated: voucher.dateCreated != null ? voucher.dateCreated.format(DATE_TIME_FORMAT) : null,
       addedBy: voucher.addedBy,
       boxNumber: voucher.boxNumber,
-      deliveryDate: voucher.deliveryDate
+      deliveryDate: voucher.deliveryDate != null ? voucher.deliveryDate.format(DATE_TIME_FORMAT) : null
     });
   }
 
@@ -84,10 +83,12 @@ export class VoucherUpdateComponent implements OnInit {
       disountAmount: this.editForm.get(['disountAmount']).value,
       status: this.editForm.get(['status']).value,
       totalPayableAmount: this.editForm.get(['totalPayableAmount']).value,
-      dateCreated: this.editForm.get(['dateCreated']).value,
+      dateCreated:
+        this.editForm.get(['dateCreated']).value != null ? moment(this.editForm.get(['dateCreated']).value, DATE_TIME_FORMAT) : undefined,
       addedBy: this.editForm.get(['addedBy']).value,
       boxNumber: this.editForm.get(['boxNumber']).value,
-      deliveryDate: this.editForm.get(['deliveryDate']).value
+      deliveryDate:
+        this.editForm.get(['deliveryDate']).value != null ? moment(this.editForm.get(['deliveryDate']).value, DATE_TIME_FORMAT) : undefined
     };
   }
 

@@ -2,7 +2,7 @@ import { TestBed, getTestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { take, map } from 'rxjs/operators';
 import * as moment from 'moment';
-import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { VoucherService } from 'app/entities/voucher/voucher.service';
 import { IVoucher, Voucher } from 'app/shared/model/voucher.model';
 import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
@@ -32,8 +32,8 @@ describe('Service Tests', () => {
       it('should find an element', () => {
         const returnedFromService = Object.assign(
           {
-            dateCreated: currentDate.format(DATE_FORMAT),
-            deliveryDate: currentDate.format(DATE_FORMAT)
+            dateCreated: currentDate.format(DATE_TIME_FORMAT),
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
           },
           elemDefault
         );
@@ -51,8 +51,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             id: 0,
-            dateCreated: currentDate.format(DATE_FORMAT),
-            deliveryDate: currentDate.format(DATE_FORMAT)
+            dateCreated: currentDate.format(DATE_TIME_FORMAT),
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
           },
           elemDefault
         );
@@ -82,10 +82,10 @@ describe('Service Tests', () => {
             disountAmount: 1,
             status: 'BBBBBB',
             totalPayableAmount: 1,
-            dateCreated: currentDate.format(DATE_FORMAT),
+            dateCreated: currentDate.format(DATE_TIME_FORMAT),
             addedBy: 'BBBBBB',
             boxNumber: 'BBBBBB',
-            deliveryDate: currentDate.format(DATE_FORMAT)
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
           },
           elemDefault
         );
@@ -116,10 +116,10 @@ describe('Service Tests', () => {
             disountAmount: 1,
             status: 'BBBBBB',
             totalPayableAmount: 1,
-            dateCreated: currentDate.format(DATE_FORMAT),
+            dateCreated: currentDate.format(DATE_TIME_FORMAT),
             addedBy: 'BBBBBB',
             boxNumber: 'BBBBBB',
-            deliveryDate: currentDate.format(DATE_FORMAT)
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
           },
           elemDefault
         );

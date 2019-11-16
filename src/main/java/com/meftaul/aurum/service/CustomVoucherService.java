@@ -71,7 +71,7 @@ public class CustomVoucherService {
 
         //generate voucher number
         voucher.setVoucherNo(getVoucherNumber(String.valueOf(voucher.getCustomerId())));
-        voucher.setDateCreated(LocalDate.now());
+        voucher.setDateCreated(Instant.now());
 
 
         Voucher savedVoucher = voucherRepository.save(voucher);

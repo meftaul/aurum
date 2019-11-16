@@ -7,7 +7,7 @@ import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,7 +53,7 @@ public class Voucher implements Serializable {
     private BigDecimal totalPayableAmount;
 
     @Column(name = "date_created")
-    private LocalDate dateCreated;
+    private Instant dateCreated;
 
     @NotNull
     @Column(name = "added_by", nullable = false)
@@ -63,9 +63,9 @@ public class Voucher implements Serializable {
     private String boxNumber;
 
     @Column(name = "delivery_date")
-    private LocalDate deliveryDate;
+    private Instant deliveryDate;
 
-    @OneToMany(mappedBy = "voucher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "voucher")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AurumService> aurumServices = new HashSet<>();
 
@@ -169,16 +169,16 @@ public class Voucher implements Serializable {
         this.totalPayableAmount = totalPayableAmount;
     }
 
-    public LocalDate getDateCreated() {
+    public Instant getDateCreated() {
         return dateCreated;
     }
 
-    public Voucher dateCreated(LocalDate dateCreated) {
+    public Voucher dateCreated(Instant dateCreated) {
         this.dateCreated = dateCreated;
         return this;
     }
 
-    public void setDateCreated(LocalDate dateCreated) {
+    public void setDateCreated(Instant dateCreated) {
         this.dateCreated = dateCreated;
     }
 
@@ -208,16 +208,16 @@ public class Voucher implements Serializable {
         this.boxNumber = boxNumber;
     }
 
-    public LocalDate getDeliveryDate() {
+    public Instant getDeliveryDate() {
         return deliveryDate;
     }
 
-    public Voucher deliveryDate(LocalDate deliveryDate) {
+    public Voucher deliveryDate(Instant deliveryDate) {
         this.deliveryDate = deliveryDate;
         return this;
     }
 
-    public void setDeliveryDate(LocalDate deliveryDate) {
+    public void setDeliveryDate(Instant deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 
