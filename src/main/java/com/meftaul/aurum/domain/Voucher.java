@@ -65,7 +65,7 @@ public class Voucher implements Serializable {
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
 
-    @OneToMany(mappedBy = "voucher")
+    @OneToMany(mappedBy = "voucher", fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AurumService> aurumServices = new HashSet<>();
 

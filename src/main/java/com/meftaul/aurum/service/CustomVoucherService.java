@@ -7,6 +7,8 @@ import com.meftaul.aurum.repository.AurumServiceRepository;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.security.SecurityUtils;
+import com.meftaul.aurum.service.dto.CustomVoucherDto;
+import com.meftaul.aurum.service.dto.VoucherViewerDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -33,8 +37,41 @@ public class CustomVoucherService {
         this.transactionHistoryRepository = transactionHistoryRepository;
     }
 
-    public Voucher save(Voucher voucher) {
-        log.debug("Request to save Voucher : {}", voucher);
+    public Optional<VoucherViewerDto> findByVoucherNo(String voucherNo) {
+
+        Voucher voucher = this.voucherRepository.findByVoucherNo(voucherNo);
+        List<TransactionHistory> txnHistory = this.transactionHistoryRepository.findAllByVoucherNo(voucherNo);
+
+        VoucherViewerDto voucherViewerDto = new VoucherViewerDto();
+        voucherViewerDto.setVoucherInfo(voucher);
+        voucherViewerDto.setTxnHistory(txnHistory);
+
+        BigDecimal sum = BigDecimal.ZERO;
+        //calculate due amount
+        if (txnHistory.size() > 0) {
+            for (TransactionHistory singleTxnHistory : txnHistory) {
+                if (singleTxnHistory.getTag().equals(TransactionStatus.RECEIVE)) {
+                    sum = sum.add(singleTxnHistory.getAmount());
+                }
+            }
+        }
+
+        BigDecimal due = voucher.getTotalPayableAmount().subtract(sum);
+
+        voucherViewerDto.setTotalAmount(voucher.getTotalPayableAmount());
+        voucherViewerDto.setDueAmount(due);
+
+        return Optional.of(voucherViewerDto);
+    }
+
+    public Voucher save(CustomVoucherDto voucherDto) {
+        log.debug("Request to save Voucher : {}", voucherDto);
+        Voucher voucher = voucherDto.getVoucher();
+
+        //generate voucher number
+        voucher.setVoucherNo(getVoucherNumber(String.valueOf(voucher.getCustomerId())));
+        voucher.setDateCreated(LocalDate.now());
+
 
         Voucher savedVoucher = voucherRepository.save(voucher);
 
@@ -44,7 +81,7 @@ public class CustomVoucherService {
             savedVoucher.addAurumService(s);
         }
 
-        createTxnHistory(savedVoucher, savedVoucher.getTotalPayableAmount(), TransactionStatus.RECEIVE);
+        createTxnHistory(savedVoucher, voucherDto.getPaidAmount(), TransactionStatus.RECEIVE);
         if (savedVoucher.getVat() != null) {
             createTxnHistory(savedVoucher, savedVoucher.getVat(), TransactionStatus.VAT);
         }
@@ -70,6 +107,12 @@ public class CustomVoucherService {
 
         return transactionHistoryRepository.save(transactionHistory);
 
+    }
+
+    private String getVoucherNumber(String userId) {
+        LocalDate today = LocalDate.now();
+        Long todayCount = this.voucherRepository.countByDateCreated(today);
+        return String.valueOf(today.getYear() % 100) + String.valueOf(today.getMonthValue()) + String.valueOf(today.getDayOfMonth()) + String.format("%05d", todayCount);
     }
 
 }
