@@ -2,9 +2,17 @@
     <div class="row">
         <mat-card class="col-md-12">
             <form class="">
-                <mat-form-field class="col-md-4">
-                    <input matInput placeholder="Search customer" [(ngModel)]="customerID"
+                <mat-form-field class="col-md-2">
+                    <mat-select placeholder="Select search category" [(ngModel)]="searchCategory"
                         [ngModelOptions]="{standalone: true}">
+                        <mat-option *ngFor="let item of searchCategories" [value]="item.value">
+                            {{item.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col-md-3">
+                    <input type="text" matInput placeholder="Search customer" [(ngModel)]="cusromerSearchingValue"
+                        [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
                 </mat-form-field>
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
                 <button type="submit" class="btn btn-primary"
@@ -15,7 +23,7 @@
         </mat-card>
     </div>
 
-    <div>
+    <div *ngIf="customer">
         <div class="row" style="margin-top: 15px;">
             <div class="col-md-6 m-0 p-0">
                 <mat-card style="margin-right: 5px;">
@@ -31,17 +39,17 @@
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
                             <mat-select placeholder="Select Item" formControlName="itemName">
-                                <mat-option *ngFor="let item of itemNames" [value]="item.value">
+                                <mat-option *ngFor="let item of itemDropdownList" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Weight(Gram)" formControlName="weight"
+                            <input type="number" matInput placeholder="Weight(Gram)" formControlName="weight"
                                 (input)="onWeightValueChange($event)">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Quantity" formControlName="quantity">
+                            <input type="number" matInput placeholder="Quantity" formControlName="quantity">
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
                             <mat-select placeholder="Select Karat Type" formControlName="karatType"
@@ -71,7 +79,7 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
-                            <input matInput placeholder="Rate" formControlName="rate">
+                            <input type="number" matInput placeholder="Rate" formControlName="rate">
                         </mat-form-field>
                         <div class="col-md-12"></div>
                         <mat-form-field class="col-md-3">
@@ -212,11 +220,15 @@
                                 <input matInput placeholder="Box Number" formControlName="boxNumber">
                             </mat-form-field>
                             <mat-form-field class="col-md-12">
+                                <input matInput type="datetime-local" name="deliveryDate" formControlName="deliveryDate"
+                                    placeholder="YYYY-MM-DD HH:mm" />
+                            </mat-form-field>
+                            <!-- <mat-form-field class="col-md-12">
                                 <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
                                     formControlName="deliveryDate" readonly>
                                 <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
                                 <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
-                            </mat-form-field>
+                            </mat-form-field> -->
                         </div>
                         <div class="col-md-8">
                             <div class="row">
@@ -231,11 +243,16 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">Vat</div>
+                                <div class="col-md-6">
+                                    <mat-checkbox [labelPosition]="'after'" (change)="onVatCheckboxValueChange($event)"
+                                        [(ngModel)]="vatChecked" [ngModelOptions]="{standalone: true}">Vat(15%)
+                                    </mat-checkbox>
+                                </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input matInput placeholder="Vat" formControlName="vat"
-                                            (input)="onVatValueChange($event)">
+                                        <input type="number" matInput placeholder="Vat" formControlName="vat"
+                                            (input)="onVatValueChange($event)"
+                                            [attr.disabled]="vatChecked ? 'disabled' : null">
                                     </mat-form-field>
                                 </div>
                             </div>
@@ -256,8 +273,8 @@
                                 <div class="col-md-6">Discount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input matInput placeholder="Disount Amount" formControlName="disountAmount"
-                                            (input)="onDiscountValueChange($event)">
+                                        <input type="number" matInput placeholder="Disount Amount"
+                                            formControlName="disountAmount" (input)="onDiscountValueChange($event)">
                                     </mat-form-field>
                                 </div>
                             </div>
@@ -275,9 +292,8 @@
                                 <div class="col-md-6">Paid Amount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input matInput placeholder="Total Payable Amount"
-                                            formControlName="totalPayableAmount"
-                                            (input)="onTotalPayableValueChange($event)">
+                                        <input type="number" matInput placeholder="Total Payable Amount"
+                                            formControlName="paidAmount" (input)="onTotalPayableValueChange($event)">
                                     </mat-form-field>
                                 </div>
                             </div>

@@ -37,16 +37,17 @@
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_dateCreated">Date Created</label>
-                    <div class="input-group">
-                        <input id="field_dateCreated" type="text" class="form-control" name="dateCreated" ngbDatepicker  #dateCreatedDp="ngbDatepicker" formControlName="dateCreated"/>
-                        <span class="input-group-append">
-                            <button type="button" class="btn btn-secondary" (click)="dateCreatedDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
-                        </span>
+                    <div class="d-flex">
+                        <input id="field_dateCreated" type="datetime-local" class="form-control" name="dateCreated" formControlName="dateCreated" placeholder="YYYY-MM-DD HH:mm"/>
                     </div>
                     <div *ngIf="editForm.get('dateCreated').invalid && (editForm.get('dateCreated').dirty || editForm.get('dateCreated').touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('dateCreated').errors.required">
                         This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('dateCreated').errors?.ZonedDateTimelocal">
+                            This field should be a date and time.
                         </small>
                     </div>
                 </div>

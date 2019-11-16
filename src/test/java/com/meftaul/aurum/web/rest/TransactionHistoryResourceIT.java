@@ -23,8 +23,8 @@ import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.meftaul.aurum.web.rest.TestUtil.createFormattingConversionService;
@@ -47,9 +47,9 @@ public class TransactionHistoryResourceIT {
     private static final BigDecimal UPDATED_AMOUNT = new BigDecimal(2);
     private static final BigDecimal SMALLER_AMOUNT = new BigDecimal(1 - 1);
 
-    private static final LocalDate DEFAULT_DATE_CREATED = LocalDate.ofEpochDay(0L);
-    private static final LocalDate UPDATED_DATE_CREATED = LocalDate.now(ZoneId.systemDefault());
-    private static final LocalDate SMALLER_DATE_CREATED = LocalDate.ofEpochDay(-1L);
+    private static final Instant DEFAULT_DATE_CREATED = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_DATE_CREATED = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant SMALLER_DATE_CREATED = Instant.ofEpochMilli(-1L);
 
     private static final TransactionStatus DEFAULT_TAG = TransactionStatus.RECEIVE;
     private static final TransactionStatus UPDATED_TAG = TransactionStatus.VAT;
@@ -497,59 +497,6 @@ public class TransactionHistoryResourceIT {
         // Get all the transactionHistoryList where dateCreated is null
         defaultTransactionHistoryShouldNotBeFound("dateCreated.specified=false");
     }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where dateCreated is greater than or equal to DEFAULT_DATE_CREATED
-        defaultTransactionHistoryShouldBeFound("dateCreated.greaterThanOrEqual=" + DEFAULT_DATE_CREATED);
-
-        // Get all the transactionHistoryList where dateCreated is greater than or equal to UPDATED_DATE_CREATED
-        defaultTransactionHistoryShouldNotBeFound("dateCreated.greaterThanOrEqual=" + UPDATED_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where dateCreated is less than or equal to DEFAULT_DATE_CREATED
-        defaultTransactionHistoryShouldBeFound("dateCreated.lessThanOrEqual=" + DEFAULT_DATE_CREATED);
-
-        // Get all the transactionHistoryList where dateCreated is less than or equal to SMALLER_DATE_CREATED
-        defaultTransactionHistoryShouldNotBeFound("dateCreated.lessThanOrEqual=" + SMALLER_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsLessThanSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where dateCreated is less than DEFAULT_DATE_CREATED
-        defaultTransactionHistoryShouldNotBeFound("dateCreated.lessThan=" + DEFAULT_DATE_CREATED);
-
-        // Get all the transactionHistoryList where dateCreated is less than UPDATED_DATE_CREATED
-        defaultTransactionHistoryShouldBeFound("dateCreated.lessThan=" + UPDATED_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where dateCreated is greater than DEFAULT_DATE_CREATED
-        defaultTransactionHistoryShouldNotBeFound("dateCreated.greaterThan=" + DEFAULT_DATE_CREATED);
-
-        // Get all the transactionHistoryList where dateCreated is greater than SMALLER_DATE_CREATED
-        defaultTransactionHistoryShouldBeFound("dateCreated.greaterThan=" + SMALLER_DATE_CREATED);
-    }
-
 
     @Test
     @Transactional

@@ -12,7 +12,7 @@ import io.github.jhipster.service.filter.IntegerFilter;
 import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.service.filter.StringFilter;
 import io.github.jhipster.service.filter.BigDecimalFilter;
-import io.github.jhipster.service.filter.LocalDateFilter;
+import io.github.jhipster.service.filter.InstantFilter;
 
 /**
  * Criteria class for the {@link com.meftaul.aurum.domain.Voucher} entity. This class is used
@@ -61,13 +61,13 @@ public class VoucherCriteria implements Serializable, Criteria {
 
     private BigDecimalFilter totalPayableAmount;
 
-    private LocalDateFilter dateCreated;
+    private InstantFilter dateCreated;
 
     private StringFilter addedBy;
 
     private StringFilter boxNumber;
 
-    private LocalDateFilter deliveryDate;
+    private InstantFilter deliveryDate;
 
     private LongFilter aurumServiceId;
 
@@ -159,11 +159,11 @@ public class VoucherCriteria implements Serializable, Criteria {
         this.totalPayableAmount = totalPayableAmount;
     }
 
-    public LocalDateFilter getDateCreated() {
+    public InstantFilter getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(LocalDateFilter dateCreated) {
+    public void setDateCreated(InstantFilter dateCreated) {
         this.dateCreated = dateCreated;
     }
 
@@ -183,11 +183,11 @@ public class VoucherCriteria implements Serializable, Criteria {
         this.boxNumber = boxNumber;
     }
 
-    public LocalDateFilter getDeliveryDate() {
+    public InstantFilter getDeliveryDate() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(LocalDateFilter deliveryDate) {
+    public void setDeliveryDate(InstantFilter deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 

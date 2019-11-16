@@ -37,7 +37,7 @@
             <column name="total_payable_amount" type="decimal(21,2)">
                 <constraints nullable="false" />
             </column>
-            <column name="date_created" type="date">
+            <column name="date_created" type="datetime">
                 <constraints nullable="true" />
             </column>
             <column name="added_by" type="varchar(255)">
@@ -46,11 +46,13 @@
             <column name="box_number" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="delivery_date" type="date">
+            <column name="delivery_date" type="datetime">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
+        <dropDefaultValue tableName="voucher" columnName="date_created" columnDataType="datetime"/>
+        <dropDefaultValue tableName="voucher" columnName="delivery_date" columnDataType="datetime"/>
     </changeSet>
 
     <changeSet id="20191023082216-1-relations" author="jhipster">
@@ -79,10 +81,10 @@
             <column name="disount_amount" type="numeric"/>
             <column name="status" type="string"/>
             <column name="total_payable_amount" type="numeric"/>
-            <column name="date_created" type="date"/>
+            <column name="date_created" type="datetime"/>
             <column name="added_by" type="string"/>
             <column name="box_number" type="string"/>
-            <column name="delivery_date" type="date"/>
+            <column name="delivery_date" type="datetime"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>

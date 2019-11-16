@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ICustomer } from 'app/shared/model/customer.model';
@@ -15,6 +15,9 @@ import { KaratService } from 'app/entities/karat/karat.service';
 import { RateService } from 'app/entities/rate/rate.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
+import { ItemService } from 'app/entities/item/item.service';
+import { CustomVoucherDto } from 'app/shared/model/custom.voucher.model';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
@@ -24,17 +27,19 @@ const VORI_TO_GRAM = 11.6638125; // = 1 vori
 @Component({
   selector: 'jhi-aurum-transaction',
   templateUrl: './transaction.component.html',
-  styleUrls: ['./transaction.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./transaction.component.scss']
 })
 export class TransactionComponent implements OnInit, OnDestroy {
   account: Account;
-  customerID: string;
+  customerID: number;
+  cusromerSearchingValue: string;
+  searchCategory: string;
   customer: ICustomer;
   voucherForm: FormGroup;
   aurumServiceForm: FormGroup;
 
   showBtnForCalculatedMelting = false;
+  vatChecked = false;
 
   aurumServiceList: AurumService[] = [];
   calculateTotalAmount = 0;
@@ -45,6 +50,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   karatParcentDifference = 0;
 
   eventSubscriber: Subscription;
+
+  searchCategories: any[] = [{ value: 'phone', viewValue: 'Phone Number' }, { value: 'id', viewValue: 'Customer ID' }];
 
   itemNames: any[] = [
     { value: 'Gold X-Ray', viewValue: 'Gold X-Ray' },
@@ -58,6 +65,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   voucherStatus: any[] = VOUCHER_STATUS;
   alloyTypeList: any[] = ALLOY_TYPE;
   karatList: any[] = [];
+  itemDropdownList: any[] = [];
   rateTypePriceMap: Map<string, number> = new Map();
   karatTypePercentMap: Map<string, number> = new Map();
   serviceListColumns: string[] = SERVICE_LIST_COLUMNS;
@@ -69,6 +77,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     protected customerService: CustomerService,
     protected karatService: KaratService,
     protected rateService: RateService,
+    protected itemService: ItemService,
     private accountService: AccountService,
     protected eventManager: JhiEventManager
   ) {}
@@ -76,36 +85,42 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.prepareAurumServiceForm();
     this.prepareVoucherForm();
-    // this.prepareCustomerForm(new Customer());
+    this.searchCategory = 'phone';
 
     this.fetchKaratList();
     this.fetchRateList();
+    this.fetchItemList();
 
     this.accountService.identity().then((account: Account) => {
       this.account = account;
     });
   }
 
-  // prepareCustomerForm(customerData: Customer) {
-  //   this.customerForm = this.formBuilder.group({
-  //     name: [customerData.name, [Validators.required]],
-  //     mobileNumber: [customerData.mobileNumber, [Validators.required]],
-  //     address1: [customerData.address1, [Validators.required]],
-  //     address2: [customerData.address2]
-  //     // rewardPoints: [customerData.rewardPoints, [Validators.required]],
-  //   });
-  // }
-
   // ******************** CUSTOMER ******************** START
   searchCustomer() {
-    this.customerService.find(+this.customerID).subscribe(
-      data => {
-        this.customer = data.body;
-      },
-      error => {
-        this.customer = null;
-      }
-    );
+    if (this.searchCategory === 'id') {
+      this.customerService.find(+this.cusromerSearchingValue).subscribe(
+        data => {
+          this.customer = data.body;
+          this.customerID = this.customer.id;
+        },
+        error => {
+          this.customer = null;
+          this.jhiAlertService.warning('Customer not found.');
+        }
+      );
+    } else {
+      this.customerService.query({ 'phone.equals': this.cusromerSearchingValue }).subscribe(
+        data => {
+          this.customer = data.body[0];
+          this.customerID = this.customer.id;
+        },
+        error => {
+          this.customer = null;
+          this.jhiAlertService.warning('Customer not found.');
+        }
+      );
+    }
   }
 
   createCustomer() {
@@ -138,7 +153,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   addService() {
     this.aurumServiceForm.markAllAsTouched();
     if (this.aurumServiceForm.invalid) {
-      this.jhiAlertService.warning('error');
+      this.jhiAlertService.warning('Form Invalid.');
       return;
     }
 
@@ -185,6 +200,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   serviceTypeChange(event) {
+    // reset some field
+    this.aurumServiceForm.controls.karatType.setValue(null);
+    this.aurumServiceForm.controls.expectedKaratType.setValue(null);
+    this.aurumServiceForm.controls.alloyQuantity.setValue(null);
+    this.aurumServiceForm.controls.addedAlloy.setValue(null);
+
     const weightTemp = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
     if (weightTemp <= 116) {
       this.selectedServiceCharge = this.rateTypePriceMap.get(event);
@@ -225,6 +246,23 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  onVatCheckboxValueChange(event) {
+    if (event.checked) {
+      const vatTemp = +((this.calculateTotalAmount * 15) / 100).toFixed(2);
+      this.totalAmount = +(this.calculateTotalAmount + vatTemp).toFixed(2);
+      const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
+      this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
+      this.amountDue = +(this.totalAmount - discount).toFixed(2);
+      this.voucherForm.controls.vat.setValue(vatTemp);
+    } else {
+      this.totalAmount = +(this.calculateTotalAmount + 0).toFixed(2);
+      const discount = this.voucherForm.controls.disountAmount ? +this.voucherForm.controls.disountAmount : 0;
+      this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
+      this.amountDue = +(this.totalAmount - discount).toFixed(2);
+      this.voucherForm.controls.vat.setValue(0);
+    }
+  }
+
   onDiscountValueChange(event) {
     this.voucherForm.controls.disountAmount.valueChanges.subscribe(value => {
       if (value) {
@@ -239,7 +277,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   onTotalPayableValueChange(event) {
-    this.voucherForm.controls.totalPayableAmount.valueChanges.subscribe(value => {
+    this.voucherForm.controls.paidAmount.valueChanges.subscribe(value => {
       if (value) {
         this.amountDue = +(this.payableTotalAmount - +value).toFixed(2);
       } else {
@@ -258,34 +296,54 @@ export class TransactionComponent implements OnInit, OnDestroy {
       calculatedTotalAmount: [0],
       disountAmount: [0, [Validators.required]],
       vat: [0, [Validators.required]],
-      totalPayableAmount: [0]
+      paidAmount: [0]
     });
   }
 
   makePayment() {
-    this.aurumServiceForm.markAllAsTouched();
-    if (this.voucherForm.invalid || this.aurumServiceList.length === 0) {
-      this.jhiAlertService.warning('error');
+    this.voucherForm.markAllAsTouched();
+    if (!this.customerID || this.customerID === 0) {
+      this.jhiAlertService.warning('Customer not found.');
+      return;
+    }
+    if (this.aurumServiceList.length === 0) {
+      this.jhiAlertService.warning('Add atleast one service.');
+      return;
+    }
+    if (this.voucherForm.invalid) {
+      this.jhiAlertService.warning('Invalid Data.');
       return;
     }
 
     const voucherTemp = new Voucher();
     voucherTemp.voucherNo = moment().toString();
-    voucherTemp.customerId = +this.customerID;
+    voucherTemp.customerId = this.customerID;
     voucherTemp.boxNumber = this.voucherForm.controls.boxNumber.value;
     voucherTemp.calculatedTotalAmount = this.calculateTotalAmount;
     voucherTemp.disountAmount = this.voucherForm.controls.disountAmount.value;
     voucherTemp.vat = this.voucherForm.controls.vat.value;
-    voucherTemp.totalPayableAmount = this.voucherForm.controls.totalPayableAmount.value;
+    voucherTemp.totalPayableAmount = this.payableTotalAmount;
     voucherTemp.aurumServices = this.aurumServiceList;
-    voucherTemp.deliveryDate = this.voucherForm.controls.deliveryDate.value; // moment()
-    if (this.payableTotalAmount === +this.voucherForm.controls.totalPayableAmount.value) voucherTemp.status = VoucherStatus.PAID;
+    // voucherTemp.dateCreated = moment(new Date(), DATE_TIME_FORMAT);
+    voucherTemp.dateCreated =
+      this.voucherForm.controls.deliveryDate.value !== null
+        ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
+        : undefined;
+    voucherTemp.deliveryDate =
+      this.voucherForm.controls.deliveryDate.value !== null
+        ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
+        : undefined;
+    if (this.payableTotalAmount === +this.voucherForm.controls.paidAmount.value) voucherTemp.status = VoucherStatus.PAID;
     else voucherTemp.status = VoucherStatus.DUE;
     // voucherTemp.status = VoucherStatus.PAID;
     voucherTemp.addedBy = this.account.login;
 
-    this.transactionService.create(voucherTemp).subscribe(data => {
-      this.jhiAlertService.success('success');
+    const customVoucherDto = new CustomVoucherDto();
+    customVoucherDto.voucher = voucherTemp;
+    customVoucherDto.paidAmount = +this.voucherForm.controls.paidAmount.value;
+
+    this.transactionService.create(customVoucherDto).subscribe(data => {
+      // this.jhiAlertService.success('success');
       this.resetVoucherForm();
     });
   }
@@ -328,18 +386,36 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  // GET ITEM LIST TO SHOW IN DROPDOWN
+  fetchItemList() {
+    this.itemService.query().subscribe(data => {
+      if (data.body && data.body.length !== 0) {
+        data.body.map(item => {
+          this.itemDropdownList = [{ value: item.name, viewValue: item.name }, ...this.itemDropdownList];
+        });
+      }
+    });
+  }
+
   // VORI_TO_GRAM = 11.6638125;
   // ANA_TO_GRAM = 0.72898828125;
   // ROTTI_TO_GRAM = 0.121498046875;
   // POINT_TO_GRAM = 0.0121498046875;
   // ****************************** WEIGHT CALCULATION ****************************** START
   onWeightValueChange(event) {
-    const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+    // reset some field value
+    this.aurumServiceForm.controls.karatType.setValue(null);
+    this.aurumServiceForm.controls.expectedKaratType.setValue(null);
+    this.aurumServiceForm.controls.alloyQuantity.setValue(null);
+    this.aurumServiceForm.controls.addedAlloy.setValue(null);
+    this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
+
+    const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
     // doing some math
     const voriValue = +(gramValue / VORI_TO_GRAM);
     const anaValue = +(voriValue % 1).toFixed(7) * 16;
     const rottiValue = +(anaValue % 1).toFixed(7) * 6;
-    const pointValue = +(rottiValue % 1).toFixed(7) * 100;
+    const pointValue = +(rottiValue % 1).toFixed(7) * 10;
 
     this.aurumServiceForm.controls.weightVori.setValue(Math.floor(voriValue));
     this.aurumServiceForm.controls.weightAna.setValue(Math.floor(anaValue));
@@ -365,7 +441,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       if (this.aurumServiceForm.controls.expectedKaratType.value) {
         const expectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.expectedKaratType.value);
         this.karatParcentDifference = selectedKaratParcent - expectedKaratParcent;
-        const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+        const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
         const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
         this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
       }
@@ -377,7 +453,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (this.aurumServiceForm.controls.karatType.value) {
       const selectedKaratParcent = this.karatTypePercentMap.get(this.aurumServiceForm.controls.karatType.value);
       this.karatParcentDifference = selectedKaratParcent - expectedKaratParcent;
-      const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value.trim() : 0;
+      const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
       const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
       this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
     }
@@ -395,5 +471,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  // Util methods
+  numberOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }
