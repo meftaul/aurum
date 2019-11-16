@@ -1,1 +1,148 @@
-<p>voucher viewer</p>
+<div class="row">
+    <mat-card class="col-md-12">
+        <form class="">
+            <mat-form-field class="col-md-3">
+                <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue"
+                    [ngModelOptions]="{standalone: true}" maxlength="11">
+                <!-- <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue"
+                    [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)"> -->
+            </mat-form-field>
+            <button type="button" class="btn btn-primary" (click)="searchVoucherViewer()">Search</button>
+            <jhi-alert></jhi-alert>
+        </form>
+    </mat-card>
+</div>
+
+<div class="row" style="margin-top: 15px;" *ngIf="voucherViewer && voucherViewer.dueAmount > 0">
+    <mat-card class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <table class=" table">
+                    <tbody>
+                        <tr>
+                            <td>Total Amount</td>
+                            <td>{{voucherViewer?.totalAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Due Amount</td>
+                            <td>{{voucherViewer?.dueAmount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <form [formGroup]="transactionHistoryForm" class="col-md-6">
+                <mat-form-field class="col-md-6">
+                    <input type="number" matInput placeholder="Amount" formControlName="amount">
+                </mat-form-field>
+                <button type="button" class="btn btn-primary" (click)="makePayment()">Make Payment</button>
+            </form>
+        </div>
+    </mat-card>
+</div>
+
+<div class="row" style="margin-top: 15px;"
+    *ngIf="voucherViewer && voucherViewer.voucherInfo && voucherViewer.voucherInfo.id">
+    <mat-card class="col-md-12">
+        <mat-card-title>Voucher Information</mat-card-title>
+
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Customer Name</td>
+                    <td>{{customerName}}</td>
+                    <td>Transaction Status</td>
+                    <td>{{voucherViewer?.voucherInfo?.status}}</td>
+                </tr>
+                <tr>
+                    <td>Voucher Number</td>
+                    <td>{{voucherViewer?.voucherInfo?.voucherNo}}</td>
+                    <td>Delivery Date</td>
+                    <td>{{voucherViewer?.voucherInfo?.deliveryDate}}</td>
+                </tr>
+                <tr *ngIf="voucherViewer.dueAmount && voucherViewer.dueAmount === 0">
+                    <td>Total Amount</td>
+                    <td>{{voucherViewer?.totalAmount}}</td>
+                    <td>Due Amount</td>
+                    <td>{{voucherViewer?.dueAmount}}</td>
+                </tr>
+                <tr>
+                    <td>Calculated Total Amount</td>
+                    <td>{{voucherViewer?.voucherInfo?.calculatedTotalAmount}}</td>
+                    <td>Vat</td>
+                    <td>{{voucherViewer?.voucherInfo?.vat}}</td>
+                </tr>
+                <tr>
+                    <td>Disount Amount</td>
+                    <td>{{voucherViewer?.voucherInfo?.disountAmount}}</td>
+                    <td>Total Payable Amount</td>
+                    <td>{{voucherViewer?.voucherInfo?.totalPayableAmount}}</td>
+                </tr>
+                <tr>
+                    <td>boxNumber</td>
+                    <td>{{voucherViewer?.voucherInfo?.boxNumber}}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr *ngIf="voucherViewer.voucherInfo.aurumServices && voucherViewer.voucherInfo.aurumServices?.length !== 0">
+        <mat-card-title style="margin-top: 15px;"
+            *ngIf="voucherViewer.voucherInfo.aurumServices && voucherViewer.voucherInfo.aurumServices?.length !== 0">
+            Services
+        </mat-card-title>
+        <table class="table table-bordered"
+            *ngIf="voucherViewer.voucherInfo.aurumServices && voucherViewer.voucherInfo.aurumServices?.length !== 0">
+            <thead>
+                <tr>
+                    <th>Service Type</th>
+                    <th>Item Name</th>
+                    <th>Weight(Gram)</th>
+                    <th>Karat Type</th>
+                    <th>Expected Karat Type</th>
+                    <th>Added Alloy</th>
+                    <th>Alloy Quantity</th>
+                    <th>Service Charge</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let service of voucherViewer.voucherInfo?.aurumServices">
+                    <td>{{service.serviceType}}</td>
+                    <td>{{service.itemName}}</td>
+                    <td>{{service.weight}}</td>
+                    <td>{{service.karatType}}</td>
+                    <td>{{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
+                    <td>{{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
+                    <td>{{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}</td>
+                    <td>{{service.serviceCharge}}</td>
+                    <td>{{service.rate}}</td>
+                    <td>{{service.amount}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr *ngIf="voucherViewer.txnHistory.length !== 0">
+        <mat-card-title style="margin-top: 15px;" *ngIf="voucherViewer.txnHistory.length !== 0">
+            Transaction History
+        </mat-card-title>
+        <table class="table table-bordered" *ngIf="voucherViewer.txnHistory.length !== 0">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Tag</th>
+                    <th>Payment Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let txn of voucherViewer.txnHistory">
+                    <td>{{txn.amount}}</td>
+                    <td>{{txn.tag}}</td>
+                    <td>{{txn.dateCreated}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </mat-card>
+</div>
