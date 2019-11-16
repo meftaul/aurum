@@ -2,7 +2,7 @@ import { TestBed, getTestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { take, map } from 'rxjs/operators';
 import * as moment from 'moment';
-import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { TransactionHistoryService } from 'app/entities/transaction-history/transaction-history.service';
 import { ITransactionHistory, TransactionHistory } from 'app/shared/model/transaction-history.model';
 import { TransactionStatus } from 'app/shared/model/enumerations/transaction-status.model';
@@ -32,7 +32,7 @@ describe('Service Tests', () => {
       it('should find an element', () => {
         const returnedFromService = Object.assign(
           {
-            dateCreated: currentDate.format(DATE_FORMAT)
+            dateCreated: currentDate.format(DATE_TIME_FORMAT)
           },
           elemDefault
         );
@@ -50,7 +50,7 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             id: 0,
-            dateCreated: currentDate.format(DATE_FORMAT)
+            dateCreated: currentDate.format(DATE_TIME_FORMAT)
           },
           elemDefault
         );
@@ -74,7 +74,7 @@ describe('Service Tests', () => {
           {
             voucherNo: 'BBBBBB',
             amount: 1,
-            dateCreated: currentDate.format(DATE_FORMAT),
+            dateCreated: currentDate.format(DATE_TIME_FORMAT),
             tag: 'BBBBBB',
             customerId: 1,
             addedBy: 'BBBBBB'
@@ -102,7 +102,7 @@ describe('Service Tests', () => {
           {
             voucherNo: 'BBBBBB',
             amount: 1,
-            dateCreated: currentDate.format(DATE_FORMAT),
+            dateCreated: currentDate.format(DATE_TIME_FORMAT),
             tag: 'BBBBBB',
             customerId: 1,
             addedBy: 'BBBBBB'

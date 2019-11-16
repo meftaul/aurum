@@ -6,6 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { ITransactionHistory, TransactionHistory } from 'app/shared/model/transaction-history.model';
 import { TransactionHistoryService } from './transaction-history.service';
 
@@ -15,7 +16,6 @@ import { TransactionHistoryService } from './transaction-history.service';
 })
 export class TransactionHistoryUpdateComponent implements OnInit {
   isSaving: boolean;
-  dateCreatedDp: any;
 
   editForm = this.fb.group({
     id: [],
@@ -45,7 +45,7 @@ export class TransactionHistoryUpdateComponent implements OnInit {
       id: transactionHistory.id,
       voucherNo: transactionHistory.voucherNo,
       amount: transactionHistory.amount,
-      dateCreated: transactionHistory.dateCreated,
+      dateCreated: transactionHistory.dateCreated != null ? transactionHistory.dateCreated.format(DATE_TIME_FORMAT) : null,
       tag: transactionHistory.tag,
       customerId: transactionHistory.customerId,
       addedBy: transactionHistory.addedBy
@@ -72,7 +72,8 @@ export class TransactionHistoryUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       voucherNo: this.editForm.get(['voucherNo']).value,
       amount: this.editForm.get(['amount']).value,
-      dateCreated: this.editForm.get(['dateCreated']).value,
+      dateCreated:
+        this.editForm.get(['dateCreated']).value != null ? moment(this.editForm.get(['dateCreated']).value, DATE_TIME_FORMAT) : undefined,
       tag: this.editForm.get(['tag']).value,
       customerId: this.editForm.get(['customerId']).value,
       addedBy: this.editForm.get(['addedBy']).value

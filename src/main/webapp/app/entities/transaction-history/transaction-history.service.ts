@@ -53,9 +53,7 @@ export class TransactionHistoryService {
   protected convertDateFromClient(transactionHistory: ITransactionHistory): ITransactionHistory {
     const copy: ITransactionHistory = Object.assign({}, transactionHistory, {
       dateCreated:
-        transactionHistory.dateCreated != null && transactionHistory.dateCreated.isValid()
-          ? transactionHistory.dateCreated.format(DATE_FORMAT)
-          : null
+        transactionHistory.dateCreated != null && transactionHistory.dateCreated.isValid() ? transactionHistory.dateCreated.toJSON() : null
     });
     return copy;
   }

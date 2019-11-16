@@ -7,7 +7,7 @@ import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 
@@ -35,7 +35,7 @@ public class TransactionHistory implements Serializable {
 
     @NotNull
     @Column(name = "date_created", nullable = false)
-    private LocalDate dateCreated;
+    private Instant dateCreated;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -85,16 +85,16 @@ public class TransactionHistory implements Serializable {
         this.amount = amount;
     }
 
-    public LocalDate getDateCreated() {
+    public Instant getDateCreated() {
         return dateCreated;
     }
 
-    public TransactionHistory dateCreated(LocalDate dateCreated) {
+    public TransactionHistory dateCreated(Instant dateCreated) {
         this.dateCreated = dateCreated;
         return this;
     }
 
-    public void setDateCreated(LocalDate dateCreated) {
+    public void setDateCreated(Instant dateCreated) {
         this.dateCreated = dateCreated;
     }
 

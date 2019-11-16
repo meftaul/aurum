@@ -20,7 +20,7 @@
         },
         {
             "fieldName": "dateCreated",
-            "fieldType": "LocalDate",
+            "fieldType": "Instant",
             "fieldValidateRules": [
                 "required"
             ]
