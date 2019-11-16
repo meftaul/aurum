@@ -101,8 +101,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (this.searchCategory === 'id') {
       this.customerService.find(+this.cusromerSearchingValue).subscribe(
         data => {
+          if (!data.body) this.jhiAlertService.warning('Customer not found.');
           this.customer = data.body;
-          this.customerID = this.customer.id;
+          this.customerID = this.customer ? this.customer.id : 0;
         },
         error => {
           this.customer = null;
@@ -112,8 +113,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     } else {
       this.customerService.query({ 'phone.equals': this.cusromerSearchingValue }).subscribe(
         data => {
+          if (data.body && data.body.length === 0) this.jhiAlertService.warning('Customer not found.');
           this.customer = data.body[0];
-          this.customerID = this.customer.id;
+          this.customerID = this.customer ? this.customer.id : 0;
         },
         error => {
           this.customer = null;
@@ -324,11 +326,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
     voucherTemp.vat = this.voucherForm.controls.vat.value;
     voucherTemp.totalPayableAmount = this.payableTotalAmount;
     voucherTemp.aurumServices = this.aurumServiceList;
-    // voucherTemp.dateCreated = moment(new Date(), DATE_TIME_FORMAT);
-    voucherTemp.dateCreated =
-      this.voucherForm.controls.deliveryDate.value !== null
-        ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
-        : undefined;
+    voucherTemp.dateCreated = moment(new Date(), DATE_TIME_FORMAT);
+    // voucherTemp.dateCreated =
+    //   this.voucherForm.controls.deliveryDate.value !== null
+    //     ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
+    //     : undefined;
     voucherTemp.deliveryDate =
       this.voucherForm.controls.deliveryDate.value !== null
         ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
