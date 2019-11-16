@@ -36,6 +36,11 @@ public class CustomVoucherService {
     public Voucher save(Voucher voucher) {
         log.debug("Request to save Voucher : {}", voucher);
 
+        //generate voucher number
+        voucher.setVoucherNo(getVoucherNumber(String.valueOf(voucher.getCustomerId())));
+        voucher.setDateCreated(LocalDate.now());
+
+
         Voucher savedVoucher = voucherRepository.save(voucher);
 
         for (AurumService s : voucher.getAurumServices()) {
@@ -70,6 +75,12 @@ public class CustomVoucherService {
 
         return transactionHistoryRepository.save(transactionHistory);
 
+    }
+
+    private String getVoucherNumber(String userId) {
+        LocalDate today = LocalDate.now();
+        Long todayCount = this.voucherRepository.countByDateCreated(today);
+        return String.valueOf(today.getYear() % 100) + String.valueOf(today.getMonthValue()) + String.valueOf(today.getDayOfMonth()) + String.format("%05d", todayCount);
     }
 
 }
