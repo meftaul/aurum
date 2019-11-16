@@ -7,6 +7,7 @@ import com.meftaul.aurum.repository.AurumServiceRepository;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.security.SecurityUtils;
+import com.meftaul.aurum.service.dto.CustomVoucherDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +64,9 @@ public class CustomVoucherService {
         return Optional.of(voucherViewerDto);
     }
 
-    public Voucher save(Voucher voucher) {
-        log.debug("Request to save Voucher : {}", voucher);
+    public Voucher save(CustomVoucherDto voucherDto) {
+        log.debug("Request to save Voucher : {}", voucherDto);
+        Voucher voucher = voucherDto.getVoucher();
 
         //generate voucher number
         voucher.setVoucherNo(getVoucherNumber(String.valueOf(voucher.getCustomerId())));
@@ -79,7 +81,7 @@ public class CustomVoucherService {
             savedVoucher.addAurumService(s);
         }
 
-        createTxnHistory(savedVoucher, savedVoucher.getTotalPayableAmount(), TransactionStatus.RECEIVE);
+        createTxnHistory(savedVoucher, voucherDto.getPaidAmount(), TransactionStatus.RECEIVE);
         if (savedVoucher.getVat() != null) {
             createTxnHistory(savedVoucher, savedVoucher.getVat(), TransactionStatus.VAT);
         }

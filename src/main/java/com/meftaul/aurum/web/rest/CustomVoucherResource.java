@@ -3,6 +3,7 @@ package com.meftaul.aurum.web.rest;
 import com.meftaul.aurum.domain.Voucher;
 import com.meftaul.aurum.service.CustomVoucherService;
 import com.meftaul.aurum.service.VoucherService;
+import com.meftaul.aurum.service.dto.CustomVoucherDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
@@ -41,12 +42,13 @@ public class CustomVoucherResource {
     * POST saveVoucher
     */
     @PostMapping("/save-voucher")
-    public ResponseEntity<Voucher> saveVoucher(@Valid @RequestBody Voucher voucher) throws URISyntaxException {
-        log.debug("REST request to save Voucher : {}", voucher);
+    public ResponseEntity<Voucher> saveVoucher(@Valid @RequestBody CustomVoucherDto voucherDto) throws URISyntaxException {
+        log.debug("REST request to save Voucher : {}", voucherDto);
+        Voucher voucher = voucherDto.getVoucher();
         if (voucher.getId() != null) {
             throw new BadRequestAlertException("A new voucher cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Voucher result = customVoucherService.save(voucher);
+        Voucher result = customVoucherService.save(voucherDto);
         return ResponseEntity.created(new URI("/api/vouchers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
