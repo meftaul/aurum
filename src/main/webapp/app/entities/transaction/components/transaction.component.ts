@@ -15,6 +15,7 @@ import { KaratService } from 'app/entities/karat/karat.service';
 import { RateService } from 'app/entities/rate/rate.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
+import { ItemService } from 'app/entities/item/item.service';
 
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
@@ -58,6 +59,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   voucherStatus: any[] = VOUCHER_STATUS;
   alloyTypeList: any[] = ALLOY_TYPE;
   karatList: any[] = [];
+  itemDropdownList: any[] = [];
   rateTypePriceMap: Map<string, number> = new Map();
   karatTypePercentMap: Map<string, number> = new Map();
   serviceListColumns: string[] = SERVICE_LIST_COLUMNS;
@@ -69,6 +71,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     protected customerService: CustomerService,
     protected karatService: KaratService,
     protected rateService: RateService,
+    protected itemService: ItemService,
     private accountService: AccountService,
     protected eventManager: JhiEventManager
   ) {}
@@ -80,6 +83,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     this.fetchKaratList();
     this.fetchRateList();
+    this.fetchItemList();
 
     this.accountService.identity().then((account: Account) => {
       this.account = account;
@@ -138,7 +142,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   addService() {
     this.aurumServiceForm.markAllAsTouched();
     if (this.aurumServiceForm.invalid) {
-      this.jhiAlertService.warning('error');
+      this.jhiAlertService.warning('Form Invalid.');
       return;
     }
 
@@ -263,9 +267,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   makePayment() {
-    this.aurumServiceForm.markAllAsTouched();
-    if (this.voucherForm.invalid || this.aurumServiceList.length === 0) {
-      this.jhiAlertService.warning('error');
+    // this.aurumServiceForm.markAllAsTouched();
+    if (this.aurumServiceList.length === 0) {
+      this.jhiAlertService.warning('Invalid Data.');
       return;
     }
 
@@ -328,6 +332,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  // GET ITEM LIST TO SHOW IN DROPDOWN
+  fetchItemList() {
+    this.itemService.query().subscribe(data => {
+      if (data.body && data.body.length !== 0) {
+        data.body.map(item => {
+          this.itemDropdownList = [{ value: item.name, viewValue: item.name }, ...this.itemDropdownList];
+        });
+      }
+    });
+  }
+
   // VORI_TO_GRAM = 11.6638125;
   // ANA_TO_GRAM = 0.72898828125;
   // ROTTI_TO_GRAM = 0.121498046875;
@@ -339,7 +354,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     const voriValue = +(gramValue / VORI_TO_GRAM);
     const anaValue = +(voriValue % 1).toFixed(7) * 16;
     const rottiValue = +(anaValue % 1).toFixed(7) * 6;
-    const pointValue = +(rottiValue % 1).toFixed(7) * 100;
+    const pointValue = +(rottiValue % 1).toFixed(7) * 10;
 
     this.aurumServiceForm.controls.weightVori.setValue(Math.floor(voriValue));
     this.aurumServiceForm.controls.weightAna.setValue(Math.floor(anaValue));

@@ -31,7 +31,7 @@
                         </mat-form-field>
                         <mat-form-field class="col-md-6">
                             <mat-select placeholder="Select Item" formControlName="itemName">
-                                <mat-option *ngFor="let item of itemNames" [value]="item.value">
+                                <mat-option *ngFor="let item of itemDropdownList" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
