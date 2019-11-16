@@ -76,6 +76,12 @@
                             <span>Transaction</span>
                         </a>
                     </li>
+                    <li>
+                        <a *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']" class="dropdown-item" routerLink="voucher-viewer" routerLinkActive="active" (click)="collapseNavbar()">
+                            <fa-icon icon="file-alt" fixedWidth="true"></fa-icon>
+                            <span>Voucher Viewer</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
