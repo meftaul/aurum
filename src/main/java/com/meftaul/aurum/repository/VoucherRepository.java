@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 /**
@@ -14,5 +15,6 @@ import java.time.LocalDate;
 public interface VoucherRepository extends JpaRepository<Voucher, Long>, JpaSpecificationExecutor<Voucher> {
 
     Long countByDateCreated(LocalDate date);
+    Voucher findByVoucherNo(String voucher);
 
 }

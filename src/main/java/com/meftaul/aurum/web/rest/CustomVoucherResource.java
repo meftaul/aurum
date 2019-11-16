@@ -3,20 +3,20 @@ package com.meftaul.aurum.web.rest;
 import com.meftaul.aurum.domain.Voucher;
 import com.meftaul.aurum.service.CustomVoucherService;
 import com.meftaul.aurum.service.VoucherService;
+import com.meftaul.aurum.service.dto.VoucherViewerDto;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 /**
  * CustomVoucherResource controller
@@ -50,6 +50,13 @@ public class CustomVoucherResource {
         return ResponseEntity.created(new URI("/api/vouchers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    @GetMapping("/{voucherNo}")
+    public ResponseEntity<VoucherViewerDto> getVoucher(@PathVariable String voucherNo) {
+        log.debug("REST request to get Voucher : {}", voucherNo);
+        Optional<VoucherViewerDto> voucher = customVoucherService.findByVoucherNo(voucherNo);
+        return ResponseUtil.wrapOrNotFound(voucher);
     }
 
 }

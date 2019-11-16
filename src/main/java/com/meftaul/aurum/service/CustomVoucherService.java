@@ -7,6 +7,7 @@ import com.meftaul.aurum.repository.AurumServiceRepository;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.security.SecurityUtils;
+import com.meftaul.aurum.service.dto.VoucherViewerDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -31,6 +34,20 @@ public class CustomVoucherService {
         this.voucherRepository = voucherRepository;
         this.aurumServiceRepository = aurumServiceRepository;
         this.transactionHistoryRepository = transactionHistoryRepository;
+    }
+
+    public Optional<VoucherViewerDto> findByVoucherNo(String voucherNo) {
+
+        Voucher voucher = this.voucherRepository.findByVoucherNo(voucherNo);
+        List<TransactionHistory> txnHistory = this.transactionHistoryRepository.findAllByVoucherNo(voucherNo);
+
+        VoucherViewerDto voucherViewerDto = new VoucherViewerDto();
+        voucherViewerDto.setVoucherInfo(voucher);
+        voucherViewerDto.setTxnHistory(txnHistory);
+
+        //calculate due amount
+
+        return Optional.of(voucherViewerDto);
     }
 
     public Voucher save(Voucher voucher) {
