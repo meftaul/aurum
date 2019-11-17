@@ -1,0 +1,14 @@
+@media print {
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  #section-to-print,
+  #section-to-print * {
+    display: block !important;
+    // visibility: visible;
+    // color: white;
+    // font-size: 5rem;
+  }
+}

@@ -38,6 +38,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
   voucherForm: FormGroup;
   aurumServiceForm: FormGroup;
 
+  selectedService = 'X-Ray';
+  printDate = new Date();
+  showPrintPreview = false;
+
   showBtnForCalculatedMelting = false;
   vatChecked = false;
 
@@ -327,27 +331,29 @@ export class TransactionComponent implements OnInit, OnDestroy {
     voucherTemp.totalPayableAmount = this.payableTotalAmount;
     voucherTemp.aurumServices = this.aurumServiceList;
     voucherTemp.dateCreated = moment(new Date(), DATE_TIME_FORMAT);
-    // voucherTemp.dateCreated =
-    //   this.voucherForm.controls.deliveryDate.value !== null
-    //     ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
-    //     : undefined;
     voucherTemp.deliveryDate =
       this.voucherForm.controls.deliveryDate.value !== null
         ? moment(this.voucherForm.controls.deliveryDate.value, DATE_TIME_FORMAT)
         : undefined;
     if (this.payableTotalAmount === +this.voucherForm.controls.paidAmount.value) voucherTemp.status = VoucherStatus.PAID;
     else voucherTemp.status = VoucherStatus.DUE;
-    // voucherTemp.status = VoucherStatus.PAID;
     voucherTemp.addedBy = this.account.login;
 
     const customVoucherDto = new CustomVoucherDto();
     customVoucherDto.voucher = voucherTemp;
     customVoucherDto.paidAmount = +this.voucherForm.controls.paidAmount.value;
 
-    this.transactionService.create(customVoucherDto).subscribe(data => {
-      // this.jhiAlertService.success('success');
-      this.resetVoucherForm();
-    });
+    // window.print();
+
+    this.transactionService.create(customVoucherDto).subscribe(
+      data => {
+        // window.print();
+        this.resetVoucherForm();
+      },
+      error => {
+        this.jhiAlertService.error('Error in saving voucher. ');
+      }
+    );
   }
 
   resetVoucherForm() {
@@ -482,5 +488,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
+  }
+
+  printPage() {
+    this.showPrintPreview = true;
+    window.print();
+    this.showPrintPreview = false;
   }
 }
