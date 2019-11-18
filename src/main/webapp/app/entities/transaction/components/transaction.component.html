@@ -323,7 +323,208 @@
 <!-- ----------------------------------------- print section ----------------------------------------- -->
 <!-- <button class="no-print" (click)="printPage()">print</button> -->
 
-<div class="container-fluid" style="display: none;" [hidden]="false">
+<div class="container" id="section-to-print">
+    <div class="row">
+        <div class="col">
+            <h3 style="text-align: center; text-decoration: underline;">Invoice</h3>
+        </div>
+    </div>
+
+    <div class="row no-gutters">
+        <div class="col">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td>Box Number</td>
+                        <td>{{voucherForm?.controls?.boxNumber?.value}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-decoration: underline; font-weight: bold;">Customer Profile:</td>
+                    </tr>
+                    <tr>
+                        <td>Name</td>
+                        <td>{{customer?.firstName}} {{customer?.lastName}}</td>
+                    </tr>
+                    <tr>
+                        <td>Mobile Number</td>
+                        <td>{{customer?.phone}}</td>
+                    </tr>
+                    <tr>
+                        <td>Address</td>
+                        <td>{{customer?.address}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td>Customer ID</td>
+                        <td>{{customer?.id}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-decoration: underline; font-weight: bold;"> </td>
+                    </tr>
+                    <tr>
+                        <td>Voucher Number</td>
+                        <td>{{savedVoucherNumber}}</td>
+                    </tr>
+                    <!-- <tr>
+                                    <td>Date of Testing</td>
+                                    <td>17-11-2019</td>
+                                </tr>
+                                <tr>
+                                    <td>Time of Testing</td>
+                                    <td>08:30 PM</td>
+                                </tr> -->
+                    <tr>
+                        <td>Print Date</td>
+                        <td>{{printDate | date}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="row" style="margin-top: 50px;">
+            <div class="col">
+                <table class="table table-borderless col-md-12">
+                    <thead>
+                        <tr>
+                            <th colspan="9" style="text-decoration: underline; font-weight: bold;">Service Information
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Service Type</th>
+                            <th>Item Name</th>
+                            <th>Weight(Gram)</th>
+                            <th>Karat Type</th>
+                            <th>Expected Karat Type</th>
+                            <th>Added Alloy</th>
+                            <th>Alloy Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let service of aurumServiceList">
+                            <td>{{service.serviceType}}</td>
+                            <td>{{service.itemName}}</td>
+                            <td>{{service.weight}}</td>
+                            <td>{{service.karatType}}</td>
+                            <td>{{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
+                            <td>{{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
+                            <td>{{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
+                            </td>
+                            <td>{{service.rate}}</td>
+                            <td>{{service.amount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 50px;">
+            <div class="col" style="width: 250px;">
+                <table class="table table-borderd">
+                    <thead>
+                        <th colspan="2" style="text-decoration: underline; font-weight: bold;">Billing Information
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Calculated Amount</td>
+                            <td>{{calculateTotalAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Vat</td>
+                            <td>{{voucherForm?.controls?.vat?.value}}</td>
+                        </tr>
+                        <tr>
+                            <td>Discount</td>
+                            <td>{{voucherForm?.controls?.disountAmount?.value}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Payable Amount</td>
+                            <td>{{payableTotalAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Paid Amount</td>
+                            <td>{{voucherForm?.controls?.paidAmount?.value}}</td>
+                        </tr>
+                        <tr>
+                            <td>Amount Due</td>
+                            <td>{{payableTotalAmount - voucherForm?.controls?.paidAmount?.value}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col" style="margin-top: 50px;">
+                <table class="table table-bordered" style="margin-left: 150px;">
+                    <!-- <thead>
+                        <th colspan="2" style="text-decoration: underline; font-weight: bold;"></th>
+                    </thead> -->
+                    <tbody>
+                        <tr>
+                            <td>Checked By</td>
+                            <td style="color: white;"> _______________________________ </td>
+                        </tr>
+                        <tr>
+                            <td>X-Ray By</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>Marked By</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>Melting By</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>Delivery By</td>
+                            <td> </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 50px; width: 100%;">
+            <div class="col">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td> </td>
+                            <td style="font-weight: bold; text-align: center; border-top: 1px solid black;">
+                                Authorized Signature</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="col">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td> </td>
+                            <td style="font-weight: bold; text-align: center; border-top: 1px solid black;">Customer
+                                Signature</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<!-- <div class="" id="section-to-print">
     <div class="row">
         <div class="col">
             <h3 style="text-align: center; text-decoration: underline;">Invoice</h3>
@@ -371,14 +572,6 @@
                         <td>Voucher Number</td>
                         <td>19111700001</td>
                     </tr>
-                    <!-- <tr>
-                        <td>Date of Testing</td>
-                        <td>17-11-2019</td>
-                    </tr>
-                    <tr>
-                        <td>Time of Testing</td>
-                        <td>08:30 PM</td>
-                    </tr> -->
                     <tr>
                         <td>Print Date</td>
                         <td>{{printDate | date}}</td>
@@ -415,7 +608,6 @@
                         <td>{{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
                         <td>{{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
                         </td>
-                        <!-- <td>{{service.serviceCharge}}</td> -->
                         <td>{{service.rate}}</td>
                         <td>{{service.amount}}</td>
                     </tr>
@@ -464,12 +656,9 @@
                     <thead>
                         <tr>
                             <th style="font-weight: bold;">Delivery Date Time</th>
-                            <th style="font-weight: bold;"> {{printDate | date}}</th>
+                            <th style="font-weight: bold;">
+                                {{voucherForm?.controls?.deliveryDate?.value | date:'medium'}}</th>
                         </tr>
-                        <!-- <tr>
-                            <th style="font-weight: bold;">Delivery Time</th>
-                            <th style="font-weight: bold;"> {{printDate | date}}</th>
-                        </tr> -->
                     </thead>
 
                 </table>
@@ -504,4 +693,4 @@
 
     </div>
 
-</div>
+</div> -->

@@ -40,7 +40,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   selectedService = 'X-Ray';
   printDate = new Date();
-  showPrintPreview = false;
+  savedVoucherNumber: string;
 
   showBtnForCalculatedMelting = false;
   vatChecked = false;
@@ -347,7 +347,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     this.transactionService.create(customVoucherDto).subscribe(
       data => {
-        // window.print();
+        this.savedVoucherNumber = data.body.voucher.voucherNo;
+        window.print();
         this.resetVoucherForm();
       },
       error => {
@@ -491,8 +492,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   printPage() {
-    this.showPrintPreview = true;
     window.print();
-    this.showPrintPreview = false;
   }
 }
