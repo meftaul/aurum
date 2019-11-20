@@ -306,6 +306,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
+                            <!-- <button type="button" class="btn btn-primary float-right" (click)="open(content)"
+                                style="margin-left: 2px;">Preview Voucher</button> -->
                             <button type="button" class="btn btn-primary float-right" (click)="makePayment()"
                                 style="margin-left: 2px;">Make
                                 Payment</button>
@@ -522,7 +524,19 @@
 </div>
 
 
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title" style="text-align: center; text-decoration: underline;">Invoice
+        </h4>
+    </div>
+    <div class="modal-body">
 
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+    </div>
+</ng-template>
 
 <!-- <div class="" id="section-to-print">
     <div class="row">

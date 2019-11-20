@@ -18,6 +18,7 @@ import { Account } from 'app/core/user/account.model';
 import { ItemService } from 'app/entities/item/item.service';
 import { CustomVoucherDto } from 'app/shared/model/custom.voucher.model';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
@@ -83,7 +84,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     protected rateService: RateService,
     protected itemService: ItemService,
     private accountService: AccountService,
-    protected eventManager: JhiEventManager
+    protected eventManager: JhiEventManager,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit() {
@@ -132,6 +134,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
   createCustomer() {
     let customerTemp: ICustomer;
     this.customerService.create(customerTemp).subscribe(data => {});
+  }
+
+  open(content) {
+    this.modalService.open(content, { size: 'xl' });
   }
   // ****************************** CUSTOMER ****************************** END
 
@@ -343,18 +349,18 @@ export class TransactionComponent implements OnInit, OnDestroy {
     customVoucherDto.voucher = voucherTemp;
     customVoucherDto.paidAmount = +this.voucherForm.controls.paidAmount.value;
 
-    // window.print();
+    window.print();
 
-    this.transactionService.create(customVoucherDto).subscribe(
-      data => {
-        this.savedVoucherNumber = data.body.voucher.voucherNo;
-        window.print();
-        this.resetVoucherForm();
-      },
-      error => {
-        this.jhiAlertService.error('Error in saving voucher. ');
-      }
-    );
+    // this.transactionService.create(customVoucherDto).subscribe(
+    //   data => {
+    //     this.savedVoucherNumber = data.body.voucher.voucherNo;
+    //     window.print();
+    //     this.resetVoucherForm();
+    //   },
+    //   error => {
+    //     this.jhiAlertService.error('Error in saving voucher. ');
+    //   }
+    // );
   }
 
   resetVoucherForm() {

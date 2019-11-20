@@ -45,8 +45,9 @@ export class CustomerFormDialogComponent implements OnInit {
     customer = this.customerForm.value;
     this.customerService.create(customer).subscribe(response => {
       /* eslint-disable no-console */
-      console.log(response.body);
+      // console.log(response.body);
       /* eslint-enable no-console */
+      localStorage.setItem('storedCustomerId', response.body.id + '');
       this.eventManager.broadcast({
         name: 'customerListModification',
         content: 'Create a customer'
