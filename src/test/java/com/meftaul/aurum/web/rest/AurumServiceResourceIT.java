@@ -78,6 +78,13 @@ public class AurumServiceResourceIT {
     private static final BigDecimal UPDATED_SERVICE_CHARGE = new BigDecimal(1);
     private static final BigDecimal SMALLER_SERVICE_CHARGE = new BigDecimal(0 - 1);
 
+    private static final BigDecimal DEFAULT_FREE_CHECK = new BigDecimal(0);
+    private static final BigDecimal UPDATED_FREE_CHECK = new BigDecimal(1);
+    private static final BigDecimal SMALLER_FREE_CHECK = new BigDecimal(0 - 1);
+
+    private static final String DEFAULT_HALL_MARKED_TEXT = "AAAAAAAAAA";
+    private static final String UPDATED_HALL_MARKED_TEXT = "BBBBBBBBBB";
+
     @Autowired
     private AurumServiceRepository aurumServiceRepository;
 
@@ -134,7 +141,9 @@ public class AurumServiceResourceIT {
             .expectedKaratType(DEFAULT_EXPECTED_KARAT_TYPE)
             .addedAlloy(DEFAULT_ADDED_ALLOY)
             .alloyQuantity(DEFAULT_ALLOY_QUANTITY)
-            .serviceCharge(DEFAULT_SERVICE_CHARGE);
+            .serviceCharge(DEFAULT_SERVICE_CHARGE)
+            .freeCheck(DEFAULT_FREE_CHECK)
+            .hallMarkedText(DEFAULT_HALL_MARKED_TEXT);
         return aurumService;
     }
     /**
@@ -156,7 +165,9 @@ public class AurumServiceResourceIT {
             .expectedKaratType(UPDATED_EXPECTED_KARAT_TYPE)
             .addedAlloy(UPDATED_ADDED_ALLOY)
             .alloyQuantity(UPDATED_ALLOY_QUANTITY)
-            .serviceCharge(UPDATED_SERVICE_CHARGE);
+            .serviceCharge(UPDATED_SERVICE_CHARGE)
+            .freeCheck(UPDATED_FREE_CHECK)
+            .hallMarkedText(UPDATED_HALL_MARKED_TEXT);
         return aurumService;
     }
 
@@ -192,6 +203,8 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getAddedAlloy()).isEqualTo(DEFAULT_ADDED_ALLOY);
         assertThat(testAurumService.getAlloyQuantity()).isEqualTo(DEFAULT_ALLOY_QUANTITY);
         assertThat(testAurumService.getServiceCharge()).isEqualTo(DEFAULT_SERVICE_CHARGE);
+        assertThat(testAurumService.getFreeCheck()).isEqualTo(DEFAULT_FREE_CHECK);
+        assertThat(testAurumService.getHallMarkedText()).isEqualTo(DEFAULT_HALL_MARKED_TEXT);
     }
 
     @Test
@@ -236,7 +249,9 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.[*].expectedKaratType").value(hasItem(DEFAULT_EXPECTED_KARAT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].addedAlloy").value(hasItem(DEFAULT_ADDED_ALLOY.toString())))
             .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(DEFAULT_ALLOY_QUANTITY.intValue())))
-            .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(DEFAULT_SERVICE_CHARGE.intValue())));
+            .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(DEFAULT_SERVICE_CHARGE.intValue())))
+            .andExpect(jsonPath("$.[*].freeCheck").value(hasItem(DEFAULT_FREE_CHECK.intValue())))
+            .andExpect(jsonPath("$.[*].hallMarkedText").value(hasItem(DEFAULT_HALL_MARKED_TEXT.toString())));
     }
     
     @Test
@@ -261,7 +276,9 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.expectedKaratType").value(DEFAULT_EXPECTED_KARAT_TYPE.toString()))
             .andExpect(jsonPath("$.addedAlloy").value(DEFAULT_ADDED_ALLOY.toString()))
             .andExpect(jsonPath("$.alloyQuantity").value(DEFAULT_ALLOY_QUANTITY.intValue()))
-            .andExpect(jsonPath("$.serviceCharge").value(DEFAULT_SERVICE_CHARGE.intValue()));
+            .andExpect(jsonPath("$.serviceCharge").value(DEFAULT_SERVICE_CHARGE.intValue()))
+            .andExpect(jsonPath("$.freeCheck").value(DEFAULT_FREE_CHECK.intValue()))
+            .andExpect(jsonPath("$.hallMarkedText").value(DEFAULT_HALL_MARKED_TEXT.toString()));
     }
 
     @Test
@@ -296,7 +313,9 @@ public class AurumServiceResourceIT {
             .expectedKaratType(UPDATED_EXPECTED_KARAT_TYPE)
             .addedAlloy(UPDATED_ADDED_ALLOY)
             .alloyQuantity(UPDATED_ALLOY_QUANTITY)
-            .serviceCharge(UPDATED_SERVICE_CHARGE);
+            .serviceCharge(UPDATED_SERVICE_CHARGE)
+            .freeCheck(UPDATED_FREE_CHECK)
+            .hallMarkedText(UPDATED_HALL_MARKED_TEXT);
 
         restAurumServiceMockMvc.perform(put("/api/aurum-services")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -319,6 +338,8 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getAddedAlloy()).isEqualTo(UPDATED_ADDED_ALLOY);
         assertThat(testAurumService.getAlloyQuantity()).isEqualTo(UPDATED_ALLOY_QUANTITY);
         assertThat(testAurumService.getServiceCharge()).isEqualTo(UPDATED_SERVICE_CHARGE);
+        assertThat(testAurumService.getFreeCheck()).isEqualTo(UPDATED_FREE_CHECK);
+        assertThat(testAurumService.getHallMarkedText()).isEqualTo(UPDATED_HALL_MARKED_TEXT);
     }
 
     @Test

@@ -15,6 +15,8 @@ export interface IAurumService {
   addedAlloy?: Alloy;
   alloyQuantity?: number;
   serviceCharge?: number;
+  freeCheck?: number;
+  hallMarkedText?: string;
   voucher?: IVoucher;
 }
 
@@ -33,6 +35,8 @@ export class AurumService implements IAurumService {
     public addedAlloy?: Alloy,
     public alloyQuantity?: number,
     public serviceCharge?: number,
+    public freeCheck?: number,
+    public hallMarkedText?: string,
     public voucher?: IVoucher
   ) {}
 }
