@@ -53,6 +53,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   amountDue = 0;
   selectedServiceCharge = 0;
   karatParcentDifference = 0;
+  selectedService: string;
 
   eventSubscriber: Subscription;
 
@@ -145,14 +146,16 @@ export class TransactionComponent implements OnInit, OnDestroy {
   prepareAurumServiceForm() {
     this.aurumServiceForm = this.formBuilder.group({
       serviceType: ['', [Validators.required]],
-      itemName: ['', [Validators.required]],
-      karatType: ['', [Validators.required]],
+      itemName: [''],
+      karatType: [''],
       expectedKaratType: [''],
       addedAlloy: [''],
       alloyQuantity: [''],
       rate: ['', [Validators.required]],
-      quantity: ['', [Validators.required]],
-      weight: ['', [Validators.required]],
+      quantity: [''],
+      weight: [''],
+      freeCheck: ['', [Validators.min(0), Validators.max(1)]],
+      hallMarkedText: [''],
 
       // only for weight calculation
       weightVori: [''],
@@ -169,6 +172,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (
+      this.aurumServiceForm.controls.quantity.value === null ||
+      this.aurumServiceForm.controls.quantity.value === 0 ||
+      this.aurumServiceForm.controls.quantity.value === ''
+    ) {
+      this.aurumServiceForm.controls.quantity.setValue(1);
+    }
+
     const aurumServiceTemp = new AurumService();
     aurumServiceTemp.serviceType = this.aurumServiceForm.controls.serviceType.value;
     aurumServiceTemp.itemName = this.aurumServiceForm.controls.itemName.value;
@@ -178,6 +189,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     aurumServiceTemp.quantity = this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.amount = +this.aurumServiceForm.controls.rate.value * +this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.weight = this.aurumServiceForm.controls.weight.value;
+
+    aurumServiceTemp.freeCheck = this.aurumServiceForm.controls.freeCheck.value;
+    aurumServiceTemp.hallMarkedText = this.aurumServiceForm.controls.hallMarkedText.value;
 
     if (this.aurumServiceForm.controls.serviceType.value === 'Calculated Melting') {
       aurumServiceTemp.expectedKaratType = this.aurumServiceForm.controls.expectedKaratType.value;
@@ -212,11 +226,16 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   serviceTypeChange(event) {
+    this.selectedService = event;
     // reset some field
     this.aurumServiceForm.controls.karatType.setValue(null);
     this.aurumServiceForm.controls.expectedKaratType.setValue(null);
     this.aurumServiceForm.controls.alloyQuantity.setValue(null);
     this.aurumServiceForm.controls.addedAlloy.setValue(null);
+
+    if (this.selectedService === 'X-Ray') {
+      this.aurumServiceForm.controls.quantity.setValue(1);
+    }
 
     const weightTemp = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
     if (weightTemp <= 116) {

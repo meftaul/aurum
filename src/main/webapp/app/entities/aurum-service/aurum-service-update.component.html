@@ -122,6 +122,26 @@
                         </small>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_freeCheck">Free Check</label>
+                    <input type="number" class="form-control" name="freeCheck" id="field_freeCheck"
+                           formControlName="freeCheck"/>
+                    <div *ngIf="editForm.get('freeCheck').invalid && (editForm.get('freeCheck').dirty || editForm.get('freeCheck').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('freeCheck').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('freeCheck')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_hallMarkedText">Hall Marked Text</label>
+                    <input type="text" class="form-control" name="hallMarkedText" id="field_hallMarkedText"
+                           formControlName="hallMarkedText"/>
+                </div>
 
                 <div class="form-group">
                     <label class="form-control-label" for="field_voucher">Voucher</label>

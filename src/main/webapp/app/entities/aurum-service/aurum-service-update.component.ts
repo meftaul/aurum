@@ -35,6 +35,8 @@ export class AurumServiceUpdateComponent implements OnInit {
     addedAlloy: [],
     alloyQuantity: [null, [Validators.min(0)]],
     serviceCharge: [null, [Validators.min(0)]],
+    freeCheck: [null, [Validators.min(0)]],
+    hallMarkedText: [],
     voucher: []
   });
 
@@ -75,6 +77,8 @@ export class AurumServiceUpdateComponent implements OnInit {
       addedAlloy: aurumService.addedAlloy,
       alloyQuantity: aurumService.alloyQuantity,
       serviceCharge: aurumService.serviceCharge,
+      freeCheck: aurumService.freeCheck,
+      hallMarkedText: aurumService.hallMarkedText,
       voucher: aurumService.voucher
     });
   }
@@ -109,6 +113,8 @@ export class AurumServiceUpdateComponent implements OnInit {
       addedAlloy: this.editForm.get(['addedAlloy']).value,
       alloyQuantity: this.editForm.get(['alloyQuantity']).value,
       serviceCharge: this.editForm.get(['serviceCharge']).value,
+      freeCheck: this.editForm.get(['freeCheck']).value,
+      hallMarkedText: this.editForm.get(['hallMarkedText']).value,
       voucher: this.editForm.get(['voucher']).value
     };
   }

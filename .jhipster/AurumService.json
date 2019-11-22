@@ -23,7 +23,7 @@
             "fieldName": "quantity",
             "fieldType": "Integer",
             "fieldValidateRules": [
-              "min"
+                "min"
             ],
             "fieldValidateRulesMin": "0"
         },
@@ -31,7 +31,7 @@
             "fieldName": "weight",
             "fieldType": "BigDecimal",
             "fieldValidateRules": [
-              "min"
+                "min"
             ],
             "fieldValidateRulesMin": "0"
         },
@@ -39,7 +39,7 @@
             "fieldName": "rate",
             "fieldType": "BigDecimal",
             "fieldValidateRules": [
-              "min"
+                "min"
             ],
             "fieldValidateRulesMin": "0"
         },
@@ -68,7 +68,7 @@
             "fieldName": "alloyQuantity",
             "fieldType": "BigDecimal",
             "fieldValidateRules": [
-              "min"
+                "min"
             ],
             "fieldValidateRulesMin": "0"
         },
@@ -79,6 +79,18 @@
                 "min"
             ],
             "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "freeCheck",
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": 0
+        },
+        {
+            "fieldName": "hallMarkedText",
+            "fieldType": "String"
         }
     ],
     "changelogDate": "20191026063357",

@@ -67,6 +67,13 @@ public class AurumService implements Serializable {
     @Column(name = "service_charge", precision = 21, scale = 2)
     private BigDecimal serviceCharge;
 
+    @DecimalMin(value = "0")
+    @Column(name = "free_check", precision = 21, scale = 2)
+    private BigDecimal freeCheck;
+
+    @Column(name = "hall_marked_text")
+    private String hallMarkedText;
+
     @ManyToOne
     @JsonIgnoreProperties("aurumServices")
     private Voucher voucher;
@@ -236,6 +243,32 @@ public class AurumService implements Serializable {
         this.serviceCharge = serviceCharge;
     }
 
+    public BigDecimal getFreeCheck() {
+        return freeCheck;
+    }
+
+    public AurumService freeCheck(BigDecimal freeCheck) {
+        this.freeCheck = freeCheck;
+        return this;
+    }
+
+    public void setFreeCheck(BigDecimal freeCheck) {
+        this.freeCheck = freeCheck;
+    }
+
+    public String getHallMarkedText() {
+        return hallMarkedText;
+    }
+
+    public AurumService hallMarkedText(String hallMarkedText) {
+        this.hallMarkedText = hallMarkedText;
+        return this;
+    }
+
+    public void setHallMarkedText(String hallMarkedText) {
+        this.hallMarkedText = hallMarkedText;
+    }
+
     public Voucher getVoucher() {
         return voucher;
     }
@@ -282,6 +315,8 @@ public class AurumService implements Serializable {
             ", addedAlloy='" + getAddedAlloy() + "'" +
             ", alloyQuantity=" + getAlloyQuantity() +
             ", serviceCharge=" + getServiceCharge() +
+            ", freeCheck=" + getFreeCheck() +
+            ", hallMarkedText='" + getHallMarkedText() + "'" +
             "}";
     }
 }
