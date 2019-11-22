@@ -162,6 +162,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (
+      this.aurumServiceForm.controls.quantity.value === null ||
+      this.aurumServiceForm.controls.quantity.value === 0 ||
+      this.aurumServiceForm.controls.quantity.value === ''
+    ) {
+      this.aurumServiceForm.controls.quantity.setValue(1);
+    }
+
     const aurumServiceTemp = new AurumService();
     aurumServiceTemp.serviceType = this.aurumServiceForm.controls.serviceType.value;
     aurumServiceTemp.itemName = this.aurumServiceForm.controls.itemName.value;
@@ -171,6 +179,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     aurumServiceTemp.quantity = this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.amount = +this.aurumServiceForm.controls.rate.value * +this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.weight = this.aurumServiceForm.controls.weight.value;
+
+    aurumServiceTemp.freeCheck = this.aurumServiceForm.controls.freeCheck.value;
+    aurumServiceTemp.hallMarkedText = this.aurumServiceForm.controls.hallMarkedText.value;
 
     if (this.aurumServiceForm.controls.serviceType.value === 'Calculated Melting') {
       aurumServiceTemp.expectedKaratType = this.aurumServiceForm.controls.expectedKaratType.value;
