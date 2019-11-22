@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,7 +114,13 @@ public class CustomVoucherService {
 
     private String getVoucherNumber(String userId) {
         LocalDate today = LocalDate.now();
-        Long todayCount = this.voucherRepository.countByDateCreated(today) + 1;
+        Instant instant = today.atStartOfDay().toInstant(ZoneOffset.UTC);
+
+        /*System.out.println("=================================");
+        System.out.println(instant);
+        System.out.println("=================================");*/
+
+        Long todayCount = this.voucherRepository.countByDateCreatedAfter(instant) + 1;
         return String.valueOf(today.getYear() % 100) + String.valueOf(today.getMonthValue()) + String.valueOf(today.getDayOfMonth()) + String.format("%05d", todayCount);
     }
 
