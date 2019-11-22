@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AurumServiceRepository extends JpaRepository<AurumService, Long> {
+public interface AurumServiceRepository extends JpaRepository<AurumService, Long>, JpaSpecificationExecutor<AurumService> {
 
 }

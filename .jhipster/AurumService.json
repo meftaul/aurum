@@ -99,6 +99,6 @@
     "service": "serviceImpl",
     "entityTableName": "aurum_service",
     "databaseType": "sql",
-    "jpaMetamodelFiltering": false,
+    "jpaMetamodelFiltering": true,
     "pagination": "pagination"
 }

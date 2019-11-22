@@ -3,6 +3,8 @@ package com.meftaul.aurum.web.rest;
 import com.meftaul.aurum.domain.AurumService;
 import com.meftaul.aurum.service.AurumServiceService;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
+import com.meftaul.aurum.service.dto.AurumServiceCriteria;
+import com.meftaul.aurum.service.AurumServiceQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -41,8 +43,11 @@ public class AurumServiceResource {
 
     private final AurumServiceService aurumServiceService;
 
-    public AurumServiceResource(AurumServiceService aurumServiceService) {
+    private final AurumServiceQueryService aurumServiceQueryService;
+
+    public AurumServiceResource(AurumServiceService aurumServiceService, AurumServiceQueryService aurumServiceQueryService) {
         this.aurumServiceService = aurumServiceService;
+        this.aurumServiceQueryService = aurumServiceQueryService;
     }
 
     /**
@@ -91,14 +96,27 @@ public class AurumServiceResource {
 
      * @param pageable the pagination information.
 
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of aurumServices in body.
      */
     @GetMapping("/aurum-services")
-    public ResponseEntity<List<AurumService>> getAllAurumServices(Pageable pageable) {
-        log.debug("REST request to get a page of AurumServices");
-        Page<AurumService> page = aurumServiceService.findAll(pageable);
+    public ResponseEntity<List<AurumService>> getAllAurumServices(AurumServiceCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get AurumServices by criteria: {}", criteria);
+        Page<AurumService> page = aurumServiceQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+    * {@code GET  /aurum-services/count} : count all the aurumServices.
+    *
+    * @param criteria the criteria which the requested entities should match.
+    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+    */
+    @GetMapping("/aurum-services/count")
+    public ResponseEntity<Long> countAurumServices(AurumServiceCriteria criteria) {
+        log.debug("REST request to count AurumServices by criteria: {}", criteria);
+        return ResponseEntity.ok().body(aurumServiceQueryService.countByCriteria(criteria));
     }
 
     /**
