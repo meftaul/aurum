@@ -21,4 +21,17 @@ export const VOUCHER_STATUS = [
 
 export const ALLOY_TYPE = [{ value: 'CU', viewValue: 'Copper' }, { value: 'SI', viewValue: 'Silver' }, { value: 'AU', viewValue: 'Gold' }];
 
-export const SERVICE_LIST_COLUMNS = ['index', 'serviceType', 'itemName', 'karatType', 'weight', 'rate', 'quantity', 'amount', 'action'];
+export const SERVICE_LIST_COLUMNS = [
+  'index',
+  'serviceType',
+  'itemName',
+  'freeCheck',
+  'hallMarkedText',
+  'karatType',
+  'expectedKaratType',
+  'weight',
+  'rate',
+  'quantity',
+  'amount',
+  'action'
+];

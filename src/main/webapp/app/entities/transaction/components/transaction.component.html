@@ -164,42 +164,57 @@
                 <mat-card-title>Services Served:</mat-card-title>
                 <table mat-table [dataSource]="aurumServiceList" class="col-md-12">
                     <ng-container matColumnDef="index">
-                        <th mat-header-cell *matHeaderCellDef> No.</th>
+                        <th mat-header-cell *matHeaderCellDef>No.</th>
                         <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="serviceType">
-                        <th mat-header-cell *matHeaderCellDef> Service Type</th>
+                        <th mat-header-cell *matHeaderCellDef>Service Type</th>
                         <td mat-cell *matCellDef="let element"> {{element.serviceType}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="itemName">
-                        <th mat-header-cell *matHeaderCellDef> Item Name</th>
+                        <th mat-header-cell *matHeaderCellDef>Item Name</th>
                         <td mat-cell *matCellDef="let element"> {{element.itemName}}</td>
                     </ng-container>
 
+                    <ng-container matColumnDef="freeCheck">
+                        <th mat-header-cell *matHeaderCellDef>Free Check</th>
+                        <td mat-cell *matCellDef="let element"> {{element.freeCheck}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="hallMarkedText">
+                        <th mat-header-cell *matHeaderCellDef>Hallnarked Text</th>
+                        <td mat-cell *matCellDef="let element"> {{element.hallMarkedText}}</td>
+                    </ng-container>
+
                     <ng-container matColumnDef="karatType">
-                        <th mat-header-cell *matHeaderCellDef> Karat Type</th>
+                        <th mat-header-cell *matHeaderCellDef>Karat Type</th>
                         <td mat-cell *matCellDef="let element"> {{element.karatType}}</td>
                     </ng-container>
 
+                    <ng-container matColumnDef="expectedKaratType">
+                        <th mat-header-cell *matHeaderCellDef>Expected Karat Type</th>
+                        <td mat-cell *matCellDef="let element"> {{element.expectedKaratType}}</td>
+                    </ng-container>
+
                     <ng-container matColumnDef="weight">
-                        <th mat-header-cell *matHeaderCellDef> Weight(Gram)</th>
+                        <th mat-header-cell *matHeaderCellDef>Weight(Gram)</th>
                         <td mat-cell *matCellDef="let element"> {{element.weight}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="rate">
-                        <th mat-header-cell *matHeaderCellDef> Rate</th>
+                        <th mat-header-cell *matHeaderCellDef>Rate</th>
                         <td mat-cell *matCellDef="let element"> {{element.rate}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="quantity">
-                        <th mat-header-cell *matHeaderCellDef> Quantity</th>
+                        <th mat-header-cell *matHeaderCellDef>Quantity</th>
                         <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="amount">
-                        <th mat-header-cell *matHeaderCellDef> Amount</th>
+                        <th mat-header-cell *matHeaderCellDef>Amount</th>
                         <td mat-cell *matCellDef="let element"> {{element.amount}}</td>
                     </ng-container>
 
