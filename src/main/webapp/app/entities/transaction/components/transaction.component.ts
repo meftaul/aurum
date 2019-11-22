@@ -286,7 +286,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.voucherForm.controls.vat.setValue(vatTemp);
     } else {
       this.totalAmount = +(this.calculateTotalAmount + 0).toFixed(2);
-      const discount = this.voucherForm.controls.disountAmount ? +this.voucherForm.controls.disountAmount : 0;
+      const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
       this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
       this.amountDue = +(this.totalAmount - discount).toFixed(2);
       this.voucherForm.controls.vat.setValue(0);
