@@ -15,6 +15,7 @@
 
 <div class="row" style="margin-top: 15px;" *ngIf="voucherViewer && voucherViewer.dueAmount > 0">
     <mat-card class="col-md-12">
+        <mat-card-title>Payment Information</mat-card-title>
         <div class="row">
             <div class="col-md-6">
                 <table class=" table">
@@ -31,7 +32,7 @@
                 </table>
             </div>
 
-            <form [formGroup]="transactionHistoryForm" class="col-md-6">
+            <form [formGroup]="transactionHistoryForm" class="col-md-6" style="margin-top: 5px;;">
                 <mat-form-field class="col-md-6">
                     <input type="number" matInput placeholder="Amount" formControlName="amount">
                 </mat-form-field>

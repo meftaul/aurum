@@ -53,7 +53,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   amountDue = 0;
   selectedServiceCharge = 0;
   karatParcentDifference = 0;
-  selectedService: string;
 
   eventSubscriber: Subscription;
 
@@ -368,18 +367,18 @@ export class TransactionComponent implements OnInit, OnDestroy {
     customVoucherDto.voucher = voucherTemp;
     customVoucherDto.paidAmount = +this.voucherForm.controls.paidAmount.value;
 
-    window.print();
+    // window.print();
 
-    // this.transactionService.create(customVoucherDto).subscribe(
-    //   data => {
-    //     this.savedVoucherNumber = data.body.voucher.voucherNo;
-    //     window.print();
-    //     this.resetVoucherForm();
-    //   },
-    //   error => {
-    //     this.jhiAlertService.error('Error in saving voucher. ');
-    //   }
-    // );
+    this.transactionService.create(customVoucherDto).subscribe(
+      data => {
+        // this.savedVoucherNumber = data.body.voucher.voucherNo;
+        // window.print();
+        this.resetVoucherForm();
+      },
+      error => {
+        this.jhiAlertService.error('Error in saving voucher. ');
+      }
+    );
   }
 
   resetVoucherForm() {
