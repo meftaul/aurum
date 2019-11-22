@@ -11,6 +11,8 @@ import { TransactionHistoryService } from 'app/entities/transaction-history/tran
 import { TransactionStatus } from 'app/shared/model/enumerations/transaction-status.model';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { CustomerService } from 'app/entities/customer/customer.service';
+import { AurumServiceService } from 'app/entities/aurum-service/aurum-service.service';
+import { AurumService } from 'app/shared/model/aurum-service.model';
 
 @Component({
   selector: 'jhi-aurum-voucher-viewer',
@@ -23,6 +25,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   voucherFieldValue: string;
   voucherNumber: string;
   voucherViewer = new VoucherViewer();
+  aurumServices: AurumService[] = [];
 
   transactionHistoryForm: FormGroup;
 
@@ -31,6 +34,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     protected jhiAlertService: JhiAlertService,
     protected transactionHistoryService: TransactionHistoryService,
     protected customerService: CustomerService,
+    protected aurumServiceService: AurumServiceService,
     private voucherViewerService: VoucherViewerService,
     private accountService: AccountService
   ) {}
@@ -56,12 +60,14 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
             this.transactionHistoryForm.controls.amount.updateValueAndValidity();
 
             this.fetchCustomer(this.voucherViewer.voucherInfo.customerId);
+            this.fetchAurumServices(this.voucherViewer.voucherInfo.id);
           }
         },
         error => {
           this.voucherViewer = null;
           this.voucherNumber = null;
           this.customerName = null;
+          this.aurumServices = [];
           this.jhiAlertService.warning('Voucher not found.');
         }
       );
@@ -73,6 +79,12 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   fetchCustomer(id: number) {
     this.customerService.find(id).subscribe(data => {
       this.customerName = data.body.firstName + ' ' + (data.body.lastName ? data.body.lastName : '');
+    });
+  }
+
+  fetchAurumServices(voucherId: number) {
+    this.aurumServiceService.query({ 'voucherId.equals': voucherId }).subscribe(data => {
+      this.aurumServices = data.body;
     });
   }
 
@@ -99,6 +111,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     transactionHistoryTemp.addedBy = this.account.login;
 
     this.transactionHistoryService.create(transactionHistoryTemp).subscribe(transaction => {
+      // search voucher data again
       this.voucherViewerService.find(this.voucherFieldValue).subscribe(voucher => {
         if (this.voucherViewer) {
           this.voucherViewer = voucher.body;
@@ -107,6 +120,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
           this.transactionHistoryForm.controls.amount.updateValueAndValidity();
 
           this.fetchCustomer(this.voucherViewer.voucherInfo.customerId);
+          this.fetchAurumServices(this.voucherViewer.voucherInfo.id);
         }
       });
       this.transactionHistoryForm.controls.amount.setValue(null);

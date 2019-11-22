@@ -88,38 +88,42 @@
             </tbody>
         </table>
 
-        <hr *ngIf="voucherViewer.voucherInfo.aurumServices && voucherViewer.voucherInfo.aurumServices?.length !== 0">
-        <mat-card-title style="margin-top: 15px;"
-            *ngIf="voucherViewer.voucherInfo.aurumServices && voucherViewer.voucherInfo.aurumServices?.length !== 0">
+        <hr *ngIf="aurumServices && aurumServices?.length !== 0">
+        <mat-card-title style="margin-top: 15px;" *ngIf="aurumServices && aurumServices?.length !== 0">
             Services
         </mat-card-title>
-        <table class="table table-bordered"
-            *ngIf="voucherViewer.voucherInfo.aurumServices && voucherViewer.voucherInfo.aurumServices?.length !== 0">
+        <table class="table table-bordered" *ngIf="aurumServices && aurumServices?.length !== 0">
             <thead>
                 <tr>
                     <th>Service Type</th>
                     <th>Item Name</th>
                     <th>Weight(Gram)</th>
+                    <th>Free Check</th>
+                    <th>Hall Marked Text</th>
                     <th>Karat Type</th>
                     <th>Expected Karat Type</th>
                     <th>Added Alloy</th>
                     <th>Alloy Quantity</th>
                     <th>Service Charge</th>
                     <th>Rate</th>
+                    <th>Quantity</th>
                     <th>Amount</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let service of voucherViewer.voucherInfo?.aurumServices">
+                <tr *ngFor="let service of aurumServices">
                     <td>{{service.serviceType}}</td>
                     <td>{{service.itemName}}</td>
                     <td>{{service.weight}}</td>
+                    <td>{{service.freeCheck}}</td>
+                    <td>{{service.hallMarkedText}}</td>
                     <td>{{service.karatType}}</td>
                     <td>{{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
                     <td>{{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
                     <td>{{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}</td>
                     <td>{{service.serviceCharge}}</td>
                     <td>{{service.rate}}</td>
+                    <td>{{service.quantity}}</td>
                     <td>{{service.amount}}</td>
                 </tr>
             </tbody>
