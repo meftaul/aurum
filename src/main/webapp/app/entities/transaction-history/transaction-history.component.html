@@ -1,12 +1,12 @@
 <div>
     <h2 id="page-heading">
         <span>Transaction Histories</span>
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-transaction-history" [routerLink]="['/transaction-history/new']">
+        <!--<button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-transaction-history" [routerLink]="['/transaction-history/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
             <span >
             Create a new Transaction History
             </span>
-        </button>
+        </button>-->
     </h2>
     <jhi-alert></jhi-alert>
     <br/>
@@ -36,7 +36,7 @@
                 <td>{{transactionHistory.tag}}</td>
                 <td>{{transactionHistory.customerId}}</td>
                 <td>{{transactionHistory.addedBy}}</td>
-                <td class="text-right">
+                <!--<td class="text-right">
                     <div class="btn-group">
                         <button type="submit"
                                 [routerLink]="['/transaction-history', transactionHistory.id, 'view' ]"
@@ -59,7 +59,7 @@
                             <span class="d-none d-md-inline">Delete</span>
                         </button>
                     </div>
-                </td>
+                </td>-->
             </tr>
             </tbody>
         </table>
