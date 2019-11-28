@@ -10,7 +10,7 @@ export const TRANSACTION_ROUTE: Routes = [
     component: TransactionComponent,
     data: {
       authorities: [],
-      pageTitle: 'Aurum: Transaction!'
+      pageTitle: 'Transaction!'
     }
   },
   {

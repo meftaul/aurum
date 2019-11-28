@@ -7,7 +7,7 @@ export const VOUCHER_VIEWER_ROUTE: Routes = [
     component: VoucherViewerComponent,
     data: {
       authorities: [],
-      pageTitle: 'Aurum: Voucher Viewer'
+      pageTitle: 'Voucher Viewer'
     }
   }
 ];

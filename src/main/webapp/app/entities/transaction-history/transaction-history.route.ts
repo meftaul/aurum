@@ -39,7 +39,7 @@ export const transactionHistoryRoute: Routes = [
     data: {
       authorities: ['ROLE_USER'],
       defaultSort: 'id,asc',
-      pageTitle: 'TransactionHistories'
+      pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -51,7 +51,7 @@ export const transactionHistoryRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'TransactionHistories'
+      pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -63,7 +63,7 @@ export const transactionHistoryRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'TransactionHistories'
+      pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -75,7 +75,7 @@ export const transactionHistoryRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'TransactionHistories'
+      pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService]
   }
@@ -90,7 +90,7 @@ export const transactionHistoryPopupRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'TransactionHistories'
+      pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService],
     outlet: 'popup'
