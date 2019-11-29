@@ -13,6 +13,8 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { CustomerService } from 'app/entities/customer/customer.service';
 import { AurumServiceService } from 'app/entities/aurum-service/aurum-service.service';
 import { AurumService } from 'app/shared/model/aurum-service.model';
+import { VoucherService } from 'app/entities/voucher/voucher.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'jhi-aurum-voucher-viewer',
@@ -35,8 +37,10 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     protected transactionHistoryService: TransactionHistoryService,
     protected customerService: CustomerService,
     protected aurumServiceService: AurumServiceService,
+    protected voucherService: VoucherService,
     private voucherViewerService: VoucherViewerService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +60,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
           } else {
             this.voucherViewer = data.body;
             this.voucherNumber = this.voucherViewer.voucherInfo.voucherNo;
-            this.transactionHistoryForm.controls.amount.setValidators([Validators.max(this.voucherViewer.dueAmount)]);
+            this.transactionHistoryForm.controls.amount.setValidators([Validators.required, Validators.max(this.voucherViewer.dueAmount)]);
             this.transactionHistoryForm.controls.amount.updateValueAndValidity();
 
             this.fetchCustomer(this.voucherViewer.voucherInfo.customerId);
@@ -95,12 +99,37 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     });
   }
 
-  makePayment() {
+  confirmMakePayment(confirmDialog) {
     this.transactionHistoryForm.markAllAsTouched();
+    if (!this.transactionHistoryForm.controls.amount.value) {
+      this.jhiAlertService.warning('Amount not found.');
+      return;
+    }
     if (this.transactionHistoryForm.invalid) {
       this.jhiAlertService.warning("Amount can't be greater then due.");
       return;
     }
+    if (
+      +(+this.transactionHistoryForm.controls.amount.value).toFixed(2) === +this.voucherViewer.dueAmount.toFixed(2) &&
+      !this.voucherViewer.voucherInfo.deliveryStatus
+    )
+      this.modalService.open(confirmDialog);
+    else this.makePayment(false);
+  }
+
+  confirmDelivery() {
+    const voucher = this.voucherViewer.voucherInfo;
+    voucher.deliveryStatus = true;
+
+    this.voucherService.update(voucher).subscribe(data => {});
+  }
+
+  makePayment(deliveryStatus: boolean) {
+    // this.transactionHistoryForm.markAllAsTouched();
+    // if (this.transactionHistoryForm.invalid) {
+    //   this.jhiAlertService.warning("Amount can't be greater then due.");
+    //   return;
+    // }
     // call service to save transaction history
     const transactionHistoryTemp = new TransactionHistory();
     transactionHistoryTemp.voucherNo = this.voucherNumber;
