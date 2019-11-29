@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-type EntityResponseType = HttpResponse<CustomVoucherDto>;
+type EntityResponseType = HttpResponse<Voucher>;
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { CustomVoucherDto } from 'app/shared/model/custom.voucher.model';
+import { Voucher } from 'app/shared/model/voucher.model';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionService {
@@ -14,6 +15,6 @@ export class TransactionService {
   constructor(protected http: HttpClient) {}
 
   create(voucher: CustomVoucherDto): Observable<EntityResponseType> {
-    return this.http.post<CustomVoucherDto>(this.resourceUrl, voucher, { observe: 'response' });
+    return this.http.post<Voucher>(this.resourceUrl, voucher, { observe: 'response' });
   }
 }

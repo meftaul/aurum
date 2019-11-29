@@ -362,6 +362,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (this.payableTotalAmount === +this.voucherForm.controls.paidAmount.value) voucherTemp.status = VoucherStatus.PAID;
     else voucherTemp.status = VoucherStatus.DUE;
     voucherTemp.addedBy = this.account.login;
+    voucherTemp.deliveryStatus =
+      this.aurumServiceList[0].serviceType === 'X-Ray' || this.aurumServiceList[0].serviceType === 'Calculated Melting';
 
     const customVoucherDto = new CustomVoucherDto();
     customVoucherDto.voucher = voucherTemp;
@@ -372,7 +374,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.transactionService.create(customVoucherDto).subscribe(
       data => {
         // method return Voucher not CustomVoucher
-        this.savedVoucherNumber = data.body.voucher.voucherNo;
+        this.savedVoucherNumber = data.body.voucherNo;
         window.print();
         this.resetVoucherForm();
       },
