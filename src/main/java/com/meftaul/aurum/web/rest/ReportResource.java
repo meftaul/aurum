@@ -1,10 +1,16 @@
 package com.meftaul.aurum.web.rest;
 
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import com.meftaul.aurum.service.ReportService;
+import com.meftaul.aurum.service.dto.ReportProjection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * ReportResource controller
@@ -15,12 +21,18 @@ public class ReportResource {
 
     private final Logger log = LoggerFactory.getLogger(ReportResource.class);
 
+    private final ReportService reportService;
+
+    public ReportResource(ReportService reportService) {
+        this.reportService = reportService;
+    }
+
     /**
     * GET getSale
     */
-    @GetMapping("/get-sale")
-    public String getSale() {
-        return "getSale";
+    @GetMapping("/get-report")
+    public List<ReportProjection> getSale(@RequestParam String tag) {
+        return reportService.getReport(tag);
     }
 
 }

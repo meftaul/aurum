@@ -24,7 +24,7 @@ public class ReportResourceIT {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        ReportResource reportResource = new ReportResource();
+        ReportResource reportResource = new ReportResource(reportService);
         restMockMvc = MockMvcBuilders
             .standaloneSetup(reportResource)
             .build();

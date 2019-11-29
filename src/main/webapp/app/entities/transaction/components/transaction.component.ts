@@ -372,7 +372,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.transactionService.create(customVoucherDto).subscribe(
       data => {
         // method return Voucher not CustomVoucher
-        this.savedVoucherNumber = data.body.voucherNo;
+        this.savedVoucherNumber = data.body.voucher.voucherNo;
         window.print();
         this.resetVoucherForm();
       },

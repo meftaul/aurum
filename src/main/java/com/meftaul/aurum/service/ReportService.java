@@ -1,9 +1,14 @@
 package com.meftaul.aurum.service;
 
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import com.meftaul.aurum.repository.TransactionHistoryRepository;
+import com.meftaul.aurum.service.dto.ReportProjection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -17,10 +22,10 @@ public class ReportService {
 
     /*
     SELECT
-    EXTRACT(YEAR FROM DATE_CREATED) AS YEAR,
-    EXTRACT(MONTH FROM DATE_CREATED) AS MONTH,
-    EXTRACT(DAY FROM DATE_CREATED) AS DAY,
-    SUM(AMOUNT) AS TOTAL
+    EXTRACT(YEAR FROM DATE_CREATED) AS year,
+    EXTRACT(MONTH FROM DATE_CREATED) AS month,
+    EXTRACT(DAY FROM DATE_CREATED) AS day,
+    SUM(AMOUNT) AS total
 
     FROM TRANSACTION_HISTORY
     WHERE TAG='RECEIVE'
@@ -37,4 +42,13 @@ public class ReportService {
     EXTRACT(DAY FROM DATE_CREATED) DESC
     */
 
+    private final TransactionHistoryRepository transactionHistoryRepository;
+
+    public ReportService(TransactionHistoryRepository transactionHistoryRepository) {
+        this.transactionHistoryRepository = transactionHistoryRepository;
+    }
+
+    public List<ReportProjection> getReport(String tag){
+        return transactionHistoryRepository.findReport(tag);
+    }
 }
