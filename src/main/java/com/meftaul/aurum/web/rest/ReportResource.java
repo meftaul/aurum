@@ -5,6 +5,7 @@ import com.meftaul.aurum.service.ReportService;
 import com.meftaul.aurum.service.dto.ReportProjection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,8 +32,8 @@ public class ReportResource {
     * GET getSale
     */
     @GetMapping("/get-report")
-    public List<ReportProjection> getSale(@RequestParam String tag) {
-        return reportService.getReport(tag);
+    public ResponseEntity<List<ReportProjection>> getSale(@RequestParam String tag) {
+        return ResponseEntity.ok().body(reportService.getReport(tag));
     }
 
 }
