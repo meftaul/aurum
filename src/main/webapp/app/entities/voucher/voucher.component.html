@@ -29,6 +29,7 @@
             <th jhiSortBy="addedBy"><span>Added By</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="boxNumber"><span>Box Number</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="deliveryDate"><span>Delivery Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="deliveryStatus"><span>Delivery Status</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -46,6 +47,7 @@
                 <td>{{voucher.addedBy}}</td>
                 <td>{{voucher.boxNumber}}</td>
                 <td>{{voucher.deliveryDate | date:'medium'}}</td>
+                <td>{{voucher.deliveryStatus}}</td>
                 <td class="text-right">
                     <div class="btn-group">
                         <button type="submit"

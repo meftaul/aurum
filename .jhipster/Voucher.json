@@ -69,6 +69,10 @@
         {
             "fieldName": "deliveryDate",
             "fieldType": "Instant"
+        },
+        {
+            "fieldName": "deliveryStatus",
+            "fieldType": "Boolean"
         }
     ],
     "changelogDate": "20191023082216",

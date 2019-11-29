@@ -15,6 +15,7 @@ export interface IVoucher {
   addedBy?: string;
   boxNumber?: string;
   deliveryDate?: Moment;
+  deliveryStatus?: boolean;
   aurumServices?: IAurumService[];
 }
 
@@ -32,6 +33,9 @@ export class Voucher implements IVoucher {
     public addedBy?: string,
     public boxNumber?: string,
     public deliveryDate?: Moment,
+    public deliveryStatus?: boolean,
     public aurumServices?: IAurumService[]
-  ) {}
+  ) {
+    this.deliveryStatus = this.deliveryStatus || false;
+  }
 }

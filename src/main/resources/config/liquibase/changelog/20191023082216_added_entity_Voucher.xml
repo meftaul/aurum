@@ -49,6 +49,9 @@
             <column name="delivery_date" type="datetime">
                 <constraints nullable="true" />
             </column>
+            <column name="delivery_status" type="boolean">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="voucher" columnName="date_created" columnDataType="datetime"/>
@@ -85,6 +88,7 @@
             <column name="added_by" type="string"/>
             <column name="box_number" type="string"/>
             <column name="delivery_date" type="datetime"/>
+            <column name="delivery_status" type="boolean"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>

@@ -65,6 +65,9 @@ public class Voucher implements Serializable {
     @Column(name = "delivery_date")
     private Instant deliveryDate;
 
+    @Column(name = "delivery_status")
+    private Boolean deliveryStatus;
+
     @OneToMany(mappedBy = "voucher")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AurumService> aurumServices = new HashSet<>();
@@ -221,6 +224,19 @@ public class Voucher implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
+    public Boolean isDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public Voucher deliveryStatus(Boolean deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+        return this;
+    }
+
+    public void setDeliveryStatus(Boolean deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+    }
+
     public Set<AurumService> getAurumServices() {
         return aurumServices;
     }
@@ -278,6 +294,7 @@ public class Voucher implements Serializable {
             ", addedBy='" + getAddedBy() + "'" +
             ", boxNumber='" + getBoxNumber() + "'" +
             ", deliveryDate='" + getDeliveryDate() + "'" +
+            ", deliveryStatus='" + isDeliveryStatus() + "'" +
             "}";
     }
 }

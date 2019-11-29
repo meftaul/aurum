@@ -29,7 +29,8 @@ export class VoucherUpdateComponent implements OnInit {
     dateCreated: [],
     addedBy: [null, [Validators.required]],
     boxNumber: [],
-    deliveryDate: []
+    deliveryDate: [],
+    deliveryStatus: []
   });
 
   constructor(protected voucherService: VoucherService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
@@ -54,7 +55,8 @@ export class VoucherUpdateComponent implements OnInit {
       dateCreated: voucher.dateCreated != null ? voucher.dateCreated.format(DATE_TIME_FORMAT) : null,
       addedBy: voucher.addedBy,
       boxNumber: voucher.boxNumber,
-      deliveryDate: voucher.deliveryDate != null ? voucher.deliveryDate.format(DATE_TIME_FORMAT) : null
+      deliveryDate: voucher.deliveryDate != null ? voucher.deliveryDate.format(DATE_TIME_FORMAT) : null,
+      deliveryStatus: voucher.deliveryStatus
     });
   }
 
@@ -88,7 +90,8 @@ export class VoucherUpdateComponent implements OnInit {
       addedBy: this.editForm.get(['addedBy']).value,
       boxNumber: this.editForm.get(['boxNumber']).value,
       deliveryDate:
-        this.editForm.get(['deliveryDate']).value != null ? moment(this.editForm.get(['deliveryDate']).value, DATE_TIME_FORMAT) : undefined
+        this.editForm.get(['deliveryDate']).value != null ? moment(this.editForm.get(['deliveryDate']).value, DATE_TIME_FORMAT) : undefined,
+      deliveryStatus: this.editForm.get(['deliveryStatus']).value
     };
   }
 

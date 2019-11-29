@@ -25,7 +25,7 @@ describe('Service Tests', () => {
       httpMock = injector.get(HttpTestingController);
       currentDate = moment();
 
-      elemDefault = new Voucher(0, 'AAAAAAA', 0, 0, 0, 0, VoucherStatus.PAID, 0, currentDate, 'AAAAAAA', 'AAAAAAA', currentDate);
+      elemDefault = new Voucher(0, 'AAAAAAA', 0, 0, 0, 0, VoucherStatus.PAID, 0, currentDate, 'AAAAAAA', 'AAAAAAA', currentDate, false);
     });
 
     describe('Service methods', () => {
@@ -85,7 +85,8 @@ describe('Service Tests', () => {
             dateCreated: currentDate.format(DATE_TIME_FORMAT),
             addedBy: 'BBBBBB',
             boxNumber: 'BBBBBB',
-            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT),
+            deliveryStatus: true
           },
           elemDefault
         );
@@ -119,7 +120,8 @@ describe('Service Tests', () => {
             dateCreated: currentDate.format(DATE_TIME_FORMAT),
             addedBy: 'BBBBBB',
             boxNumber: 'BBBBBB',
-            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT),
+            deliveryStatus: true
           },
           elemDefault
         );

@@ -81,6 +81,9 @@ public class VoucherResourceIT {
     private static final Instant UPDATED_DELIVERY_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
     private static final Instant SMALLER_DELIVERY_DATE = Instant.ofEpochMilli(-1L);
 
+    private static final Boolean DEFAULT_DELIVERY_STATUS = false;
+    private static final Boolean UPDATED_DELIVERY_STATUS = true;
+
     @Autowired
     private VoucherRepository voucherRepository;
 
@@ -139,7 +142,8 @@ public class VoucherResourceIT {
             .dateCreated(DEFAULT_DATE_CREATED)
             .addedBy(DEFAULT_ADDED_BY)
             .boxNumber(DEFAULT_BOX_NUMBER)
-            .deliveryDate(DEFAULT_DELIVERY_DATE);
+            .deliveryDate(DEFAULT_DELIVERY_DATE)
+            .deliveryStatus(DEFAULT_DELIVERY_STATUS);
         return voucher;
     }
     /**
@@ -160,7 +164,8 @@ public class VoucherResourceIT {
             .dateCreated(UPDATED_DATE_CREATED)
             .addedBy(UPDATED_ADDED_BY)
             .boxNumber(UPDATED_BOX_NUMBER)
-            .deliveryDate(UPDATED_DELIVERY_DATE);
+            .deliveryDate(UPDATED_DELIVERY_DATE)
+            .deliveryStatus(UPDATED_DELIVERY_STATUS);
         return voucher;
     }
 
@@ -195,6 +200,7 @@ public class VoucherResourceIT {
         assertThat(testVoucher.getAddedBy()).isEqualTo(DEFAULT_ADDED_BY);
         assertThat(testVoucher.getBoxNumber()).isEqualTo(DEFAULT_BOX_NUMBER);
         assertThat(testVoucher.getDeliveryDate()).isEqualTo(DEFAULT_DELIVERY_DATE);
+        assertThat(testVoucher.isDeliveryStatus()).isEqualTo(DEFAULT_DELIVERY_STATUS);
     }
 
     @Test
@@ -310,7 +316,8 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY.toString())))
             .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER.toString())))
-            .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())));
+            .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())))
+            .andExpect(jsonPath("$.[*].deliveryStatus").value(hasItem(DEFAULT_DELIVERY_STATUS.booleanValue())));
     }
     
     @Test
@@ -334,7 +341,8 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.dateCreated").value(DEFAULT_DATE_CREATED.toString()))
             .andExpect(jsonPath("$.addedBy").value(DEFAULT_ADDED_BY.toString()))
             .andExpect(jsonPath("$.boxNumber").value(DEFAULT_BOX_NUMBER.toString()))
-            .andExpect(jsonPath("$.deliveryDate").value(DEFAULT_DELIVERY_DATE.toString()));
+            .andExpect(jsonPath("$.deliveryDate").value(DEFAULT_DELIVERY_DATE.toString()))
+            .andExpect(jsonPath("$.deliveryStatus").value(DEFAULT_DELIVERY_STATUS.booleanValue()));
     }
 
     @Test
@@ -1033,6 +1041,45 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
+    public void getAllVouchersByDeliveryStatusIsEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryStatus equals to DEFAULT_DELIVERY_STATUS
+        defaultVoucherShouldBeFound("deliveryStatus.equals=" + DEFAULT_DELIVERY_STATUS);
+
+        // Get all the voucherList where deliveryStatus equals to UPDATED_DELIVERY_STATUS
+        defaultVoucherShouldNotBeFound("deliveryStatus.equals=" + UPDATED_DELIVERY_STATUS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryStatusIsInShouldWork() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryStatus in DEFAULT_DELIVERY_STATUS or UPDATED_DELIVERY_STATUS
+        defaultVoucherShouldBeFound("deliveryStatus.in=" + DEFAULT_DELIVERY_STATUS + "," + UPDATED_DELIVERY_STATUS);
+
+        // Get all the voucherList where deliveryStatus equals to UPDATED_DELIVERY_STATUS
+        defaultVoucherShouldNotBeFound("deliveryStatus.in=" + UPDATED_DELIVERY_STATUS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryStatusIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryStatus is not null
+        defaultVoucherShouldBeFound("deliveryStatus.specified=true");
+
+        // Get all the voucherList where deliveryStatus is null
+        defaultVoucherShouldNotBeFound("deliveryStatus.specified=false");
+    }
+
+    @Test
+    @Transactional
     public void getAllVouchersByAurumServiceIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
@@ -1068,7 +1115,8 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)))
             .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER)))
-            .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())));
+            .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())))
+            .andExpect(jsonPath("$.[*].deliveryStatus").value(hasItem(DEFAULT_DELIVERY_STATUS.booleanValue())));
 
         // Check, that the count call also returns 1
         restVoucherMockMvc.perform(get("/api/vouchers/count?sort=id,desc&" + filter))
@@ -1126,7 +1174,8 @@ public class VoucherResourceIT {
             .dateCreated(UPDATED_DATE_CREATED)
             .addedBy(UPDATED_ADDED_BY)
             .boxNumber(UPDATED_BOX_NUMBER)
-            .deliveryDate(UPDATED_DELIVERY_DATE);
+            .deliveryDate(UPDATED_DELIVERY_DATE)
+            .deliveryStatus(UPDATED_DELIVERY_STATUS);
 
         restVoucherMockMvc.perform(put("/api/vouchers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -1148,6 +1197,7 @@ public class VoucherResourceIT {
         assertThat(testVoucher.getAddedBy()).isEqualTo(UPDATED_ADDED_BY);
         assertThat(testVoucher.getBoxNumber()).isEqualTo(UPDATED_BOX_NUMBER);
         assertThat(testVoucher.getDeliveryDate()).isEqualTo(UPDATED_DELIVERY_DATE);
+        assertThat(testVoucher.isDeliveryStatus()).isEqualTo(UPDATED_DELIVERY_STATUS);
     }
 
     @Test
