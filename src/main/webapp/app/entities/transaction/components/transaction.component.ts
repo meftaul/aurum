@@ -371,8 +371,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     this.transactionService.create(customVoucherDto).subscribe(
       data => {
-        // this.savedVoucherNumber = data.body.voucher.voucherNo;
-        // window.print();
+        // method return Voucher not CustomVoucher
+        this.savedVoucherNumber = data.body.voucherNo;
+        window.print();
         this.resetVoucherForm();
       },
       error => {
@@ -390,6 +391,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.payableTotalAmount = 0;
     this.amountDue = 0;
     this.customer = null;
+    this.cusromerSearchingValue = null;
   }
   // ****************************** VOUCHER ****************************** END
 
