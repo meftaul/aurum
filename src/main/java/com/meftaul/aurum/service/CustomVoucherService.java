@@ -3,11 +3,13 @@ package com.meftaul.aurum.service;
 import com.meftaul.aurum.domain.AurumService;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.domain.enumeration.VoucherStatus;
 import com.meftaul.aurum.repository.AurumServiceRepository;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.security.SecurityUtils;
 import com.meftaul.aurum.service.dto.CustomVoucherDto;
+import com.meftaul.aurum.service.dto.TransactionDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +95,23 @@ public class CustomVoucherService {
         }
 
         return voucherRepository.save(savedVoucher);
+    }
+
+    public TransactionHistory saveCustomTransaction(TransactionDto txnDto) {
+        String voucherNo = txnDto.getTransactionHistory().getVoucherNo();
+        Voucher voucher = voucherRepository.findByVoucherNo(voucherNo);
+
+        if (voucher != null && txnDto.getDeliveryStatus().equals(VoucherStatus.PAID)) {
+            voucher.setStatus(VoucherStatus.PAID);
+        }
+
+        if (voucher != null && txnDto.getDeliveryStatus()) {
+            voucher.setDeliveryStatus(txnDto.getDeliveryStatus());
+        }
+
+        voucherRepository.save(voucher);
+
+        return transactionHistoryRepository.save(txnDto.getTransactionHistory());
     }
 
     private TransactionHistory createTxnHistory(Voucher voucher, BigDecimal amount, TransactionStatus tag) {
