@@ -352,94 +352,130 @@
         </div>
     </div>
     <br>
-    <div class="row no-gutters">
-        <div class="col-md-4">
+    <div class="row">
+        <div class="col-xs-4 col-md-4">
             <table class="table table-borderless">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td>Box Number</td>
+                        <td>{{voucherForm?.controls?.boxNumber?.value}}</td>
+                    </tr>
+                    <tr>
+                        <td>Voucher Number</td>
+                        <td>{{savedVoucherNumber}}</td>
+                    </tr>
+                    <tr>
+                        <td>Name</td>
+                        <td>{{customer?.firstName + ' ' + customer?.lastName}}</td>
+                    </tr>
+                    <tr>
+                        <td>Phone Number</td>
+                        <td>{{ customer?.phone }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-6 col-md-6" style="float: right;position:absolute;right:0;">
+            <table class="table table-borderd">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td>Calculated Amount</td>
+                        <td>{{calculateTotalAmount}}</td>
+                    </tr>
+                    <tr>
+                        <td>VAT Amount</td>
+                        <td>{{voucherForm?.controls?.vat?.value}}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td>{{voucherForm?.controls?.disountAmount?.value}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Payable</td>
+                        <td>{{payableTotalAmount}}</td>
+                    </tr>
+                    <tr>
+                        <td>Paid Amount</td>
+                        <td>{{voucherForm?.controls?.paidAmount?.value}}</td>
+                    </tr>
+                    <tr>
+                        <td>Due</td>
+                        <td>{{payableTotalAmount - voucherForm?.controls?.paidAmount?.value}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br><br>
+    <div class="row" style="padding-top: 30px;">
+        <div class="col-xs-12">
+            <table class="table table-borderless col-xs-12">
+                <thead>
                 <tr>
-                    <td>Box Number</td>
-                    <td>{{voucherForm?.controls?.boxNumber?.value}}</td>
+                    <th colspan="9" style="text-decoration: underline; font-weight: bold;">Service Information
+                    </th>
                 </tr>
                 <tr>
-                    <td>Voucher Number</td>
-                    <td>{{savedVoucherNumber}}</td>
+                    <th>Service Type</th>
+                    <th>Item Name</th>
+                    <th>Weight(Gram)</th>
+                    <th>Karat Type</th>
+                    <th>Expected Karat Type</th>
+                    <th>Added Alloy</th>
+                    <th>Alloy Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
                 </tr>
-                <tr>
-                    <td>Name</td>
-                    <td>{{customer?.firstName + ' ' + customer?.lastName}}</td>
+                </thead>
+                <tbody>
+                <tr *ngFor="let service of aurumServiceList">
+                    <td>{{service.serviceType}}</td>
+                    <td>{{service.itemName}}</td>
+                    <td>{{service.weight}}</td>
+                    <td>{{service.karatType}}</td>
+                    <td>{{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
+                    <td>{{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
+                    <td>{{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
+                    </td>
+                    <td>{{service.rate}}</td>
+                    <td>{{service.amount}}</td>
                 </tr>
-                <tr>
-                    <td>Phone Number</td>
-                    <td>{{ customer?.phone }}</td>
-                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 50px; width: 100%;">
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td> </td>
+                        <td style="font-weight: bold; text-align: center; border-top: 1px solid black;">
+                            Authorized Signature</td>
+                    </tr>
+                </tbody>
+
             </table>
         </div>
         <div class="col-md-6">
-            <table class="table table-borderd">
-                <tr>
-                    <td>Calculated Amount</td>
-                    <td>{{calculateTotalAmount}}</td>
-                </tr>
-                <tr>
-                    <td>VAT Amount</td>
-                    <td>{{voucherForm?.controls?.vat?.value}}</td>
-                </tr>
-                <tr>
-                    <td>Discount</td>
-                    <td>{{voucherForm?.controls?.disountAmount?.value}}</td>
-                </tr>
-                <tr>
-                    <td>Total Payable</td>
-                    <td>{{payableTotalAmount}}</td>
-                </tr>
-                <tr>
-                    <td>Paid Amount</td>
-                    <td>{{voucherForm?.controls?.paidAmount?.value}}</td>
-                </tr>
-                <tr>
-                    <td>Due</td>
-                    <td>{{payableTotalAmount - voucherForm?.controls?.paidAmount?.value}}</td>
-                </tr>
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td> </td>
+                        <td style="font-weight: bold; text-align: center; border-top: 1px solid black;">Customer
+                            Signature</td>
+                    </tr>
+                </tbody>
+
             </table>
         </div>
-        <br>
-        <div class="row" style="margin-top: 50px;">
-            <div class="col-md-12">
-                <table class="table table-borderless col-md-12">
-                    <thead>
-                    <tr>
-                        <th colspan="9" style="text-decoration: underline; font-weight: bold;">Service Information
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>Service Type</th>
-                        <th>Item Name</th>
-                        <th>Weight(Gram)</th>
-                        <th>Karat Type</th>
-                        <th>Expected Karat Type</th>
-                        <th>Added Alloy</th>
-                        <th>Alloy Quantity</th>
-                        <th>Rate</th>
-                        <th>Amount</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let service of aurumServiceList">
-                        <td>{{service.serviceType}}</td>
-                        <td>{{service.itemName}}</td>
-                        <td>{{service.weight}}</td>
-                        <td>{{service.karatType}}</td>
-                        <td>{{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
-                        <td>{{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
-                        <td>{{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
-                        </td>
-                        <td>{{service.rate}}</td>
-                        <td>{{service.amount}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    </div>
 
+    <div>
+        
         <!--<div class="col-md-6">
             <table class="table table-borderless">
                 <tbody>
@@ -554,33 +590,6 @@
                 </table>
             </div>
         </div>-->
-
-        <div class="row" style="margin-top: 50px; width: 100%;">
-            <div class="col-md-6">
-                <table class="table table-borderless">
-                    <tbody>
-                        <tr>
-                            <td> </td>
-                            <td style="font-weight: bold; text-align: center; border-top: 1px solid black;">
-                                Authorized Signature</td>
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div>
-            <div class="col-md-6">
-                <table class="table table-borderless">
-                    <tbody>
-                        <tr>
-                            <td> </td>
-                            <td style="font-weight: bold; text-align: center; border-top: 1px solid black;">Customer
-                                Signature</td>
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div>
-        </div>
 
     </div>
 </div>

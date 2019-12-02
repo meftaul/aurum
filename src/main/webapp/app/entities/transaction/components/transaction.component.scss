@@ -1,6 +1,7 @@
 #section-to-print {
   /* hide the printing component from @media screen */
-  display: none !important;
+  //display: none !important;
+  visibility: hidden;
 }
 
 @media print {
@@ -11,8 +12,8 @@
 
   #section-to-print,
   #section-to-print * {
-    display: block !important;
-    // visibility: visible;
+    //display: block !important;
+    visibility: visible;
     // color: white;
     // font-size: 5rem;
     //display: block;
