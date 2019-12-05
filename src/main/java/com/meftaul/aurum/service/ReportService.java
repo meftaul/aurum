@@ -22,24 +22,24 @@ public class ReportService {
 
     /*
     SELECT
-    EXTRACT(YEAR FROM DATE_CREATED) AS year,
-    EXTRACT(MONTH FROM DATE_CREATED) AS month,
-    EXTRACT(DAY FROM DATE_CREATED) AS day,
-    SUM(AMOUNT) AS total
+    EXTRACT(YEAR FROM date_created) AS year,
+    EXTRACT(MONTH FROM date_created) AS month,
+    EXTRACT(DAY FROM date_created) AS day,
+    SUM(amount) AS total
 
-    FROM TRANSACTION_HISTORY
-    WHERE TAG='RECEIVE'
+    FROM transaction_history
+    WHERE tag='RECEIVE'
 
     GROUP BY
-    EXTRACT(YEAR FROM DATE_CREATED),
-    EXTRACT(MONTH FROM DATE_CREATED),
-    EXTRACT(DAY FROM DATE_CREATED)
+    EXTRACT(YEAR FROM date_created),
+    EXTRACT(MONTH FROM date_created),
+    EXTRACT(DAY FROM date_created)
 
     ORDER BY
 
-    EXTRACT(YEAR FROM DATE_CREATED) DESC,
-    EXTRACT(MONTH FROM DATE_CREATED) DESC,
-    EXTRACT(DAY FROM DATE_CREATED) DESC
+    EXTRACT(YEAR FROM date_created) DESC,
+    EXTRACT(MONTH FROM date_created) DESC,
+    EXTRACT(DAY FROM date_created) DESC;
     */
 
     private final TransactionHistoryRepository transactionHistoryRepository;

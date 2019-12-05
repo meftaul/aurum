@@ -20,25 +20,25 @@ public interface TransactionHistoryRepository extends JpaRepository<TransactionH
 
     @Query(value = "" +
         "SELECT\n" +
-        "    EXTRACT(YEAR FROM DATE_CREATED) AS year,\n" +
-        "    EXTRACT(MONTH FROM DATE_CREATED) AS month,\n" +
-        "    EXTRACT(DAY FROM DATE_CREATED) AS day,\n" +
-        "    SUM(AMOUNT) AS totalAmount,\n" +
+        "    EXTRACT(YEAR FROM date_created) AS year,\n" +
+        "    EXTRACT(MONTH FROM date_created) AS month,\n" +
+        "    EXTRACT(DAY FROM date_created) AS day,\n" +
+        "    SUM(amount) AS totalAmount,\n" +
         "    tag\n" +
         "\n" +
-        "    FROM TRANSACTION_HISTORY\n" +
-        "    WHERE TAG=:tag\n" +
+        "    FROM transaction_history\n" +
+        "    WHERE tag=:tag\n" +
         "\n" +
         "    GROUP BY\n" +
-        "    EXTRACT(YEAR FROM DATE_CREATED),\n" +
-        "    EXTRACT(MONTH FROM DATE_CREATED),\n" +
-        "    EXTRACT(DAY FROM DATE_CREATED)\n" +
+        "    EXTRACT(YEAR FROM date_created),\n" +
+        "    EXTRACT(MONTH FROM date_created),\n" +
+        "    EXTRACT(DAY FROM date_created)\n" +
         "\n" +
         "    ORDER BY\n" +
         "\n" +
-        "    EXTRACT(YEAR FROM DATE_CREATED) DESC,\n" +
-        "    EXTRACT(MONTH FROM DATE_CREATED) DESC,\n" +
-        "    EXTRACT(DAY FROM DATE_CREATED) DESC", nativeQuery = true)
+        "    EXTRACT(YEAR FROM date_created) DESC,\n" +
+        "    EXTRACT(MONTH FROM date_created) DESC,\n" +
+        "    EXTRACT(DAY FROM date_created) DESC", nativeQuery = true)
     List<ReportProjection> findReport(@Param("tag") String tag);
 
 }
