@@ -3,7 +3,7 @@
         <form class="">
             <mat-form-field class="col-md-3">
                 <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue"
-                    [ngModelOptions]="{standalone: true}" maxlength="11">
+                    [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
                 <!-- <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue"
                     [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)"> -->
             </mat-form-field>
@@ -153,7 +153,7 @@
                 <tr *ngFor="let txn of voucherViewer.txnHistory">
                     <td>{{txn.amount}}</td>
                     <td>{{txn.tag}}</td>
-                    <td>{{txn.dateCreated}}</td>
+                    <td>{{txn.dateCreated | date:'medium'}}</td>
                 </tr>
             </tbody>
         </table>

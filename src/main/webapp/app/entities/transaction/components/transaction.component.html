@@ -374,6 +374,10 @@
                         <td>Phone Number</td>
                         <td>{{ customer?.phone }}</td>
                     </tr>
+                    <tr>
+                        <td>Delivery Datetime</td>
+                        <td>{{ voucherForm?.controls?.deliveryDate?.value | date:'medium'}}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

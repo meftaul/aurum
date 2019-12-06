@@ -122,7 +122,9 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     const voucher = this.voucherViewer.voucherInfo;
     voucher.deliveryStatus = true;
 
-    this.voucherService.update(voucher).subscribe(data => {});
+    this.voucherService.update(voucher).subscribe(data => {
+      this.jhiAlertService.success('Delivery Completed.');
+    });
   }
 
   makePayment(deliveryStatus: boolean, isPaid: boolean) {
@@ -154,22 +156,6 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
       });
       this.transactionHistoryForm.controls.amount.setValue(null);
     });
-
-    // this.transactionHistoryService.create(transactionHistoryTemp).subscribe(transaction => {
-    //   // search voucher data again
-    //   this.voucherViewerService.find(this.voucherFieldValue).subscribe(voucher => {
-    //     if (this.voucherViewer) {
-    //       this.voucherViewer = voucher.body;
-    //       this.voucherNumber = this.voucherViewer.voucherInfo.voucherNo;
-    //       this.transactionHistoryForm.controls.amount.setValidators([Validators.max(this.voucherViewer.dueAmount)]);
-    //       this.transactionHistoryForm.controls.amount.updateValueAndValidity();
-
-    //       this.fetchCustomer(this.voucherViewer.voucherInfo.customerId);
-    //       this.fetchAurumServices(this.voucherViewer.voucherInfo.id);
-    //     }
-    //   });
-    //   this.transactionHistoryForm.controls.amount.setValue(null);
-    // });
   }
 
   ngOnDestroy(): void {}
