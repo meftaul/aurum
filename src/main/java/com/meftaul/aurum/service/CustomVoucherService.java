@@ -140,7 +140,7 @@ public class CustomVoucherService {
         System.out.println("=================================");*/
 
         Long todayCount = this.voucherRepository.countByDateCreatedAfter(instant) + 1;
-        return String.valueOf(today.getYear() % 100) + String.valueOf(today.getMonthValue()) + String.valueOf(today.getDayOfMonth()) + String.format("%05d", todayCount);
+        return String.valueOf(today.getYear() % 100) + String.format("%02d", today.getMonthValue()) + String.format("%02d", today.getDayOfMonth())  + String.format("%05d", todayCount);
     }
 
 }
