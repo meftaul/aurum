@@ -377,6 +377,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.savedVoucherNumber = data.body.voucherNo;
         window.print();
         this.resetVoucherForm();
+        this.jhiAlertService.success('Transaction completed with voucher number '.concat(this.savedVoucherNumber));
       },
       error => {
         this.jhiAlertService.error('Error in saving voucher. ');
