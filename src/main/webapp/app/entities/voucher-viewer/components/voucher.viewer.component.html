@@ -172,9 +172,9 @@
         Is Delivery Done?
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="makePayment(true); modal.close()">Yes! Make
+        <button type="button" class="btn btn-outline-dark" (click)="makePayment(true, true); modal.close()">Yes! Make
             Payment</button>
-        <button type="button" class="btn btn-outline-dark" (click)="makePayment(false); modal.close()">No! Make
+        <button type="button" class="btn btn-outline-dark" (click)="makePayment(false, true); modal.close()">No! Make
             Payment</button>
     </div>
 </ng-template>

@@ -101,7 +101,7 @@ public class CustomVoucherService {
         String voucherNo = txnDto.getTransactionHistory().getVoucherNo();
         Voucher voucher = voucherRepository.findByVoucherNo(voucherNo);
 
-        if (voucher != null && txnDto.getDeliveryStatus().equals(VoucherStatus.PAID)) {
+        if (voucher != null && txnDto.getVoucherStatus().equals(VoucherStatus.PAID)) {
             voucher.setStatus(VoucherStatus.PAID);
         }
 

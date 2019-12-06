@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { JhiAlertService } from 'ng-jhipster';
 import * as moment from 'moment';
 import { VoucherViewerService } from '../services/service-api/voucher.viewer.service';
-import { VoucherViewer } from '../services/domain/voucher.viewer.models';
+import { VoucherViewer, TransactionDto } from '../services/domain/voucher.viewer.models';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
@@ -15,6 +15,7 @@ import { AurumServiceService } from 'app/entities/aurum-service/aurum-service.se
 import { AurumService } from 'app/shared/model/aurum-service.model';
 import { VoucherService } from 'app/entities/voucher/voucher.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
 
 @Component({
   selector: 'jhi-aurum-voucher-viewer',
@@ -114,7 +115,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
       !this.voucherViewer.voucherInfo.deliveryStatus
     )
       this.modalService.open(confirmDialog);
-    else this.makePayment(false);
+    else this.makePayment(false, false);
   }
 
   confirmDelivery() {
@@ -124,13 +125,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     this.voucherService.update(voucher).subscribe(data => {});
   }
 
-  makePayment(deliveryStatus: boolean) {
-    // this.transactionHistoryForm.markAllAsTouched();
-    // if (this.transactionHistoryForm.invalid) {
-    //   this.jhiAlertService.warning("Amount can't be greater then due.");
-    //   return;
-    // }
-    // call service to save transaction history
+  makePayment(deliveryStatus: boolean, isPaid: boolean) {
     const transactionHistoryTemp = new TransactionHistory();
     transactionHistoryTemp.voucherNo = this.voucherNumber;
     transactionHistoryTemp.amount = this.transactionHistoryForm.controls.amount.value;
@@ -139,7 +134,12 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     transactionHistoryTemp.dateCreated = moment(new Date(), DATE_TIME_FORMAT);
     transactionHistoryTemp.addedBy = this.account.login;
 
-    this.transactionHistoryService.create(transactionHistoryTemp).subscribe(transaction => {
+    const transactionDto = new TransactionDto();
+    transactionDto.transactionHistory = transactionHistoryTemp;
+    transactionDto.deliveryStatus = deliveryStatus;
+    transactionDto.voucherStatus = isPaid ? VoucherStatus.PAID : VoucherStatus.DUE;
+
+    this.voucherViewerService.createCustomeTransaction(transactionDto).subscribe(txn => {
       // search voucher data again
       this.voucherViewerService.find(this.voucherFieldValue).subscribe(voucher => {
         if (this.voucherViewer) {
@@ -154,6 +154,22 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
       });
       this.transactionHistoryForm.controls.amount.setValue(null);
     });
+
+    // this.transactionHistoryService.create(transactionHistoryTemp).subscribe(transaction => {
+    //   // search voucher data again
+    //   this.voucherViewerService.find(this.voucherFieldValue).subscribe(voucher => {
+    //     if (this.voucherViewer) {
+    //       this.voucherViewer = voucher.body;
+    //       this.voucherNumber = this.voucherViewer.voucherInfo.voucherNo;
+    //       this.transactionHistoryForm.controls.amount.setValidators([Validators.max(this.voucherViewer.dueAmount)]);
+    //       this.transactionHistoryForm.controls.amount.updateValueAndValidity();
+
+    //       this.fetchCustomer(this.voucherViewer.voucherInfo.customerId);
+    //       this.fetchAurumServices(this.voucherViewer.voucherInfo.id);
+    //     }
+    //   });
+    //   this.transactionHistoryForm.controls.amount.setValue(null);
+    // });
   }
 
   ngOnDestroy(): void {}
