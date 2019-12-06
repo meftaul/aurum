@@ -363,8 +363,8 @@
                     </tr>
                     <tr>
                         <td>Voucher Number</td>
-                        <!-- <td>{{savedVoucherNumber}}</td> -->
-                        <td><input type="number" matInput [(ngModel)]="savedVoucherNumber"></td>
+                        <td>{{savedVoucherNumber}}</td>
+                        <!-- <td><input type="text" matInput [(ngModel)]="savedVoucherNumber"></td> -->
                     </tr>
                     <tr>
                         <td>Name</td>
@@ -394,16 +394,16 @@
                         <td>{{voucherForm?.controls?.disountAmount?.value}}</td>
                     </tr>
                     <tr>
+                        <td>Total Payable</td>
+                        <td>{{payableTotalAmount}}</td>
+                    </tr>
+                    <tr>
                         <td>Paid Amount</td>
                         <td>{{voucherForm?.controls?.paidAmount?.value}}</td>
                     </tr>
                     <tr>
                         <td>Due</td>
                         <td>{{payableTotalAmount - voucherForm?.controls?.paidAmount?.value}}</td>
-                    </tr>
-                    <tr>
-                        <td>Total Payable</td>
-                        <td>{{payableTotalAmount}}</td>
                     </tr>
                 </tbody>
             </table>
