@@ -2,6 +2,7 @@
   /* hide the printing component from @media screen */
   //display: none !important;
   visibility: hidden;
+  margin-top: 100px;
 }
 
 @media print {
