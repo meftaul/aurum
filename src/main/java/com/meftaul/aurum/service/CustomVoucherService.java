@@ -1,10 +1,12 @@
 package com.meftaul.aurum.service;
 
 import com.meftaul.aurum.domain.AurumService;
+import com.meftaul.aurum.domain.Customer;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.Voucher;
 import com.meftaul.aurum.domain.enumeration.VoucherStatus;
 import com.meftaul.aurum.repository.AurumServiceRepository;
+import com.meftaul.aurum.repository.CustomerRepository;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.security.SecurityUtils;
@@ -20,9 +22,7 @@ import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,11 +35,13 @@ public class CustomVoucherService {
     private final VoucherRepository voucherRepository;
     private final AurumServiceRepository aurumServiceRepository;
     private final TransactionHistoryRepository transactionHistoryRepository;
+    private final CustomerRepository customerRepository;
 
-    public CustomVoucherService(VoucherRepository voucherRepository, AurumServiceRepository aurumServiceRepository, TransactionHistoryRepository transactionHistoryRepository) {
+    public CustomVoucherService(VoucherRepository voucherRepository, AurumServiceRepository aurumServiceRepository, TransactionHistoryRepository transactionHistoryRepository, CustomerRepository customerRepository) {
         this.voucherRepository = voucherRepository;
         this.aurumServiceRepository = aurumServiceRepository;
         this.transactionHistoryRepository = transactionHistoryRepository;
+        this.customerRepository = customerRepository;
     }
 
     public Optional<VoucherViewerDto> findByVoucherNo(String voucherNo) {
@@ -94,6 +96,8 @@ public class CustomVoucherService {
             createTxnHistory(savedVoucher, savedVoucher.getDisountAmount(), TransactionStatus.DISCOUNT);
         }
 
+        updateCustomerPoint(voucher.getCustomerId());
+
         return voucherRepository.save(savedVoucher);
     }
 
@@ -112,6 +116,18 @@ public class CustomVoucherService {
         voucherRepository.save(voucher);
 
         return transactionHistoryRepository.save(txnDto.getTransactionHistory());
+    }
+
+    private void updateCustomerPoint(Long customerId) {
+        Customer customer = customerRepository.getOne(customerId);
+        Long existingPoint = customer.getTotalPoint();
+        if (existingPoint == null || existingPoint == 0L) {
+            existingPoint = 5L;
+        } else {
+            existingPoint += 5L;
+        }
+        customer.setTotalPoint(existingPoint);
+        customerRepository.save(customer);
     }
 
     private TransactionHistory createTxnHistory(Voucher voucher, BigDecimal amount, TransactionStatus tag) {
