@@ -23,6 +23,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
   paidAmount: number;
   distinctServiceType: string[];
   invoiceTitle: string;
+  printDate: Date = new Date();
 
   constructor(
     private route: ActivatedRoute,
