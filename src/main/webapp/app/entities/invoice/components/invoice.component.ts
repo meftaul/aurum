@@ -9,6 +9,11 @@ import { VoucherService } from 'app/entities/voucher/voucher.service';
 import { TransactionHistoryService } from 'app/entities/transaction-history/transaction-history.service';
 import { TransactionHistory } from 'app/shared/model/transaction-history.model';
 
+export class TypedAurumService {
+  serviceType: string;
+  serviceList: AurumService[];
+}
+
 @Component({
   selector: 'jhi-aurum-invoice',
   templateUrl: './invoice.component.html',
@@ -19,6 +24,8 @@ export class InvoiceComponent implements OnInit, OnDestroy {
   voucher: Voucher;
   customer: Customer;
   aurumServices: AurumService[];
+  typedAurumServiceList: TypedAurumService[];
+  serviceTypeToServiceListMap: Map<string, AurumService[]>;
   txnHitoryList: TransactionHistory[];
   paidAmount: number;
   distinctServiceType: string[];
@@ -58,11 +65,17 @@ export class InvoiceComponent implements OnInit, OnDestroy {
 
   fetchAurumServices(voucherId: number) {
     this.distinctServiceType = [];
+    this.serviceTypeToServiceListMap = new Map();
     this.aurumServiceService.query({ 'voucherId.equals': voucherId }).subscribe(data => {
       this.aurumServices = data.body;
       this.aurumServices.map(as => {
         if (!this.distinctServiceType.includes(as.serviceType)) this.distinctServiceType.push(as.serviceType);
-        this.invoiceTitle = this.distinctServiceType.join(', ');
+        if (!this.serviceTypeToServiceListMap.has(as.serviceType)) this.serviceTypeToServiceListMap.set(as.serviceType, []);
+      });
+      this.invoiceTitle = this.distinctServiceType.join(', ');
+
+      this.aurumServices.map(service => {
+        this.serviceTypeToServiceListMap.get(service.serviceType).push(service);
       });
     });
   }
@@ -75,6 +88,10 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         if (txn.tag === 'RECEIVE') this.paidAmount += txn.amount;
       });
     });
+  }
+
+  printPage() {
+    window.print();
   }
 
   ngOnDestroy() {}
