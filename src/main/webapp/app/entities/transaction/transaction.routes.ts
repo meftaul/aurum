@@ -9,15 +9,16 @@ export const TRANSACTION_ROUTE: Routes = [
     path: '',
     component: TransactionComponent,
     data: {
-      authorities: [],
+      authorities: ['ROLE_ADMIN', 'ROLE_USER'],
       pageTitle: 'Transaction!'
-    }
+    },
+    canActivate: [UserRouteAccessService]
   },
   {
     path: '/create-customer',
     component: CustomerFormPopupComponent,
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_USER'],
       pageTitle: 'Customers'
     },
     canActivate: [UserRouteAccessService],
