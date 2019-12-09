@@ -19,6 +19,7 @@ import { ItemService } from 'app/entities/item/item.service';
 import { CustomVoucherDto } from 'app/shared/model/custom.voucher.model';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
@@ -77,6 +78,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
+    private router: Router,
     protected jhiAlertService: JhiAlertService,
     private transactionService: TransactionService,
     protected customerService: CustomerService,
@@ -375,9 +377,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
       data => {
         // method return Voucher not CustomVoucher
         this.savedVoucherNumber = data.body.voucherNo;
-        window.print();
+        // window.print();
         this.resetVoucherForm();
         this.jhiAlertService.success('Transaction completed with voucher number '.concat(this.savedVoucherNumber));
+
+        this.router.navigate(['/invoice', this.savedVoucherNumber]);
+        // {
+        //   queryParams: {
+        //     voucherNumber: this.savedVoucherNumber,
+        //   }
+        // }
+        // );
       },
       error => {
         this.jhiAlertService.error('Error in saving voucher. ');

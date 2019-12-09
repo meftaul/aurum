@@ -22,6 +22,14 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
         loadChildren: () => import('./voucher-viewer/voucher.viewer.module').then(m => m.AurumVoucherViewerModule)
       },
       {
+        path: 'invoice',
+        data: {
+          authorities: ['ROLE_ADMIN', 'ROLE_USER']
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./invoice/invoice.module').then(m => m.AurumInvoiceModule)
+      },
+      {
         path: 'report',
         data: {
           authorities: ['ROLE_ADMIN']
