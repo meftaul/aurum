@@ -32,6 +32,9 @@ export class InvoiceComponent implements OnInit, OnDestroy {
   invoiceTitle: string;
   printDate: Date = new Date();
 
+  showXrayNote: boolean;
+  showHallmarkNote: boolean;
+
   constructor(
     private route: ActivatedRoute,
     protected customerService: CustomerService,
@@ -69,6 +72,8 @@ export class InvoiceComponent implements OnInit, OnDestroy {
     this.aurumServiceService.query({ 'voucherId.equals': voucherId }).subscribe(data => {
       this.aurumServices = data.body;
       this.aurumServices.map(as => {
+        if (as.serviceType === 'X-Ray') this.showXrayNote = true;
+        if (as.serviceType === 'Hallmark') this.showHallmarkNote = true;
         if (!this.distinctServiceType.includes(as.serviceType)) this.distinctServiceType.push(as.serviceType);
         if (!this.serviceTypeToServiceListMap.has(as.serviceType)) this.serviceTypeToServiceListMap.set(as.serviceType, []);
       });
