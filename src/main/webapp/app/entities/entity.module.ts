@@ -6,7 +6,7 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
   imports: [
     RouterModule.forChild([
       {
-        path: 'entity/transactions',
+        path: 'transactions',
         data: {
           authorities: ['ROLE_ADMIN', 'ROLE_USER']
         },

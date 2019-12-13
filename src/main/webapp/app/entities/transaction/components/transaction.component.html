@@ -265,7 +265,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-6" style="margin-top: 12px;">
                                     <mat-checkbox [labelPosition]="'after'" (change)="onVatCheckboxValueChange($event)"
                                         [(ngModel)]="vatChecked" [ngModelOptions]="{standalone: true}">Vat(15%)
                                     </mat-checkbox>
@@ -289,7 +289,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">Discount</div>
+                                <div class="col-md-6" style="margin-top: 12px;">Discount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
                                         <input type="number" matInput placeholder="Disount Amount"
@@ -308,10 +308,10 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">Paid Amount</div>
+                                <div class="col-md-6" style="margin-top: 12px;">Paid Amount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input type="number" matInput placeholder="Total Payable Amount"
+                                        <input type="number" matInput placeholder="Paid Amount"
                                             formControlName="paidAmount" (input)="onTotalPayableValueChange($event)">
                                     </mat-form-field>
                                 </div>
@@ -343,9 +343,6 @@
     </div>
 </div>
 
-
-<!-- ----------------------------------------- print section ----------------------------------------- -->
-<!-- <button class="no-print" (click)="printPage()">print</button> -->
 
 <ng-template #createCustomerDialog let-cusModal>
     <div class="modal-header">
