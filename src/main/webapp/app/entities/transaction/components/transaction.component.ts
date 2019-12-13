@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { ICustomer } from 'app/shared/model/customer.model';
+import { ICustomer, Customer } from 'app/shared/model/customer.model';
 import { TransactionService } from '../services/service-api/transaction.service';
 import { VOUCHER_STATUS, SERVICE_LIST_COLUMNS, AURUM_SERVICE_LIST, ALLOY_TYPE } from '../services/domain/transaction.models';
 import { Subscription } from 'rxjs';
@@ -76,6 +76,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   karatTypePercentMap: Map<string, number> = new Map();
   serviceListColumns: string[] = SERVICE_LIST_COLUMNS;
 
+  customerForm: FormGroup;
+
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -93,6 +95,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.prepareAurumServiceForm();
     this.prepareVoucherForm();
+    this.prepareCustomerForm(new Customer());
     this.searchCategory = 'phone';
 
     this.fetchKaratList();
@@ -133,9 +136,50 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
   }
 
-  createCustomer() {
-    let customerTemp: ICustomer;
-    this.customerService.create(customerTemp).subscribe(data => {});
+  prepareCustomerForm(customerData: Customer) {
+    this.customerForm = this.formBuilder.group({
+      firstName: [customerData.firstName, [Validators.required]],
+      lastName: [customerData.lastName],
+      phone: [customerData.phone, [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
+      email: [customerData.email, [Validators.required, Validators.email]],
+      address: [customerData.address]
+      // referenceBy: [customerData.referenceBy],
+    });
+  }
+
+  showCreateCustomerDialog(createCustomerDialog) {
+    this.modalService.open(createCustomerDialog, { centered: true, size: 'lg' });
+  }
+
+  closeCreateCustomerDialog(cusModal) {
+    cusModal.close();
+    this.customerForm.reset();
+  }
+
+  createCustomer(cusModal) {
+    this.markFormGroupAsTouched(this.customerForm);
+    if (this.customerForm.invalid) {
+      return;
+    }
+
+    let customer = new Customer();
+    customer = this.customerForm.value;
+    this.customerService.create(customer).subscribe(
+      response => {
+        if (response.body) {
+          this.customer = response.body;
+          this.customerID = this.customer ? this.customer.id : 0;
+          cusModal.close();
+          this.customerForm.reset();
+        } else {
+          this.customer = null;
+          this.jhiAlertService.warning('Customer not found.');
+        }
+      },
+      error => {
+        this.customer = null;
+      }
+    );
   }
   // ****************************** CUSTOMER ****************************** END
 
@@ -541,6 +585,16 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
+  }
+
+  markFormGroupAsTouched(formGroup: FormGroup) {
+    (Object as any).values(formGroup.controls).forEach(control => {
+      control.markAsDirty();
+      control.markAllAsTouched();
+      if (control.controls) {
+        control.controls.forEach(ctrl => this.markFormGroupAsTouched(ctrl));
+      }
+    });
   }
 
   printPage() {

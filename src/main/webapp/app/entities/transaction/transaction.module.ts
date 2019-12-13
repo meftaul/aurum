@@ -16,7 +16,8 @@ import { AurumSharedModule } from 'app/shared/shared.module';
 
 import { TransactionComponent } from './components/transaction.component';
 import { TRANSACTION_ROUTE } from './transaction.routes';
-import { CustomerFormDialogComponent, CustomerFormPopupComponent } from './components/customer-form/customer.form.component';
+import { CustomerFormDialogComponent } from './components/customer-form/customer.form.component';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
@@ -33,8 +34,7 @@ import { CustomerFormDialogComponent, CustomerFormPopupComponent } from './compo
     MatSelectModule,
     MatCheckboxModule
   ],
-  declarations: [TransactionComponent, CustomerFormDialogComponent, CustomerFormPopupComponent],
-  providers: [MatDatepickerModule],
-  entryComponents: [CustomerFormDialogComponent]
+  declarations: [TransactionComponent, CustomerFormDialogComponent],
+  providers: [MatDatepickerModule, NgbActiveModal]
 })
 export class AurumTransactionModule {}

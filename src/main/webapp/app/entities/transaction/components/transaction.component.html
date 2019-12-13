@@ -15,9 +15,11 @@
                         [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
                 </mat-form-field>
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
-                <button type="submit" class="btn btn-primary"
+                <button type="button" class="btn btn-primary"
+                    (click)="showCreateCustomerDialog(createCustomerDialog)">Create Customer</button>
+                <!-- <button type="submit" class="btn btn-primary"
                     [routerLink]="['/entity/transactions', { outlets: { popup: '/create-customer'} }]"
-                    replaceUrl="true">Create Customer</button>
+                    replaceUrl="true">Create Customer</button> -->
                 <jhi-alert></jhi-alert>
             </form>
         </mat-card>
@@ -344,6 +346,57 @@
 
 <!-- ----------------------------------------- print section ----------------------------------------- -->
 <!-- <button class="no-print" (click)="printPage()">print</button> -->
+
+<ng-template #createCustomerDialog let-cusModal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Create Customer</h4>
+        <button type="button" class="close" aria-label="Close" (click)="cusModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="customerForm" class="row">
+            <mat-form-field class="col-md-6">
+                <input matInput placeholder="First Name" formControlName="firstName">
+                <mat-error
+                    *ngIf="customerForm.controls['firstName'].errors && !customerForm.controls['firstName'].pristine">
+                    <div [hidden]="!customerForm.controls['firstName'].errors.required">First name is required</div>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="col-md-6">
+                <input matInput placeholder="Last Name" formControlName="lastName">
+            </mat-form-field>
+
+            <mat-form-field class="col-md-6" style="margin-top: 5px;">
+                <input type="text" matInput placeholder="Phone" formControlName="phone" maxlength="11"
+                    (keypress)="numberOnly($event)">
+                <mat-error *ngIf="customerForm.controls['phone'].errors && !customerForm.controls['phone'].pristine">
+                    <div [hidden]="!customerForm.controls['phone'].errors.required">Phone number is required</div>
+                    <div [hidden]="!customerForm.controls['phone'].errors.minlength">Phone number minimum length is 11
+                    </div>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="col-md-6" style="margin-top: 5px;">
+                <input type="email" matInput placeholder="Email" formControlName="email">
+                <mat-error *ngIf="customerForm.controls['email'].errors && !customerForm.controls['email'].pristine">
+                    <div [hidden]="!customerForm.controls['email'].errors.required">Email is required</div>
+                    <div [hidden]="!customerForm.controls['email'].errors.email">Email is not valid</div>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-6" style="margin-top: 5px;">
+                <input matInput placeholder="Address" formControlName="address">
+            </mat-form-field>
+            <!-- <mat-form-field class="col-md-6" style="margin-top: 5px;">
+                    <input matInput placeholder="Reference By" formControlName="referenceBy">
+                </mat-form-field> -->
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="createCustomer(cusModal);">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeCreateCustomerDialog(cusModal)">Cancel</button>
+    </div>
+</ng-template>
 
 <ng-template #confirmDialog let-modal>
     <div class="modal-header">
