@@ -100,7 +100,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     });
   }
 
-  confirmMakePayment(confirmDialog) {
+  confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog) {
     this.transactionHistoryForm.markAllAsTouched();
     if (!this.transactionHistoryForm.controls.amount.value) {
       this.jhiAlertService.warning('Amount not found.');
@@ -110,21 +110,15 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
       this.jhiAlertService.warning("Amount can't be greater then due.");
       return;
     }
-    if (
+
+    if (+(+this.transactionHistoryForm.controls.amount.value).toFixed(2) < +this.voucherViewer.dueAmount.toFixed(2)) {
+      this.modalService.open(confirmPaymentDialog, { centered: true }); // TODO:
+    } else if (
       +(+this.transactionHistoryForm.controls.amount.value).toFixed(2) === +this.voucherViewer.dueAmount.toFixed(2) &&
       !this.voucherViewer.voucherInfo.deliveryStatus
     )
-      this.modalService.open(confirmDialog);
+      this.modalService.open(confirmPaymentWithDeliveryDialog, { centered: true });
     else this.makePayment(false, false);
-  }
-
-  confirmDelivery() {
-    const voucher = this.voucherViewer.voucherInfo;
-    voucher.deliveryStatus = true;
-
-    this.voucherService.update(voucher).subscribe(data => {
-      this.jhiAlertService.success('Delivery Completed.');
-    });
   }
 
   makePayment(deliveryStatus: boolean, isPaid: boolean) {
@@ -155,6 +149,19 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
         }
       });
       this.transactionHistoryForm.controls.amount.setValue(null);
+    });
+  }
+
+  confirmDelivery(confirmDeliveryDialog) {
+    this.modalService.open(confirmDeliveryDialog, { centered: true });
+  }
+
+  makeDelivery() {
+    const voucher = this.voucherViewer.voucherInfo;
+    voucher.deliveryStatus = true;
+
+    this.voucherService.update(voucher).subscribe(data => {
+      this.jhiAlertService.success('Delivery Completed.');
     });
   }
 

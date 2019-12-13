@@ -137,10 +137,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
     let customerTemp: ICustomer;
     this.customerService.create(customerTemp).subscribe(data => {});
   }
-
-  open(content) {
-    this.modalService.open(content, { size: 'xl' });
-  }
   // ****************************** CUSTOMER ****************************** END
 
   // ****************************** AURUM SERVICE ****************************** START
@@ -346,7 +342,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.jhiAlertService.warning('Invalid Data.');
       return;
     }
-    this.modalService.open(confirmDialog);
+    this.modalService.open(confirmDialog, { centered: true });
   }
 
   makePayment() {
