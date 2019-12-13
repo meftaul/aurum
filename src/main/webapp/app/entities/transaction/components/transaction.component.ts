@@ -332,6 +332,23 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  confirmMakePayment(confirmDialog) {
+    this.voucherForm.markAllAsTouched();
+    if (!this.customerID || this.customerID === 0) {
+      this.jhiAlertService.warning('Customer not found.');
+      return;
+    }
+    if (this.aurumServiceList.length === 0) {
+      this.jhiAlertService.warning('Add atleast one service.');
+      return;
+    }
+    if (this.voucherForm.invalid) {
+      this.jhiAlertService.warning('Invalid Data.');
+      return;
+    }
+    this.modalService.open(confirmDialog);
+  }
+
   makePayment() {
     this.voucherForm.markAllAsTouched();
     if (!this.customerID || this.customerID === 0) {
