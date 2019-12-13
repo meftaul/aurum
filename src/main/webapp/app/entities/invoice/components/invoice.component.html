@@ -77,12 +77,13 @@
     </div>
     <div class="row" style="padding-top: 5px;">
         <div class="col-md-12">
+            <h4 style="text-decoration: underline; font-weight: bold;">Service Information:</h4>
             <table class="table" *ngFor="let serviceMap of serviceTypeToServiceListMap | keyvalue">
                 <thead class="borderStyle">
                     <tr class="borderStyle">
                         <th colspan="9" class="borderStyle"
                             style="text-decoration: underline; font-weight: bold; text-align: left;">
-                            Service({{serviceMap.key}}) Information </th>
+                            {{serviceMap.key}}</th>
                     </tr>
                     <tr class="borderStyle">
                         <th class="borderStyle">#</th>
