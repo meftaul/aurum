@@ -40,7 +40,7 @@
                 <button type="button" class="btn btn-primary" (click)="confirmMakePayment(confirmDialog)"
                     *ngIf="voucherViewer.dueAmount > 0">Make Payment</button>
 
-                <button type="button" class="btn btn-primary" (click)="confirmDelivery()"
+                <button type="button" class="btn btn-primary" (click)="confirmDelivery()" style="margin-top: 5px;"
                     *ngIf="voucherViewer.dueAmount === 0 && !voucherViewer.voucherInfo.deliveryStatus">Make
                     Delivery</button>
             </form>
@@ -66,32 +66,26 @@
                 <tr>
                     <td>Voucher Number</td>
                     <td>{{voucherViewer?.voucherInfo?.voucherNo}}</td>
-                    <td>Delivery Date</td>
-                    <td>{{voucherViewer?.voucherInfo?.deliveryDate}}</td>
+                    <td>Delivery Status</td>
+                    <td>{{voucherViewer?.voucherInfo?.deliveryStatus ? 'Delivered' : 'Not Delivered'}}</td>
                 </tr>
-                <!-- <tr *ngIf="voucherViewer.dueAmount && voucherViewer.dueAmount === 0">
-                    <td>Total Amount</td>
-                    <td>{{voucherViewer?.totalAmount}}</td>
-                    <td>Due Amount</td>
-                    <td>{{voucherViewer?.dueAmount}}</td>
-                </tr> -->
                 <tr>
                     <td>Calculated Total Amount</td>
                     <td>{{voucherViewer?.voucherInfo?.calculatedTotalAmount}}</td>
-                    <td>Vat</td>
-                    <td>{{voucherViewer?.voucherInfo?.vat}}</td>
+                    <td>Delivery Date</td>
+                    <td>{{voucherViewer?.voucherInfo?.deliveryDate}}</td>
                 </tr>
                 <tr>
                     <td>Disount Amount</td>
                     <td>{{voucherViewer?.voucherInfo?.disountAmount}}</td>
-                    <td>Total Payable Amount</td>
-                    <td>{{voucherViewer?.voucherInfo?.totalPayableAmount}}</td>
+                    <td>Vat</td>
+                    <td>{{voucherViewer?.voucherInfo?.vat}}</td>
                 </tr>
                 <tr>
                     <td>boxNumber</td>
                     <td>{{voucherViewer?.voucherInfo?.boxNumber}}</td>
-                    <td></td>
-                    <td></td>
+                    <td>Total Payable Amount</td>
+                    <td>{{voucherViewer?.voucherInfo?.totalPayableAmount}}</td>
                 </tr>
             </tbody>
         </table>
