@@ -100,7 +100,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   }
 
   confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog) {
-    this.transactionHistoryForm.markAllAsTouched();
+    this.markFormGroupAsTouched(this.transactionHistoryForm);
     if (!this.transactionHistoryForm.controls.amount.value) {
       this.jhiAlertService.warning('Amount not found.');
       return;
@@ -173,5 +173,15 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
+  }
+
+  markFormGroupAsTouched(formGroup: FormGroup) {
+    (Object as any).values(formGroup.controls).forEach(control => {
+      control.markAsDirty();
+      control.markAllAsTouched();
+      if (control.controls) {
+        control.controls.forEach(ctrl => this.markFormGroupAsTouched(ctrl));
+      }
+    });
   }
 }

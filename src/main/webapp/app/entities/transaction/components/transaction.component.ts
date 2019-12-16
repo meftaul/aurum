@@ -207,7 +207,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   addService() {
-    this.aurumServiceForm.markAllAsTouched();
+    this.markFormGroupAsTouched(this.aurumServiceForm);
     if (this.aurumServiceForm.invalid) {
       this.jhiAlertService.warning('Form Invalid.');
       return;
@@ -265,17 +265,66 @@ export class TransactionComponent implements OnInit, OnDestroy {
       });
     }
   }
-
+  // itemName
+  // karatType
+  // expectedKaratType
+  // addedAlloy
+  // alloyQuantity
+  // quantity
+  // weight
+  // freeCheck
+  // hallMarkedText
   serviceTypeChange(event) {
     this.selectedService = event;
-    // reset some field
-    this.aurumServiceForm.controls.karatType.setValue(null);
-    this.aurumServiceForm.controls.expectedKaratType.setValue(null);
-    this.aurumServiceForm.controls.alloyQuantity.setValue(null);
-    this.aurumServiceForm.controls.addedAlloy.setValue(null);
 
     if (this.selectedService === 'X-Ray') {
+      this.aurumServiceForm.controls.itemName.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.karatType.clearValidators();
+      this.aurumServiceForm.controls.expectedKaratType.clearValidators();
+      this.aurumServiceForm.controls.addedAlloy.clearValidators();
+      this.aurumServiceForm.controls.alloyQuantity.clearValidators();
+      this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.quantity.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.freeCheck.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.hallMarkedText.clearValidators();
       this.aurumServiceForm.controls.quantity.setValue(1);
+      this.updateFormValueAndValidity();
+    } else if (this.selectedService === 'Hallmark') {
+      this.aurumServiceForm.controls.itemName.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.karatType.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.expectedKaratType.clearValidators();
+      this.aurumServiceForm.controls.addedAlloy.clearValidators();
+      this.aurumServiceForm.controls.alloyQuantity.clearValidators();
+      this.aurumServiceForm.controls.weight.clearValidators();
+      this.aurumServiceForm.controls.quantity.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.freeCheck.clearValidators();
+      this.aurumServiceForm.controls.hallMarkedText.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.quantity.setValue(1);
+      this.updateFormValueAndValidity();
+    } else if (this.selectedService === 'Normal Melting') {
+      this.aurumServiceForm.controls.itemName.clearValidators();
+      this.aurumServiceForm.controls.karatType.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.expectedKaratType.clearValidators();
+      this.aurumServiceForm.controls.addedAlloy.clearValidators();
+      this.aurumServiceForm.controls.alloyQuantity.clearValidators();
+      this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.quantity.clearValidators();
+      this.aurumServiceForm.controls.freeCheck.clearValidators();
+      this.aurumServiceForm.controls.hallMarkedText.clearValidators();
+      this.aurumServiceForm.controls.quantity.setValue(1);
+      this.updateFormValueAndValidity();
+    } else if (this.selectedService === 'Calculated Melting') {
+      this.aurumServiceForm.controls.itemName.clearValidators();
+      this.aurumServiceForm.controls.karatType.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.expectedKaratType.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.addedAlloy.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.alloyQuantity.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.quantity.clearValidators();
+      this.aurumServiceForm.controls.freeCheck.clearValidators();
+      this.aurumServiceForm.controls.hallMarkedText.clearValidators();
+      this.aurumServiceForm.controls.quantity.setValue(1);
+      this.updateFormValueAndValidity();
     }
 
     const weightTemp = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
@@ -292,6 +341,28 @@ export class TransactionComponent implements OnInit, OnDestroy {
     } else {
       this.showBtnForCalculatedMelting = false;
     }
+  }
+
+  updateFormValueAndValidity() {
+    this.aurumServiceForm.controls.itemName.setValue(null);
+    this.aurumServiceForm.controls.karatType.setValue(null);
+    this.aurumServiceForm.controls.expectedKaratType.setValue(null);
+    this.aurumServiceForm.controls.addedAlloy.setValue(null);
+    this.aurumServiceForm.controls.alloyQuantity.setValue(null);
+    this.aurumServiceForm.controls.weight.setValue(null);
+    this.aurumServiceForm.controls.quantity.setValue(null);
+    this.aurumServiceForm.controls.freeCheck.setValue(null);
+    this.aurumServiceForm.controls.hallMarkedText.setValue(null);
+
+    this.aurumServiceForm.controls.itemName.updateValueAndValidity();
+    this.aurumServiceForm.controls.karatType.updateValueAndValidity();
+    this.aurumServiceForm.controls.expectedKaratType.updateValueAndValidity();
+    this.aurumServiceForm.controls.addedAlloy.updateValueAndValidity();
+    this.aurumServiceForm.controls.alloyQuantity.updateValueAndValidity();
+    this.aurumServiceForm.controls.weight.updateValueAndValidity();
+    this.aurumServiceForm.controls.quantity.updateValueAndValidity();
+    this.aurumServiceForm.controls.freeCheck.updateValueAndValidity();
+    this.aurumServiceForm.controls.hallMarkedText.updateValueAndValidity();
   }
 
   resetServiceForm() {
@@ -373,7 +444,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   confirmMakePayment(confirmDialog) {
-    this.voucherForm.markAllAsTouched();
+    this.markFormGroupAsTouched(this.voucherForm);
     if (!this.customerID || this.customerID === 0) {
       this.jhiAlertService.warning('Customer not found.');
       return;
@@ -390,19 +461,19 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   makePayment() {
-    this.voucherForm.markAllAsTouched();
-    if (!this.customerID || this.customerID === 0) {
-      this.jhiAlertService.warning('Customer not found.');
-      return;
-    }
-    if (this.aurumServiceList.length === 0) {
-      this.jhiAlertService.warning('Add atleast one service.');
-      return;
-    }
-    if (this.voucherForm.invalid) {
-      this.jhiAlertService.warning('Invalid Data.');
-      return;
-    }
+    // this.markFormGroupAsTouched(this.voucherForm);
+    // if (!this.customerID || this.customerID === 0) {
+    //   this.jhiAlertService.warning('Customer not found.');
+    //   return;
+    // }
+    // if (this.aurumServiceList.length === 0) {
+    //   this.jhiAlertService.warning('Add atleast one service.');
+    //   return;
+    // }
+    // if (this.voucherForm.invalid) {
+    //   this.jhiAlertService.warning('Invalid Data.');
+    //   return;
+    // }
 
     const voucherTemp = new Voucher();
     voucherTemp.voucherNo = moment().toString();
@@ -549,6 +620,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
         const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
         const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
         this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
+
+        if (+this.karatParcentDifference <= 0) {
+          this.aurumServiceForm.controls.karatType.setErrors({ percentDiffError: true });
+          this.aurumServiceForm.controls.expectedKaratType.setErrors({ percentDiffError: true });
+        }
       }
     }
   }
@@ -561,6 +637,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
       const gramValue = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
       const addedAlloyWeight = (gramValue * this.karatParcentDifference) / 100;
       this.aurumServiceForm.controls.alloyQuantity.setValue(addedAlloyWeight.toFixed(2));
+
+      if (+this.karatParcentDifference <= 0) {
+        this.aurumServiceForm.controls.karatType.setErrors({ percentDiffError: true });
+        this.aurumServiceForm.controls.expectedKaratType.setErrors({ percentDiffError: true });
+      }
     }
   }
 

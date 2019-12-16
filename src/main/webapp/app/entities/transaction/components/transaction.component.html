@@ -38,6 +38,11 @@
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['serviceType'].errors && !aurumServiceForm.controls['serviceType'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['serviceType'].errors.required">Service type
+                                    is required</div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6"
@@ -47,16 +52,34 @@
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['itemName'].errors && !aurumServiceForm.controls['itemName'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['itemName'].errors.required">Item name is
+                                    required
+                                </div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" [hidden]="selectedService === 'Hallmark'">
                             <input type="number" matInput placeholder="Weight(Gram)" formControlName="weight"
                                 (input)="onWeightValueChange($event)">
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['weight'].errors && !aurumServiceForm.controls['weight'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['weight'].errors.required">Weight is
+                                    required
+                                </div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6"
                             [hidden]="selectedService === 'Normal Melting' || selectedService === 'Calculated Melting'">
                             <input type="number" matInput placeholder="Quantity" formControlName="quantity">
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['quantity'].errors && !aurumServiceForm.controls['quantity'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['quantity'].errors.required">Quantity is
+                                    required
+                                </div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" [hidden]="selectedService === 'X-Ray'">
@@ -66,6 +89,13 @@
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['karatType'].errors && !aurumServiceForm.controls['karatType'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['karatType'].errors.required">Karat type is
+                                    required</div>
+                                <div [hidden]="!aurumServiceForm.controls['karatType'].errors.percentDiffError">Karat
+                                    type must be heigher then expected karat type</div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
@@ -75,10 +105,23 @@
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['expectedKaratType'].errors && !aurumServiceForm.controls['expectedKaratType'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['expectedKaratType'].errors.required">Expected
+                                    karat type is required</div>
+                                <div [hidden]="!aurumServiceForm.controls['karatType'].errors.percentDiffError">Expected
+                                    karat type must be lower then karat type</div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
                             <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity" readonly>
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['alloyQuantity'].errors && !aurumServiceForm.controls['alloyQuantity'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['alloyQuantity'].errors.required">Alloy
+                                    quantity is required
+                                </div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
@@ -88,31 +131,58 @@
                                     {{item.viewValue}}
                                 </mat-option>
                             </mat-select>
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['addedAlloy'].errors && !aurumServiceForm.controls['addedAlloy'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['addedAlloy'].errors.required">Added alloy is
+                                    required
+                                </div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6">
                             <input type="number" matInput placeholder="Rate" formControlName="rate">
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['rate'].errors && !aurumServiceForm.controls['rate'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['rate'].errors.required">Rate is required
+                                </div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" [hidden]="selectedService != 'Hallmark'">
-                            <input type="text" matInput placeholder="Hall Marked Text" formControlName="hallMarkedText">
+                            <input type="text" matInput placeholder="Hallmark Text" formControlName="hallMarkedText">
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['hallMarkedText'].errors && !aurumServiceForm.controls['hallMarkedText'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['hallMarkedText'].errors.required">Hallmark
+                                    text is required
+                                </div>
+                            </mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" [hidden]="selectedService != 'X-Ray'">
                             <input type="number" matInput placeholder="Check" formControlName="freeCheck">
+                            <mat-error
+                                *ngIf="aurumServiceForm.controls['freeCheck'].errors && !aurumServiceForm.controls['freeCheck'].pristine">
+                                <div [hidden]="!aurumServiceForm.controls['freeCheck'].errors.required">Check is
+                                    required
+                                </div>
+                                <div [hidden]="!aurumServiceForm.controls['freeCheck'].errors.min">Free check
+                                    minimum value is 0</div>
+                                <div [hidden]="!aurumServiceForm.controls['freeCheck'].errors.max">Free check
+                                    maximum value is 1</div>
+                            </mat-error>
                         </mat-form-field>
 
                         <div [hidden]="selectedService === 'Hallmark'">
                             <mat-form-field class="col-md-3">
                                 <input matInput placeholder="Weight(Vori)" formControlName="weightVori" readonly>
                             </mat-form-field>
-                            <mat-form-field class="col-md-3">
+                            <mat-form-field class="col-md-3" style="margin-left: -8px;">
                                 <input matInput placeholder="Weight(Ana)" formControlName="weightAna" readonly>
                             </mat-form-field>
                             <mat-form-field class="col-md-3">
                                 <input matInput placeholder="Weight(Rotti)" formControlName="weightRotti" readonly>
                             </mat-form-field>
-                            <mat-form-field class="col-md-3">
+                            <mat-form-field class="col-md-3" style="margin-left: -8px;">
                                 <input matInput placeholder="Weight(Point)" formControlName="weightPoint" readonly>
                             </mat-form-field>
                         </div>
@@ -244,10 +314,20 @@
                         <div class="col-md-4">
                             <mat-form-field class="col-md-12">
                                 <input matInput placeholder="Box Number" formControlName="boxNumber">
+                                <mat-error
+                                    *ngIf="voucherForm.controls['boxNumber'].errors && !voucherForm.controls['boxNumber'].pristine">
+                                    <div [hidden]="!voucherForm.controls['boxNumber'].errors.required">Box number is
+                                        required</div>
+                                </mat-error>
                             </mat-form-field>
-                            <mat-form-field class="col-md-12">
+                            <mat-form-field class="col-md-12" style="margin-top: 10px;;">
                                 <input matInput type="datetime-local" name="deliveryDate" formControlName="deliveryDate"
                                     placeholder="YYYY-MM-DD HH:mm" />
+                                <mat-error
+                                    *ngIf="voucherForm.controls['deliveryDate'].errors && !voucherForm.controls['deliveryDate'].pristine">
+                                    <div [hidden]="!voucherForm.controls['deliveryDate'].errors.required">Delivery date
+                                        is required</div>
+                                </mat-error>
                             </mat-form-field>
                             <!-- <mat-form-field class="col-md-12">
                                 <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
