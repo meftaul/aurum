@@ -36,6 +36,13 @@
             <form [formGroup]="transactionHistoryForm" class="col-md-6" style="margin-top: 5px;;">
                 <mat-form-field class="col-md-6" *ngIf="voucherViewer.dueAmount > 0">
                     <input type="number" matInput placeholder="Amount" formControlName="amount">
+                    <mat-error
+                        *ngIf="transactionHistoryForm.controls['amount'].errors && !transactionHistoryForm.controls['amount'].pristine">
+                        <div [hidden]="!transactionHistoryForm.controls['amount'].errors.required">Amount is required
+                        </div>
+                        <div [hidden]="!transactionHistoryForm.controls['amount'].errors.max">Amount can't be greater
+                            then due</div>
+                    </mat-error>
                 </mat-form-field>
                 <button type="button" class="btn btn-primary"
                     (click)="confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog)"

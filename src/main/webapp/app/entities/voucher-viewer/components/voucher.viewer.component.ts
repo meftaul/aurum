@@ -96,7 +96,6 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   prepareTransactionHistoryForm() {
     this.transactionHistoryForm = this.formBuilder.group({
       amount: ['', [Validators.required]]
-      // itemName: ['', [Validators.required]],
     });
   }
 
