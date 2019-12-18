@@ -13,32 +13,32 @@
             <table class="table table-borderless">
                 <tbody>
                     <tr>
-                        <td>Box Number</td>
+                        <td>Box Number:</td>
                         <td>{{voucher?.boxNumber}}</td>
                     </tr>
                     <tr>
-                        <td>Voucher Number</td>
+                        <td>Voucher Number:</td>
                         <td>{{voucher?.voucherNo}}</td>
                     </tr>
                     <tr>
-                        <td>Name</td>
+                        <td>Name & ID:</td>
                         <td>{{customer?.firstName + ' ' + customer?.lastName}}
                             (<span style="font-weight: bold;">ID: {{customer?.id}}</span>)</td>
                     </tr>
                     <tr>
-                        <td>Phone Number</td>
+                        <td>Contact Number:</td>
                         <td>{{ customer?.phone }}</td>
                     </tr>
                     <tr>
-                        <td>Address</td>
+                        <td>Address:</td>
                         <td>{{ customer?.address }}</td>
                     </tr>
                     <tr>
-                        <td>Delivery Time</td>
+                        <td>Delivery Time:</td>
                         <td>{{ voucher?.deliveryDate | date:'medium'}}</td>
                     </tr>
                     <tr>
-                        <td>Print Time</td>
+                        <td>Receive Time:</td>
                         <td>{{ printDate | date:'medium'}}</td>
                     </tr>
                 </tbody>
@@ -77,13 +77,13 @@
     </div>
     <div class="row" style="padding-top: 5px;">
         <div class="col-md-12">
-            <h4 style="text-decoration: underline; font-weight: bold;">Service Information:</h4>
+            <!-- <h4 style="text-decoration: underline; font-weight: bold;">Service Information:</h4> -->
             <table class="table" *ngFor="let serviceMap of serviceTypeToServiceListMap | keyvalue">
                 <thead class="borderStyle">
                     <tr class="borderStyle">
                         <th colspan="9" class="borderStyle"
                             style="text-decoration: underline; font-weight: bold; text-align: left;">
-                            {{serviceMap.key}}</th>
+                            Service Information:</th>
                     </tr>
                     <tr class="borderStyle">
                         <th class="borderStyle">#</th>
@@ -92,7 +92,7 @@
                         <th class="borderStyle" *ngIf="serviceMap.key !== 'Hallmark'">Weight(Gram)</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'X-Ray'">Free Check</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">Hall Marked Text</th>
-                        <th class="borderStyle" *ngIf="serviceMap.key !== 'X-Ray'">Karat Type</th>
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">Karat Type</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Expected
                             Karat Type</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Added Alloy
@@ -113,7 +113,7 @@
                         <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Hallmark'">{{service.hallMarkedText}}
                         </td>
-                        <td class="borderStyle" *ngIf="service.serviceType !== 'X-Ray'">{{service.karatType}}</td>
+                        <td class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">{{service.karatType}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
@@ -130,7 +130,30 @@
         </div>
     </div>
 
-    <div class="row" style="margin-top: 80px; width: 100%;">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table borderStyle">
+                <tbody class="borderStyle">
+                    <tr class="borderStyle">
+                        <th class="borderStyle">Checked By</th>
+                        <th class="borderStyle">X-Ray By</th>
+                        <th class="borderStyle">Marked By</th>
+                        <th class="borderStyle">Melting By</th>
+                        <th class="borderStyle">Delivery By</th>
+                    </tr>
+                    <tr class="borderStyle">
+                        <td class="borderStyle" style="height: 40px;"></td>
+                        <td class="borderStyle" style="height: 40px;"></td>
+                        <td class="borderStyle" style="height: 40px;"></td>
+                        <td class="borderStyle" style="height: 40px;"></td>
+                        <td class="borderStyle" style="height: 40px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 110px; width: 100%;">
         <div class="col-md-6">
             <table class="table table-borderless">
                 <tbody>
@@ -155,30 +178,18 @@
         </div>
     </div>
 
-    <div class="row" *ngIf="showXrayNote || showHallmarkNote" style="margin-top: 10px; width: 100%;">
+    <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: 10px; width: 100%;">
         <div class="col-md-12">
             <h4>Note</h4>
             <ul>
-                <li *ngIf="showXrayNote || showHallmarkNote">X-ray result maximum difference ± 0.30%</li>
-                <li *ngIf="showXrayNote">Spot and screen test result.</li>
-                <li *ngIf="showHallmarkNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
+                <li *ngIf="showXrayNote || showMeltingNote">X-ray result maximum difference ± 0.30%</li>
+                <!-- <li *ngIf="showXrayNote">Spot and screen test result.</li> -->
+                <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
                     so Maitree is not
                     responsible for this purity. Maitree Gold is not responsible for any lost/stolen gold or gold
                     ornaments.</li>
             </ul>
         </div>
     </div>
-
-    <!-- <div class="row" *ngIf="showHallmarkNote">
-        <div class="col-md-12">
-            <h4>Note</h4>
-            <ul>
-                <li>Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold, so Maitree is not
-                    responsible for this purity. Maitree Gold is not responsible for any lost/stolen gold or gold
-                    ornaments.</li>
-                <li>X-ray result maximum difference ± 0.30%</li>
-            </ul>
-        </div>
-    </div> -->
 
 </div>
