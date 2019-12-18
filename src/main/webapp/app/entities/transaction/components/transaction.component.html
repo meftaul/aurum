@@ -221,6 +221,10 @@
                                 <td>{{customer?.address}}</td>
                             </tr>
                             <tr>
+                                <td>Reference</td>
+                                <td>{{customer?.reference}}</td>
+                            </tr>
+                            <tr>
                                 <td>Total Point</td>
                                 <td>{{customer?.totalPoint}}</td>
                             </tr>
@@ -464,9 +468,9 @@
             <mat-form-field class="col-md-6" style="margin-top: 5px;">
                 <input matInput placeholder="Address" formControlName="address">
             </mat-form-field>
-            <!-- <mat-form-field class="col-md-6" style="margin-top: 5px;">
-                    <input matInput placeholder="Reference By" formControlName="referenceBy">
-                </mat-form-field> -->
+            <mat-form-field class="col-md-6" style="margin-top: 5px;">
+                <input matInput placeholder="Reference" formControlName="reference">
+            </mat-form-field>
         </form>
     </div>
     <div class="modal-footer">

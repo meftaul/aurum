@@ -141,9 +141,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
       firstName: [customerData.firstName, [Validators.required]],
       lastName: [customerData.lastName],
       phone: [customerData.phone, [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
-      email: [customerData.email, [Validators.required, Validators.email]],
-      address: [customerData.address]
-      // referenceBy: [customerData.referenceBy],
+      email: [customerData.email, [Validators.email]],
+      address: [customerData.address],
+      reference: [customerData.reference]
     });
   }
 
@@ -265,15 +265,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       });
     }
   }
-  // itemName
-  // karatType
-  // expectedKaratType
-  // addedAlloy
-  // alloyQuantity
-  // quantity
-  // weight
-  // freeCheck
-  // hallMarkedText
+
   serviceTypeChange(event) {
     this.selectedService = event;
 
