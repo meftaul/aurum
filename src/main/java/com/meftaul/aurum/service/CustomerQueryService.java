@@ -103,6 +103,9 @@ public class CustomerQueryService extends QueryService<Customer> {
             if (criteria.getTotalPoint() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getTotalPoint(), Customer_.totalPoint));
             }
+            if (criteria.getReference() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getReference(), Customer_.reference));
+            }
         }
         return specification;
     }

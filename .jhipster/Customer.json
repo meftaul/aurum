@@ -31,9 +31,13 @@
             "fieldName": "totalPoint",
             "fieldType": "Long",
             "fieldValidateRules": [
-              "min"
+                "min"
             ],
             "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "reference",
+            "fieldType": "String"
         }
     ],
     "changelogDate": "20191023070656",

@@ -41,6 +41,9 @@ public class Customer implements Serializable {
     @Column(name = "total_point")
     private Long totalPoint;
 
+    @Column(name = "reference")
+    private String reference;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -127,6 +130,19 @@ public class Customer implements Serializable {
     public void setTotalPoint(Long totalPoint) {
         this.totalPoint = totalPoint;
     }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public Customer reference(String reference) {
+        this.reference = reference;
+        return this;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -155,6 +171,7 @@ public class Customer implements Serializable {
             ", email='" + getEmail() + "'" +
             ", address='" + getAddress() + "'" +
             ", totalPoint=" + getTotalPoint() +
+            ", reference='" + getReference() + "'" +
             "}";
     }
 }
