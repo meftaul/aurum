@@ -34,8 +34,8 @@
                         <td>{{ customer?.address }}</td>
                     </tr>
                     <tr>
-                        <td>Delivery Time:</td>
-                        <td>{{ voucher?.deliveryDate | date:'medium'}}</td>
+                        <td>Reference:</td>
+                        <td>{{ customer?.reference }}</td>
                     </tr>
                     <tr>
                         <td>Receive Time:</td>
@@ -70,6 +70,10 @@
                     <tr>
                         <td>Due</td>
                         <td>{{(voucher?.totalPayableAmount - paidAmount) | currency: ' '}}</td>
+                    </tr>
+                    <tr>
+                        <td>Delivery Time:</td>
+                        <td>{{ voucher?.deliveryDate | date:'medium'}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -142,11 +146,11 @@
                         <th class="borderStyle">Delivery By</th>
                     </tr>
                     <tr class="borderStyle">
-                        <td class="borderStyle" style="height: 40px;"></td>
-                        <td class="borderStyle" style="height: 40px;"></td>
-                        <td class="borderStyle" style="height: 40px;"></td>
-                        <td class="borderStyle" style="height: 40px;"></td>
-                        <td class="borderStyle" style="height: 40px;"></td>
+                        <td class="borderStyle" style="height: 40px; width: 20%;"></td>
+                        <td class="borderStyle" style="height: 40px; width: 20%;"></td>
+                        <td class="borderStyle" style="height: 40px; width: 20%;"></td>
+                        <td class="borderStyle" style="height: 40px; width: 20%;"></td>
+                        <td class="borderStyle" style="height: 40px; width: 20%;"></td>
                     </tr>
                 </tbody>
             </table>
