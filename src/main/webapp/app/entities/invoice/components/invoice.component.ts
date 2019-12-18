@@ -8,6 +8,7 @@ import { AurumService } from 'app/shared/model/aurum-service.model';
 import { VoucherService } from 'app/entities/voucher/voucher.service';
 import { TransactionHistoryService } from 'app/entities/transaction-history/transaction-history.service';
 import { TransactionHistory } from 'app/shared/model/transaction-history.model';
+import { AmountInWords } from '../util/amount.in.words';
 
 export class TypedAurumService {
   serviceType: string;
@@ -35,12 +36,15 @@ export class InvoiceComponent implements OnInit, OnDestroy {
   showXrayNote: boolean;
   showMeltingNote: boolean;
 
+  amountInWordsStr: string;
+
   constructor(
     private route: ActivatedRoute,
     protected customerService: CustomerService,
     protected aurumServiceService: AurumServiceService,
     protected voucherService: VoucherService,
-    protected transactionHistoryService: TransactionHistoryService
+    protected transactionHistoryService: TransactionHistoryService,
+    private amountInWordsService: AmountInWords
   ) {}
 
   ngOnInit() {
@@ -92,6 +96,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
       this.txnHitoryList.map(txn => {
         if (txn.tag === 'RECEIVE') this.paidAmount += txn.amount;
       });
+      this.amountInWordsStr = this.amountInWordsService.convertNumberToWords(this.paidAmount);
     });
   }
 
