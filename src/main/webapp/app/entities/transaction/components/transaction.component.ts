@@ -389,6 +389,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.selectedServiceCharge = 0;
     this.karatParcentDifference = 0;
     this.aurumServiceForm.reset();
+    this.aurumServiceForm.controls.serviceType.setValue(this.aurumServiceList[0].serviceType);
   }
   // ****************************** AURUM SERVICE ****************************** END
 

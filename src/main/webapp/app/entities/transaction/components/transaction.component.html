@@ -17,9 +17,6 @@
                 <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
                 <button type="button" class="btn btn-primary"
                     (click)="showCreateCustomerDialog(createCustomerDialog)">Create Customer</button>
-                <!-- <button type="submit" class="btn btn-primary"
-                    [routerLink]="['/entity/transactions', { outlets: { popup: '/create-customer'} }]"
-                    replaceUrl="true">Create Customer</button> -->
                 <jhi-alert></jhi-alert>
             </form>
         </mat-card>
@@ -187,7 +184,6 @@
                             </mat-form-field>
                         </div>
 
-
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary float-right" (click)="resetServiceForm()"
                                 style="margin-left: 2px;">Clear</button>
@@ -199,7 +195,6 @@
             </div>
 
             <div class="col-md-6 m-0 p-0">
-                <!-- <jhi-aurum-customer-form [customerId]="customerID"></jhi-aurum-customer-form> -->
                 <mat-card style="margin-right: 5px;">
                     <mat-card-title>Customer Information:</mat-card-title>
                     <table class="table table-striped">
@@ -236,6 +231,68 @@
         </div>
 
         <div class="row" style="margin-top: 15px;">
+            <mat-card class="col-md-12">
+                <mat-card-title>Services Served:</mat-card-title>
+
+                <table class="table">
+                    <thead class="borderStyle">
+                        <tr class="borderStyle">
+                            <th class="borderStyle">#</th>
+                            <th class="borderStyle"
+                                *ngIf="selectedService === 'Hallmark' || selectedService === 'X-Ray'">
+                                Item Name
+                            </th>
+                            <th class="borderStyle" *ngIf="selectedService !== 'Hallmark'">Weight(Gram)</th>
+                            <th class="borderStyle" *ngIf="selectedService === 'X-Ray'">Free Check</th>
+                            <th class="borderStyle" *ngIf="selectedService === 'Hallmark'">Hall Marked Text</th>
+                            <th class="borderStyle" *ngIf="selectedService !== 'X-Ray'">Karat Type</th>
+                            <th class="borderStyle" *ngIf="selectedService === 'Calculated Melting'">Expected
+                                Karat Type</th>
+                            <th class="borderStyle" *ngIf="selectedService === 'Calculated Melting'">Added Alloy
+                            </th>
+                            <th class="borderStyle" *ngIf="selectedService === 'Calculated Melting'">Alloy
+                                Quantity</th>
+                            <th class="borderStyle">Rate</th>
+                            <th class="borderStyle">Quantity</th>
+                            <th class="borderStyle">Amount</th>
+                            <th class="borderStyle">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody class="borderStyle">
+                        <tr *ngFor="let service of aurumServiceList; let i = index" class="borderStyle">
+                            <td class="borderStyle">{{i + 1}}</td>
+                            <td class="borderStyle"
+                                *ngIf="service.serviceType === 'Hallmark' || service.serviceType === 'X-Ray'">
+                                {{service.itemName}}</td>
+                            <td class="borderStyle" *ngIf="service.serviceType !== 'Hallmark'">{{service.weight}}</td>
+                            <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
+                            <td class="borderStyle" *ngIf="service.serviceType === 'Hallmark'">
+                                {{service.hallMarkedText}}
+                            </td>
+                            <td class="borderStyle" *ngIf="service.serviceType !== 'X-Ray'">{{service.karatType}}</td>
+                            <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
+                                {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
+                            <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
+                                {{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
+                            <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
+                                {{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
+                            </td>
+                            <td class="borderStyle">{{service.rate | currency: ' '}}</td>
+                            <td class="borderStyle">{{service.quantity}}</td>
+                            <td class="borderStyle">{{service.amount | currency: ' '}}</td>
+                            <td class="borderStyle">
+                                <button type="submit" class="btn btn-danger btn-sm" (click)="deleteService(i)">
+                                    <fa-icon [icon]="'times'"></fa-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </mat-card>
+        </div>
+
+        <!-- <div class="row" style="margin-top: 15px;">
             <mat-card class="col-md-12">
                 <mat-card-title>Services Served:</mat-card-title>
                 <table mat-table [dataSource]="aurumServiceList" class="col-md-12">
@@ -300,9 +357,6 @@
                             <button type="submit" class="btn btn-danger btn-sm" (click)="deleteService(i)">
                                 <fa-icon [icon]="'times'"></fa-icon>
                             </button>
-                            <!-- <button mat-mini-fab (click)="deleteService(i)">
-                                <mat-icon>delete</mat-icon>
-                            </button> -->
                         </td>
                     </ng-container>
 
@@ -310,7 +364,7 @@
                     <tr mat-row *matRowDef="let row; columns: serviceListColumns;"></tr>
                 </table>
             </mat-card>
-        </div>
+        </div> -->
 
         <div class="row" style="margin-top: 15px;">
             <mat-card class="col-md-12">
@@ -435,11 +489,11 @@
 
                     <div class="row">
                         <div class="col-md-12">
+                            <button type="button" class="btn btn-primary float-right" (click)="resetVoucherForm()"
+                                style="margin-left: 2px;">Cancel</button>
                             <button type="button" class="btn btn-primary float-right"
-                                (click)="resetVoucherForm()">Cancel</button>
-                            <button type="button" class="btn btn-primary float-right"
-                                (click)="confirmMakePayment(confirmDialog)" style="margin-left: 2px;">Make
-                                Payment</button> &nbsp;
+                                (click)="confirmMakePayment(confirmDialog)">Make
+                                Payment</button>
                             <!-- <button type="button" class="btn btn-primary float-right" (click)="makePayment()"
                                 style="margin-left: 2px;">Make Payment</button> -->
                         </div>
