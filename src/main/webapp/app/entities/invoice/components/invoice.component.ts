@@ -61,6 +61,8 @@ export class InvoiceComponent implements OnInit, OnDestroy {
       this.fetchCustomer(this.voucher.customerId);
       this.fetchAurumServices(this.voucher.id);
       this.fetchTxnHistory(this.voucher.voucherNo);
+
+      this.amountInWordsStr = this.amountInWordsService.convertNumberToWords(this.voucher.totalPayableAmount);
     });
   }
 
@@ -96,7 +98,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
       this.txnHitoryList.map(txn => {
         if (txn.tag === 'RECEIVE') this.paidAmount += txn.amount;
       });
-      this.amountInWordsStr = this.amountInWordsService.convertNumberToWords(this.paidAmount);
+      // this.amountInWordsStr = this.amountInWordsService.convertNumberToWords(this.paidAmount);
     });
   }
 

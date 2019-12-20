@@ -22,7 +22,7 @@
                     </tr>
                     <tr>
                         <td>Name & ID:</td>
-                        <td>{{customer?.firstName + ' ' + customer?.lastName}}
+                        <td>{{customer?.firstName + ' ' + customer?.lastName ? customer?.lastName : ''}}
                             (<span style="font-weight: bold;">ID: {{customer?.id}}</span>)</td>
                     </tr>
                     <tr>
@@ -91,20 +91,24 @@
                     </tr>
                     <tr class="borderStyle">
                         <th class="borderStyle">#</th>
-                        <th class="borderStyle" *ngIf="serviceMap.key !== 'Calculated Melting'">Item Name
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark' || serviceMap.key === 'X-Ray'">Item
+                            Name
                         </th>
                         <th class="borderStyle" *ngIf="serviceMap.key !== 'Hallmark'">Weight(Gram)</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'X-Ray'">Free Check</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">Hall Marked Text</th>
-                        <th class="borderStyle"
-                            *ngIf="serviceMap.key === 'Hallmark' || serviceMap.key === 'Calculated Melting'">Karat Type
+                        <th class="borderStyle" *ngIf="serviceMap.key !== 'X-Ray'">Karat Type
                         </th>
-                        <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Expected
+                        <th class="borderStyle"
+                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
+                            Service Charge
+                        </th>
+                        <!-- <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Expected
                             Karat Type</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Added Alloy
                         </th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Alloy
-                            Quantity</th>
+                            Quantity</th> -->
                         <th class="borderStyle">Rate</th>
                         <th class="borderStyle">Quantity</th>
                         <th class="borderStyle">Amount</th>
@@ -113,22 +117,23 @@
                 <tbody class="borderStyle">
                     <tr *ngFor="let service of serviceMap.value; let i = index" class="borderStyle">
                         <td class="borderStyle">{{i + 1}}</td>
-                        <td class="borderStyle" *ngIf="service.serviceType !== 'Calculated Melting'">
+                        <td class="borderStyle" *ngIf="serviceMap.key === 'Hallmark' || serviceMap.key === 'X-Ray'">
                             {{service.itemName}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType !== 'Hallmark'">{{service.weight}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Hallmark'">{{service.hallMarkedText}}
                         </td>
+                        <td class="borderStyle" *ngIf="serviceMap.key !== 'X-Ray'">{{service.karatType}}</td>
                         <td class="borderStyle"
-                            *ngIf="serviceMap.key === 'Hallmark' || serviceMap.key === 'Calculated Melting'">
-                            {{service.karatType}}</td>
-                        <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
+                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
+                            {{service.serviceCharge | currency: ' '}}</td>
+                        <!-- <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
-                        </td>
+                        </td> -->
                         <td class="borderStyle">{{service.rate | currency: ' '}}</td>
                         <td class="borderStyle">{{service.quantity}}</td>
                         <td class="borderStyle">{{service.amount | currency: ' '}}</td>
