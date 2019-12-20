@@ -104,7 +104,51 @@
             Services
         </mat-card-title>
         <table class="table table-bordered" *ngIf="aurumServices && aurumServices?.length !== 0">
-            <thead>
+            <thead style="text-align: center;">
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th *ngIf="aurumServices[0].serviceType === 'Hallmark' || aurumServices[0].serviceType === 'X-Ray'">
+                        Item Name
+                    </th>
+                    <th *ngIf="aurumServices[0].serviceType !== 'Hallmark'">Weight(Gram)</th>
+                    <th *ngIf="aurumServices[0].serviceType === 'X-Ray'">Free Check</th>
+                    <th *ngIf="aurumServices[0].serviceType === 'Hallmark'">Hall Marked Text</th>
+                    <th *ngIf="aurumServices[0].serviceType !== 'X-Ray'">Karat Type</th>
+                    <th *ngIf="aurumServices[0].serviceType === 'Calculated Melting'">Expected
+                        Karat Type</th>
+                    <th *ngIf="aurumServices[0].serviceType === 'Calculated Melting'">Added Alloy
+                    </th>
+                    <th *ngIf="aurumServices[0].serviceType === 'Calculated Melting'">Alloy
+                        Quantity</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody style="text-align: center;">
+                <tr *ngFor="let service of aurumServices; let i = index">
+                    <td>{{i + 1}}</td>
+                    <td *ngIf="service.serviceType === 'Hallmark' || service.serviceType === 'X-Ray'">
+                        {{service.itemName}}</td>
+                    <td *ngIf="service.serviceType !== 'Hallmark'">{{service.weight}}</td>
+                    <td *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
+                    <td *ngIf="service.serviceType === 'Hallmark'">
+                        {{service.hallMarkedText}}
+                    </td>
+                    <td *ngIf="service.serviceType !== 'X-Ray'">{{service.karatType}}</td>
+                    <td *ngIf="service.serviceType === 'Calculated Melting'">
+                        {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
+                    <td *ngIf="service.serviceType === 'Calculated Melting'">
+                        {{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
+                    <td *ngIf="service.serviceType === 'Calculated Melting'">
+                        {{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
+                    </td>
+                    <td>{{service.rate | currency: ' '}}</td>
+                    <td>{{service.quantity}}</td>
+                    <td>{{service.amount | currency: ' '}}</td>
+                </tr>
+            </tbody>
+            <!-- <thead>
                 <tr>
                     <th>Service Type</th>
                     <th>Item Name</th>
@@ -120,8 +164,8 @@
                     <th>Quantity</th>
                     <th>Amount</th>
                 </tr>
-            </thead>
-            <tbody>
+            </thead> -->
+            <!-- <tbody>
                 <tr *ngFor="let service of aurumServices">
                     <td>{{service.serviceType}}</td>
                     <td>{{service.itemName}}</td>
@@ -137,7 +181,7 @@
                     <td>{{service.quantity}}</td>
                     <td>{{service.amount | currency: ' '}}</td>
                 </tr>
-            </tbody>
+            </tbody> -->
         </table>
 
         <hr *ngIf="voucherViewer.txnHistory.length !== 0">
@@ -145,16 +189,16 @@
             Transaction History
         </mat-card-title>
         <table class="table table-bordered" *ngIf="voucherViewer.txnHistory.length !== 0">
-            <thead>
+            <thead style="text-align: center;">
                 <tr>
                     <th>Amount</th>
                     <th>Tag</th>
                     <th>Payment Date</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody style="text-align: center;">
                 <tr *ngFor="let txn of voucherViewer.txnHistory">
-                    <td>{{txn.amount}}</td>
+                    <td>{{txn.amount | currency: ' '}}</td>
                     <td>{{txn.tag}}</td>
                     <td>{{txn.dateCreated | date:'medium'}}</td>
                 </tr>
