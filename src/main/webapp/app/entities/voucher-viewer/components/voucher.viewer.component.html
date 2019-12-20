@@ -175,9 +175,8 @@
         Are you sure you want to make payment?
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark"
-            (click)="makePayment(false, false); modal.close()">Yes</button>
-        <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Cancel</button>
+        <button type="button" class="btn btn-success" (click)="makePayment(false, false); modal.close()">Yes</button>
+        <button type="button" class="btn btn-danger" (click)="modal.close()">Cancel</button>
     </div>
 </ng-template>
 
@@ -192,9 +191,9 @@
         Is Delivery Done?
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="makePayment(true, true); modal.close()">Yes! Make
+        <button type="button" class="btn btn-success" (click)="makePayment(true, true); modal.close()">Yes! Make
             Payment</button>
-        <button type="button" class="btn btn-outline-dark" (click)="makePayment(false, true); modal.close()">No! Make
+        <button type="button" class="btn btn-danger" (click)="makePayment(false, true); modal.close()">No! Make
             Payment</button>
     </div>
 </ng-template>
@@ -210,7 +209,7 @@
         Are you sure you want to complete this delivery?
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="makeDelivery(); deliveryModal.close()">Yes</button>
-        <button type="button" class="btn btn-outline-dark" (click)="deliveryModal.close()">Cancel</button>
+        <button type="button" class="btn btn-success" (click)="makeDelivery(); deliveryModal.close()">Yes</button>
+        <button type="button" class="btn btn-danger" (click)="deliveryModal.close()">Cancel</button>
     </div>
 </ng-template>
