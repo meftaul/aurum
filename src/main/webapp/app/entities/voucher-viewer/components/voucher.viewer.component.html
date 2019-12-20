@@ -69,32 +69,32 @@
                 <tr>
                     <td>Customer Name</td>
                     <td>{{customerName}}</td>
-                    <td>Transaction Status</td>
-                    <td>{{voucherViewer?.voucherInfo?.status}}</td>
-                </tr>
-                <tr>
                     <td>Voucher Number</td>
                     <td>{{voucherViewer?.voucherInfo?.voucherNo}}</td>
+                </tr>
+                <tr>
+                    <td>Calculated Total Amount</td>
+                    <td>{{voucherViewer?.voucherInfo?.calculatedTotalAmount | currency: ' '}}</td>
+                    <td>boxNumber</td>
+                    <td>{{voucherViewer?.voucherInfo?.boxNumber}}</td>
+                </tr>
+                <tr>
+                    <td>Vat</td>
+                    <td>{{voucherViewer?.voucherInfo?.vat | currency: ' '}}</td>
                     <td>Delivery Status</td>
                     <td>{{voucherViewer?.voucherInfo?.deliveryStatus ? 'Delivered' : 'Not Delivered'}}</td>
                 </tr>
                 <tr>
-                    <td>Calculated Total Amount</td>
-                    <td>{{voucherViewer?.voucherInfo?.calculatedTotalAmount}}</td>
+                    <td>Disount Amount</td>
+                    <td>{{voucherViewer?.voucherInfo?.disountAmount | currency: ' '}}</td>
+                    <td>Transaction Status</td>
+                    <td>{{voucherViewer?.voucherInfo?.status}}</td>
+                </tr>
+                <tr>
+                    <td>Total Payable Amount</td>
+                    <td>{{voucherViewer?.voucherInfo?.totalPayableAmount | currency: ' '}}</td>
                     <td>Delivery Date</td>
                     <td>{{voucherViewer?.voucherInfo?.deliveryDate}}</td>
-                </tr>
-                <tr>
-                    <td>Disount Amount</td>
-                    <td>{{voucherViewer?.voucherInfo?.disountAmount}}</td>
-                    <td>Vat</td>
-                    <td>{{voucherViewer?.voucherInfo?.vat}}</td>
-                </tr>
-                <tr>
-                    <td>boxNumber</td>
-                    <td>{{voucherViewer?.voucherInfo?.boxNumber}}</td>
-                    <td>Total Payable Amount</td>
-                    <td>{{voucherViewer?.voucherInfo?.totalPayableAmount}}</td>
                 </tr>
             </tbody>
         </table>
@@ -132,10 +132,10 @@
                     <td>{{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
                     <td>{{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
                     <td>{{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}</td>
-                    <td>{{service.serviceCharge}}</td>
-                    <td>{{service.rate}}</td>
+                    <td>{{service.serviceCharge | currency: ' '}}</td>
+                    <td>{{service.rate | currency: ' '}}</td>
                     <td>{{service.quantity}}</td>
-                    <td>{{service.amount}}</td>
+                    <td>{{service.amount | currency: ' '}}</td>
                 </tr>
             </tbody>
         </table>
