@@ -46,6 +46,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   showBtnForCalculatedMelting = false;
   vatChecked = false;
+  reportChargeChecked = false;
+  isReportChargeDisabled = true;
+  reportCharge = 50;
 
   aurumServiceList: AurumService[] = [];
   calculateTotalAmount = 0;
@@ -226,7 +229,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     aurumServiceTemp.itemName = this.aurumServiceForm.controls.itemName.value;
     aurumServiceTemp.karatType = this.aurumServiceForm.controls.karatType.value;
     aurumServiceTemp.rate = this.aurumServiceForm.controls.rate.value;
-    aurumServiceTemp.serviceCharge = this.selectedServiceCharge;
+    aurumServiceTemp.serviceCharge = 0;
     aurumServiceTemp.quantity = this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.amount = +this.aurumServiceForm.controls.rate.value * +this.aurumServiceForm.controls.quantity.value;
     aurumServiceTemp.weight = this.aurumServiceForm.controls.weight.value;
@@ -260,9 +263,30 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (serviceList.length !== 0) {
       serviceList.map(service => {
         this.calculateTotalAmount += service.amount;
+        this.totalAmount += service.amount;
         this.payableTotalAmount += service.amount;
         this.amountDue += service.amount;
       });
+    }
+
+    if (this.reportChargeChecked) {
+      this.calculateTotalAmount += +this.reportCharge;
+      const vatTemp = this.vatChecked ? +((this.calculateTotalAmount * 15) / 100).toFixed(2) : 0;
+      this.totalAmount = +(this.calculateTotalAmount + vatTemp).toFixed(2);
+      const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
+      this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
+      this.amountDue = +(this.totalAmount - discount).toFixed(2);
+      this.voucherForm.controls.vat.setValue(vatTemp);
+    }
+
+    if (this.vatChecked) {
+      // this.calculateTotalAmount += this.reportChargeChecked ? +this.reportCharge : 0;
+      const vatTemp = +((this.calculateTotalAmount * 15) / 100).toFixed(2);
+      this.totalAmount = +(this.calculateTotalAmount + vatTemp).toFixed(2);
+      const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
+      this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
+      this.amountDue = +(this.totalAmount - discount).toFixed(2);
+      this.voucherForm.controls.vat.setValue(vatTemp);
     }
   }
 
@@ -281,6 +305,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.hallMarkedText.clearValidators();
       this.aurumServiceForm.controls.quantity.setValue(1);
       this.updateFormValueAndValidity();
+      this.isReportChargeDisabled = true;
     } else if (this.selectedService === 'Hallmark') {
       this.aurumServiceForm.controls.itemName.setValidators([Validators.required]);
       this.aurumServiceForm.controls.karatType.setValidators([Validators.required]);
@@ -293,6 +318,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.hallMarkedText.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.setValue(1);
       this.updateFormValueAndValidity();
+      this.isReportChargeDisabled = true;
     } else if (this.selectedService === 'Normal Melting') {
       this.aurumServiceForm.controls.itemName.clearValidators();
       this.aurumServiceForm.controls.karatType.setValidators([Validators.required]);
@@ -305,6 +331,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.hallMarkedText.clearValidators();
       this.aurumServiceForm.controls.quantity.setValue(1);
       this.updateFormValueAndValidity();
+      this.isReportChargeDisabled = false;
     } else if (this.selectedService === 'Calculated Melting') {
       this.aurumServiceForm.controls.itemName.clearValidators();
       this.aurumServiceForm.controls.karatType.setValidators([Validators.required]);
@@ -317,6 +344,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.hallMarkedText.clearValidators();
       this.aurumServiceForm.controls.quantity.setValue(1);
       this.updateFormValueAndValidity();
+      this.isReportChargeDisabled = false;
     }
 
     const weightTemp = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
@@ -381,6 +409,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  onReportChargeValueChange(event) {}
+
   onVatCheckboxValueChange(event) {
     if (event.checked) {
       const vatTemp = +((this.calculateTotalAmount * 15) / 100).toFixed(2);
@@ -396,6 +426,20 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.amountDue = +(this.totalAmount - discount).toFixed(2);
       this.voucherForm.controls.vat.setValue(0);
     }
+  }
+
+  onReportChargeCheckboxValueChange(event) {
+    if (event.checked) {
+      this.calculateTotalAmount += +this.reportCharge;
+    } else {
+      this.calculateTotalAmount -= +this.reportCharge;
+    }
+    const vatTemp = this.vatChecked ? +((this.calculateTotalAmount * 15) / 100).toFixed(2) : 0;
+    this.totalAmount = +(this.calculateTotalAmount + vatTemp).toFixed(2);
+    const discount = this.voucherForm.controls.disountAmount.value ? +this.voucherForm.controls.disountAmount.value : 0;
+    this.payableTotalAmount = +(this.totalAmount - discount).toFixed(2);
+    this.amountDue = +(this.totalAmount - discount).toFixed(2);
+    this.voucherForm.controls.vat.setValue(vatTemp);
   }
 
   onDiscountValueChange(event) {
@@ -453,19 +497,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   makePayment() {
-    // this.markFormGroupAsTouched(this.voucherForm);
-    // if (!this.customerID || this.customerID === 0) {
-    //   this.jhiAlertService.warning('Customer not found.');
-    //   return;
-    // }
-    // if (this.aurumServiceList.length === 0) {
-    //   this.jhiAlertService.warning('Add atleast one service.');
-    //   return;
-    // }
-    // if (this.voucherForm.invalid) {
-    //   this.jhiAlertService.warning('Invalid Data.');
-    //   return;
-    // }
+    // add report/service charge to aurumService's first item
+    if (this.reportChargeChecked) {
+      this.aurumServiceList[0].serviceCharge = +this.reportCharge;
+    }
 
     const voucherTemp = new Voucher();
     voucherTemp.voucherNo = moment().toString();
@@ -497,17 +532,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
       data => {
         // method return Voucher not CustomVoucher
         this.savedVoucherNumber = data.body.voucherNo;
-        // window.print();
         this.resetVoucherForm();
         this.jhiAlertService.success('Transaction completed with voucher number '.concat(this.savedVoucherNumber));
 
         this.router.navigate(['/invoice', this.savedVoucherNumber]);
-        // {
-        //   queryParams: {
-        //     voucherNumber: this.savedVoucherNumber,
-        //   }
-        // }
-        // );
       },
       error => {
         this.jhiAlertService.error('Error in saving voucher. ');
