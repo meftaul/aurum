@@ -13,32 +13,32 @@
             <table class="table table-borderless">
                 <tbody>
                     <tr>
-                        <td>Box Number:</td>
+                        <td><b>Box Number:</b></td>
                         <td>{{voucher?.boxNumber}}</td>
                     </tr>
                     <tr>
-                        <td>Voucher Number:</td>
+                        <td><b>Voucher Number:</b></td>
                         <td>{{voucher?.voucherNo}}</td>
                     </tr>
                     <tr>
-                        <td>Name & ID:</td>
+                        <td><b>Name & ID:</b></td>
                         <td>{{customer?.firstName + ' ' + customer?.lastName ? customer?.lastName : ''}}
                             (<span style="font-weight: bold;">ID: {{customer?.id}}</span>)</td>
                     </tr>
                     <tr>
-                        <td>Contact Number:</td>
+                        <td><b>Contact Number:</b></td>
                         <td>{{ customer?.phone }}</td>
                     </tr>
                     <tr>
-                        <td>Address:</td>
+                        <td><b>Address:</b></td>
                         <td>{{ customer?.address }}</td>
                     </tr>
                     <tr>
-                        <td>Reference:</td>
+                        <td><b>Reference:</b></td>
                         <td>{{ customer?.reference }}</td>
                     </tr>
                     <tr>
-                        <td>Receive Time:</td>
+                        <td><b>Receive Time:</b></td>
                         <td>{{ printDate | date:'medium'}}</td>
                     </tr>
                 </tbody>
@@ -48,31 +48,31 @@
             <table class="table table-borderd">
                 <tbody>
                     <tr>
-                        <td>Calculated Amount</td>
+                        <td><b>Calculated Amount</b></td>
                         <td>{{voucher?.calculatedTotalAmount | currency: ' '}}</td>
                     </tr>
                     <tr>
-                        <td>VAT Amount</td>
+                        <td><b>VAT Amount</b></td>
                         <td>{{voucher?.vat | currency: ' '}}</td>
                     </tr>
                     <tr>
-                        <td>Discount</td>
+                        <td><b>Discount</b></td>
                         <td>{{voucher?.disountAmount | currency: ' '}}</td>
                     </tr>
                     <tr>
-                        <td>Total Payable</td>
+                        <td><b>Total Payable</b></td>
                         <td>{{voucher?.totalPayableAmount | currency: ' '}}</td>
                     </tr>
                     <tr>
-                        <td>Paid Amount</td>
+                        <td><b>Paid Amount</b></td>
                         <td>{{paidAmount | currency: ' '}}</td>
                     </tr>
                     <tr>
-                        <td>Due</td>
+                        <td><b>Due</b></td>
                         <td>{{(voucher?.totalPayableAmount - paidAmount) | currency: ' '}}</td>
                     </tr>
                     <tr>
-                        <td>Delivery Time:</td>
+                        <td><b>Delivery Time:</b></td>
                         <td>{{ voucher?.deliveryDate | date:'medium'}}</td>
                     </tr>
                 </tbody>
@@ -90,7 +90,7 @@
                             Service Information:</th>
                     </tr>
                     <tr class="borderStyle">
-                        <th class="borderStyle">#</th>
+                        <th class="borderStyle">SL</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark' || serviceMap.key === 'X-Ray'">Item
                             Name
                         </th>
@@ -201,8 +201,8 @@
         <div class="col-md-12">
             <h4>Note</h4>
             <ul>
-                <li *ngIf="showXrayNote || showMeltingNote">X-ray result maximum difference ± 0.30%</li>
-                <!-- <li *ngIf="showXrayNote">Spot and screen test result.</li> -->
+                <li *ngIf="showXrayNote">X-ray result maximum difference ± 0.30%</li>
+                <li *ngIf="showXrayNote">Spot and screen test result.</li>
                 <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
                     so Maitree is not
                     responsible for this purity. Maitree Gold is not responsible for any lost/stolen gold or gold
