@@ -95,7 +95,6 @@
                             Name
                         </th>
                         <th class="borderStyle" *ngIf="serviceMap.key !== 'Hallmark'">Weight(Gram)</th>
-                        <th class="borderStyle" *ngIf="serviceMap.key === 'X-Ray'">Free Check</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">Hall Marked Text</th>
                         <th class="borderStyle" *ngIf="serviceMap.key !== 'X-Ray'">Karat Type
                         </th>
@@ -112,6 +111,8 @@
                         <th class="borderStyle">Rate</th>
                         <th class="borderStyle">Quantity</th>
                         <th class="borderStyle">Amount</th>
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'X-Ray'">Free Check</th>
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'X-Ray'">Free Check <br>Weight(Gram)</th>
                     </tr>
                 </thead>
                 <tbody class="borderStyle">
@@ -120,7 +121,6 @@
                         <td class="borderStyle" *ngIf="serviceMap.key === 'Hallmark' || serviceMap.key === 'X-Ray'">
                             {{service.itemName}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType !== 'Hallmark'">{{service.weight}}</td>
-                        <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Hallmark'">{{service.hallMarkedText}}
                         </td>
                         <td class="borderStyle" *ngIf="serviceMap.key !== 'X-Ray'">{{service.karatType}}</td>
@@ -137,12 +137,14 @@
                         <td class="borderStyle">{{service.rate | currency: ' '}}</td>
                         <td class="borderStyle">{{service.quantity}}</td>
                         <td class="borderStyle">{{service.amount | currency: ' '}}</td>
+                        <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
+                        <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'"></td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <th colspan="2">Amount In Words:</th>
-                        <td colspan="4">{{amountInWordsStr}}</td>
+                        <td colspan="4"><b>{{amountInWordsStr}}</b></td>
                     </tr>
                 </tfoot>
             </table>
