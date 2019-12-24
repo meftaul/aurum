@@ -91,7 +91,9 @@
                                 *ngIf="aurumServiceForm.controls['karatType'].errors && !aurumServiceForm.controls['karatType'].pristine">
                                 <div [hidden]="!aurumServiceForm.controls['karatType'].errors.required">Karat type is
                                     required</div>
-                                <div [hidden]="!aurumServiceForm.controls['karatType'].errors.percentDiffError">Karat
+                                <div
+                                    *ngIf="aurumServiceForm.controls['karatType'].errors && aurumServiceForm.controls['karatType'].errors?.percentDiffError">
+                                    Karat
                                     type must be heigher then expected karat type</div>
                             </mat-error>
                         </mat-form-field>
@@ -107,7 +109,9 @@
                                 *ngIf="aurumServiceForm.controls['expectedKaratType'].errors && !aurumServiceForm.controls['expectedKaratType'].pristine">
                                 <div [hidden]="!aurumServiceForm.controls['expectedKaratType'].errors.required">Expected
                                     karat type is required</div>
-                                <div [hidden]="!aurumServiceForm.controls['karatType'].errors.percentDiffError">Expected
+                                <div
+                                    *ngIf="aurumServiceForm.controls['expectedKaratType'].errors && aurumServiceForm.controls['expectedKaratType'].errors?.percentDiffError">
+                                    Expected
                                     karat type must be lower then karat type</div>
                             </mat-error>
                         </mat-form-field>
@@ -245,7 +249,8 @@
                             <th>Weight(Gram)</th>
                             <th *ngIf="selectedService === 'X-Ray'">Free Check</th>
                             <th *ngIf="selectedService === 'Hallmark'">Hall Marked Text</th>
-                            <th *ngIf="selectedService !== 'X-Ray'">Karat Type</th>
+                            <th *ngIf="selectedService === 'Calculated Melting' || selectedService === 'Hallmark'">
+                                Karat Type</th>
                             <th *ngIf="selectedService === 'Calculated Melting'">Expected
                                 Karat Type</th>
                             <th *ngIf="selectedService === 'Calculated Melting'">Added Alloy
@@ -268,7 +273,9 @@
                             <td *ngIf="service.serviceType === 'Hallmark'">
                                 {{service.hallMarkedText}}
                             </td>
-                            <td *ngIf="service.serviceType !== 'X-Ray'">{{service.karatType}}</td>
+                            <td
+                                *ngIf="service.serviceType === 'Calculated Melting' || service.serviceType === 'Hallmark'">
+                                {{service.karatType}}</td>
                             <td *ngIf="service.serviceType === 'Calculated Melting'">
                                 {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
                             <td *ngIf="service.serviceType === 'Calculated Melting'">
@@ -404,7 +411,7 @@
                                         <input type="number" matInput placeholder="Report Charge"
                                             (input)="onReportChargeValueChange($event)" [(ngModel)]="reportCharge"
                                             [ngModelOptions]="{standalone: true}"
-                                            [disabled]="isReportChargeDisabled ? 'disabled' : null">
+                                            [disabled]="(isReportChargeDisabled || reportChargeChecked) ? 'disabled' : null">
                                     </mat-form-field>
                                 </div>
                             </div>

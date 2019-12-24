@@ -96,7 +96,8 @@
                         </th>
                         <th class="borderStyle">Weight(Gram)</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">Hall Marked Text</th>
-                        <th class="borderStyle" *ngIf="serviceMap.key !== 'X-Ray'">Karat Type
+                        <th class="borderStyle"
+                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">Karat Type
                         </th>
                         <th class="borderStyle"
                             *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
@@ -123,7 +124,9 @@
                         <td class="borderStyle">{{service.weight}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Hallmark'">{{service.hallMarkedText}}
                         </td>
-                        <td class="borderStyle" *ngIf="serviceMap.key !== 'X-Ray'">{{service.karatType}}</td>
+                        <td class="borderStyle"
+                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">
+                            {{service.karatType}}</td>
                         <td class="borderStyle"
                             *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
                             {{service.serviceCharge | currency: ' '}}</td>

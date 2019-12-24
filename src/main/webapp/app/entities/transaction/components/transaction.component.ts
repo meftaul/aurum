@@ -646,6 +646,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
         if (+this.karatParcentDifference <= 0) {
           this.aurumServiceForm.controls.karatType.setErrors({ percentDiffError: true });
           this.aurumServiceForm.controls.expectedKaratType.setErrors({ percentDiffError: true });
+        } else {
+          this.aurumServiceForm.controls.karatType.markAsPristine();
+          this.aurumServiceForm.controls.expectedKaratType.markAsPristine();
+          this.aurumServiceForm.controls.karatType.updateValueAndValidity();
+          this.aurumServiceForm.controls.expectedKaratType.updateValueAndValidity();
         }
       }
     }
@@ -663,6 +668,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
       if (+this.karatParcentDifference <= 0) {
         this.aurumServiceForm.controls.karatType.setErrors({ percentDiffError: true });
         this.aurumServiceForm.controls.expectedKaratType.setErrors({ percentDiffError: true });
+      } else {
+        this.aurumServiceForm.controls.karatType.markAsPristine();
+        this.aurumServiceForm.controls.expectedKaratType.markAsPristine();
+        this.aurumServiceForm.controls.karatType.updateValueAndValidity();
+        this.aurumServiceForm.controls.expectedKaratType.updateValueAndValidity();
       }
     }
   }
