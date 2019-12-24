@@ -301,7 +301,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.alloyQuantity.clearValidators();
       this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.setValidators([Validators.required]);
-      this.aurumServiceForm.controls.freeCheck.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.freeCheck.setValidators([Validators.required, Validators.min(0), Validators.max(1)]);
       this.aurumServiceForm.controls.hallMarkedText.clearValidators();
       this.aurumServiceForm.controls.quantity.setValue(1);
       this.updateFormValueAndValidity();
@@ -312,6 +312,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.expectedKaratType.clearValidators();
       this.aurumServiceForm.controls.addedAlloy.clearValidators();
       this.aurumServiceForm.controls.alloyQuantity.clearValidators();
+      this.aurumServiceForm.controls.weight.reset();
       this.aurumServiceForm.controls.weight.clearValidators();
       this.aurumServiceForm.controls.quantity.setValidators([Validators.required]);
       this.aurumServiceForm.controls.freeCheck.clearValidators();
@@ -321,7 +322,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.isReportChargeDisabled = true;
     } else if (this.selectedService === 'Normal Melting') {
       this.aurumServiceForm.controls.itemName.clearValidators();
-      this.aurumServiceForm.controls.karatType.setValidators([Validators.required]);
+      this.aurumServiceForm.controls.karatType.reset();
+      this.aurumServiceForm.controls.karatType.clearValidators();
       this.aurumServiceForm.controls.expectedKaratType.clearValidators();
       this.aurumServiceForm.controls.addedAlloy.clearValidators();
       this.aurumServiceForm.controls.alloyQuantity.clearValidators();

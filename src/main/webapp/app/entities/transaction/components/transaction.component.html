@@ -79,7 +79,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <mat-form-field class="col-md-6" [hidden]="selectedService === 'X-Ray'">
+                        <mat-form-field class="col-md-6" [hidden]="selectedService === 'X-Ray' || selectedService === 'Normal Melting'">
                             <mat-select placeholder="Select Karat Type" formControlName="karatType"
                                 (ngModelChange)="onKaratTypeChange($event)">
                                 <mat-option *ngFor="let item of karatList" [value]="item.value">
