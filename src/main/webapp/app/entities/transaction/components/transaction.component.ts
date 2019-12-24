@@ -197,7 +197,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       alloyQuantity: [''],
       rate: ['', [Validators.required]],
       quantity: [''],
-      weight: [''],
+      weight: ['', [Validators.required]],
       freeCheck: ['', [Validators.min(0), Validators.max(1)]],
       hallMarkedText: [''],
 
@@ -299,7 +299,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.expectedKaratType.clearValidators();
       this.aurumServiceForm.controls.addedAlloy.clearValidators();
       this.aurumServiceForm.controls.alloyQuantity.clearValidators();
-      this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
+      // this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.setValidators([Validators.required]);
       this.aurumServiceForm.controls.freeCheck.setValidators([Validators.required, Validators.min(0), Validators.max(1)]);
       this.aurumServiceForm.controls.hallMarkedText.clearValidators();
@@ -312,8 +312,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.expectedKaratType.clearValidators();
       this.aurumServiceForm.controls.addedAlloy.clearValidators();
       this.aurumServiceForm.controls.alloyQuantity.clearValidators();
-      this.aurumServiceForm.controls.weight.reset();
-      this.aurumServiceForm.controls.weight.clearValidators();
+      // this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.setValidators([Validators.required]);
       this.aurumServiceForm.controls.freeCheck.clearValidators();
       this.aurumServiceForm.controls.hallMarkedText.setValidators([Validators.required]);
@@ -327,7 +326,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.expectedKaratType.clearValidators();
       this.aurumServiceForm.controls.addedAlloy.clearValidators();
       this.aurumServiceForm.controls.alloyQuantity.clearValidators();
-      this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
+      // this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.clearValidators();
       this.aurumServiceForm.controls.freeCheck.clearValidators();
       this.aurumServiceForm.controls.hallMarkedText.clearValidators();
@@ -340,7 +339,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.expectedKaratType.setValidators([Validators.required]);
       this.aurumServiceForm.controls.addedAlloy.setValidators([Validators.required]);
       this.aurumServiceForm.controls.alloyQuantity.setValidators([Validators.required]);
-      this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
+      // this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.clearValidators();
       this.aurumServiceForm.controls.freeCheck.clearValidators();
       this.aurumServiceForm.controls.hallMarkedText.clearValidators();

@@ -30,7 +30,7 @@
                     <form [formGroup]="aurumServiceForm" class="row">
                         <mat-form-field class="col-md-6">
                             <mat-select placeholder="Select Service" formControlName="serviceType"
-                                (ngModelChange)="serviceTypeChange($event)">
+                                (ngModelChange)="serviceTypeChange($event)" [disabled]="aurumServiceList.length > 0">
                                 <mat-option *ngFor="let item of aurumServiceDropdownData" [value]="item.value">
                                     {{item.viewValue}}
                                 </mat-option>
@@ -57,7 +57,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <mat-form-field class="col-md-6" [hidden]="selectedService === 'Hallmark'">
+                        <mat-form-field class="col-md-6">
                             <input type="number" matInput placeholder="Weight(Gram)" formControlName="weight"
                                 (input)="onWeightValueChange($event)">
                             <mat-error
@@ -79,7 +79,8 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <mat-form-field class="col-md-6" [hidden]="selectedService === 'X-Ray' || selectedService === 'Normal Melting'">
+                        <mat-form-field class="col-md-6"
+                            [hidden]="selectedService === 'X-Ray' || selectedService === 'Normal Melting'">
                             <mat-select placeholder="Select Karat Type" formControlName="karatType"
                                 (ngModelChange)="onKaratTypeChange($event)">
                                 <mat-option *ngFor="let item of karatList" [value]="item.value">
@@ -169,7 +170,7 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <div [hidden]="selectedService === 'Hallmark'">
+                        <div>
                             <mat-form-field class="col-md-3">
                                 <input matInput placeholder="Weight(Vori)" formControlName="weightVori" readonly>
                             </mat-form-field>
@@ -241,7 +242,7 @@
                             <th *ngIf="selectedService === 'Hallmark' || selectedService === 'X-Ray'">
                                 Item Name
                             </th>
-                            <th *ngIf="selectedService !== 'Hallmark'">Weight(Gram)</th>
+                            <th>Weight(Gram)</th>
                             <th *ngIf="selectedService === 'X-Ray'">Free Check</th>
                             <th *ngIf="selectedService === 'Hallmark'">Hall Marked Text</th>
                             <th *ngIf="selectedService !== 'X-Ray'">Karat Type</th>
@@ -262,7 +263,7 @@
                             <td>{{i + 1}}</td>
                             <td *ngIf="service.serviceType === 'Hallmark' || service.serviceType === 'X-Ray'">
                                 {{service.itemName}}</td>
-                            <td *ngIf="service.serviceType !== 'Hallmark'">{{service.weight}}</td>
+                            <td>{{service.weight}}</td>
                             <td *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
                             <td *ngIf="service.serviceType === 'Hallmark'">
                                 {{service.hallMarkedText}}
