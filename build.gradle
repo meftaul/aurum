@@ -30,7 +30,7 @@ plugins {
 }
 
 group = "com.meftaul.aurum"
-version = "2.0.0-RELEASE"
+version = "2.0.1-RELEASE"
 
 description = ""
 

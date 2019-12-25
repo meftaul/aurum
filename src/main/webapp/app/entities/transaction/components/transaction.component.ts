@@ -362,6 +362,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
     } else {
       this.showBtnForCalculatedMelting = false;
     }
+
+    // handle the case if user check 'Report Charge' then change service --not deployed yet
+    this.calculateTotalAmount = 0;
+    this.totalAmount = 0;
+    this.payableTotalAmount = 0;
+    this.amountDue = 0;
   }
 
   updateFormValueAndValidity() {
