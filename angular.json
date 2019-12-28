@@ -26,7 +26,15 @@
         }
       },
       "prefix": "jhi",
-      "architect": {}
+      "architect": {
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "your-application-name:build",
+            "proxyConfig": "proxy.conf.json"
+          }
+        }
+      }
     }
   },
   "defaultProject": "aurum",
