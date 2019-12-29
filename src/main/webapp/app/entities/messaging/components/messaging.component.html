@@ -1,9 +1,38 @@
-<p>messaging works...</p>
-
 
 <div class="col-md-12">
     <div class="col md 6"></div>
     <div class="col md 6">
         <button type="button" (click)="sendMessage()">Click Me to send sms!</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>All Customers: </h3>
+            <div class="comments-list" *ngIf="customers?.length > 0">
+                <div class="media" *ngFor="let customer of customers">
+                    <div class="media-body">
+                        <h4 class="media-heading user_name">
+                            {{ customer.firstName + ' ' + customer.lastName }}
+                        </h4>
+                        {{ customer.phone }}
+                        <p><small><a (click)="addToSendList(customer)">Add</a></small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Selected Numbers: </h3>
+            <div class="comments-list" *ngIf="sendList?.length > 0">
+                <div class="media" *ngFor="let listItem of sendList; let i = index">
+                    <div class="media-body">
+                        <h4 class="media-heading user_name">
+                            {{ listItem }} <span (click)="removeFromSendList(i)">✘</span>s
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

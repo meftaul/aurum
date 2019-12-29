@@ -1,5 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { MessageService } from 'app/entities/messaging/services/messaging.service';
+import { CustomerService } from 'app/entities/customer/customer.service';
+import { ICustomer } from 'app/shared/model/customer.model';
+import { JhiAlertService } from 'ng-jhipster';
 
 @Component({
   selector: 'jhi-aurum-messaging',
@@ -7,9 +12,19 @@ import { MessageService } from 'app/entities/messaging/services/messaging.servic
   styleUrls: ['./messaging.component.scss']
 })
 export class MessagingComponent implements OnInit, OnDestroy {
-  constructor(private messageService: MessageService) {}
+  customers: ICustomer[];
+  eventSubscriber: Subscription;
+  sendList: any[] = [];
 
-  ngOnInit() {}
+  constructor(
+    private messageService: MessageService,
+    private customerService: CustomerService,
+    protected jhiAlertService: JhiAlertService
+  ) {}
+
+  ngOnInit() {
+    this.fetchCustomer();
+  }
 
   ngOnDestroy() {}
 
@@ -25,5 +40,28 @@ export class MessagingComponent implements OnInit, OnDestroy {
         console.error(error);
       }
     );
+  }
+
+  fetchCustomer() {
+    this.customerService
+      .query({})
+      .subscribe((res: HttpResponse<ICustomer[]>) => (this.customers = res.body), (res: HttpErrorResponse) => this.onError(res.message));
+  }
+
+  addToSendList(customer: ICustomer) {
+    if (this.sendList.filter(data => data === customer.phone).length > 0) {
+      alert('This number is already added.');
+      return;
+    }
+    this.sendList.push(customer.phone);
+  }
+
+  removeFromSendList(index) {
+    // eslint-disable-next-line no-console
+    console.log(index);
+  }
+
+  protected onError(errorMessage: string) {
+    this.jhiAlertService.error(errorMessage, null, null);
   }
 }
