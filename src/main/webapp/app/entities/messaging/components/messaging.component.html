@@ -28,11 +28,27 @@
                 <div class="media" *ngFor="let listItem of sendList; let i = index">
                     <div class="media-body">
                         <h4 class="media-heading user_name">
-                            {{ listItem }} <span (click)="removeFromSendList(i)">✘</span>s
+                            {{ listItem }} <span style="float: right; cursor: pointer" (click)="removeFromSendList(i)">✘</span>
                         </h4>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-4">
+            <div class="example-form">
+
+                <mat-form-field class="" style="width: 100%">
+                    <textarea matInput cdkTextareaAutosize
+                              #autosize="cdkTextareaAutosize"
+                              cdkAutosizeMinRows="3"
+                              cdkAutosizeMaxRows="20"
+                              placeholder="Message"></textarea>
+                </mat-form-field>
+            </div>
+
+            <button class="btn btn-primary">
+                <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span>Send</span>
+            </button>
         </div>
     </div>
 </div>

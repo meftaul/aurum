@@ -58,7 +58,8 @@ export class MessagingComponent implements OnInit, OnDestroy {
 
   removeFromSendList(index) {
     // eslint-disable-next-line no-console
-    console.log(index);
+    // console.log(index);
+    this.sendList.splice(index, 1);
   }
 
   protected onError(errorMessage: string) {
