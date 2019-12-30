@@ -74,6 +74,8 @@ public class AurumServiceCriteria implements Serializable, Criteria {
 
     private StringFilter hallMarkedText;
 
+    private StringFilter weightOfFreeCheck;
+
     private LongFilter voucherId;
 
     public AurumServiceCriteria(){
@@ -95,6 +97,7 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         this.serviceCharge = other.serviceCharge == null ? null : other.serviceCharge.copy();
         this.freeCheck = other.freeCheck == null ? null : other.freeCheck.copy();
         this.hallMarkedText = other.hallMarkedText == null ? null : other.hallMarkedText.copy();
+        this.weightOfFreeCheck = other.weightOfFreeCheck == null ? null : other.weightOfFreeCheck.copy();
         this.voucherId = other.voucherId == null ? null : other.voucherId.copy();
     }
 
@@ -223,6 +226,14 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         this.hallMarkedText = hallMarkedText;
     }
 
+    public StringFilter getWeightOfFreeCheck() {
+        return weightOfFreeCheck;
+    }
+
+    public void setWeightOfFreeCheck(StringFilter weightOfFreeCheck) {
+        this.weightOfFreeCheck = weightOfFreeCheck;
+    }
+
     public LongFilter getVoucherId() {
         return voucherId;
     }
@@ -257,6 +268,7 @@ public class AurumServiceCriteria implements Serializable, Criteria {
             Objects.equals(serviceCharge, that.serviceCharge) &&
             Objects.equals(freeCheck, that.freeCheck) &&
             Objects.equals(hallMarkedText, that.hallMarkedText) &&
+            Objects.equals(weightOfFreeCheck, that.weightOfFreeCheck) &&
             Objects.equals(voucherId, that.voucherId);
     }
 
@@ -278,6 +290,7 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         serviceCharge,
         freeCheck,
         hallMarkedText,
+        weightOfFreeCheck,
         voucherId
         );
     }
@@ -300,6 +313,7 @@ public class AurumServiceCriteria implements Serializable, Criteria {
                 (serviceCharge != null ? "serviceCharge=" + serviceCharge + ", " : "") +
                 (freeCheck != null ? "freeCheck=" + freeCheck + ", " : "") +
                 (hallMarkedText != null ? "hallMarkedText=" + hallMarkedText + ", " : "") +
+                (weightOfFreeCheck != null ? "weightOfFreeCheck=" + weightOfFreeCheck + ", " : "") +
                 (voucherId != null ? "voucherId=" + voucherId + ", " : "") +
             "}";
     }

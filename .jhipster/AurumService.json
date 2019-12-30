@@ -91,6 +91,10 @@
         {
             "fieldName": "hallMarkedText",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "weightOfFreeCheck",
+            "fieldType": "String"
         }
     ],
     "changelogDate": "20191026063357",

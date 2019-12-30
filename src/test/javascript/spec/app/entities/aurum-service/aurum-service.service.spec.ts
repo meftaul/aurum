@@ -21,7 +21,24 @@ describe('Service Tests', () => {
       service = injector.get(AurumServiceService);
       httpMock = injector.get(HttpTestingController);
 
-      elemDefault = new AurumService(0, 'AAAAAAA', 'AAAAAAA', 0, 0, 0, 0, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', Alloy.AU, 0, 0, 0, 'AAAAAAA');
+      elemDefault = new AurumService(
+        0,
+        'AAAAAAA',
+        'AAAAAAA',
+        0,
+        0,
+        0,
+        0,
+        'AAAAAAA',
+        'AAAAAAA',
+        'AAAAAAA',
+        Alloy.AU,
+        0,
+        0,
+        0,
+        'AAAAAAA',
+        'AAAAAAA'
+      );
     });
 
     describe('Service methods', () => {
@@ -70,7 +87,8 @@ describe('Service Tests', () => {
             alloyQuantity: 1,
             serviceCharge: 1,
             freeCheck: 1,
-            hallMarkedText: 'BBBBBB'
+            hallMarkedText: 'BBBBBB',
+            weightOfFreeCheck: 'BBBBBB'
           },
           elemDefault
         );
@@ -101,7 +119,8 @@ describe('Service Tests', () => {
             alloyQuantity: 1,
             serviceCharge: 1,
             freeCheck: 1,
-            hallMarkedText: 'BBBBBB'
+            hallMarkedText: 'BBBBBB',
+            weightOfFreeCheck: 'BBBBBB'
           },
           elemDefault
         );

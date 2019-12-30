@@ -74,6 +74,9 @@ public class AurumService implements Serializable {
     @Column(name = "hall_marked_text")
     private String hallMarkedText;
 
+    @Column(name = "weight_of_free_check")
+    private String weightOfFreeCheck;
+
     @ManyToOne
     @JsonIgnoreProperties("aurumServices")
     private Voucher voucher;
@@ -269,6 +272,19 @@ public class AurumService implements Serializable {
         this.hallMarkedText = hallMarkedText;
     }
 
+    public String getWeightOfFreeCheck() {
+        return weightOfFreeCheck;
+    }
+
+    public AurumService weightOfFreeCheck(String weightOfFreeCheck) {
+        this.weightOfFreeCheck = weightOfFreeCheck;
+        return this;
+    }
+
+    public void setWeightOfFreeCheck(String weightOfFreeCheck) {
+        this.weightOfFreeCheck = weightOfFreeCheck;
+    }
+
     public Voucher getVoucher() {
         return voucher;
     }
@@ -317,6 +333,7 @@ public class AurumService implements Serializable {
             ", serviceCharge=" + getServiceCharge() +
             ", freeCheck=" + getFreeCheck() +
             ", hallMarkedText='" + getHallMarkedText() + "'" +
+            ", weightOfFreeCheck='" + getWeightOfFreeCheck() + "'" +
             "}";
     }
 }

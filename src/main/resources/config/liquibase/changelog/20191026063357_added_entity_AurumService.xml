@@ -58,6 +58,9 @@
             <column name="hall_marked_text" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="weight_of_free_check" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="voucher_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -98,6 +101,7 @@
             <column name="service_charge" type="numeric"/>
             <column name="free_check" type="numeric"/>
             <column name="hall_marked_text" type="string"/>
+            <column name="weight_of_free_check" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>

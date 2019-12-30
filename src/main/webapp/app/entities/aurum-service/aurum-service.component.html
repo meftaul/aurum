@@ -32,6 +32,7 @@
             <th jhiSortBy="serviceCharge"><span>Service Charge</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="freeCheck"><span>Free Check</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="hallMarkedText"><span>Hall Marked Text</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="weightOfFreeCheck"><span>Weight Of Free Check</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="voucher.voucherNo"><span>Voucher</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
@@ -53,6 +54,7 @@
                 <td>{{aurumService.serviceCharge}}</td>
                 <td>{{aurumService.freeCheck}}</td>
                 <td>{{aurumService.hallMarkedText}}</td>
+                <td>{{aurumService.weightOfFreeCheck}}</td>
                 <td>
                     <div *ngIf="aurumService.voucher">
                         <a [routerLink]="['/voucher', aurumService.voucher?.id, 'view' ]" >{{aurumService.voucher?.voucherNo}}</a>

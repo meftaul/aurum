@@ -88,6 +88,9 @@ public class AurumServiceResourceIT {
     private static final String DEFAULT_HALL_MARKED_TEXT = "AAAAAAAAAA";
     private static final String UPDATED_HALL_MARKED_TEXT = "BBBBBBBBBB";
 
+    private static final String DEFAULT_WEIGHT_OF_FREE_CHECK = "AAAAAAAAAA";
+    private static final String UPDATED_WEIGHT_OF_FREE_CHECK = "BBBBBBBBBB";
+
     @Autowired
     private AurumServiceRepository aurumServiceRepository;
 
@@ -149,7 +152,8 @@ public class AurumServiceResourceIT {
             .alloyQuantity(DEFAULT_ALLOY_QUANTITY)
             .serviceCharge(DEFAULT_SERVICE_CHARGE)
             .freeCheck(DEFAULT_FREE_CHECK)
-            .hallMarkedText(DEFAULT_HALL_MARKED_TEXT);
+            .hallMarkedText(DEFAULT_HALL_MARKED_TEXT)
+            .weightOfFreeCheck(DEFAULT_WEIGHT_OF_FREE_CHECK);
         return aurumService;
     }
     /**
@@ -173,7 +177,8 @@ public class AurumServiceResourceIT {
             .alloyQuantity(UPDATED_ALLOY_QUANTITY)
             .serviceCharge(UPDATED_SERVICE_CHARGE)
             .freeCheck(UPDATED_FREE_CHECK)
-            .hallMarkedText(UPDATED_HALL_MARKED_TEXT);
+            .hallMarkedText(UPDATED_HALL_MARKED_TEXT)
+            .weightOfFreeCheck(UPDATED_WEIGHT_OF_FREE_CHECK);
         return aurumService;
     }
 
@@ -211,6 +216,7 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getServiceCharge()).isEqualTo(DEFAULT_SERVICE_CHARGE);
         assertThat(testAurumService.getFreeCheck()).isEqualTo(DEFAULT_FREE_CHECK);
         assertThat(testAurumService.getHallMarkedText()).isEqualTo(DEFAULT_HALL_MARKED_TEXT);
+        assertThat(testAurumService.getWeightOfFreeCheck()).isEqualTo(DEFAULT_WEIGHT_OF_FREE_CHECK);
     }
 
     @Test
@@ -257,7 +263,8 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(DEFAULT_ALLOY_QUANTITY.intValue())))
             .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(DEFAULT_SERVICE_CHARGE.intValue())))
             .andExpect(jsonPath("$.[*].freeCheck").value(hasItem(DEFAULT_FREE_CHECK.intValue())))
-            .andExpect(jsonPath("$.[*].hallMarkedText").value(hasItem(DEFAULT_HALL_MARKED_TEXT.toString())));
+            .andExpect(jsonPath("$.[*].hallMarkedText").value(hasItem(DEFAULT_HALL_MARKED_TEXT.toString())))
+            .andExpect(jsonPath("$.[*].weightOfFreeCheck").value(hasItem(DEFAULT_WEIGHT_OF_FREE_CHECK.toString())));
     }
     
     @Test
@@ -284,7 +291,8 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.alloyQuantity").value(DEFAULT_ALLOY_QUANTITY.intValue()))
             .andExpect(jsonPath("$.serviceCharge").value(DEFAULT_SERVICE_CHARGE.intValue()))
             .andExpect(jsonPath("$.freeCheck").value(DEFAULT_FREE_CHECK.intValue()))
-            .andExpect(jsonPath("$.hallMarkedText").value(DEFAULT_HALL_MARKED_TEXT.toString()));
+            .andExpect(jsonPath("$.hallMarkedText").value(DEFAULT_HALL_MARKED_TEXT.toString()))
+            .andExpect(jsonPath("$.weightOfFreeCheck").value(DEFAULT_WEIGHT_OF_FREE_CHECK.toString()));
     }
 
     @Test
@@ -1206,6 +1214,45 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
+    public void getAllAurumServicesByWeightOfFreeCheckIsEqualToSomething() throws Exception {
+        // Initialize the database
+        aurumServiceRepository.saveAndFlush(aurumService);
+
+        // Get all the aurumServiceList where weightOfFreeCheck equals to DEFAULT_WEIGHT_OF_FREE_CHECK
+        defaultAurumServiceShouldBeFound("weightOfFreeCheck.equals=" + DEFAULT_WEIGHT_OF_FREE_CHECK);
+
+        // Get all the aurumServiceList where weightOfFreeCheck equals to UPDATED_WEIGHT_OF_FREE_CHECK
+        defaultAurumServiceShouldNotBeFound("weightOfFreeCheck.equals=" + UPDATED_WEIGHT_OF_FREE_CHECK);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAurumServicesByWeightOfFreeCheckIsInShouldWork() throws Exception {
+        // Initialize the database
+        aurumServiceRepository.saveAndFlush(aurumService);
+
+        // Get all the aurumServiceList where weightOfFreeCheck in DEFAULT_WEIGHT_OF_FREE_CHECK or UPDATED_WEIGHT_OF_FREE_CHECK
+        defaultAurumServiceShouldBeFound("weightOfFreeCheck.in=" + DEFAULT_WEIGHT_OF_FREE_CHECK + "," + UPDATED_WEIGHT_OF_FREE_CHECK);
+
+        // Get all the aurumServiceList where weightOfFreeCheck equals to UPDATED_WEIGHT_OF_FREE_CHECK
+        defaultAurumServiceShouldNotBeFound("weightOfFreeCheck.in=" + UPDATED_WEIGHT_OF_FREE_CHECK);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAurumServicesByWeightOfFreeCheckIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        aurumServiceRepository.saveAndFlush(aurumService);
+
+        // Get all the aurumServiceList where weightOfFreeCheck is not null
+        defaultAurumServiceShouldBeFound("weightOfFreeCheck.specified=true");
+
+        // Get all the aurumServiceList where weightOfFreeCheck is null
+        defaultAurumServiceShouldNotBeFound("weightOfFreeCheck.specified=false");
+    }
+
+    @Test
+    @Transactional
     public void getAllAurumServicesByVoucherIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
@@ -1244,7 +1291,8 @@ public class AurumServiceResourceIT {
             .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(DEFAULT_ALLOY_QUANTITY.intValue())))
             .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(DEFAULT_SERVICE_CHARGE.intValue())))
             .andExpect(jsonPath("$.[*].freeCheck").value(hasItem(DEFAULT_FREE_CHECK.intValue())))
-            .andExpect(jsonPath("$.[*].hallMarkedText").value(hasItem(DEFAULT_HALL_MARKED_TEXT)));
+            .andExpect(jsonPath("$.[*].hallMarkedText").value(hasItem(DEFAULT_HALL_MARKED_TEXT)))
+            .andExpect(jsonPath("$.[*].weightOfFreeCheck").value(hasItem(DEFAULT_WEIGHT_OF_FREE_CHECK)));
 
         // Check, that the count call also returns 1
         restAurumServiceMockMvc.perform(get("/api/aurum-services/count?sort=id,desc&" + filter))
@@ -1305,7 +1353,8 @@ public class AurumServiceResourceIT {
             .alloyQuantity(UPDATED_ALLOY_QUANTITY)
             .serviceCharge(UPDATED_SERVICE_CHARGE)
             .freeCheck(UPDATED_FREE_CHECK)
-            .hallMarkedText(UPDATED_HALL_MARKED_TEXT);
+            .hallMarkedText(UPDATED_HALL_MARKED_TEXT)
+            .weightOfFreeCheck(UPDATED_WEIGHT_OF_FREE_CHECK);
 
         restAurumServiceMockMvc.perform(put("/api/aurum-services")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -1330,6 +1379,7 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getServiceCharge()).isEqualTo(UPDATED_SERVICE_CHARGE);
         assertThat(testAurumService.getFreeCheck()).isEqualTo(UPDATED_FREE_CHECK);
         assertThat(testAurumService.getHallMarkedText()).isEqualTo(UPDATED_HALL_MARKED_TEXT);
+        assertThat(testAurumService.getWeightOfFreeCheck()).isEqualTo(UPDATED_WEIGHT_OF_FREE_CHECK);
     }
 
     @Test

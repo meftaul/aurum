@@ -17,6 +17,7 @@ export interface IAurumService {
   serviceCharge?: number;
   freeCheck?: number;
   hallMarkedText?: string;
+  weightOfFreeCheck?: string;
   voucher?: IVoucher;
 }
 
@@ -37,6 +38,7 @@ export class AurumService implements IAurumService {
     public serviceCharge?: number,
     public freeCheck?: number,
     public hallMarkedText?: string,
+    public weightOfFreeCheck?: string,
     public voucher?: IVoucher
   ) {}
 }

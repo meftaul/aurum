@@ -127,6 +127,9 @@ public class AurumServiceQueryService extends QueryService<AurumService> {
             if (criteria.getHallMarkedText() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getHallMarkedText(), AurumService_.hallMarkedText));
             }
+            if (criteria.getWeightOfFreeCheck() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getWeightOfFreeCheck(), AurumService_.weightOfFreeCheck));
+            }
             if (criteria.getVoucherId() != null) {
                 specification = specification.and(buildSpecification(criteria.getVoucherId(),
                     root -> root.join(AurumService_.voucher, JoinType.LEFT).get(Voucher_.id)));

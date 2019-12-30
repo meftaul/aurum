@@ -37,6 +37,7 @@ export class AurumServiceUpdateComponent implements OnInit {
     serviceCharge: [null, [Validators.min(0)]],
     freeCheck: [null, [Validators.min(0)]],
     hallMarkedText: [],
+    weightOfFreeCheck: [],
     voucher: []
   });
 
@@ -79,6 +80,7 @@ export class AurumServiceUpdateComponent implements OnInit {
       serviceCharge: aurumService.serviceCharge,
       freeCheck: aurumService.freeCheck,
       hallMarkedText: aurumService.hallMarkedText,
+      weightOfFreeCheck: aurumService.weightOfFreeCheck,
       voucher: aurumService.voucher
     });
   }
@@ -115,6 +117,7 @@ export class AurumServiceUpdateComponent implements OnInit {
       serviceCharge: this.editForm.get(['serviceCharge']).value,
       freeCheck: this.editForm.get(['freeCheck']).value,
       hallMarkedText: this.editForm.get(['hallMarkedText']).value,
+      weightOfFreeCheck: this.editForm.get(['weightOfFreeCheck']).value,
       voucher: this.editForm.get(['voucher']).value
     };
   }
