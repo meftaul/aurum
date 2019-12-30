@@ -1,7 +1,9 @@
 package com.meftaul.aurum.web.rest;
 
+import com.meftaul.aurum.domain.Authority;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.security.AuthoritiesConstants;
 import com.meftaul.aurum.service.CustomVoucherService;
 import com.meftaul.aurum.service.VoucherService;
 import com.meftaul.aurum.service.dto.CustomVoucherDto;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -68,6 +71,7 @@ public class CustomVoucherResource {
         return ResponseUtil.wrapOrNotFound(voucher);
     }
 
+    @Secured({AuthoritiesConstants.ADMIN})
     @DeleteMapping("/delete/{voucherNo}")
     public ResponseEntity<String> deleteVoucher(@PathVariable String voucherNo) {
         log.debug("REST request to get Voucher : {}", voucherNo);
