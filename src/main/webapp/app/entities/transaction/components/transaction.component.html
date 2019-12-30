@@ -258,6 +258,7 @@
                             </th>
                             <th>Weight(Gram)</th>
                             <th *ngIf="selectedService === 'X-Ray'">Free Check</th>
+                            <th *ngIf="selectedService === 'X-Ray'">Free Check Weight(Gram)</th>
                             <th *ngIf="selectedService === 'Hallmark'">Hall Marked Text</th>
                             <th *ngIf="selectedService === 'Calculated Melting' || selectedService === 'Hallmark'">
                                 Karat Type</th>
@@ -280,6 +281,7 @@
                                 {{service.itemName}}</td>
                             <td>{{service.weight}}</td>
                             <td *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
+                            <td *ngIf="service.serviceType === 'X-Ray'">{{service.weightOfFreeCheck}}</td>
                             <td *ngIf="service.serviceType === 'Hallmark'">
                                 {{service.hallMarkedText}}
                             </td>
@@ -449,7 +451,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input type="number" matInput placeholder="Vat" formControlName="vat"
+                                        <input type="number" matInput placeholder="Vat" formControlName="vat" [maxlength]="11"
                                             (input)="onVatValueChange($event)"
                                             [attr.disabled]="vatChecked ? 'disabled' : null">
                                     </mat-form-field>
@@ -469,7 +471,7 @@
                                 <div class="col-md-6" style="margin-top: 12px;">Discount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input type="number" matInput placeholder="Disount Amount"
+                                        <input type="number" matInput placeholder="Disount Amount" [maxlength]="11"
                                             formControlName="disountAmount" (input)="onDiscountValueChange($event)">
                                     </mat-form-field>
                                 </div>
@@ -488,7 +490,7 @@
                                 <div class="col-md-6" style="margin-top: 12px;">Paid Amount</div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input type="number" matInput placeholder="Paid Amount"
+                                        <input type="number" matInput placeholder="Paid Amount" [maxlength]="11"
                                             formControlName="paidAmount" (input)="onTotalPayableValueChange($event)">
                                     </mat-form-field>
                                 </div>

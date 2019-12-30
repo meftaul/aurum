@@ -134,7 +134,7 @@
                         <td class="borderStyle">{{service.quantity}}</td>
                         <td class="borderStyle">{{service.amount | currency: ' '}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
-                        <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'"></td>
+                    <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.weightOfFreeCheck}}</td>
                     </tr>
                 </tbody>
                 <!-- <tfoot>

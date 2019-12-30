@@ -46,7 +46,7 @@
                 <button type="button" class="btn btn-primary" (click)="confirmDelivery(confirmDeliveryDialog)" style="margin-top: 5px;" *ngIf="voucherViewer.dueAmount === 0 && !voucherViewer.voucherInfo.deliveryStatus">Make
                     Delivery</button>
 
-                <button type="button" class="btn btn btn-danger" (click)="deleteVoucherDialog(confirmDeleteVoucherDialog)" style="margin-top: 0px;">Delete Voucher</button>
+                <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN']" class="btn btn btn-danger" (click)="deleteVoucherDialog(confirmDeleteVoucherDialog)" style="margin-top: 0px;">Delete Voucher</button>
             </form>
 
         </div>
@@ -106,6 +106,7 @@
                     </th>
                     <th *ngIf="aurumServices[0].serviceType !== 'Hallmark'">Weight(Gram)</th>
                     <th *ngIf="aurumServices[0].serviceType === 'X-Ray'">Free Check</th>
+                    <th *ngIf="aurumServices[0].serviceType === 'X-Ray'">Free Check Weight(Gram)</th>
                     <th *ngIf="aurumServices[0].serviceType === 'Hallmark'">Hall Marked Text</th>
                     <th *ngIf="aurumServices[0].serviceType !== 'X-Ray'">Karat Type</th>
                     <th *ngIf="aurumServices[0].serviceType === 'Calculated Melting'">Expected
@@ -126,6 +127,7 @@
                         {{service.itemName}}</td>
                     <td *ngIf="service.serviceType !== 'Hallmark'">{{service.weight}}</td>
                     <td *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
+                    <td *ngIf="service.serviceType === 'X-Ray'">{{service.weightOfFreeCheck}}</td>
                     <td *ngIf="service.serviceType === 'Hallmark'">
                         {{service.hallMarkedText}}
                     </td>

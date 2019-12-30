@@ -197,7 +197,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       alloyQuantity: ['', Validators.maxLength(11)],
       rate: ['', [Validators.required, Validators.maxLength(11)]],
       quantity: ['', Validators.maxLength(3)],
-      weight: ['', [Validators.required], Validators.maxLength(11)],
+      weight: ['', [Validators.required, Validators.maxLength(11)]],
       freeCheck: ['', [Validators.min(0), Validators.max(1)]],
       hallMarkedText: ['', Validators.maxLength(50)],
       weightOfFreeCheck: ['', [Validators.maxLength(11)]],
@@ -237,6 +237,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     aurumServiceTemp.freeCheck = this.aurumServiceForm.controls.freeCheck.value;
     aurumServiceTemp.hallMarkedText = this.aurumServiceForm.controls.hallMarkedText.value;
+    aurumServiceTemp.weightOfFreeCheck = this.aurumServiceForm.controls.weightOfFreeCheck.value;
 
     if (this.aurumServiceForm.controls.serviceType.value === 'Calculated Melting') {
       aurumServiceTemp.expectedKaratType = this.aurumServiceForm.controls.expectedKaratType.value;
@@ -481,12 +482,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
   prepareVoucherForm() {
     this.voucherForm = this.formBuilder.group({
       voucherNo: [''],
-      boxNumber: ['', [Validators.required]],
+      boxNumber: ['', [Validators.required, Validators.maxLength(50)]],
       deliveryDate: ['', [Validators.required]],
       calculatedTotalAmount: [0],
-      disountAmount: [0, [Validators.required]],
-      vat: [0, [Validators.required]],
-      paidAmount: [0]
+      disountAmount: [0, [Validators.required, Validators.maxLength(11)]],
+      vat: [0, [Validators.required, Validators.maxLength(11)]],
+      paidAmount: [0, Validators.maxLength(11)]
     });
   }
 
