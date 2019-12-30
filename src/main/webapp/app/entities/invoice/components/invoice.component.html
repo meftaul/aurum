@@ -1,10 +1,8 @@
-<div class="container"
-    style="margin-top: 100px; font-size: 18px; font-family: 'Times New Roman', Times, serif; font-weight: 500;">
+<div class="container" style="margin-top: 100px; font-size: 18px; font-family: 'Times New Roman', Times, serif; font-weight: 500;">
     <div class="row">
         <div class="col-md-12">
             <h3 style="text-align: center; text-decoration: underline;">{{invoiceTitle}} Invoice</h3>
-            <button type="button" style="margin-top: -45px;" class="btn btn-primary float-right no-print"
-                (click)="printPage()">Print</button>
+            <button type="button" style="margin-top: -45px;" class="btn btn-primary float-right no-print" (click)="printPage()">Print</button>
         </div>
     </div>
     <br>
@@ -85,8 +83,7 @@
             <table class="table" *ngFor="let serviceMap of serviceTypeToServiceListMap | keyvalue">
                 <thead class="borderStyle">
                     <tr class="borderStyle">
-                        <th colspan="9" class="borderStyle"
-                            style="text-decoration: underline; font-weight: bold; text-align: left;">
+                        <th colspan="9" class="borderStyle" style="text-decoration: underline; font-weight: bold; text-align: left;">
                             Service Information:</th>
                     </tr>
                     <tr class="borderStyle">
@@ -96,11 +93,9 @@
                         </th>
                         <th class="borderStyle">Weight(Gram)</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">Hall Marked Text</th>
-                        <th class="borderStyle"
-                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">Karat Type
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">Karat Type
                         </th>
-                        <th class="borderStyle"
-                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
                             Report Charge
                         </th>
                         <!-- <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Expected
@@ -124,11 +119,9 @@
                         <td class="borderStyle">{{service.weight}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Hallmark'">{{service.hallMarkedText}}
                         </td>
-                        <td class="borderStyle"
-                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">
+                        <td class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">
                             {{service.karatType}}</td>
-                        <td class="borderStyle"
-                            *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
+                        <td class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
                             {{service.serviceCharge | currency: ' '}}</td>
                         <!-- <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
@@ -144,13 +137,22 @@
                         <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'"></td>
                     </tr>
                 </tbody>
-                <tfoot>
+                <!-- <tfoot>
                     <tr>
                         <th colspan="2">Amount In Words:</th>
                         <td colspan="4"><b>{{amountInWordsStr}}</b></td>
                     </tr>
-                </tfoot>
+                </tfoot> -->
             </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p>Amount In Words: <b>{{amountInWordsStr}}</b></p>
+        </div>
+        <div class="col-md-6">
+                <p style="text-align: right">Total Amount: <b>{{voucher?.totalPayableAmount | currency: ' '}}</b></p>
         </div>
     </div>
 
