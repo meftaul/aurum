@@ -194,12 +194,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
       karatType: [''],
       expectedKaratType: [''],
       addedAlloy: [''],
-      alloyQuantity: [''],
-      rate: ['', [Validators.required]],
-      quantity: [''],
-      weight: ['', [Validators.required]],
+      alloyQuantity: ['', Validators.maxLength(11)],
+      rate: ['', [Validators.required, Validators.maxLength(11)]],
+      quantity: ['', Validators.maxLength(3)],
+      weight: ['', [Validators.required], Validators.maxLength(11)],
       freeCheck: ['', [Validators.min(0), Validators.max(1)]],
-      hallMarkedText: [''],
+      hallMarkedText: ['', Validators.maxLength(50)],
+      weightOfFreeCheck: ['', [Validators.maxLength(11)]],
 
       // only for weight calculation
       weightVori: [''],
