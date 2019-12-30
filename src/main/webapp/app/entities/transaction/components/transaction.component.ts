@@ -363,11 +363,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.showBtnForCalculatedMelting = false;
     }
 
-    // handle the case if user check 'Report Charge' then change service --not deployed yet
-    this.calculateTotalAmount = 0;
-    this.totalAmount = 0;
-    this.payableTotalAmount = 0;
-    this.amountDue = 0;
+    // handle the case if user check 'Report Charge' then change service
+    if (this.aurumServiceList && this.aurumServiceList.length === 0) {
+      this.calculateTotalAmount = 0;
+      this.totalAmount = 0;
+      this.payableTotalAmount = 0;
+      this.amountDue = 0;
+    }
   }
 
   updateFormValueAndValidity() {
