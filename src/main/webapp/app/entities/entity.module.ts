@@ -64,6 +64,10 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
       {
         path: 'item',
         loadChildren: () => import('./item/item.module').then(m => m.AurumItemModule)
+      },
+      {
+        path: 'messaging',
+        loadChildren: () => import('./messaging/messaging.module').then(m => m.AurumMessagingModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

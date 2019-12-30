@@ -1,6 +1,16 @@
 {
-  "*": {
+  "/api/*": {
     "target": "http://localhost:8080",
+    "secure": false,
+    "loglevel": "debug"
+  },
+  "/management/*": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "loglevel": "debug"
+  },
+  "/api.php": {
+    "target": "http://66.45.237.70",
     "secure": false,
     "loglevel": "debug"
   }
