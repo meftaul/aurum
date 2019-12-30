@@ -68,4 +68,11 @@ public class CustomVoucherResource {
         return ResponseUtil.wrapOrNotFound(voucher);
     }
 
+    @DeleteMapping("/delete/{voucherNo}")
+    public ResponseEntity<String> deleteVoucher(@PathVariable String voucherNo) {
+        log.debug("REST request to get Voucher : {}", voucherNo);
+        String vNo = customVoucherService.deleteVoucher(voucherNo);
+        return ResponseEntity.accepted().body(voucherNo);
+    }
+
 }

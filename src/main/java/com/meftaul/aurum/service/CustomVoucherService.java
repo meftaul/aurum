@@ -118,6 +118,32 @@ public class CustomVoucherService {
         return transactionHistoryRepository.save(txnDto.getTransactionHistory());
     }
 
+    @Transactional
+    public String deleteVoucher(String voucherNo) {
+        Voucher voucher =  this.voucherRepository.findByVoucherNo(voucherNo);
+        if (voucher == null) {
+            throw new RuntimeException("Invalid Voucher number");
+        }
+
+        List<AurumService> aurumServices = this.aurumServiceRepository.findAllByVoucher(voucher);
+        if (aurumServices.size() > 0) {
+            for (AurumService service : aurumServices) {
+                this.aurumServiceRepository.delete(service);
+            }
+        }
+
+        List<TransactionHistory> txnHistories = this.transactionHistoryRepository.findAllByVoucherNo(voucherNo);
+        if (txnHistories.size() > 0) {
+            for (TransactionHistory txn : txnHistories) {
+                this.transactionHistoryRepository.delete(txn);
+            }
+        }
+
+        this.voucherRepository.delete(voucher);
+
+        return voucherNo;
+    }
+
     private void updateCustomerPoint(Long customerId) {
         Customer customer = customerRepository.getOne(customerId);
         Long existingPoint = customer.getTotalPoint();
