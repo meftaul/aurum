@@ -155,6 +155,20 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     this.modalService.open(confirmDeliveryDialog, { centered: true });
   }
 
+  deleteVoucherDialog(confirmDeleteVoucherDialog) {
+    this.modalService.open(confirmDeleteVoucherDialog, { centered: true });
+  }
+
+  deleteVoucher() {
+    if (this.voucherFieldValue) {
+      this.voucherViewerService.deleteVoucher(this.voucherFieldValue).subscribe(data => {
+        this.voucherViewer = new VoucherViewer();
+        this.voucherFieldValue = null;
+        this.jhiAlertService.success('Voucher deleted successfully.');
+      });
+    }
+  }
+
   makeDelivery() {
     const voucher = this.voucherViewer.voucherInfo;
     voucher.deliveryStatus = true;

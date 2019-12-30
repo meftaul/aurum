@@ -25,4 +25,8 @@ export class VoucherViewerService {
   createCustomeTransaction(transactionDto: TransactionDto): Observable<HttpResponse<TransactionHistory>> {
     return this.http.post<TransactionHistory>(this.resourceUrl + '/custom-transaction', transactionDto, { observe: 'response' });
   }
+
+  deleteVoucher(voucherNo: string): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl}/delete/${voucherNo}`, { observe: 'response' });
+  }
 }

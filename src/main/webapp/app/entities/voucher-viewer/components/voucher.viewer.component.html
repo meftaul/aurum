@@ -2,8 +2,7 @@
     <mat-card class="col-md-12">
         <form class="">
             <mat-form-field class="col-md-3">
-                <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue"
-                    [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
+                <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue" [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
                 <!-- <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue"
                     [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)"> -->
             </mat-form-field>
@@ -13,8 +12,7 @@
     </mat-card>
 </div>
 
-<div class="row" style="margin-top: 15px;"
-    *ngIf="voucherViewer && voucherViewer.voucherInfo && voucherViewer.voucherInfo.id">
+<div class="row" style="margin-top: 15px;" *ngIf="voucherViewer && voucherViewer.voucherInfo && voucherViewer.voucherInfo.id">
     <mat-card class="col-md-12">
         <mat-card-title>Payment Information</mat-card-title>
         <div class="row">
@@ -36,30 +34,26 @@
             <form [formGroup]="transactionHistoryForm" class="col-md-6" style="margin-top: 5px;;">
                 <mat-form-field class="col-md-6" *ngIf="voucherViewer.dueAmount > 0">
                     <input type="number" matInput placeholder="Amount" formControlName="amount">
-                    <mat-error
-                        *ngIf="transactionHistoryForm.controls['amount'].errors && !transactionHistoryForm.controls['amount'].pristine">
+                    <mat-error *ngIf="transactionHistoryForm.controls['amount'].errors && !transactionHistoryForm.controls['amount'].pristine">
                         <div [hidden]="!transactionHistoryForm.controls['amount'].errors.required">Amount is required
                         </div>
                         <div [hidden]="!transactionHistoryForm.controls['amount'].errors.max">Amount can't be greater
                             then due</div>
                     </mat-error>
                 </mat-form-field>
-                <button type="button" class="btn btn-primary"
-                    (click)="confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog)"
-                    *ngIf="voucherViewer.dueAmount > 0">Make Payment</button>
+                <button type="button" class="btn btn-primary" (click)="confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog)" *ngIf="voucherViewer.dueAmount > 0">Make Payment</button>
 
-                <button type="button" class="btn btn-primary" (click)="confirmDelivery(confirmDeliveryDialog)"
-                    style="margin-top: 5px;"
-                    *ngIf="voucherViewer.dueAmount === 0 && !voucherViewer.voucherInfo.deliveryStatus">Make
+                <button type="button" class="btn btn-primary" (click)="confirmDelivery(confirmDeliveryDialog)" style="margin-top: 5px;" *ngIf="voucherViewer.dueAmount === 0 && !voucherViewer.voucherInfo.deliveryStatus">Make
                     Delivery</button>
+
+                <button type="button" class="btn btn btn-danger" (click)="deleteVoucherDialog(confirmDeleteVoucherDialog)" style="margin-top: 0px;">Delete Voucher</button>
             </form>
 
         </div>
     </mat-card>
 </div>
 
-<div class="row" style="margin-top: 15px;"
-    *ngIf="voucherViewer && voucherViewer.voucherInfo && voucherViewer.voucherInfo.id">
+<div class="row" style="margin-top: 15px;" *ngIf="voucherViewer && voucherViewer.voucherInfo && voucherViewer.voucherInfo.id">
     <mat-card class="col-md-12">
         <mat-card-title>Voucher Information</mat-card-title>
 
@@ -255,5 +249,23 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-success" (click)="makeDelivery(); deliveryModal.close()">Yes</button>
         <button type="button" class="btn btn-danger" (click)="deliveryModal.close()">Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #confirmDeleteVoucherDialog let-deleteModal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Confirmation</h4>
+        <button type="button" class="close" aria-label="Close" (click)="deleteModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        Are you sure you want to delete voucher?
+        <br> <br>
+        <h5 style="color: red">It will delete this voucher & all coresponding transaction data.</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="deleteVoucher(); deleteModal.close()">Yes</button>
+        <button type="button" class="btn btn-danger" (click)="deleteModal.close()">Cancel</button>
     </div>
 </ng-template>
