@@ -20,7 +20,7 @@
                     </tr>
                     <tr>
                         <td><b>Name & ID:</b></td>
-                        <td>{{customer?.firstName + ' ' + customer?.lastName ? customer?.lastName : ''}}
+                        <td>{{customer?.firstName + ' ' + (customer?.lastName ? customer?.lastName : '')}}
                             (<span style="font-weight: bold;">ID: {{customer?.id}}</span>)</td>
                     </tr>
                     <tr>
