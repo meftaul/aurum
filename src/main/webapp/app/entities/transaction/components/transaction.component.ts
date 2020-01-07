@@ -317,7 +317,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       // this.aurumServiceForm.controls.weight.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.setValidators([Validators.required]);
       this.aurumServiceForm.controls.freeCheck.clearValidators();
-      this.aurumServiceForm.controls.hallMarkedText.setValidators([Validators.required]);
+      // this.aurumServiceForm.controls.hallMarkedText.setValidators([Validators.required]);
       this.aurumServiceForm.controls.quantity.setValue(1);
       this.updateFormValueAndValidity();
       this.isReportChargeDisabled = true;
@@ -384,6 +384,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.aurumServiceForm.controls.quantity.setValue(null);
     this.aurumServiceForm.controls.freeCheck.setValue(null);
     this.aurumServiceForm.controls.hallMarkedText.setValue(null);
+    this.aurumServiceForm.controls.weightOfFreeCheck.setValue(null);
 
     this.aurumServiceForm.controls.itemName.updateValueAndValidity();
     this.aurumServiceForm.controls.karatType.updateValueAndValidity();
@@ -394,6 +395,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.aurumServiceForm.controls.quantity.updateValueAndValidity();
     this.aurumServiceForm.controls.freeCheck.updateValueAndValidity();
     this.aurumServiceForm.controls.hallMarkedText.updateValueAndValidity();
+    this.aurumServiceForm.controls.weightOfFreeCheck.updateValueAndValidity();
   }
 
   resetServiceForm() {
