@@ -146,7 +146,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
       phone: [customerData.phone, [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
       email: [customerData.email, [Validators.email]],
       address: [customerData.address],
-      reference: [customerData.reference]
+      reference: [customerData.reference],
+      customId: [customerData.customId]
     });
   }
 

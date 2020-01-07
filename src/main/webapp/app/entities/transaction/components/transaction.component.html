@@ -215,6 +215,10 @@
                     <table class="table table-striped">
                         <tbody>
                             <tr>
+                                <td>Custom ID</td>
+                                <td>{{customer?.customId}}</td>
+                            </tr>
+                            <tr>
                                 <td>Name</td>
                                 <td>{{customer?.firstName}} {{customer?.lastName}}</td>
                             </tr>
@@ -565,6 +569,9 @@
             </mat-form-field>
             <mat-form-field class="col-md-6" style="margin-top: 5px;">
                 <input matInput placeholder="Reference" formControlName="reference">
+            </mat-form-field>
+            <mat-form-field class="col-md-6" style="margin-top: 5px;">
+                <input matInput placeholder="Custom ID" formControlName="customId">
             </mat-form-field>
         </form>
     </div>
