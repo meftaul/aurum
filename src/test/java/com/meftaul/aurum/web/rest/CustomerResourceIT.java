@@ -58,6 +58,9 @@ public class CustomerResourceIT {
     private static final String DEFAULT_REFERENCE = "AAAAAAAAAA";
     private static final String UPDATED_REFERENCE = "BBBBBBBBBB";
 
+    private static final String DEFAULT_CUSTOM_ID = "AAAAAAAAAA";
+    private static final String UPDATED_CUSTOM_ID = "BBBBBBBBBB";
+
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -112,7 +115,8 @@ public class CustomerResourceIT {
             .email(DEFAULT_EMAIL)
             .address(DEFAULT_ADDRESS)
             .totalPoint(DEFAULT_TOTAL_POINT)
-            .reference(DEFAULT_REFERENCE);
+            .reference(DEFAULT_REFERENCE)
+            .customId(DEFAULT_CUSTOM_ID);
         return customer;
     }
     /**
@@ -129,7 +133,8 @@ public class CustomerResourceIT {
             .email(UPDATED_EMAIL)
             .address(UPDATED_ADDRESS)
             .totalPoint(UPDATED_TOTAL_POINT)
-            .reference(UPDATED_REFERENCE);
+            .reference(UPDATED_REFERENCE)
+            .customId(UPDATED_CUSTOM_ID);
         return customer;
     }
 
@@ -160,6 +165,7 @@ public class CustomerResourceIT {
         assertThat(testCustomer.getAddress()).isEqualTo(DEFAULT_ADDRESS);
         assertThat(testCustomer.getTotalPoint()).isEqualTo(DEFAULT_TOTAL_POINT);
         assertThat(testCustomer.getReference()).isEqualTo(DEFAULT_REFERENCE);
+        assertThat(testCustomer.getCustomId()).isEqualTo(DEFAULT_CUSTOM_ID);
     }
 
     @Test
@@ -217,7 +223,8 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
             .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS.toString())))
             .andExpect(jsonPath("$.[*].totalPoint").value(hasItem(DEFAULT_TOTAL_POINT.intValue())))
-            .andExpect(jsonPath("$.[*].reference").value(hasItem(DEFAULT_REFERENCE.toString())));
+            .andExpect(jsonPath("$.[*].reference").value(hasItem(DEFAULT_REFERENCE.toString())))
+            .andExpect(jsonPath("$.[*].customId").value(hasItem(DEFAULT_CUSTOM_ID.toString())));
     }
     
     @Test
@@ -237,7 +244,8 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
             .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
             .andExpect(jsonPath("$.totalPoint").value(DEFAULT_TOTAL_POINT.intValue()))
-            .andExpect(jsonPath("$.reference").value(DEFAULT_REFERENCE.toString()));
+            .andExpect(jsonPath("$.reference").value(DEFAULT_REFERENCE.toString()))
+            .andExpect(jsonPath("$.customId").value(DEFAULT_CUSTOM_ID.toString()));
     }
 
     @Test
@@ -565,6 +573,45 @@ public class CustomerResourceIT {
         // Get all the customerList where reference is null
         defaultCustomerShouldNotBeFound("reference.specified=false");
     }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByCustomIdIsEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where customId equals to DEFAULT_CUSTOM_ID
+        defaultCustomerShouldBeFound("customId.equals=" + DEFAULT_CUSTOM_ID);
+
+        // Get all the customerList where customId equals to UPDATED_CUSTOM_ID
+        defaultCustomerShouldNotBeFound("customId.equals=" + UPDATED_CUSTOM_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByCustomIdIsInShouldWork() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where customId in DEFAULT_CUSTOM_ID or UPDATED_CUSTOM_ID
+        defaultCustomerShouldBeFound("customId.in=" + DEFAULT_CUSTOM_ID + "," + UPDATED_CUSTOM_ID);
+
+        // Get all the customerList where customId equals to UPDATED_CUSTOM_ID
+        defaultCustomerShouldNotBeFound("customId.in=" + UPDATED_CUSTOM_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByCustomIdIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where customId is not null
+        defaultCustomerShouldBeFound("customId.specified=true");
+
+        // Get all the customerList where customId is null
+        defaultCustomerShouldNotBeFound("customId.specified=false");
+    }
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -579,7 +626,8 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
             .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)))
             .andExpect(jsonPath("$.[*].totalPoint").value(hasItem(DEFAULT_TOTAL_POINT.intValue())))
-            .andExpect(jsonPath("$.[*].reference").value(hasItem(DEFAULT_REFERENCE)));
+            .andExpect(jsonPath("$.[*].reference").value(hasItem(DEFAULT_REFERENCE)))
+            .andExpect(jsonPath("$.[*].customId").value(hasItem(DEFAULT_CUSTOM_ID)));
 
         // Check, that the count call also returns 1
         restCustomerMockMvc.perform(get("/api/customers/count?sort=id,desc&" + filter))
@@ -633,7 +681,8 @@ public class CustomerResourceIT {
             .email(UPDATED_EMAIL)
             .address(UPDATED_ADDRESS)
             .totalPoint(UPDATED_TOTAL_POINT)
-            .reference(UPDATED_REFERENCE);
+            .reference(UPDATED_REFERENCE)
+            .customId(UPDATED_CUSTOM_ID);
 
         restCustomerMockMvc.perform(put("/api/customers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -651,6 +700,7 @@ public class CustomerResourceIT {
         assertThat(testCustomer.getAddress()).isEqualTo(UPDATED_ADDRESS);
         assertThat(testCustomer.getTotalPoint()).isEqualTo(UPDATED_TOTAL_POINT);
         assertThat(testCustomer.getReference()).isEqualTo(UPDATED_REFERENCE);
+        assertThat(testCustomer.getCustomId()).isEqualTo(UPDATED_CUSTOM_ID);
     }
 
     @Test

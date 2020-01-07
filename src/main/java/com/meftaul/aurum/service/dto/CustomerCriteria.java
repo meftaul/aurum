@@ -40,6 +40,8 @@ public class CustomerCriteria implements Serializable, Criteria {
 
     private StringFilter reference;
 
+    private StringFilter customId;
+
     public CustomerCriteria(){
     }
 
@@ -52,6 +54,7 @@ public class CustomerCriteria implements Serializable, Criteria {
         this.address = other.address == null ? null : other.address.copy();
         this.totalPoint = other.totalPoint == null ? null : other.totalPoint.copy();
         this.reference = other.reference == null ? null : other.reference.copy();
+        this.customId = other.customId == null ? null : other.customId.copy();
     }
 
     @Override
@@ -123,6 +126,14 @@ public class CustomerCriteria implements Serializable, Criteria {
         this.reference = reference;
     }
 
+    public StringFilter getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(StringFilter customId) {
+        this.customId = customId;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -141,7 +152,8 @@ public class CustomerCriteria implements Serializable, Criteria {
             Objects.equals(email, that.email) &&
             Objects.equals(address, that.address) &&
             Objects.equals(totalPoint, that.totalPoint) &&
-            Objects.equals(reference, that.reference);
+            Objects.equals(reference, that.reference) &&
+            Objects.equals(customId, that.customId);
     }
 
     @Override
@@ -154,7 +166,8 @@ public class CustomerCriteria implements Serializable, Criteria {
         email,
         address,
         totalPoint,
-        reference
+        reference,
+        customId
         );
     }
 
@@ -169,6 +182,7 @@ public class CustomerCriteria implements Serializable, Criteria {
                 (address != null ? "address=" + address + ", " : "") +
                 (totalPoint != null ? "totalPoint=" + totalPoint + ", " : "") +
                 (reference != null ? "reference=" + reference + ", " : "") +
+                (customId != null ? "customId=" + customId + ", " : "") +
             "}";
     }
 

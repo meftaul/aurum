@@ -106,6 +106,9 @@ public class CustomerQueryService extends QueryService<Customer> {
             if (criteria.getReference() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getReference(), Customer_.reference));
             }
+            if (criteria.getCustomId() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getCustomId(), Customer_.customId));
+            }
         }
         return specification;
     }

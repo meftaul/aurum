@@ -23,7 +23,8 @@ export class CustomerUpdateComponent implements OnInit {
     email: [],
     address: [],
     totalPoint: [null, [Validators.min(0)]],
-    reference: []
+    reference: [],
+    customId: [null, []]
   });
 
   constructor(protected customerService: CustomerService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
@@ -44,7 +45,8 @@ export class CustomerUpdateComponent implements OnInit {
       email: customer.email,
       address: customer.address,
       totalPoint: customer.totalPoint,
-      reference: customer.reference
+      reference: customer.reference,
+      customId: customer.customId
     });
   }
 
@@ -72,7 +74,8 @@ export class CustomerUpdateComponent implements OnInit {
       email: this.editForm.get(['email']).value,
       address: this.editForm.get(['address']).value,
       totalPoint: this.editForm.get(['totalPoint']).value,
-      reference: this.editForm.get(['reference']).value
+      reference: this.editForm.get(['reference']).value,
+      customId: this.editForm.get(['customId']).value
     };
   }
 

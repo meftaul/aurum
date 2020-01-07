@@ -25,6 +25,7 @@
             <th jhiSortBy="address"><span>Address</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="totalPoint"><span>Total Point</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="reference"><span>Reference</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="customId"><span>Custom Id</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -38,6 +39,7 @@
                 <td>{{customer.address}}</td>
                 <td>{{customer.totalPoint}}</td>
                 <td>{{customer.reference}}</td>
+                <td>{{customer.customId}}</td>
                 <td class="text-right">
                     <div class="btn-group">
                         <button type="submit"

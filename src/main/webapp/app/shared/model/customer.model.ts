@@ -7,6 +7,7 @@ export interface ICustomer {
   address?: string;
   totalPoint?: number;
   reference?: string;
+  customId?: string;
 }
 
 export class Customer implements ICustomer {
@@ -18,6 +19,7 @@ export class Customer implements ICustomer {
     public email?: string,
     public address?: string,
     public totalPoint?: number,
-    public reference?: string
+    public reference?: string,
+    public customId?: string
   ) {}
 }

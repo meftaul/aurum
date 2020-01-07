@@ -60,6 +60,13 @@
                     <input type="text" class="form-control" name="reference" id="field_reference"
                            formControlName="reference"/>
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_customId">Custom Id</label>
+                    <input type="text" class="form-control" name="customId" id="field_customId"
+                           formControlName="customId"/>
+                    <div *ngIf="editForm.get('customId').invalid && (editForm.get('customId').dirty || editForm.get('customId').touched)">
+                    </div>
+                </div>
 
             </div>
             <div>

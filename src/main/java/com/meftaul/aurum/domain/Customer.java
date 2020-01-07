@@ -44,6 +44,10 @@ public class Customer implements Serializable {
     @Column(name = "reference")
     private String reference;
 
+    
+    @Column(name = "custom_id", unique = true)
+    private String customId;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -143,6 +147,19 @@ public class Customer implements Serializable {
     public void setReference(String reference) {
         this.reference = reference;
     }
+
+    public String getCustomId() {
+        return customId;
+    }
+
+    public Customer customId(String customId) {
+        this.customId = customId;
+        return this;
+    }
+
+    public void setCustomId(String customId) {
+        this.customId = customId;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -172,6 +189,7 @@ public class Customer implements Serializable {
             ", address='" + getAddress() + "'" +
             ", totalPoint=" + getTotalPoint() +
             ", reference='" + getReference() + "'" +
+            ", customId='" + getCustomId() + "'" +
             "}";
     }
 }
