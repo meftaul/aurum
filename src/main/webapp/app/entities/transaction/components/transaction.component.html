@@ -175,7 +175,7 @@
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" [hidden]="selectedService != 'X-Ray'">
-                            <input type="text" matInput placeholder="Weight Of Free Check" formControlName="weightOfFreeCheck" (keypress)="numberOnly($event)">
+                            <input type="number" matInput placeholder="Weight Of Free Check" formControlName="weightOfFreeCheck">
                             <mat-error
                                 *ngIf="aurumServiceForm.controls['weightOfFreeCheck'].errors && !aurumServiceForm.controls['weightOfFreeCheck'].pristine">
                                 <div [hidden]="!aurumServiceForm.controls['weightOfFreeCheck'].errors.required">Weight Of Free Check is
