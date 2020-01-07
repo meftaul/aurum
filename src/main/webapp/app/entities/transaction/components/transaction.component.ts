@@ -113,10 +113,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
   // ******************** CUSTOMER ******************** START
   searchCustomer() {
     if (this.searchCategory === 'id') {
-      this.customerService.find(+this.cusromerSearchingValue).subscribe(
+      this.customerService.query({ 'customId.equals': this.cusromerSearchingValue }).subscribe(
         data => {
-          if (!data.body) this.jhiAlertService.warning('Customer not found.');
-          this.customer = data.body;
+          if (data.body && data.body.length === 0) this.jhiAlertService.warning('Customer not found.');
+          this.customer = data.body[0];
           this.customerID = this.customer ? this.customer.id : 0;
         },
         error => {
