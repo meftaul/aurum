@@ -573,13 +573,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   // GET KARAT LIST FROM SERVICE
   fetchKaratList() {
-    this.karatService.query().subscribe(data => {
+    this.karatService.query({ size: 100 }).subscribe(data => {
       /* eslint-disable no-console */
       console.log(data);
       /* eslint-enable no-console */
       if (data.body && data.body.length !== 0) {
         data.body.map(karat => {
-          this.karatList = [{ value: karat.karatType, viewValue: karat.karatType + '(' + karat.purityPercent + '%)' }, ...this.karatList];
+          this.karatList = [...this.karatList, { value: karat.karatType, viewValue: karat.karatType + '(' + karat.purityPercent + '%)' }];
           this.karatTypePercentMap.set(karat.karatType, karat.purityPercent);
         });
       }
@@ -599,10 +599,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   // GET ITEM LIST TO SHOW IN DROPDOWN
   fetchItemList() {
-    this.itemService.query().subscribe(data => {
+    this.itemService.query({ size: 150 }).subscribe(data => {
       if (data.body && data.body.length !== 0) {
         data.body.map(item => {
-          this.itemDropdownList = [{ value: item.name, viewValue: item.name }, ...this.itemDropdownList];
+          this.itemDropdownList = [...this.itemDropdownList, { value: item.name, viewValue: item.name }];
         });
       }
     });
