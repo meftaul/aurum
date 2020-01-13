@@ -261,6 +261,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   calculateTotalServiceCharge(serviceList: AurumService[]) {
     this.calculateTotalAmount = 0;
+    this.totalAmount = 0;
     this.payableTotalAmount = 0;
     this.amountDue = 0;
     if (serviceList.length !== 0) {
@@ -427,6 +428,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   onReportChargeValueChange(event) {}
 
   onVatCheckboxValueChange(event) {
+    this.voucherForm.controls.paidAmount.setValue(null);
     if (event.checked) {
       const vatTemp = +((this.calculateTotalAmount * 15) / 100).toFixed(2);
       this.totalAmount = +(this.calculateTotalAmount + vatTemp).toFixed(2);
@@ -444,6 +446,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   onReportChargeCheckboxValueChange(event) {
+    this.voucherForm.controls.paidAmount.setValue(null);
     if (event.checked) {
       this.calculateTotalAmount += +this.reportCharge;
     } else {
@@ -490,7 +493,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       calculatedTotalAmount: [0],
       disountAmount: [0, [Validators.required, Validators.maxLength(11)]],
       vat: [0, [Validators.required, Validators.maxLength(11)]],
-      paidAmount: [0, Validators.maxLength(11)]
+      paidAmount: ['', [Validators.maxLength(11), Validators.required]]
     });
   }
 
@@ -513,6 +516,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   makePayment() {
     // add report/service charge to aurumService's first item
+
+    if (+this.voucherForm.controls.paidAmount.value > this.payableTotalAmount) {
+      this.jhiAlertService.error('Paid amount can not be greater than payable amount');
+      return;
+    }
+
     if (this.reportChargeChecked) {
       this.aurumServiceList[0].serviceCharge = +this.reportCharge;
     }

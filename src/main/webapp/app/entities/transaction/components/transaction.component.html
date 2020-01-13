@@ -496,6 +496,11 @@
                                     <mat-form-field>
                                         <input type="number" matInput placeholder="Paid Amount" [maxlength]="11"
                                             formControlName="paidAmount" (input)="onTotalPayableValueChange($event)">
+                                        <mat-error *ngIf="voucherForm.controls['paidAmount'].errors && !voucherForm.controls['paidAmount'].pristine">
+                                            <div [hidden]="!voucherForm.controls['paidAmount'].errors.required">Paid Amount is required</div>
+                                            <!--<div *ngIf="voucherForm.controls['paidAmount'].errors && voucherForm.controls['paidAmount'].errors?.invalidAmount">-->
+                                                <!--Paid amount can't be greater then Payable total amount</div>-->
+                                        </mat-error>
                                     </mat-form-field>
                                 </div>
                             </div>
