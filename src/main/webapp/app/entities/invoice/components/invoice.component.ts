@@ -9,6 +9,7 @@ import { VoucherService } from 'app/entities/voucher/voucher.service';
 import { TransactionHistoryService } from 'app/entities/transaction-history/transaction-history.service';
 import { TransactionHistory } from 'app/shared/model/transaction-history.model';
 import { AmountInWords } from '../util/amount.in.words';
+import { RateService } from 'app/entities/rate/rate.service';
 
 export class TypedAurumService {
   serviceType: string;
@@ -32,9 +33,11 @@ export class InvoiceComponent implements OnInit, OnDestroy {
   distinctServiceType: string[];
   invoiceTitle: string;
   printDate: Date = new Date();
+  rateTypePriceMap: Map<string, number> = new Map();
 
   showXrayNote: boolean;
   showMeltingNote: boolean;
+  showCalculatedMeltingNote: boolean;
 
   amountInWordsStr: string;
 
@@ -44,7 +47,8 @@ export class InvoiceComponent implements OnInit, OnDestroy {
     protected aurumServiceService: AurumServiceService,
     protected voucherService: VoucherService,
     protected transactionHistoryService: TransactionHistoryService,
-    private amountInWordsService: AmountInWords
+    private amountInWordsService: AmountInWords,
+    protected rateService: RateService
   ) {}
 
   ngOnInit() {
@@ -77,9 +81,12 @@ export class InvoiceComponent implements OnInit, OnDestroy {
     this.serviceTypeToServiceListMap = new Map();
     this.aurumServiceService.query({ 'voucherId.equals': voucherId }).subscribe(data => {
       this.aurumServices = data.body;
+      if (this.aurumServices[0].serviceType === 'Calculated Melting') this.fetchRateList();
+
       this.aurumServices.map(as => {
         if (as.serviceType === 'X-Ray') this.showXrayNote = true;
         if (as.serviceType === 'Normal Melting' || as.serviceType === 'Calculated Melting') this.showMeltingNote = true;
+        if (as.serviceType === 'Calculated Melting') this.showCalculatedMeltingNote = true;
         if (!this.distinctServiceType.includes(as.serviceType)) this.distinctServiceType.push(as.serviceType);
         if (!this.serviceTypeToServiceListMap.has(as.serviceType)) this.serviceTypeToServiceListMap.set(as.serviceType, []);
       });
@@ -99,6 +106,16 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         if (txn.tag === 'RECEIVE') this.paidAmount += txn.amount;
       });
       // this.amountInWordsStr = this.amountInWordsService.convertNumberToWords(this.paidAmount);
+    });
+  }
+
+  fetchRateList() {
+    this.rateService.query().subscribe(data => {
+      if (data.body && data.body.length !== 0) {
+        data.body.map(rate => {
+          this.rateTypePriceMap.set(rate.rateType, rate.unitPrice);
+        });
+      }
     });
   }
 

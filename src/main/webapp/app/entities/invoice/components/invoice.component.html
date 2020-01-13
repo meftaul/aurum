@@ -83,7 +83,7 @@
             <table class="table" *ngFor="let serviceMap of serviceTypeToServiceListMap | keyvalue">
                 <thead class="borderStyle">
                     <tr class="borderStyle">
-                        <th colspan="9" class="borderStyle" style="text-decoration: underline; font-weight: bold; text-align: left;">
+                        <th colspan="11" class="borderStyle" style="text-decoration: underline; font-weight: bold; text-align: left;">
                             Service Information:</th>
                     </tr>
                     <tr class="borderStyle">
@@ -91,24 +91,25 @@
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark' || serviceMap.key === 'X-Ray'">Item
                             Name
                         </th>
-                        <th class="borderStyle">Weight(Gram)</th>
+                        <th class="borderStyle">{{serviceMap.key === 'Calculated Melting' ? 'Weight of Gold(gm)' : 'Weight(gm)'}}</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Hallmark'">Hall Marked Text</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">Karat Type
                         </th>
-                        <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
-                            Report Charge
-                        </th>
-                        <!-- <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Expected
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Expected
                             Karat Type</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Added Alloy
                         </th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Alloy
-                            Quantity</th> -->
-                        <th class="borderStyle">Rate</th>
-                        <th class="borderStyle">Quantity</th>
-                        <th class="borderStyle">Amount</th>
+                            Quantity</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'X-Ray'">Free Check</th>
                         <th class="borderStyle" *ngIf="serviceMap.key === 'X-Ray'">Free Check <br>Weight(Gram)</th>
+                        <th class="borderStyle">{{serviceMap.key === 'Calculated Melting' ? 'Gold Rate' : 'Rate'}}</th>
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">Alloy Rate</th>
+                        <th class="borderStyle">Quantity</th>
+                        <th class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
+                            Report Charge
+                        </th>
+                        <th class="borderStyle">Amount</th>
                     </tr>
                 </thead>
                 <tbody class="borderStyle">
@@ -121,20 +122,21 @@
                         </td>
                         <td class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Hallmark'">
                             {{service.karatType}}</td>
-                        <td class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
-                            {{service.serviceCharge | currency: ' '}}</td>
-                        <!-- <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
+                        <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'Calculated Melting'">
                             {{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
-                        </td> -->
-                        <td class="borderStyle">{{service.rate | currency: ' '}}</td>
-                        <td class="borderStyle">{{service.quantity}}</td>
-                        <td class="borderStyle">{{service.amount | currency: ' '}}</td>
+                        </td>
                         <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
-                    <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.weightOfFreeCheck}}</td>
+                        <td class="borderStyle" *ngIf="service.serviceType === 'X-Ray'">{{service.weightOfFreeCheck}}</td>
+                        <td class="borderStyle">{{service.rate | currency: ' '}}</td>
+                        <td class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting'">{{rateTypePriceMap.get(service.addedAlloy)}}</td>
+                        <td class="borderStyle">{{service.quantity}}</td>
+                        <td class="borderStyle" *ngIf="serviceMap.key === 'Calculated Melting' || serviceMap.key === 'Normal Melting'">
+                            {{service.serviceCharge | currency: ' '}}</td>
+                        <td class="borderStyle">{{service.amount | currency: ' '}}</td>
                     </tr>
                 </tbody>
                 <!-- <tfoot>
@@ -148,10 +150,10 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <p>Amount In Words: <b>{{amountInWordsStr}}</b></p>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
                 <p style="text-align: right">Total Amount: <b>{{voucher?.totalPayableAmount | currency: ' '}}</b></p>
         </div>
     </div>
@@ -208,8 +210,8 @@
         <div class="col-md-12">
             <h4>Note</h4>
             <ul>
-                <li *ngIf="showXrayNote">X-ray result maximum difference ± 0.30%</li>
-                <li *ngIf="showXrayNote">Spot and screen test result.</li>
+                <li *ngIf="showXrayNote || showCalculatedMeltingNote">X-ray result maximum difference ± 0.30%</li>
+                <!--<li *ngIf="showXrayNote">Spot and screen test result.</li>-->
                 <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
                     so Maitree is not
                     responsible for this purity. Maitree Gold is not responsible for any lost/stolen gold or gold
