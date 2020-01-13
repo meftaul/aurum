@@ -47,12 +47,17 @@ public class CustomVoucherResource {
     * POST saveVoucher
     */
     @PostMapping("/save-voucher")
-    public ResponseEntity<Voucher> saveVoucher(@Valid @RequestBody CustomVoucherDto voucherDto) throws URISyntaxException {
+    public ResponseEntity<Voucher> saveVoucher(@Valid @RequestBody CustomVoucherDto voucherDto) throws Exception {
         log.debug("REST request to save Voucher : {}", voucherDto);
         Voucher voucher = voucherDto.getVoucher();
         if (voucher.getId() != null) {
             throw new BadRequestAlertException("A new voucher cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if (voucherDto.getPaidAmount().compareTo(voucherDto.getVoucher().getTotalPayableAmount()) == 1) {
+            throw new BadRequestAlertException("Paid amount can not be greater than payable amount", ENTITY_NAME, "idexists");
+        }
+
         Voucher result = customVoucherService.save(voucherDto);
         return ResponseEntity.created(new URI("/api/vouchers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
