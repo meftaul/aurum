@@ -24,7 +24,7 @@ export class CustomerUpdateComponent implements OnInit {
     address: [],
     totalPoint: [null, [Validators.min(0)]],
     reference: [],
-    customId: [null, []]
+    customId: [null, [Validators.required]]
   });
 
   constructor(protected customerService: CustomerService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
@@ -90,5 +90,13 @@ export class CustomerUpdateComponent implements OnInit {
 
   protected onSaveError() {
     this.isSaving = false;
+  }
+
+  numberOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }

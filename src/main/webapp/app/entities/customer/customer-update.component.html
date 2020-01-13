@@ -63,8 +63,12 @@
                 <div class="form-group">
                     <label class="form-control-label" for="field_customId">Custom Id</label>
                     <input type="text" class="form-control" name="customId" id="field_customId"
-                           formControlName="customId"/>
+                           formControlName="customId" (keypress)="numberOnly($event)"/>
                     <div *ngIf="editForm.get('customId').invalid && (editForm.get('customId').dirty || editForm.get('customId').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('customId').errors.required">
+                            This field is required.
+                        </small>
                     </div>
                 </div>
 

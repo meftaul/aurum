@@ -147,7 +147,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       email: [customerData.email, [Validators.email]],
       address: [customerData.address],
       reference: [customerData.reference],
-      customId: [customerData.customId]
+      customId: [customerData.customId, [Validators.required]]
     });
   }
 
