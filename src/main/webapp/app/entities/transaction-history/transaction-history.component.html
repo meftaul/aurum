@@ -30,7 +30,7 @@
             <tbody>
             <tr *ngFor="let transactionHistory of transactionHistories ;trackBy: trackId">
                 <td><a [routerLink]="['/transaction-history', transactionHistory.id, 'view' ]">{{transactionHistory.id}}</a></td>
-                <td>{{transactionHistory.voucherNo}}</td>
+                <td><a [routerLink]="['/invoice', transactionHistory.voucherNo ]">{{transactionHistory.voucherNo}}</a></td>
                 <td>{{transactionHistory.amount}}</td>
                 <td>{{transactionHistory.dateCreated | date:'medium'}}</td>
                 <td>{{transactionHistory.tag}}</td>
