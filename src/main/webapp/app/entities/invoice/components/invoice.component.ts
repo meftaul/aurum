@@ -56,6 +56,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
       this.voucherNumber = param['id'];
       this.fetchVoucherInformation(this.voucherNumber);
     });
+    this.fetchRateList();
   }
 
   fetchVoucherInformation(voucherNo: string) {
@@ -81,7 +82,6 @@ export class InvoiceComponent implements OnInit, OnDestroy {
     this.serviceTypeToServiceListMap = new Map();
     this.aurumServiceService.query({ 'voucherId.equals': voucherId }).subscribe(data => {
       this.aurumServices = data.body;
-      if (this.aurumServices[0].serviceType === 'Calculated Melting') this.fetchRateList();
 
       this.aurumServices.map(as => {
         if (as.serviceType === 'X-Ray') this.showXrayNote = true;
