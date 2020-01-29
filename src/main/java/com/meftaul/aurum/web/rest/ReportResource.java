@@ -3,6 +3,8 @@ package com.meftaul.aurum.web.rest;
 import com.meftaul.aurum.service.MessageService;
 import com.meftaul.aurum.service.ReportService;
 import com.meftaul.aurum.service.dto.ReportProjection;
+import com.meftaul.aurum.service.dto.TransactionHistoryAmountByTag;
+import com.meftaul.aurum.service.dto.TransactionHistoryAmountByTagAndCustomer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -37,6 +40,22 @@ public class ReportResource {
     public ResponseEntity<List<ReportProjection>> getSale(@RequestParam String tag) {
         return ResponseEntity.ok().body(reportService.getReport(tag));
     }
+
+    @GetMapping("/get-sale-tag")
+    public ResponseEntity<List<TransactionHistoryAmountByTag>> getSaleByTag(@RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam String tag) {
+        return ResponseEntity.ok().body(reportService.getTxnHistoryAmountByTag(startDate, endDate));
+    }
+
+    @GetMapping("/get-sale-by-customer")
+    public ResponseEntity<List<TransactionHistoryAmountByTagAndCustomer>> getSaleByTagAndCustomer(@RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam String customCustomerId) {
+        return ResponseEntity.ok().body(reportService.getTxnHistoryAmountByTagAndCustomer(startDate, endDate, customCustomerId));
+    }
+
+    @GetMapping("/get-sale-top-n-customer")
+    public ResponseEntity<List<TransactionHistoryAmountByTagAndCustomer>> getTopNCustomer(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String topN) {
+        return ResponseEntity.ok().body(reportService.getTopTxnHistoryAmountByCustomer(startDate, endDate, topN));
+    }
+
 
     @GetMapping("/get-sms")
     public ResponseEntity<String> sendSms() {
