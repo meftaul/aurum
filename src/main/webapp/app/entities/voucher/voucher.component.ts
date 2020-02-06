@@ -31,6 +31,9 @@ export class VoucherComponent implements OnInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
+  startDate: Date;
+  endDate: Date;
+
   constructor(
     protected voucherService: VoucherService,
     protected parseLinks: JhiParseLinks,
@@ -50,16 +53,28 @@ export class VoucherComponent implements OnInit, OnDestroy {
   }
 
   loadAll() {
+    const req = {
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort()
+    };
+
+    if (this.startDate != null) {
+      req['startDate.contains'] = this.startDate;
+    }
+
     this.voucherService
-      .query({
-        page: this.page - 1,
-        size: this.itemsPerPage,
-        sort: this.sort()
-      })
+      .query(req)
       .subscribe(
         (res: HttpResponse<IVoucher[]>) => this.paginateVouchers(res.body, res.headers),
         (res: HttpErrorResponse) => this.onError(res.message)
       );
+  }
+
+  resetFilter() {
+    this.startDate = null;
+    this.endDate = null;
+    this.loadAll();
   }
 
   loadPage(page: number) {
