@@ -12,11 +12,22 @@ import { AccountService } from 'app/core/auth/account.service';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { VoucherService } from './voucher.service';
 
+interface VoucherStatus {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'jhi-voucher',
   templateUrl: './voucher.component.html'
 })
 export class VoucherComponent implements OnInit, OnDestroy {
+  voucherStatus: VoucherStatus[] = [
+    { value: 'PAID', viewValue: 'PAID' },
+    { value: 'DUE', viewValue: 'DUE' },
+    { value: 'CANCEL', viewValue: 'CANCEL' }
+  ];
+
   currentAccount: any;
   vouchers: IVoucher[];
   error: any;
@@ -33,6 +44,8 @@ export class VoucherComponent implements OnInit, OnDestroy {
 
   startDate: Date;
   endDate: Date;
+  vStatus: string;
+  deliveryStatus: boolean;
 
   constructor(
     protected voucherService: VoucherService,
@@ -60,7 +73,21 @@ export class VoucherComponent implements OnInit, OnDestroy {
     };
 
     if (this.startDate != null) {
-      req['startDate.contains'] = this.startDate;
+      const startIsoDate = new Date(this.startDate.getTime() - this.startDate.getTimezoneOffset() * 60000).toISOString();
+      req['dateCreated.greaterThanOrEqual'] = startIsoDate;
+    }
+
+    if (this.endDate != null) {
+      const endIsoDate = new Date(this.endDate.getTime() - this.endDate.getTimezoneOffset() * 60000).toISOString();
+      req['dateCreated.lessThanOrEqual'] = endIsoDate;
+    }
+
+    if (this.vStatus != null) {
+      req['status.equals'] = this.vStatus;
+    }
+
+    if (this.deliveryStatus != null) {
+      req['deliveryStatus.equals'] = this.deliveryStatus;
     }
 
     this.voucherService
@@ -74,6 +101,8 @@ export class VoucherComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.startDate = null;
     this.endDate = null;
+    this.vStatus = null;
+    this.deliveryStatus = null;
     this.loadAll();
   }
 
