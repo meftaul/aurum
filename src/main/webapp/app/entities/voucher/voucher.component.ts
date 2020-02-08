@@ -42,6 +42,7 @@ export class VoucherComponent implements OnInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
+  voucherNo: string;
   startDate: Date;
   endDate: Date;
   vStatus: string;
@@ -90,6 +91,10 @@ export class VoucherComponent implements OnInit, OnDestroy {
       req['deliveryStatus.equals'] = this.deliveryStatus;
     }
 
+    if (this.voucherNo != null) {
+      req['voucherNo.equals'] = this.voucherNo;
+    }
+
     this.voucherService
       .query(req)
       .subscribe(
@@ -99,6 +104,7 @@ export class VoucherComponent implements OnInit, OnDestroy {
   }
 
   resetFilter() {
+    this.voucherNo = null;
     this.startDate = null;
     this.endDate = null;
     this.vStatus = null;
