@@ -2,6 +2,7 @@ package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.service.TransactionHistoryService;
+import com.meftaul.aurum.service.dto.TxnReportDto;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
 import com.meftaul.aurum.service.dto.TransactionHistoryCriteria;
 import com.meftaul.aurum.service.TransactionHistoryQueryService;
@@ -105,6 +106,14 @@ public class TransactionHistoryResource {
         Page<TransactionHistory> page = transactionHistoryQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/transaction-report")
+    public ResponseEntity<TxnReportDto> getAllTransactionReport(TransactionHistoryCriteria criteria) {
+        log.debug("REST request to get TransactionHistories by criteria: {}", criteria);
+        TxnReportDto txnReportDto = transactionHistoryQueryService.reportByCriteria(criteria);
+        /*HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest());*/
+        return ResponseEntity.ok().body(txnReportDto);
     }
 
     /**

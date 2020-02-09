@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.criteria.JoinType;
 
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import com.meftaul.aurum.service.dto.TxnReportDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -60,6 +62,41 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<TransactionHistory> specification = createSpecification(criteria);
         return transactionHistoryRepository.findAll(specification, page);
+    }
+
+    @Transactional(readOnly = true)
+    public TxnReportDto reportByCriteria(TransactionHistoryCriteria criteria) {
+        log.debug("find by criteria : {}, page: {}", criteria);
+        final Specification<TransactionHistory> specification = createSpecification(criteria);
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll(specification);
+
+
+        TxnReportDto txnReportDto = new TxnReportDto();
+
+        for (TransactionHistory txn : transactionHistoryList) {
+            if (txn.getTag().equals(TransactionStatus.RECEIVE)) {
+                txnReportDto.setReceivedVoucherCount(txnReportDto.getReceivedVoucherCount() + 1l);
+                txnReportDto.setTotalReceived(txnReportDto.getTotalReceived().add(txn.getAmount()));
+            }
+
+            if (txn.getTag().equals(TransactionStatus.VAT)) {
+                txnReportDto.setVatVoucherCount(txnReportDto.getVatVoucherCount() + 1l);
+                txnReportDto.setTotalVat(txnReportDto.getTotalVat().add(txn.getAmount()));
+            }
+
+            if (txn.getTag().equals(TransactionStatus.REFUND)) {
+                txnReportDto.setRefundVoucherCount(txnReportDto.getRefundVoucherCount() + 1l);
+                txnReportDto.setTotalRefund(txnReportDto.getTotalRefund().add(txn.getAmount()));
+            }
+
+            if (txn.getTag().equals(TransactionStatus.DISCOUNT)) {
+                txnReportDto.setDiscountVoucherCount(txnReportDto.getDiscountVoucherCount() + 1l);
+                txnReportDto.setTotalDiscount(txnReportDto.getTotalDiscount().add(txn.getAmount()));
+            }
+
+        }
+
+        return txnReportDto;
     }
 
     /**
