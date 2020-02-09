@@ -35,13 +35,13 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" routerLink="voucher" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+                        <a *jhiHasAnyAuthority="['ROLE_ADMIN']" class="dropdown-item" routerLink="voucher" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
                             <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
                             <span>Voucher Report</span>
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" routerLink="transaction-history" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
+                        <a *jhiHasAnyAuthority="['ROLE_ADMIN']" class="dropdown-item" routerLink="transaction-history" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar()">
                             <fa-icon icon="asterisk" fixedWidth="true"></fa-icon>
                             <span>Transaction Report</span>
                         </a>
@@ -95,12 +95,12 @@
                             <span>Messaging</span>
                         </a>
                     </li>
-                    <li>
+                    <!--<li>
                         <a *jhiHasAnyAuthority="['ROLE_ADMIN']" class="dropdown-item" routerLink="report" routerLinkActive="active" (click)="collapseNavbar()">
                             <fa-icon icon="file-alt" fixedWidth="true"></fa-icon>
                             <span>Report</span>
                         </a>
-                    </li>
+                    </li>-->
                 </ul>
             </li>
             <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">

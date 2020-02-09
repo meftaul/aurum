@@ -62,6 +62,55 @@
     <br>
     <br>
 
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="box">
+                    <h2>Total COLLECTION</h2>
+                    <h1>
+                        <span *ngIf="txnReport">{{ txnReport.totalReceived }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="box">
+                    <h2>Total VAT</h2>
+                    <h1>
+                        <span *ngIf="txnReport">{{ txnReport.totalVat }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="box">
+                    <h2>Total REFUND</h2>
+                    <h1>
+                        <span *ngIf="txnReport">{{ txnReport.totalRefund }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="box">
+                    <h2>Total DISCOUNT</h2>
+                    <h1>
+                        <span *ngIf="txnReport">{{ txnReport.totalDiscount }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <br><br><br>
+
     <div class="alert alert-warning" *ngIf="transactionHistories?.length === 0">
         <span>No transactionHistories found</span>
     </div>

@@ -22,3 +22,15 @@ export class TransactionHistory implements ITransactionHistory {
     public addedBy?: string
   ) {}
 }
+
+export class TxnReport {
+  discountVoucherCount?: number;
+  receivedVoucherCount?: number;
+  vatVoucherCount?: number;
+  refundVoucherCount?: number;
+
+  totalDiscount?: number;
+  totalReceived?: number;
+  totalVat?: number;
+  totalRefund?: number;
+}

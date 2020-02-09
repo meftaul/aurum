@@ -16,6 +16,7 @@ type EntityArrayResponseType = HttpResponse<ITransactionHistory[]>;
 @Injectable({ providedIn: 'root' })
 export class TransactionHistoryService {
   public resourceUrl = SERVER_API_URL + 'api/transaction-histories';
+  public reportUrl = SERVER_API_URL + 'api/transaction-report';
 
   constructor(protected http: HttpClient) {}
 
@@ -44,6 +45,11 @@ export class TransactionHistoryService {
     return this.http
       .get<ITransactionHistory[]>(this.resourceUrl, { params: options, observe: 'response' })
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  }
+
+  queryReport(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<ITransactionHistory[]>(this.reportUrl, { params: options, observe: 'response' });
   }
 
   delete(id: number): Observable<HttpResponse<any>> {

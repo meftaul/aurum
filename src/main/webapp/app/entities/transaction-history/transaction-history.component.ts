@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
-import { ITransactionHistory } from 'app/shared/model/transaction-history.model';
+import { ITransactionHistory, TxnReport } from 'app/shared/model/transaction-history.model';
 import { AccountService } from 'app/core/auth/account.service';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
@@ -19,7 +19,8 @@ interface Tag {
 
 @Component({
   selector: 'jhi-transaction-history',
-  templateUrl: './transaction-history.component.html'
+  templateUrl: './transaction-history.component.html',
+  styleUrls: ['transaction-history.component.scss']
 })
 export class TransactionHistoryComponent implements OnInit, OnDestroy {
   tags: Tag[] = [
@@ -47,6 +48,7 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
   startDate: Date;
   endDate: Date;
   tag: string;
+  txnReport: any;
 
   constructor(
     protected transactionHistoryService: TransactionHistoryService,
@@ -97,6 +99,10 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
         (res: HttpResponse<ITransactionHistory[]>) => this.paginateTransactionHistories(res.body, res.headers),
         (res: HttpErrorResponse) => this.onError(res.message)
       );
+
+    this.transactionHistoryService.queryReport(req).subscribe((data: HttpResponse<any>) => {
+      this.txnReport = data.body;
+    });
   }
 
   loadPage(page: number) {
