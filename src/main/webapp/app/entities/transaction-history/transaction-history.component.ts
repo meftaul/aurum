@@ -12,11 +12,23 @@ import { AccountService } from 'app/core/auth/account.service';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionHistoryService } from './transaction-history.service';
 
+interface Tag {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'jhi-transaction-history',
   templateUrl: './transaction-history.component.html'
 })
 export class TransactionHistoryComponent implements OnInit, OnDestroy {
+  tags: Tag[] = [
+    { value: 'RECEIVE', viewValue: 'RECEIVE' },
+    { value: 'REFUND', viewValue: 'REFUND' },
+    { value: 'DISCOUNT', viewValue: 'DISCOUNT' },
+    { value: 'VAT', viewValue: 'VAT' }
+  ];
+
   currentAccount: any;
   transactionHistories: ITransactionHistory[];
   error: any;
@@ -30,6 +42,11 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
   predicate: any;
   previousPage: any;
   reverse: any;
+
+  voucherNo: string;
+  startDate: Date;
+  endDate: Date;
+  tag: string;
 
   constructor(
     protected transactionHistoryService: TransactionHistoryService,
@@ -50,12 +67,32 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
   }
 
   loadAll() {
+    const req = {
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort()
+    };
+
+    if (this.startDate != null) {
+      const startIsoDate = new Date(this.startDate.getTime() - this.startDate.getTimezoneOffset() * 60000).toISOString();
+      req['dateCreated.greaterThanOrEqual'] = startIsoDate;
+    }
+
+    if (this.endDate != null) {
+      const endIsoDate = new Date(this.endDate.getTime() - this.endDate.getTimezoneOffset() * 60000).toISOString();
+      req['dateCreated.lessThanOrEqual'] = endIsoDate;
+    }
+
+    if (this.tag != null) {
+      req['tag.equals'] = this.tag;
+    }
+
+    if (this.voucherNo != null) {
+      req['voucherNo.equals'] = this.voucherNo;
+    }
+
     this.transactionHistoryService
-      .query({
-        page: this.page - 1,
-        size: this.itemsPerPage,
-        sort: this.sort()
-      })
+      .query(req)
       .subscribe(
         (res: HttpResponse<ITransactionHistory[]>) => this.paginateTransactionHistories(res.body, res.headers),
         (res: HttpErrorResponse) => this.onError(res.message)
@@ -77,6 +114,14 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
         sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
       }
     });
+    this.loadAll();
+  }
+
+  resetFilter() {
+    this.voucherNo = null;
+    this.startDate = null;
+    this.endDate = null;
+    this.tag = null;
     this.loadAll();
   }
 
