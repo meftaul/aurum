@@ -5,8 +5,9 @@ import { Subscription } from 'rxjs';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import * as moment from 'moment';
 
-import { ITransactionHistory, TxnReport } from 'app/shared/model/transaction-history.model';
+import { ITransactionHistory } from 'app/shared/model/transaction-history.model';
 import { AccountService } from 'app/core/auth/account.service';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
@@ -49,6 +50,7 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
   endDate: Date;
   tag: string;
   txnReport: any;
+  title: string;
 
   constructor(
     protected transactionHistoryService: TransactionHistoryService,
@@ -66,6 +68,11 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
       this.reverse = data.pagingParams.ascending;
       this.predicate = data.pagingParams.predicate;
     });
+  }
+
+  search() {
+    this.title = 'Custom Report';
+    this.loadAll();
   }
 
   loadAll() {
@@ -133,6 +140,32 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
     this.loadAll();
   }
 
+  updateDate(type: string) {
+    this.tag = 'RECEIVE';
+    if (type === 'daily') {
+      this.startDate = new Date();
+      this.endDate = new Date();
+      this.title = "Today's Report";
+    }
+    if (type === 'week') {
+      this.endDate = new Date();
+      this.startDate = moment()
+        .startOf('week')
+        .weekday(-1)
+        .toDate();
+      this.title = 'Weekly Report';
+    }
+    if (type === 'month') {
+      this.endDate = new Date();
+      this.startDate = moment()
+        .startOf('month')
+        .toDate();
+      this.endDate = new Date();
+      this.title = 'Monthly Report';
+    }
+    this.loadAll();
+  }
+
   clear() {
     this.page = 0;
     this.router.navigate([
@@ -146,6 +179,7 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.title = "Today's Report";
     this.tag = 'RECEIVE';
     this.startDate = new Date();
     this.endDate = new Date();
