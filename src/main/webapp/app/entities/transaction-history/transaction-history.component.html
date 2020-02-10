@@ -63,7 +63,7 @@
     <br>
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card">
                 <div class="box">
                     <h2>Total COLLECTION</h2>
@@ -74,18 +74,7 @@
             </div>
         </div>
 
-        <!--<div class="col-md-3">
-            <div class="card">
-                <div class="box">
-                    <h2>Total VAT</h2>
-                    <h1>
-                        <span *ngIf="txnReport">{{ txnReport.totalVat }}</span>
-                    </h1>
-                </div>
-            </div>
-        </div>-->
-
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card">
                 <div class="box">
                     <h2>Total DUE</h2>
@@ -106,29 +95,52 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!--<div class="col-md-3">
+    <div class="row">
+        <div class="col-md-4">
             <div class="card">
                 <div class="box">
-                    <h2>Total REFUND</h2>
+                    <h2>X-Ray</h2>
                     <h1>
-                        <span *ngIf="txnReport">{{ txnReport.totalRefund }}</span>
+                        <span *ngIf="txnReport">{{ txnReport.xRayAmount }}</span>
                     </h1>
                 </div>
             </div>
-        </div>-->
+        </div>
 
-        <!--<div class="col-md-3">
+        <div class="col-md-3">
             <div class="card">
                 <div class="box">
-                    <h2>Total DISCOUNT</h2>
+                    <h2>Hallmark</h2>
                     <h1>
-                        <span *ngIf="txnReport">{{ txnReport.totalDiscount }}</span>
+                        <span *ngIf="txnReport">{{ txnReport.hallMarkAmount }}</span>
                     </h1>
                 </div>
             </div>
-        </div>-->
+        </div>
 
+        <div class="col-md-3">
+            <div class="card">
+                <div class="box">
+                    <h2>Normal Melting</h2>
+                    <h1>
+                        <span *ngIf="txnReport">{{ txnReport.normalMeltingAmount }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="box">
+                    <h2>Calculated Melting</h2>
+                    <h1>
+                        <span *ngIf="txnReport">{{ txnReport.calculatedMeltingAmount }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
     </div>
 
     <br><br><br>

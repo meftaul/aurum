@@ -16,6 +16,43 @@ public class TxnReportDto {
     BigDecimal totalPayableAmount = BigDecimal.ZERO;
     BigDecimal due = BigDecimal.ZERO;
 
+    BigDecimal xRayAmount = BigDecimal.ZERO;
+    BigDecimal hallMarkAmount = BigDecimal.ZERO;
+    BigDecimal normalMeltingAmount = BigDecimal.ZERO;
+    BigDecimal calculatedMeltingAmount = BigDecimal.ZERO;
+
+    public BigDecimal getxRayAmount() {
+        return xRayAmount;
+    }
+
+    public void setxRayAmount(BigDecimal xRayAmount) {
+        this.xRayAmount = xRayAmount;
+    }
+
+    public BigDecimal getHallMarkAmount() {
+        return hallMarkAmount;
+    }
+
+    public void setHallMarkAmount(BigDecimal hallMarkAmount) {
+        this.hallMarkAmount = hallMarkAmount;
+    }
+
+    public BigDecimal getNormalMeltingAmount() {
+        return normalMeltingAmount;
+    }
+
+    public void setNormalMeltingAmount(BigDecimal normalMeltingAmount) {
+        this.normalMeltingAmount = normalMeltingAmount;
+    }
+
+    public BigDecimal getCalculatedMeltingAmount() {
+        return calculatedMeltingAmount;
+    }
+
+    public void setCalculatedMeltingAmount(BigDecimal calculatedMeltingAmount) {
+        this.calculatedMeltingAmount = calculatedMeltingAmount;
+    }
+
     public BigDecimal getDue() {
         return due;
     }
