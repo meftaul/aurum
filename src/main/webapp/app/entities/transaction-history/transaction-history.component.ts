@@ -76,11 +76,13 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
     };
 
     if (this.startDate != null) {
+      this.startDate.setHours(0, 0, 0, 0);
       const startIsoDate = new Date(this.startDate.getTime() - this.startDate.getTimezoneOffset() * 60000).toISOString();
       req['dateCreated.greaterThanOrEqual'] = startIsoDate;
     }
 
     if (this.endDate != null) {
+      this.endDate.setHours(23, 59, 59, 999);
       const endIsoDate = new Date(this.endDate.getTime() - this.endDate.getTimezoneOffset() * 60000).toISOString();
       req['dateCreated.lessThanOrEqual'] = endIsoDate;
     }
@@ -90,7 +92,7 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
     }
 
     if (this.voucherNo != null) {
-      req['voucherNo.equals'] = this.voucherNo;
+      req['voucherNo.contains'] = this.voucherNo;
     }
 
     this.transactionHistoryService
@@ -144,6 +146,9 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.tag = 'RECEIVE';
+    this.startDate = new Date();
+    this.endDate = new Date();
     this.loadAll();
     this.accountService.identity().then(account => {
       this.currentAccount = account;

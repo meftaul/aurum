@@ -85,13 +85,13 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
                 Voucher voucher = voucherRepository.findByVoucherNo(txn.getVoucherNo());
                 if (voucher != null) {
                     for (AurumService aurumService : voucher.getAurumServices()) {
-                        if (aurumService.getServiceName().equals("X-Ray")){
+                        if (aurumService.getServiceType().equals("X-Ray")){
                             txnReportDto.setxRayAmount(txnReportDto.getxRayAmount().add(aurumService.getAmount()));
-                        } else if (aurumService.getServiceName().equals("Hallmark")){
+                        } else if (aurumService.getServiceType().equals("Hallmark")){
                             txnReportDto.setHallMarkAmount(txnReportDto.getHallMarkAmount().add(aurumService.getAmount()));
-                        } else if (aurumService.getServiceName().equals("Normal Melting")){
+                        } else if (aurumService.getServiceType().equals("Normal Melting")){
                             txnReportDto.setNormalMeltingAmount(txnReportDto.getNormalMeltingAmount().add(aurumService.getAmount()));
-                        } else  if (aurumService.getServiceName().equals("Calculated Melting")){
+                        } else  if (aurumService.getServiceType().equals("Calculated Melting")){
                             txnReportDto.setCalculatedMeltingAmount(txnReportDto.getCalculatedMeltingAmount().add(aurumService.getAmount()));
                         }
                     }

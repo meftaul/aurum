@@ -92,7 +92,7 @@ export class VoucherComponent implements OnInit, OnDestroy {
     }
 
     if (this.voucherNo != null) {
-      req['voucherNo.equals'] = this.voucherNo;
+      req['voucherNo.contains'] = this.voucherNo;
     }
 
     this.voucherService
