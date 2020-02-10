@@ -1,10 +1,11 @@
 package com.meftaul.aurum.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.criteria.JoinType;
-
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.service.dto.TxnReportDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,11 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
 
     private final TransactionHistoryRepository transactionHistoryRepository;
 
-    public TransactionHistoryQueryService(TransactionHistoryRepository transactionHistoryRepository) {
+    private final VoucherRepository voucherRepository;
+
+    public TransactionHistoryQueryService(TransactionHistoryRepository transactionHistoryRepository, VoucherRepository voucherRepository) {
         this.transactionHistoryRepository = transactionHistoryRepository;
+        this.voucherRepository = voucherRepository;
     }
 
     /**
@@ -72,8 +76,18 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
 
 
         TxnReportDto txnReportDto = new TxnReportDto();
+        List<String> uniqueVouchers = new ArrayList<>();
 
         for (TransactionHistory txn : transactionHistoryList) {
+
+            if (!uniqueVouchers.contains(txn.getVoucherNo())) {
+                uniqueVouchers.add(txn.getVoucherNo());
+                Voucher voucher = voucherRepository.findByVoucherNo(txn.getVoucherNo());
+                if (voucher != null) {
+                    txnReportDto.setTotalPayableAmount(txnReportDto.getTotalPayableAmount().add(voucher.getTotalPayableAmount()));
+                }
+            }
+
             if (txn.getTag().equals(TransactionStatus.RECEIVE)) {
                 txnReportDto.setReceivedVoucherCount(txnReportDto.getReceivedVoucherCount() + 1l);
                 txnReportDto.setTotalReceived(txnReportDto.getTotalReceived().add(txn.getAmount()));
@@ -95,6 +109,12 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
             }
 
         }
+
+        txnReportDto.setTotalVoucherCount(Long.valueOf(uniqueVouchers.size()));
+
+        txnReportDto.setDue(txnReportDto.getTotalPayableAmount()
+            .subtract(txnReportDto.getTotalReceived())
+            .subtract(txnReportDto.getTotalDiscount()));
 
         return txnReportDto;
     }
