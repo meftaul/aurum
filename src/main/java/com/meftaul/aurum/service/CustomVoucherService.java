@@ -13,6 +13,7 @@ import com.meftaul.aurum.security.SecurityUtils;
 import com.meftaul.aurum.service.dto.CustomVoucherDto;
 import com.meftaul.aurum.service.dto.TransactionDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
+import com.meftaul.aurum.web.rest.errors.VoucherNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,11 @@ public class CustomVoucherService {
     public Optional<VoucherViewerDto> findByVoucherNo(String voucherNo) {
 
         Voucher voucher = this.voucherRepository.findByVoucherNo(voucherNo);
+
+        if (voucher == null) {
+            throw new VoucherNotFoundException();
+        }
+
         List<TransactionHistory> txnHistory = this.transactionHistoryRepository.findAllByVoucherNo(voucherNo);
 
         VoucherViewerDto voucherViewerDto = new VoucherViewerDto();
