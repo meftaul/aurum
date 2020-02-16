@@ -2,7 +2,7 @@
     <mat-card class="col-md-12">
         <form class="">
             <mat-form-field class="col-md-3">
-                <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue" [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
+                <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue" [ngModelOptions]="{standalone: true}" (keypress)="numberOnly($event)">
                 <!-- <input type="text" matInput placeholder="Search voucher" [(ngModel)]="voucherFieldValue"
                     [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)"> -->
             </mat-form-field>
@@ -187,16 +187,16 @@
         <table class="table table-bordered" *ngIf="voucherViewer.txnHistory.length !== 0">
             <thead style="text-align: center;">
                 <tr>
-                    <th>Amount</th>
-                    <th>Tag</th>
                     <th>Payment Date</th>
+                    <th>Tag</th>
+                    <th>Amount</th>
                 </tr>
             </thead>
             <tbody style="text-align: center;">
                 <tr *ngFor="let txn of voucherViewer.txnHistory">
-                    <td>{{txn.amount | currency: ' '}}</td>
-                    <td>{{txn.tag}}</td>
                     <td>{{txn.dateCreated | date:'medium'}}</td>
+                    <td>{{txn.tag}}</td>
+                    <td>{{txn.amount | currency: ' '}}</td>
                 </tr>
             </tbody>
         </table>

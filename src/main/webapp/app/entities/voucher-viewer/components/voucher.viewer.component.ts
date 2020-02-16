@@ -53,6 +53,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   }
 
   searchVoucherViewer() {
+    this.voucherViewer = new VoucherViewer();
     if (this.voucherFieldValue) {
       this.voucherViewerService.find(this.voucherFieldValue).subscribe(
         data => {

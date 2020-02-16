@@ -1,6 +1,6 @@
 <div>
-    <h2 id="page-heading">
-        <span>Transaction -  {{ title }}</span>
+    <h2 id="page-heading" style="text-align: center">
+        <span>Transaction -  {{ title }} </span>
         <!--<button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-transaction-history" [routerLink]="['/transaction-history/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
             <span >
@@ -8,10 +8,11 @@
             </span>
         </button>-->
     </h2>
+    <p style="text-align: center">( <span *ngIf="startDate">{{startDate | date}}</span> - <span *ngIf="endDate">{{ endDate | date }}</span> )</p>
     <jhi-alert></jhi-alert>
     <br/>
 
-    <div class="row">
+    <div class="row" style="text-align: center">
         <div class="col md-12">
             <mat-form-field>
                 <input matInput placeholder="Voucher Number" [(ngModel)]="voucherNo">
@@ -44,7 +45,7 @@
 
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="text-align: center">
         <div class="col-md-12">
             <button class="btn btn-info btn-sm" (click)="search()">
                 <!--<fa-icon [icon]="'search'"></fa-icon>-->
@@ -55,31 +56,36 @@
                 <!--<fa-icon [icon]="'search'"></fa-icon>-->
                 <span class="d-none d-md-inline" class="uppercase">Reset</span>
             </button>
-
-            <button class="btn btn-default btn-sm" (click)="updateDate('daily')">
+        </div>
+    </div>
+    <br>
+    <hr>
+    <div class="row" style="text-align: center">
+        <div class="col-md-12">
+            <button class="btn btn-primary btn-sm" (click)="updateDate('daily')">
                 <!--<fa-icon [icon]="'search'"></fa-icon>-->
                 <span class="d-none d-md-inline" class="uppercase">Daily Report</span>
             </button>
 
-            <button class="btn btn-default btn-sm" (click)="updateDate('week')">
+            <button class="btn btn-success btn-sm" (click)="updateDate('week')">
                 <!--<fa-icon [icon]="'search'"></fa-icon>-->
                 <span class="d-none d-md-inline" class="uppercase">Weekly Report</span>
             </button>
 
-            <button class="btn btn-default btn-sm" (click)="updateDate('month')">
+            <button class="btn btn-warning btn-sm" (click)="updateDate('month')">
                 <!--<fa-icon [icon]="'search'"></fa-icon>-->
                 <span class="d-none d-md-inline" class="uppercase">Monthly Report</span>
             </button>
-
         </div>
     </div>
-
+    <hr>
     <br>
     <br>
     <br>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-3">
             <div class="card">
                 <div class="box">
                     <h2>Total COLLECTION</h2>
@@ -90,7 +96,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="box">
                     <h2>Total DUE</h2>
@@ -101,7 +107,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="box">
                     <h2>Number of Vouchers</h2>

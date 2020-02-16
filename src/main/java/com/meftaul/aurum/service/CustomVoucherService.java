@@ -13,6 +13,7 @@ import com.meftaul.aurum.security.SecurityUtils;
 import com.meftaul.aurum.service.dto.CustomVoucherDto;
 import com.meftaul.aurum.service.dto.TransactionDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
+import com.meftaul.aurum.web.rest.errors.VoucherNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +49,11 @@ public class CustomVoucherService {
     public Optional<VoucherViewerDto> findByVoucherNo(String voucherNo) {
 
         Voucher voucher = this.voucherRepository.findByVoucherNo(voucherNo);
+
+        if (voucher == null) {
+            throw new VoucherNotFoundException();
+        }
+
         List<TransactionHistory> txnHistory = this.transactionHistoryRepository.findAllByVoucherNo(voucherNo);
 
         VoucherViewerDto voucherViewerDto = new VoucherViewerDto();
@@ -174,15 +181,25 @@ public class CustomVoucherService {
     }
 
     private String getVoucherNumber(String userId) {
-        LocalDate today = LocalDate.now();
-        Instant instant = today.atStartOfDay().toInstant(ZoneOffset.UTC);
+        LocalDateTime now = LocalDateTime.now();
+        /*Instant instant = today.atStartOfDay().toInstant(ZoneOffset.UTC);*/
+        /*Instant now = Instant.now();*/
 
         /*System.out.println("=================================");
         System.out.println(instant);
         System.out.println("=================================");*/
 
-        Long todayCount = this.voucherRepository.countByDateCreatedAfter(instant) + 1;
-        return String.valueOf(today.getYear() % 100) + String.format("%02d", today.getMonthValue()) + String.format("%02d", today.getDayOfMonth())  + String.format("%05d", todayCount);
+        /*Long todayCount = this.voucherRepository.countByDateCreatedAfter(instant) + 1;*/
+        String generatedVoucherNo = String.valueOf(now.getYear() % 100)
+            + String.format("%02d", now.getMonthValue())
+            + String.format("%02d", now.getDayOfMonth())
+            + String.format("%02d", now.getHour())
+            + String.format("%02d", now.getMinute())
+            + String.format("%02d", now.getSecond());
+        if (voucherRepository.existsByVoucherNo(generatedVoucherNo)) {
+            throw new RuntimeException();
+        }
+        return generatedVoucherNo;
     }
 
 }

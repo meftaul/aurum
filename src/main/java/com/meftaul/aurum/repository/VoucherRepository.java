@@ -16,5 +16,6 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long>, JpaSpec
 
     Long countByDateCreatedAfter(Instant instant);
     Voucher findByVoucherNo(String voucher);
+    Boolean existsByVoucherNo(String voucherNo);
 
 }
