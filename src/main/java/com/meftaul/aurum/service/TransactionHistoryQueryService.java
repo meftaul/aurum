@@ -91,8 +91,10 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
                             txnReportDto.setHallMarkAmount(txnReportDto.getHallMarkAmount().add(aurumService.getAmount()));
                         } else if (aurumService.getServiceType().equals("Normal Melting")){
                             txnReportDto.setNormalMeltingAmount(txnReportDto.getNormalMeltingAmount().add(aurumService.getAmount()));
+                            txnReportDto.setNormalMeltingServiceChargeAmount(txnReportDto.getCalculatedMeltingServiceChargeAmount().add(aurumService.getServiceCharge()));
                         } else  if (aurumService.getServiceType().equals("Calculated Melting")){
                             txnReportDto.setCalculatedMeltingAmount(txnReportDto.getCalculatedMeltingAmount().add(aurumService.getAmount()));
+                            txnReportDto.setCalculatedMeltingServiceChargeAmount(txnReportDto.getCalculatedMeltingServiceChargeAmount().add(aurumService.getServiceCharge()));
                         }
                     }
 

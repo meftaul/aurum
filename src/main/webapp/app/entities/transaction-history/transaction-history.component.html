@@ -141,7 +141,8 @@
                 <div class="box">
                     <h2>Normal Melting</h2>
                     <h1>
-                        <span *ngIf="txnReport">{{ txnReport.normalMeltingAmount }}</span>
+                        <span *ngIf="txnReport">{{ txnReport.normalMeltingAmount }}</span><br>
+                        <span *ngIf="txnReport"> + {{ txnReport.normalMeltingServiceChargeAmount }}</span>
                     </h1>
                 </div>
             </div>
@@ -152,7 +153,8 @@
                 <div class="box">
                     <h2>Calculated Melting</h2>
                     <h1>
-                        <span *ngIf="txnReport">{{ txnReport.calculatedMeltingAmount }}</span>
+                        <span *ngIf="txnReport">{{ txnReport.calculatedMeltingAmount }}</span><br>
+                        <span *ngIf="txnReport"> + {{ txnReport.calculatedMeltingServiceChargeAmount }}</span>
                     </h1>
                 </div>
             </div>

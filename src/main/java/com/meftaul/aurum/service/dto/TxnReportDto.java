@@ -19,7 +19,25 @@ public class TxnReportDto {
     BigDecimal xRayAmount = BigDecimal.ZERO;
     BigDecimal hallMarkAmount = BigDecimal.ZERO;
     BigDecimal normalMeltingAmount = BigDecimal.ZERO;
+    BigDecimal normalMeltingServiceChargeAmount = BigDecimal.ZERO;
     BigDecimal calculatedMeltingAmount = BigDecimal.ZERO;
+    BigDecimal calculatedMeltingServiceChargeAmount = BigDecimal.ZERO;
+
+    public BigDecimal getNormalMeltingServiceChargeAmount() {
+        return normalMeltingServiceChargeAmount;
+    }
+
+    public void setNormalMeltingServiceChargeAmount(BigDecimal normalMeltingServiceChargeAmount) {
+        this.normalMeltingServiceChargeAmount = normalMeltingServiceChargeAmount;
+    }
+
+    public BigDecimal getCalculatedMeltingServiceChargeAmount() {
+        return calculatedMeltingServiceChargeAmount;
+    }
+
+    public void setCalculatedMeltingServiceChargeAmount(BigDecimal calculatedMeltingServiceChargeAmount) {
+        this.calculatedMeltingServiceChargeAmount = calculatedMeltingServiceChargeAmount;
+    }
 
     public BigDecimal getxRayAmount() {
         return xRayAmount;
