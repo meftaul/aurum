@@ -84,11 +84,21 @@
     <br>
 
     <div class="row">
-        <div class="col-md-2">&nbsp;</div>
         <div class="col-md-3">
             <div class="card">
                 <div class="box">
-                    <h2>Total COLLECTION</h2>
+                    <h2>Total</h2>
+                    <h1>
+                        <span *ngIf="txnReport">{{ txnReport.totalReceived + txnReport.due }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="box">
+                    <h2>COLLECTION</h2>
                     <h1>
                         <span *ngIf="txnReport">{{ txnReport.totalReceived }}</span>
                     </h1>
@@ -99,7 +109,7 @@
         <div class="col-md-3">
             <div class="card">
                 <div class="box">
-                    <h2>Total DUE</h2>
+                    <h2>DUE</h2>
                     <h1>
                         <span *ngIf="txnReport">{{ txnReport.due }}</span>
                     </h1>
