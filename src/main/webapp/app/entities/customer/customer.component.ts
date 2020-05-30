@@ -31,6 +31,11 @@ export class CustomerComponent implements OnInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
+  phone: string;
+  customId: string;
+  firstName: string;
+  lastName: string;
+
   constructor(
     protected customerService: CustomerService,
     protected parseLinks: JhiParseLinks,
@@ -50,12 +55,30 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   loadAll() {
+    const req = {
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort()
+    };
+
+    if (this.firstName != null) {
+      req['firstName.contains'] = this.firstName;
+    }
+
+    if (this.lastName != null) {
+      req['lastName.contains'] = this.lastName;
+    }
+
+    if (this.phone != null) {
+      req['phone.equals'] = this.phone;
+    }
+
+    if (this.customId != null) {
+      req['customId.equals'] = this.customId;
+    }
+
     this.customerService
-      .query({
-        page: this.page - 1,
-        size: this.itemsPerPage,
-        sort: this.sort()
-      })
+      .query(req)
       .subscribe(
         (res: HttpResponse<ICustomer[]>) => this.paginateCustomers(res.body, res.headers),
         (res: HttpErrorResponse) => this.onError(res.message)
@@ -118,6 +141,14 @@ export class CustomerComponent implements OnInit, OnDestroy {
       result.push('id');
     }
     return result;
+  }
+
+  resetFilter() {
+    this.phone = null;
+    this.customId = null;
+    this.firstName = null;
+    this.lastName = null;
+    this.loadAll();
   }
 
   protected paginateCustomers(data: ICustomer[], headers: HttpHeaders) {

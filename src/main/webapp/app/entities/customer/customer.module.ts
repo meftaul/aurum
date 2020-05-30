@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { AurumSharedModule } from 'app/shared/shared.module';
 import { CustomerComponent } from './customer.component';
@@ -11,7 +13,7 @@ import { customerRoute, customerPopupRoute } from './customer.route';
 const ENTITY_STATES = [...customerRoute, ...customerPopupRoute];
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES), MatFormFieldModule, MatInputModule],
   declarations: [
     CustomerComponent,
     CustomerDetailComponent,
