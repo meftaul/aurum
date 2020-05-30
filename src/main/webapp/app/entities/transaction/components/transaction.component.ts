@@ -486,10 +486,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   // ****************************** VOUCHER ****************************** START
   prepareVoucherForm() {
+    let d = new Date().toISOString();
+    d = d.substring(0, d.length - 5);
+
     this.voucherForm = this.formBuilder.group({
       voucherNo: [''],
       boxNumber: ['', [Validators.required, Validators.maxLength(50)]],
-      deliveryDate: ['', [Validators.required]],
+      deliveryDate: [d, [Validators.required]],
       calculatedTotalAmount: [0],
       disountAmount: [0, [Validators.required, Validators.maxLength(11)]],
       vat: [0, [Validators.required, Validators.maxLength(11)]],
