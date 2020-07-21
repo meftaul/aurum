@@ -195,13 +195,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
       karatType: [''],
       expectedKaratType: [''],
       addedAlloy: [''],
-      alloyQuantity: ['', Validators.maxLength(11)],
-      rate: ['', [Validators.required, Validators.maxLength(11)]],
-      quantity: ['', Validators.maxLength(3)],
-      weight: ['', [Validators.required, Validators.maxLength(11)]],
+      alloyQuantity: ['', [Validators.maxLength(11), Validators.max(999999999.99)]],
+      rate: ['', [Validators.required, Validators.maxLength(11), Validators.max(999999999.99)]],
+      quantity: ['', [Validators.maxLength(3), Validators.max(9999)]],
+      weight: ['', [Validators.required, Validators.maxLength(11), Validators.max(999999999.99)]],
       freeCheck: ['', [Validators.min(0), Validators.max(1)]],
       hallMarkedText: ['', Validators.maxLength(50)],
-      weightOfFreeCheck: ['', [Validators.maxLength(11)]],
+      weightOfFreeCheck: ['', [Validators.maxLength(11), Validators.max(999999999.99)]],
 
       // only for weight calculation
       weightVori: [''],
@@ -651,7 +651,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp);
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       } else if (serviceTypeTemp === 'Normal Melting' || serviceTypeTemp === 'Calculated Melting') {
-        const extraWeightToCharge = +(gramValue % 116).toFixed(2);
+        const extraWeightToCharge = +(gramValue - 116).toFixed(2);
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp) + extraWeightToCharge;
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       }
