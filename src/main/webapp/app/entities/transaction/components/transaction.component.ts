@@ -651,7 +651,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp);
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       } else if (serviceTypeTemp === 'Normal Melting' || serviceTypeTemp === 'Calculated Melting') {
-        const extraWeightToCharge = +(gramValue - 116).toFixed(2);
+        const extraWeightToCharge: number = +(+(gramValue - 116).toFixed(2) * 11).toFixed(2);
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp) + extraWeightToCharge;
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       }
