@@ -40,6 +40,7 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
   showCalculatedMeltingNote: boolean;
 
   isPrintFirstSection: boolean;
+  isPrintCustomerSection: boolean;
 
   amountInWordsStr: string;
 
@@ -51,7 +52,10 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
     protected transactionHistoryService: TransactionHistoryService,
     private amountInWordsService: AmountInWords,
     protected rateService: RateService
-  ) {}
+  ) {
+    this.isPrintFirstSection = true;
+    this.isPrintCustomerSection = true;
+  }
 
   ngOnInit() {
     this.route.params.subscribe(param => {
@@ -123,201 +127,18 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
 
   printPage() {
     this.isPrintFirstSection = true;
-    window.print();
+    this.isPrintCustomerSection = false;
+    setTimeout(() => {
+      window.print();
+    }, 100);
   }
 
   printForCustomer() {
-    // this.isPrintFirstSection = false;
-    // setTimeout(() => {
-    //   window.print();
-    // }, 100);
-
-    // const printContent = document.getElementById("customerPrintSection");
-    const printContent = document.getElementById('customerPrintSection').innerHTML;
-    const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-    WindowPrt.document.open();
-    WindowPrt.document.write(`
-        <html>
-         <style>
-            body{
-                font-family: 'Times new roman'
-            }
-            .printButton{
-              background-color: #009688;
-              color: #ffffff;
-              border: none;
-              width: 80px;
-              height: 40px;
-              float:right;
-            }
-            @media print {
-              .printButton{
-                display: none;
-              }
-
-              .container,
-              .container-fluid,
-              .container-sm,
-              .container-md,
-              .container-lg,
-              .container-xl {
-                width: 100%;
-                padding-right: 15px;
-                padding-left: 15px;
-                margin-right: auto;
-                margin-left: auto;
-              }
-
-              @media (min-width: 768px) {
-                .col-md-6 {
-                  -ms-flex: 0 0 46%;
-                  flex: 0 0 46%;
-                  max-width: 50%;
-                }
-                .col-md-12 {
-                  -ms-flex: 0 0 96%;
-                  flex: 0 0 96%;
-                  max-width: 100%;
-                }
-              }
-
-              .row {
-                display: -ms-flexbox;
-                display: flex;
-                -ms-flex-wrap: wrap;
-                flex-wrap: wrap;
-                margin-right: -15px;
-                margin-left: -15px;
-              }
-
-              .col-md-6, .col-md-12, 
-              .col-md {
-                position: relative;
-                width: 100%;
-                padding-right: 15px;
-                padding-left: 15px;
-              }
-
-              .table {
-                width: 100%;
-                margin-bottom: 1rem;
-                color: #212529;
-              }
-
-              .table-borderless th,
-              .table-borderless td,
-              .table-borderless thead th,
-              .table-borderless tbody + tbody {
-                border: 0;
-              }
-
-              .cusBorderStyle {
-                border: 1px solid black;
-                text-align: left;
-                vertical-align: middle;
-              }
-            }
-            .container,
-            .container-fluid,
-            .container-sm,
-            .container-md,
-            .container-lg,
-            .container-xl {
-              width: 100%;
-              padding-right: 15px;
-              padding-left: 15px;
-              margin-right: auto;
-              margin-left: auto;
-            }
-
-            @media (min-width: 768px) {
-              .col-md-6 {
-                -ms-flex: 0 0 46%;
-                flex: 0 0 46%;
-                max-width: 50%;
-              }
-              .col-md-12 {
-                -ms-flex: 0 0 96%;
-                flex: 0 0 96%;
-                max-width: 100%;
-              }
-            }
-
-            .row {
-              display: -ms-flexbox;
-              display: flex;
-              -ms-flex-wrap: wrap;
-              flex-wrap: wrap;
-              margin-right: -15px;
-              margin-left: -15px;
-            }
-
-            .col-md-6, .col-md-12, 
-            .col-md {
-              position: relative;
-              width: 100%;
-              padding-right: 15px;
-              padding-left: 15px;
-            }
-
-            table {
-              border-collapse: collapse;
-            }
-
-            .table {
-              width: 100%;
-              margin-bottom: 1rem;
-              color: #212529;
-            }
-
-            .table th,
-            .table td {
-              padding: 5px;
-            }
-
-            .table-bordered {
-              border: 1px solid black;
-            }
-
-            .table-bordered th,
-            .table-bordered td {
-              border: 1px solid black;
-            }
-
-            .table-bordered thead th,
-            .table-bordered thead td {
-              border-bottom-width: 2px;
-            }
-
-            .table-borderless th,
-            .table-borderless td,
-            .table-borderless thead th,
-            .table-borderless tbody + tbody {
-              border: 0;
-            }
-
-            .cusBorderStyle {
-              border: 1px solid black;
-              text-align: left;
-              vertical-align: middle;
-            }
-          }
-
-         </style> 
-        </head>
-      <body>
-
-        <button onClick="window.print();window.close()" class="printButton"> Print</button>
-      
-        <div>
-            ${printContent}
-        </div>
-      </body>
-    </html>`);
-    WindowPrt.document.close();
-    WindowPrt.focus();
-    // WindowPrt.print();
-    // WindowPrt.close();
+    this.isPrintFirstSection = false;
+    this.isPrintCustomerSection = true;
+    setTimeout(() => {
+      window.print();
+    }, 100);
   }
 
   ngOnDestroy() {}
