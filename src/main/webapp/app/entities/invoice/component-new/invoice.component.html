@@ -35,25 +35,40 @@
                             </td>
                         </tr>
                         <tr class="cusBorderStyle">
-                            <td colspan="4" class="cusBorderStyle"><b>Mobile Number:</b> {{ customer?.phone }}</td>
+                            <td colspan="4" class="cusBorderStyle"><b>Contact Number:</b> {{ customer?.phone }}</td>
                         </tr>
                         <tr class="cusBorderStyle">
                             <td colspan="4" class="cusBorderStyle"><b>Address:</b> {{ customer?.address }}</td>
                         </tr>
-                        <tr class="cusBorderStyle">
+
+                        <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Hallmark'">
                             <td colspan="4" class="cusBorderStyle"><b>Karat Stamp:</b> </td>
+                        </tr>
+
+                        <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Calculated Melting'">
+                            <td colspan="2" class="cusBorderStyle"><b>Added Aloy:</b> </td>
+                            <td colspan="2" class="cusBorderStyle"><b>Report Charge:</b> </td>
                         </tr>
     
                         <tr class="cusBorderStyle">
-                            <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Item</b> </td>
-                            <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Quantity</b> </td>
-                            <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Weight(gm)</b> </td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>Item</b> </td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>Quantity</b> </td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>Weight(gm)</b> </td>
+
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>Rate</b></td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>Gold Weight(gm)</b></td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>Total Weight(gm)</b></td>
                             <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Taka</b> </td>
                         </tr>
                         <tr *ngFor="let service of aurumServices; let i = index" class="cusBorderStyle">
-                            <td class="cusBorderStyle" style="text-align: center;">{{service.itemName}}</td>
-                            <td class="cusBorderStyle" style="text-align: center;">{{service.quantity}}</td>
-                            <td class="cusBorderStyle" style="text-align: center;">{{service.weight}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'">{{service.itemName}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'">{{service.quantity}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'">{{service.weight}}</td>
+
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">{{service.rate}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">{{service.weight}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">{{service.weight}}</td>
+
                             <td class="cusBorderStyle" style="text-align: center;">{{service.amount | currency: ' '}}</td>
                         </tr>
                     </tbody>
@@ -126,27 +141,42 @@
                                 </td>
                             </tr>
                             <tr class="cusBorderStyle">
-                                <td colspan="4" class="cusBorderStyle"><b>Mobile Number:</b> {{ customer?.phone }}</td>
+                                <td colspan="4" class="cusBorderStyle"><b>Contact Number:</b> {{ customer?.phone }}</td>
                             </tr>
                             <tr class="cusBorderStyle">
                                 <td colspan="4" class="cusBorderStyle"><b>Address:</b> {{ customer?.address }}</td>
                             </tr>
-                            <tr class="cusBorderStyle">
+                            
+                            <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Hallmark'">
                                 <td colspan="4" class="cusBorderStyle"><b>Karat Stamp:</b> </td>
+                            </tr>
+                            
+                            <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Calculated Melting'">
+                                <td colspan="2" class="cusBorderStyle"><b>Added Aloy:</b> </td>
+                                <td colspan="2" class="cusBorderStyle"><b>Report Charge:</b> </td>
                             </tr>
 
                             <tr class="cusBorderStyle">
-                                <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Item</b> </td>
-                                <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Quantity</b> </td>
-                                <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Weight(gm)</b> </td>
-                                <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Taka</b> </td>
-                            </tr>
-                            <tr *ngFor="let service of aurumServices; let i = index" class="cusBorderStyle">
-                                <td class="cusBorderStyle" style="text-align: center;">{{service.itemName}}</td>
-                                <td class="cusBorderStyle" style="text-align: center;">{{service.quantity}}</td>
-                                <td class="cusBorderStyle" style="text-align: center;">{{service.weight}}</td>
-                                <td class="cusBorderStyle" style="text-align: center;">{{service.amount | currency: ' '}}</td>
-                            </tr>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>Item</b> </td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>Quantity</b> </td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>Weight(gm)</b> </td>
+
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>Rate</b></td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>Gold Weight(gm)</b></td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>Total Weight(gm)</b></td>
+                            <td class="cusBorderStyle" style="width: 25%; text-align: center;"><b>Taka</b> </td>
+                        </tr>
+                        <tr *ngFor="let service of aurumServices; let i = index" class="cusBorderStyle">
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'">{{service.itemName}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'">{{service.quantity}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'">{{service.weight}}</td>
+
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">{{service.rate}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">{{service.weight}}</td>
+                            <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">{{service.weight}}</td>
+
+                            <td class="cusBorderStyle" style="text-align: center;">{{service.amount | currency: ' '}}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
