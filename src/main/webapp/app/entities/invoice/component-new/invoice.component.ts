@@ -44,6 +44,10 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
 
   amountInWordsStr: string;
 
+  totalQuantity: number;
+  totalWeight: number;
+  totalAlloyWeight: number;
+
   constructor(
     private route: ActivatedRoute,
     protected customerService: CustomerService,
@@ -84,6 +88,10 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
   }
 
   fetchAurumServices(voucherId: number) {
+    this.totalQuantity = 0;
+    this.totalWeight = 0;
+    this.totalAlloyWeight = 0;
+
     this.distinctServiceType = [];
     this.serviceTypeToServiceListMap = new Map();
     this.aurumServiceService.query({ 'voucherId.equals': voucherId }).subscribe(data => {
@@ -100,6 +108,10 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
 
       this.aurumServices.map(service => {
         this.serviceTypeToServiceListMap.get(service.serviceType).push(service);
+
+        this.totalQuantity += service.quantity;
+        this.totalWeight += service.weight;
+        this.totalAlloyWeight += service.alloyQuantity;
       });
     });
   }
