@@ -39,10 +39,18 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
       },
       {
         path: 'customer',
+        data: {
+          authorities: ['ROLE_ADMIN', 'ROLE_USER']
+        },
+        canActivate: [UserRouteAccessService],
         loadChildren: () => import('./customer/customer.module').then(m => m.AurumCustomerModule)
       },
       {
         path: 'voucher',
+        data: {
+          authorities: ['ROLE_ADMIN']
+        },
+        canActivate: [UserRouteAccessService],
         loadChildren: () => import('./voucher/voucher.module').then(m => m.AurumVoucherModule)
       },
       {
@@ -67,6 +75,10 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
       },
       {
         path: 'messaging',
+        data: {
+          authorities: ['ROLE_ADMIN']
+        },
+        canActivate: [UserRouteAccessService],
         loadChildren: () => import('./messaging/messaging.module').then(m => m.AurumMessagingModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
