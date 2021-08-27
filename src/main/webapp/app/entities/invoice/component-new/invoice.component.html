@@ -88,10 +88,10 @@
                     </tbody>
                 </table>
             </div>
-            <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: 10px; width: 100%;">
+            <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: -7px; width: 100%;">
                 <div class="col-md-12">
                     <h4>Note</h4>
-                    <ul>
+                    <ul style="margin-top: -5px;">
                         <li *ngIf="showXrayNote || showCalculatedMeltingNote">X-ray result maximum difference ± 0.30%</li>
                         <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
                             so Maitree is not
@@ -102,7 +102,7 @@
             </div>
         </div>
     
-        <div class="row" style="margin-top: 80px; width: 100%;">
+        <div class="row" style="margin-top: 50px; width: 100%;">
             <div class="col-md-6">
                 <table class="table table-borderless">
                     <tbody>
@@ -221,9 +221,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: 10px; width: 100%;" [ngStyle]="{'padding-right': index === 0 ? '25px' : '',  'padding-left': index === 1 ? '25px' : ''}">
+                <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: -7px; width: 100%;" [ngStyle]="{'padding-right': index === 0 ? '25px' : '',  'padding-left': index === 1 ? '25px' : ''}">
                     <div class="col-md-12">
-                        <h4>Note</h4>
+                        <h4 style="margin-top: -5px;">Note</h4>
                         <ul>
                             <li *ngIf="showXrayNote || showCalculatedMeltingNote">X-ray result maximum difference ± 0.30%</li>
                             <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
@@ -235,7 +235,7 @@
                 </div>
             </div>
 
-            <div class="row" style="margin-top: 80px; width: 100%;">
+            <div class="row" style="margin-top: 50px; width: 100%;">
                 <div class="col-md-6">
                     <table class="table table-borderless">
                         <tbody>
