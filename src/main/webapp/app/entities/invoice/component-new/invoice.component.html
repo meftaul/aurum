@@ -83,7 +83,7 @@
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>{{totalQuantity}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;"><b>{{totalWeight}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>{{totalWeight + totalAlloyWeight}}</b></td>
-                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency}}</b></td>
+                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency: ' '}}</b></td>
                         </tr>
                     </tbody>
                 </table>
@@ -145,7 +145,7 @@
         
         <div class="col-md-6" *ngFor="let i of [].constructor(2); let index = index"
             [ngStyle]="{'border-right': index === 0 ? '1px dotted black' : '' }" style="padding: 0px;">
-            <h3 style="text-align: center; text-decoration: underline;">{{invoiceTitle}} Invoice</h3>
+            <h3 style="text-align: center; text-decoration: underline; font-size: 22px;">{{invoiceTitle}} Invoice</h3>
             <div class="row">
                 <div class="col-md-12" [ngStyle]="{'padding-right': index === 0 ? '25px' : '',  'padding-left': index === 0 ? '0px' : '25px'}">
                     <table class="table table-bordered">
@@ -215,7 +215,7 @@
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>{{totalQuantity}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;"><b>{{totalWeight}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>{{totalWeight + totalAlloyWeight}}</b></td>
-                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency}}</b></td>
+                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency: ' '}}</b></td>
                         </tr>
 
                         </tbody>
@@ -237,7 +237,7 @@
 
             <div class="row" style="margin-top: 50px; width: 100%;">
                 <div class="col-md-6">
-                    <table class="table table-borderless">
+                    <table class="table table-borderless" style="margin-bottom: 0px;">
                         <tbody>
                             <tr>
                                 <td> </td>
@@ -248,7 +248,7 @@
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <table class="table table-borderless">
+                    <table class="table table-borderless" style="margin-bottom: 0px;">
                         <tbody>
                             <tr>
                                 <td> </td>
