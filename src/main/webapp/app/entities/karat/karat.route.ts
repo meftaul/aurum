@@ -62,7 +62,7 @@ export const karatRoute: Routes = [
       karat: KaratResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Karats'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const karatRoute: Routes = [
       karat: KaratResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Karats'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const karatPopupRoute: Routes = [
       karat: KaratResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Karats'
     },
     canActivate: [UserRouteAccessService],

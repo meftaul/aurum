@@ -62,7 +62,7 @@ export const rateRoute: Routes = [
       rate: RateResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_USER_1'],
       pageTitle: 'Rates'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const rateRoute: Routes = [
       rate: RateResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Rates'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const ratePopupRoute: Routes = [
       rate: RateResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_USER_1'],
       pageTitle: 'Rates'
     },
     canActivate: [UserRouteAccessService],
