@@ -83,15 +83,15 @@
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>{{totalQuantity}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;"><b>{{totalWeight}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>{{totalWeight + totalAlloyWeight}}</b></td>
-                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency}}</b></td>
+                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency: ' '}}</b></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: 10px; width: 100%;">
+            <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: -7px; width: 100%;">
                 <div class="col-md-12">
                     <h4>Note</h4>
-                    <ul>
+                    <ul style="margin-top: -5px;">
                         <li *ngIf="showXrayNote || showCalculatedMeltingNote">X-ray result maximum difference ± 0.30%</li>
                         <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
                             so Maitree is not
@@ -102,7 +102,7 @@
             </div>
         </div>
     
-        <div class="row" style="margin-top: 80px; width: 100%;">
+        <div class="row" style="margin-top: 50px; width: 100%;">
             <div class="col-md-6">
                 <table class="table table-borderless">
                     <tbody>
@@ -145,7 +145,7 @@
         
         <div class="col-md-6" *ngFor="let i of [].constructor(2); let index = index"
             [ngStyle]="{'border-right': index === 0 ? '1px dotted black' : '' }" style="padding: 0px;">
-            <h3 style="text-align: center; text-decoration: underline;">{{invoiceTitle}} Invoice</h3>
+            <h3 style="text-align: center; text-decoration: underline; font-size: 22px;">{{invoiceTitle}} Invoice</h3>
             <div class="row">
                 <div class="col-md-12" [ngStyle]="{'padding-right': index === 0 ? '25px' : '',  'padding-left': index === 0 ? '0px' : '25px'}">
                     <table class="table table-bordered">
@@ -215,15 +215,15 @@
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Hallmark' || invoiceTitle === 'X-Ray'"><b>{{totalQuantity}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;"><b>{{totalWeight}}</b></td>
                             <td class="cusBorderStyle" style="text-align: center;" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'"><b>{{totalWeight + totalAlloyWeight}}</b></td>
-                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency}}</b></td>
+                            <td class="cusBorderStyle" style="text-align: center;"><b>{{voucher?.calculatedTotalAmount | currency: ' '}}</b></td>
                         </tr>
 
                         </tbody>
                     </table>
                 </div>
-                <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: 10px; width: 100%;" [ngStyle]="{'padding-right': index === 0 ? '25px' : '',  'padding-left': index === 1 ? '25px' : ''}">
+                <div class="row" *ngIf="showXrayNote || showMeltingNote" style="margin-top: -7px; width: 100%;" [ngStyle]="{'padding-right': index === 0 ? '25px' : '',  'padding-left': index === 1 ? '25px' : ''}">
                     <div class="col-md-12">
-                        <h4>Note</h4>
+                        <h4 style="margin-top: -5px;">Note</h4>
                         <ul>
                             <li *ngIf="showXrayNote || showCalculatedMeltingNote">X-ray result maximum difference ± 0.30%</li>
                             <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
@@ -235,9 +235,9 @@
                 </div>
             </div>
 
-            <div class="row" style="margin-top: 80px; width: 100%;">
+            <div class="row" style="margin-top: 50px; width: 100%;">
                 <div class="col-md-6">
-                    <table class="table table-borderless">
+                    <table class="table table-borderless" style="margin-bottom: 0px;">
                         <tbody>
                             <tr>
                                 <td> </td>
@@ -248,7 +248,7 @@
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <table class="table table-borderless">
+                    <table class="table table-borderless" style="margin-bottom: 0px;">
                         <tbody>
                             <tr>
                                 <td> </td>
