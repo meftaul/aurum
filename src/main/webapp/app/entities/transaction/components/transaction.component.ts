@@ -21,6 +21,7 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 
+const EXTRA_CHARGE_FOR_PER_GRAM: number = 1;
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
 // const ROTTI_TO_GRAM = 0.121498046875;
@@ -651,7 +652,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp);
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       } else if (serviceTypeTemp === 'Normal Melting' || serviceTypeTemp === 'Calculated Melting') {
-        const extraWeightToCharge: number = +(+(gramValue - 116).toFixed(2) * 11).toFixed(2);
+        const extraWeightToCharge: number = +(+(gramValue - 116).toFixed(2) * EXTRA_CHARGE_FOR_PER_GRAM).toFixed(2);
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp) + extraWeightToCharge;
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       }
