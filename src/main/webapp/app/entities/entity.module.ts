@@ -63,6 +63,10 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
       },
       {
         path: 'rate',
+        data: {
+          authorities: ['ROLE_ADMIN']
+        },
+        canActivate: [UserRouteAccessService],
         loadChildren: () => import('./rate/rate.module').then(m => m.AurumRateModule)
       },
       {
