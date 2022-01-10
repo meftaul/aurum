@@ -1,11 +1,10 @@
 package com.meftaul.aurum.web.rest;
 
-import com.meftaul.aurum.domain.Authority;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.security.AuthoritiesConstants;
 import com.meftaul.aurum.service.CustomVoucherService;
-import com.meftaul.aurum.service.VoucherService;
 import com.meftaul.aurum.service.dto.CustomVoucherDto;
 import com.meftaul.aurum.service.dto.TransactionDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 
 /**
@@ -38,9 +36,11 @@ public class CustomVoucherResource {
 
     private final Logger log = LoggerFactory.getLogger(CustomVoucherResource.class);
     private final CustomVoucherService customVoucherService;
+    private final VoucherRepository voucherRepository;
 
-    public CustomVoucherResource(CustomVoucherService customVoucherService) {
+    public CustomVoucherResource(CustomVoucherService customVoucherService, VoucherRepository voucherRepository) {
         this.customVoucherService = customVoucherService;
+        this.voucherRepository = voucherRepository;
     }
 
     /**
@@ -51,7 +51,11 @@ public class CustomVoucherResource {
         log.debug("REST request to save Voucher : {}", voucherDto);
         Voucher voucher = voucherDto.getVoucher();
         if (voucher.getId() != null) {
-            throw new BadRequestAlertException("A new voucher cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new voucher cannot already have an ID", ENTITY_NAME, "id exists");
+        }
+
+        if (!voucherRepository.existsByVoucherNo(voucher.getVoucherNo())) {
+            throw new BadRequestAlertException("Please try again later", ENTITY_NAME, "id exists");
         }
 
         if (voucherDto.getPaidAmount().compareTo(voucherDto.getVoucher().getTotalPayableAmount()) == 1) {
