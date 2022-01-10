@@ -54,10 +54,6 @@ public class CustomVoucherResource {
             throw new BadRequestAlertException("A new voucher cannot already have an ID", ENTITY_NAME, "id exists");
         }
 
-        if (!voucherRepository.existsByVoucherNo(voucher.getVoucherNo())) {
-            throw new BadRequestAlertException("Please try again later", ENTITY_NAME, "id exists");
-        }
-
         if (voucherDto.getPaidAmount().compareTo(voucherDto.getVoucher().getTotalPayableAmount()) == 1) {
             throw new BadRequestAlertException("Paid amount can not be greater than payable amount", ENTITY_NAME, "idexists");
         }
