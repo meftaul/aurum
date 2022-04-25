@@ -10,10 +10,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReportComponent } from 'app/entities/report/components/report.component';
 import { REPORT_ROUTE } from 'app/entities/report/report.routes';
 
-import * as PlotlyJS from 'plotly.js/dist/plotly.js';
+/*import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import { PlotlyModule } from 'angular-plotly.js';
 
-PlotlyModule.plotlyjs = PlotlyJS;
+PlotlyModule.plotlyjs = PlotlyJS;*/
 
 @NgModule({
   imports: [
@@ -23,8 +23,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     MatIconModule,
     MatCardModule,
     MatInputModule,
-    MatFormFieldModule,
-    PlotlyModule
+    MatFormFieldModule
+    /*PlotlyModule*/
     // MatDatepickerModule,
     // MatNativeDateModule,
     // MatTableModule,

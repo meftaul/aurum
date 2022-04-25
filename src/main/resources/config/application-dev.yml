@@ -37,9 +37,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./build/h2db/db/aurum;DB_CLOSE_DELAY=-1
-    username: aurum
-    password:
+    url: jdbc:mysql://localhost:3306/aurum?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: madmin123
     hikari:
       poolName: Hikari
       auto-commit: false
