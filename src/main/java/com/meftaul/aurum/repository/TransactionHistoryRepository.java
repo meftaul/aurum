@@ -66,4 +66,5 @@ public interface TransactionHistoryRepository extends JpaRepository<TransactionH
     List<TransactionHistoryAmountByTagAndCustomer> topNTotalAmountByCustomerId(@Param("startDate") String startDate,
                                                                                @Param("endDate") String endDate,
                                                                                @Param("n") String topN);
+    TransactionHistory findByVoucherNoAndTag(String voucherNo, TransactionStatus tag);
 }

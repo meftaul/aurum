@@ -62,7 +62,7 @@ export const transactionHistoryRoute: Routes = [
       transactionHistory: TransactionHistoryResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const transactionHistoryRoute: Routes = [
       transactionHistory: TransactionHistoryResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const transactionHistoryPopupRoute: Routes = [
       transactionHistory: TransactionHistoryResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Transaction Histories'
     },
     canActivate: [UserRouteAccessService],

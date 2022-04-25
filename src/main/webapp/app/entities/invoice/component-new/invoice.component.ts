@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Voucher } from 'app/shared/model/voucher.model';
 import { CustomerService } from 'app/entities/customer/customer.service';
 import { AurumServiceService } from 'app/entities/aurum-service/aurum-service.service';
@@ -30,6 +30,7 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
   serviceTypeToServiceListMap: Map<string, AurumService[]>;
   txnHitoryList: TransactionHistory[];
   paidAmount: number;
+  discountId: number;
   distinctServiceType: string[];
   invoiceTitle: string;
   printDate: Date = new Date();
@@ -50,6 +51,7 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    protected router: Router,
     protected customerService: CustomerService,
     protected aurumServiceService: AurumServiceService,
     protected voucherService: VoucherService,
@@ -122,6 +124,7 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
       this.txnHitoryList = data.body;
       this.txnHitoryList.map(txn => {
         if (txn.tag === 'RECEIVE') this.paidAmount += txn.amount;
+        if (txn.tag === 'DISCOUNT') this.discountId = txn.id;
       });
       // this.amountInWordsStr = this.amountInWordsService.convertNumberToWords(this.paidAmount);
     });
@@ -151,6 +154,10 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       window.print();
     }, 100);
+  }
+
+  adjustDiscount() {
+    this.router.navigate(['transaction-history/' + this.discountId + '/edit']);
   }
 
   ngOnDestroy() {}

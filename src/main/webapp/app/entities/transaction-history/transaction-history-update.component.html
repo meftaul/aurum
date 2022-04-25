@@ -1,18 +1,18 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-transaction-history-heading">Create or edit a Transaction History</h2>
+            <h2 id="jhi-transaction-history-heading">Update discount amount</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
-                <div class="form-group" [hidden]="!editForm.get('id').value">
+                <!--<div class="form-group" [hidden]="!editForm.get('id').value">
                     <label for="id">ID</label>
                     <input type="text" class="form-control" id="id" name="id" formControlName="id"
                         readonly />
-                </div>
+                </div>-->
                 <div class="form-group">
                     <label class="form-control-label" for="field_voucherNo">Voucher No</label>
                     <input type="text" class="form-control" name="voucherNo" id="field_voucherNo"
-                           formControlName="voucherNo"/>
+                           formControlName="voucherNo" readonly/>
                     <div *ngIf="editForm.get('voucherNo').invalid && (editForm.get('voucherNo').dirty || editForm.get('voucherNo').touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('voucherNo').errors.required">
@@ -35,7 +35,7 @@
                         </small>
                     </div>
                 </div>
-                <div class="form-group">
+                <!--<div class="form-group">
                     <label class="form-control-label" for="field_dateCreated">Date Created</label>
                     <div class="d-flex">
                         <input id="field_dateCreated" type="datetime-local" class="form-control" name="dateCreated" formControlName="dateCreated" placeholder="YYYY-MM-DD HH:mm"/>
@@ -50,8 +50,8 @@
                             This field should be a date and time.
                         </small>
                     </div>
-                </div>
-                <div class="form-group">
+                </div>-->
+                <!--<div class="form-group">
                     <label class="form-control-label" for="field_tag">Tag</label>
                     <select class="form-control" name="tag" formControlName="tag" id="field_tag">
                         <option value="RECEIVE">RECEIVE</option>
@@ -65,8 +65,8 @@
                         This field is required.
                         </small>
                     </div>
-                </div>
-                <div class="form-group">
+                </div>-->
+                <!--<div class="form-group">
                     <label class="form-control-label" for="field_customerId">Customer Id</label>
                     <input type="number" class="form-control" name="customerId" id="field_customerId"
                            formControlName="customerId"/>
@@ -80,8 +80,8 @@
                             This field should be a number.
                         </small>
                     </div>
-                </div>
-                <div class="form-group">
+                </div>-->
+                <!--<div class="form-group">
                     <label class="form-control-label" for="field_addedBy">Added By</label>
                     <input type="text" class="form-control" name="addedBy" id="field_addedBy"
                            formControlName="addedBy"/>
@@ -91,7 +91,7 @@
                         This field is required.
                         </small>
                     </div>
-                </div>
+                </div>-->
 
             </div>
             <div>

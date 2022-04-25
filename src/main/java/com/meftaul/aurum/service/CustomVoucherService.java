@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -190,12 +191,15 @@ public class CustomVoucherService {
         System.out.println("=================================");*/
 
         /*Long todayCount = this.voucherRepository.countByDateCreatedAfter(instant) + 1;*/
+        UUID uuid = UUID.randomUUID();
+        String uuidAsString = uuid.toString();
         String generatedVoucherNo = String.valueOf(now.getYear() % 100)
             + String.format("%02d", now.getMonthValue())
             + String.format("%02d", now.getDayOfMonth())
             + String.format("%02d", now.getHour())
             + String.format("%02d", now.getMinute())
-            + String.format("%02d", now.getSecond());
+            + String.format("%02d", now.getSecond())
+            + uuidAsString.substring(0, 2).toUpperCase();
         if (voucherRepository.existsByVoucherNo(generatedVoucherNo)) {
             throw new RuntimeException();
         }

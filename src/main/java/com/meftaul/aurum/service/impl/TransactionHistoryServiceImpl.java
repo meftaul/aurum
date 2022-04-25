@@ -1,8 +1,12 @@
 package com.meftaul.aurum.service.impl;
 
+import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.service.TransactionHistoryService;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
+import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +28,12 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
 
     private final TransactionHistoryRepository transactionHistoryRepository;
 
-    public TransactionHistoryServiceImpl(TransactionHistoryRepository transactionHistoryRepository) {
+    private final VoucherRepository voucherRepository;
+
+    public TransactionHistoryServiceImpl(TransactionHistoryRepository transactionHistoryRepository,
+                                         VoucherRepository voucherRepository) {
         this.transactionHistoryRepository = transactionHistoryRepository;
+        this.voucherRepository = voucherRepository;
     }
 
     /**
@@ -37,7 +45,34 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
     @Override
     public TransactionHistory save(TransactionHistory transactionHistory) {
         log.debug("Request to save TransactionHistory : {}", transactionHistory);
-        return transactionHistoryRepository.save(transactionHistory);
+
+        Voucher voucher = voucherRepository.findByVoucherNo(transactionHistory.getVoucherNo());
+
+        if (voucher == null) {
+            throw new BadRequestAlertException("Invalid voucher.", "transactionHistory", "invalidVoucher");
+        }
+
+        TransactionHistory rcvHistory =
+            transactionHistoryRepository.findByVoucherNoAndTag(transactionHistory.getVoucherNo(), TransactionStatus.RECEIVE);
+
+        TransactionHistory discountHistory =
+            transactionHistoryRepository.findByVoucherNoAndTag(transactionHistory.getVoucherNo(), TransactionStatus.DISCOUNT);
+
+        if (transactionHistory.getAmount().compareTo(rcvHistory.getAmount()) == 1) {
+            throw new BadRequestAlertException("Invalid amount.", "transactionHistory", "invalidAmount");
+        }
+
+        rcvHistory.setAmount(rcvHistory.getAmount().add(discountHistory.getAmount()).subtract(transactionHistory.getAmount()));
+        transactionHistoryRepository.save(rcvHistory);
+
+        discountHistory.setAmount(transactionHistory.getAmount());
+        transactionHistoryRepository.save(discountHistory);
+
+        voucher.setDisountAmount(discountHistory.getAmount());
+        voucher.setTotalPayableAmount(rcvHistory.getAmount());
+        voucherRepository.save(voucher);
+
+        return discountHistory;
     }
 
     /**
