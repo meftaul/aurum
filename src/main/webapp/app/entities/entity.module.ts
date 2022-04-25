@@ -48,7 +48,7 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
       {
         path: 'voucher',
         data: {
-          authorities: ['ROLE_ADMIN']
+          authorities: ['ROLE_ADMIN', 'ROLE_USER']
         },
         canActivate: [UserRouteAccessService],
         loadChildren: () => import('./voucher/voucher.module').then(m => m.AurumVoucherModule)
