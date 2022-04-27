@@ -21,7 +21,7 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 
-const EXTRA_CHARGE_FOR_PER_GRAM: number = 1;
+const EXTRA_CHARGE_FOR_PER_GRAM = 1;
 const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const ANA_TO_GRAM = 0.72898828125;
 // const ROTTI_TO_GRAM = 0.121498046875;
@@ -60,6 +60,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   karatParcentDifference = 0;
 
   eventSubscriber: Subscription;
+  loading = false;
 
   searchCategories: any[] = [{ value: 'phone', viewValue: 'Phone Number' }, { value: 'id', viewValue: 'Customer ID' }];
 
@@ -520,9 +521,15 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   makePayment() {
     // add report/service charge to aurumService's first item
+    if (this.loading === true) {
+      alert('Your have one pending request. Please wait few moments.');
+      return;
+    }
+    this.loading = true;
 
     if (+this.voucherForm.controls.paidAmount.value > this.payableTotalAmount) {
       this.jhiAlertService.error('Paid amount can not be greater than payable amount');
+      this.loading = false;
       return;
     }
 
@@ -555,18 +562,18 @@ export class TransactionComponent implements OnInit, OnDestroy {
     customVoucherDto.paidAmount = +this.voucherForm.controls.paidAmount.value;
 
     // window.print();
-
     this.transactionService.create(customVoucherDto).subscribe(
       data => {
         // method return Voucher not CustomVoucher
         this.savedVoucherNumber = data.body.voucherNo;
         this.resetVoucherForm();
         this.jhiAlertService.success('Transaction completed with voucher number '.concat(this.savedVoucherNumber));
-
+        this.loading = false;
         this.router.navigate(['/invoice', this.savedVoucherNumber]);
       },
       error => {
-        this.jhiAlertService.error('Error in saving voucher. ');
+        alert('Error in saving voucher. Please try again.');
+        this.loading = false;
       }
     );
   }

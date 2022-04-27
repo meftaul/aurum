@@ -84,7 +84,13 @@ public class CustomVoucherService {
         Voucher voucher = voucherDto.getVoucher();
 
         //generate voucher number
-        voucher.setVoucherNo(getVoucherNumber(String.valueOf(voucher.getCustomerId())));
+        String generatedVoucherNo = getVoucherNumber();
+
+        if (voucherRepository.existsByVoucherNo(generatedVoucherNo)) {
+            throw new RuntimeException();
+        }
+
+        voucher.setVoucherNo(generatedVoucherNo);
         voucher.setDateCreated(Instant.now());
 
 
@@ -181,7 +187,7 @@ public class CustomVoucherService {
 
     }
 
-    private String getVoucherNumber(String userId) {
+    private String getVoucherNumber() {
         LocalDateTime now = LocalDateTime.now();
         /*Instant instant = today.atStartOfDay().toInstant(ZoneOffset.UTC);*/
         /*Instant now = Instant.now();*/
@@ -192,14 +198,11 @@ public class CustomVoucherService {
 
         /*Long todayCount = this.voucherRepository.countByDateCreatedAfter(instant) + 1;*/
         UUID uuid = UUID.randomUUID();
-        String uuidAsString = uuid.toString();
+        String uuidAsString = uuid.toString().replace("-","");
         String generatedVoucherNo = String.valueOf(now.getYear() % 100)
             + String.format("%02d", now.getMonthValue())
             + String.format("%02d", now.getDayOfMonth())
-            + String.format("%02d", now.getHour())
-            + String.format("%02d", now.getMinute())
-            + String.format("%02d", now.getSecond())
-            + uuidAsString.substring(0, 2).toUpperCase();
+            + uuidAsString.substring(0, 10).toUpperCase();
         if (voucherRepository.existsByVoucherNo(generatedVoucherNo)) {
             throw new RuntimeException();
         }
