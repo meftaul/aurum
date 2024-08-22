@@ -62,7 +62,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   eventSubscriber: Subscription;
   loading = false;
 
-  searchCategories: any[] = [{ value: 'phone', viewValue: 'Phone Number' }, { value: 'id', viewValue: 'Customer ID' }];
+  searchCategories: any[] = [{ value: 'id', viewValue: 'Customer ID' }, { value: 'phone', viewValue: 'Phone Number' }];
 
   itemNames: any[] = [
     { value: 'Gold X-Ray', viewValue: 'Gold X-Ray' },
@@ -355,11 +355,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
 
     const weightTemp = this.aurumServiceForm.controls.weight.value ? +this.aurumServiceForm.controls.weight.value : 0;
-    if (weightTemp <= 116) {
+    if (weightTemp <= 100) {
       this.selectedServiceCharge = this.rateTypePriceMap.get(event);
       this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
     } else {
-      const extraWeightToCharge = +(weightTemp % 116).toFixed(2);
+      const extraWeightToCharge = +(weightTemp % 100).toFixed(2);
       this.selectedServiceCharge = this.rateTypePriceMap.get(event) + extraWeightToCharge;
       this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
     }
@@ -599,7 +599,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       /* eslint-enable no-console */
       if (data.body && data.body.length !== 0) {
         data.body.map(karat => {
-          this.karatList = [...this.karatList, { value: karat.karatType, viewValue: karat.karatType + '(' + karat.purityPercent + '%)' }];
+          this.karatList = [...this.karatList, { value: karat.karatType, viewValue: karat.karatType }];
           this.karatTypePercentMap.set(karat.karatType, karat.purityPercent);
         });
       }
@@ -655,11 +655,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     const serviceTypeTemp = this.aurumServiceForm.controls.serviceType.value;
     if (serviceTypeTemp) {
-      if (gramValue <= 116) {
+      if (gramValue <= 100) {
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp);
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       } else if (serviceTypeTemp === 'Normal Melting' || serviceTypeTemp === 'Calculated Melting') {
-        const extraWeightToCharge: number = +(+(gramValue - 116).toFixed(2) * EXTRA_CHARGE_FOR_PER_GRAM).toFixed(2);
+        const extraWeightToCharge: number = +(+(gramValue - 100).toFixed(2) * EXTRA_CHARGE_FOR_PER_GRAM).toFixed(2);
         this.selectedServiceCharge = this.rateTypePriceMap.get(serviceTypeTemp) + extraWeightToCharge;
         this.aurumServiceForm.controls.rate.setValue(this.selectedServiceCharge);
       }

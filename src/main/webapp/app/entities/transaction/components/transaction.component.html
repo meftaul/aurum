@@ -117,7 +117,7 @@
                         </mat-form-field>
 
                         <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
-                            <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity" readonly>
+                            <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity">
                             <mat-error
                                 *ngIf="aurumServiceForm.controls['alloyQuantity'].errors && !aurumServiceForm.controls['alloyQuantity'].pristine">
                                 <div [hidden]="!aurumServiceForm.controls['alloyQuantity'].errors.required">Alloy

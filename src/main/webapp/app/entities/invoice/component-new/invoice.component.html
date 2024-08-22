@@ -36,9 +36,12 @@
                             <td colspan="2" class="cusBorderStyle"><b>ID:</b> {{customer?.customId}}</td>
                             <td colspan="2" class="cusBorderStyle">{{ voucher?.deliveryDate | date:'medium'}}</td>
                         </tr>
+                        <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Hallmark'">
+                            <td colspan="2" class="cusBorderStyle"><b>Karat Stamp:</b> {{aurumServices[0]?.hallMarkedText}}</td>
+                            <td colspan="4" class="cusBorderStyle">{{voucher?.voucherNo}}</td>
+                        </tr>
                         <tr class="cusBorderStyle">
-                            <td colspan="2" class="cusBorderStyle"><b>Shop Name:</b> {{customer?.reference}}</td>
-                            <td colspan="2" class="cusBorderStyle">{{voucher?.voucherNo}}</td>
+                            <td colspan="4" class="cusBorderStyle"><b>Shop Name:</b> {{customer?.reference}}</td>
                         </tr>
                         <tr class="cusBorderStyle">
                             <td colspan="4" class="cusBorderStyle">
@@ -55,10 +58,6 @@
                         <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'X-Ray'">
                             <td colspan="2" class="cusBorderStyle"><b>Free Check:</b> {{aurumServices[0]?.freeCheck}}</td>
                             <td colspan="2" class="cusBorderStyle"><b>Weight:</b> </td>
-                        </tr>
-
-                        <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Hallmark'">
-                            <td colspan="4" class="cusBorderStyle"><b>Karat Stamp:</b> {{aurumServices[0]?.hallMarkedText}}</td>
                         </tr>
 
                         <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">
@@ -104,8 +103,8 @@
                     <ul style="margin-top: -5px;">
                         <li *ngIf="showXrayNote || showCalculatedMeltingNote">X-ray result maximum difference ± 0.30%</li>
                         <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
-                            so Maitree is not
-                            responsible for this purity. Maitree Gold is not responsible for any lost/stolen gold or gold
+                            so Narayanganj is not
+                            responsible for this purity. Narayanganj Gold is not responsible for any lost/stolen gold or gold
                             ornaments.</li>
                     </ul>
                 </div>
@@ -168,9 +167,12 @@
                                 <td colspan="2" class="cusBorderStyle"><b>ID:</b> {{customer?.customId}}</td>
                                 <td colspan="2" class="cusBorderStyle">{{ voucher?.deliveryDate | date:'medium'}}</td>
                             </tr>
-                            <tr class="cusBorderStyle">
-                                <td colspan="2" class="cusBorderStyle"><b>Shop Name:</b> {{customer?.reference}}</td>
+                            <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Hallmark'">
+                                <td colspan="2" class="cusBorderStyle"><b>Karat Stamp:</b> {{aurumServices[0]?.hallMarkedText}}</td>
                                 <td colspan="2" class="cusBorderStyle">{{voucher?.voucherNo}}</td>
+                            </tr>
+                            <tr class="cusBorderStyle">
+                                <td colspan="4" class="cusBorderStyle"><b>Shop Name:</b> {{customer?.reference}}</td>
                             </tr>
                             <tr class="cusBorderStyle">
                                 <td colspan="4" class="cusBorderStyle">
@@ -187,10 +189,6 @@
                             <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'X-Ray'">
                                 <td colspan="2" class="cusBorderStyle"><b>Free Check:</b> {{aurumServices[0]?.freeCheck}}</td>
                                 <td colspan="2" class="cusBorderStyle"><b>Weight:</b> </td>
-                            </tr>
-
-                            <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Hallmark'">
-                                <td colspan="4" class="cusBorderStyle"><b>Karat Stamp:</b> {{aurumServices[0]?.hallMarkedText}}</td>
                             </tr>
 
                             <tr class="cusBorderStyle" *ngIf="invoiceTitle === 'Calculated Melting' || invoiceTitle === 'Normal Melting'">
@@ -237,8 +235,8 @@
                         <ul>
                             <li *ngIf="showXrayNote || showCalculatedMeltingNote">X-ray result maximum difference ± 0.30%</li>
                             <li *ngIf="showMeltingNote">Copper and Silver haven't used. Gold Purity is not tasted by Maitres Gold,
-                                so Maitree is not
-                                responsible for this purity. Maitree Gold is not responsible for any lost/stolen gold or gold
+                                so Narayanganj is not
+                                responsible for this purity. Narayanganj Gold is not responsible for any lost/stolen gold or gold
                                 ornaments.</li>
                         </ul>
                     </div>
