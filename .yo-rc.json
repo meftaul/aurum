@@ -27,7 +27,7 @@
     "clientPackageManager": "npm",
     "clientFramework": "angularX",
     "clientTheme": "flatly",
-    "clientThemeVariant": "dark",
+    "clientThemeVariant": "light",
     "testFrameworks": [],
     "jhiPrefix": "jhi",
     "entitySuffix": "",

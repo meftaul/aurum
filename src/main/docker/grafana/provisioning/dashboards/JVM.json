@@ -3650,7 +3650,7 @@
   ],
   "refresh": "10s",
   "schemaVersion": 18,
-  "style": "dark",
+  "style": "light",
   "tags": [],
   "templating": {
     "list": [
