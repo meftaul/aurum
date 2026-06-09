@@ -5,20 +5,12 @@ import { AurumSharedModule } from 'app/shared/shared.module';
 import { VoucherComponent } from './voucher.component';
 import { VoucherDetailComponent } from './voucher-detail.component';
 import { VoucherUpdateComponent } from './voucher-update.component';
-import { VoucherDeletePopupComponent, VoucherDeleteDialogComponent } from './voucher-delete-dialog.component';
-import { voucherRoute, voucherPopupRoute } from './voucher.route';
-
-const ENTITY_STATES = [...voucherRoute, ...voucherPopupRoute];
+import { VoucherDeleteDialogComponent } from './voucher-delete-dialog.component';
+import { voucherRoute } from './voucher.route';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES)],
-  declarations: [
-    VoucherComponent,
-    VoucherDetailComponent,
-    VoucherUpdateComponent,
-    VoucherDeleteDialogComponent,
-    VoucherDeletePopupComponent
-  ],
-  entryComponents: [VoucherDeleteDialogComponent]
+  imports: [AurumSharedModule, RouterModule.forChild(voucherRoute)],
+  declarations: [VoucherComponent, VoucherDetailComponent, VoucherUpdateComponent, VoucherDeleteDialogComponent],
+  entryComponents: [VoucherDeleteDialogComponent],
 })
 export class AurumVoucherModule {}

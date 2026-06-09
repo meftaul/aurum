@@ -28,24 +28,12 @@ public class VoucherServiceImpl implements VoucherService {
         this.voucherRepository = voucherRepository;
     }
 
-    /**
-     * Save a voucher.
-     *
-     * @param voucher the entity to save.
-     * @return the persisted entity.
-     */
     @Override
     public Voucher save(Voucher voucher) {
         log.debug("Request to save Voucher : {}", voucher);
         return voucherRepository.save(voucher);
     }
 
-    /**
-     * Get all the vouchers.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<Voucher> findAll(Pageable pageable) {
@@ -54,12 +42,6 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
 
-    /**
-     * Get one voucher by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Voucher> findOne(Long id) {
@@ -67,11 +49,6 @@ public class VoucherServiceImpl implements VoucherService {
         return voucherRepository.findById(id);
     }
 
-    /**
-     * Delete the voucher by id.
-     *
-     * @param id the id of the entity.
-     */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Voucher : {}", id);

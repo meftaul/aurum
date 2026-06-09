@@ -18,7 +18,7 @@ describe('Component Tests', () => {
       TestBed.configureTestingModule({
         imports: [AurumTestModule],
         declarations: [AurumServiceUpdateComponent],
-        providers: [FormBuilder]
+        providers: [FormBuilder],
       })
         .overrideTemplate(AurumServiceUpdateComponent, '')
         .compileComponents();

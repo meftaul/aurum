@@ -2,30 +2,34 @@
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
             <h2 id="jhi-aurum-service-heading">Create or edit a Aurum Service</h2>
+
             <div>
                 <jhi-alert-error></jhi-alert-error>
-                <div class="form-group" [hidden]="!editForm.get('id').value">
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
                     <label for="id">ID</label>
-                    <input type="text" class="form-control" id="id" name="id" formControlName="id"
-                        readonly />
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_serviceType">Service Type</label>
                     <input type="text" class="form-control" name="serviceType" id="field_serviceType"
                            formControlName="serviceType"/>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_itemName">Item Name</label>
                     <input type="text" class="form-control" name="itemName" id="field_itemName"
                            formControlName="itemName"/>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_quantity">Quantity</label>
                     <input type="number" class="form-control" name="quantity" id="field_quantity"
                            formControlName="quantity"/>
-                    <div *ngIf="editForm.get('quantity').invalid && (editForm.get('quantity').dirty || editForm.get('quantity').touched)">
+                    <div *ngIf="editForm.get('quantity')!.invalid && (editForm.get('quantity')!.dirty || editForm.get('quantity')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('quantity').errors.min">
+                               *ngIf="editForm.get('quantity')?.errors?.min">
                             This field should be at least 0.
                         </small>
                         <small class="form-text text-danger"
@@ -34,13 +38,14 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_weight">Weight</label>
                     <input type="number" class="form-control" name="weight" id="field_weight"
                            formControlName="weight"/>
-                    <div *ngIf="editForm.get('weight').invalid && (editForm.get('weight').dirty || editForm.get('weight').touched)">
+                    <div *ngIf="editForm.get('weight')!.invalid && (editForm.get('weight')!.dirty || editForm.get('weight')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('weight').errors.min">
+                               *ngIf="editForm.get('weight')?.errors?.min">
                             This field should be at least 0.
                         </small>
                         <small class="form-text text-danger"
@@ -49,13 +54,14 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_rate">Rate</label>
                     <input type="number" class="form-control" name="rate" id="field_rate"
                            formControlName="rate"/>
-                    <div *ngIf="editForm.get('rate').invalid && (editForm.get('rate').dirty || editForm.get('rate').touched)">
+                    <div *ngIf="editForm.get('rate')!.invalid && (editForm.get('rate')!.dirty || editForm.get('rate')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('rate').errors.min">
+                               *ngIf="editForm.get('rate')?.errors?.min">
                             This field should be at least 0.
                         </small>
                         <small class="form-text text-danger"
@@ -64,26 +70,31 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_amount">Amount</label>
                     <input type="number" class="form-control" name="amount" id="field_amount"
                            formControlName="amount"/>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_serviceName">Service Name</label>
                     <input type="text" class="form-control" name="serviceName" id="field_serviceName"
                            formControlName="serviceName"/>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_karatType">Karat Type</label>
                     <input type="text" class="form-control" name="karatType" id="field_karatType"
                            formControlName="karatType"/>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_expectedKaratType">Expected Karat Type</label>
                     <input type="text" class="form-control" name="expectedKaratType" id="field_expectedKaratType"
                            formControlName="expectedKaratType"/>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_addedAlloy">Added Alloy</label>
                     <select class="form-control" name="addedAlloy" formControlName="addedAlloy" id="field_addedAlloy">
@@ -92,13 +103,14 @@
                         <option value="CU">CU</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_alloyQuantity">Alloy Quantity</label>
                     <input type="number" class="form-control" name="alloyQuantity" id="field_alloyQuantity"
                            formControlName="alloyQuantity"/>
-                    <div *ngIf="editForm.get('alloyQuantity').invalid && (editForm.get('alloyQuantity').dirty || editForm.get('alloyQuantity').touched)">
+                    <div *ngIf="editForm.get('alloyQuantity')!.invalid && (editForm.get('alloyQuantity')!.dirty || editForm.get('alloyQuantity')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('alloyQuantity').errors.min">
+                               *ngIf="editForm.get('alloyQuantity')?.errors?.min">
                             This field should be at least 0.
                         </small>
                         <small class="form-text text-danger"
@@ -107,13 +119,14 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_serviceCharge">Service Charge</label>
                     <input type="number" class="form-control" name="serviceCharge" id="field_serviceCharge"
                            formControlName="serviceCharge"/>
-                    <div *ngIf="editForm.get('serviceCharge').invalid && (editForm.get('serviceCharge').dirty || editForm.get('serviceCharge').touched)">
+                    <div *ngIf="editForm.get('serviceCharge')!.invalid && (editForm.get('serviceCharge')!.dirty || editForm.get('serviceCharge')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('serviceCharge').errors.min">
+                               *ngIf="editForm.get('serviceCharge')?.errors?.min">
                             This field should be at least 0.
                         </small>
                         <small class="form-text text-danger"
@@ -122,13 +135,14 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_freeCheck">Free Check</label>
                     <input type="number" class="form-control" name="freeCheck" id="field_freeCheck"
                            formControlName="freeCheck"/>
-                    <div *ngIf="editForm.get('freeCheck').invalid && (editForm.get('freeCheck').dirty || editForm.get('freeCheck').touched)">
+                    <div *ngIf="editForm.get('freeCheck')!.invalid && (editForm.get('freeCheck')!.dirty || editForm.get('freeCheck')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('freeCheck').errors.min">
+                               *ngIf="editForm.get('freeCheck')?.errors?.min">
                             This field should be at least 0.
                         </small>
                         <small class="form-text text-danger"
@@ -137,11 +151,13 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_hallMarkedText">Hall Marked Text</label>
                     <input type="text" class="form-control" name="hallMarkedText" id="field_hallMarkedText"
                            formControlName="hallMarkedText"/>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" for="field_weightOfFreeCheck">Weight Of Free Check</label>
                     <input type="text" class="form-control" name="weightOfFreeCheck" id="field_weightOfFreeCheck"
@@ -152,16 +168,18 @@
                     <label class="form-control-label" for="field_voucher">Voucher</label>
                     <select class="form-control" id="field_voucher" name="voucher" formControlName="voucher">
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="voucherOption.id === editForm.get('voucher').value?.id ? editForm.get('voucher').value : voucherOption" *ngFor="let voucherOption of vouchers; trackBy: trackVoucherById">{{voucherOption.voucherNo}}</option>
+                        <option [ngValue]="voucherOption.id === editForm.get('voucher')!.value?.id ? editForm.get('voucher')!.value : voucherOption" *ngFor="let voucherOption of vouchers; trackBy: trackById">{{ voucherOption.voucherNo }}</option>
                     </select>
                 </div>
             </div>
+
             <div>
-                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
-                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span>Cancel</span>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
                 </button>
+
                 <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
-                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span>Save</span>
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
                 </button>
             </div>
         </form>

@@ -1,4 +1,5 @@
 package com.meftaul.aurum.domain;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -16,7 +17,7 @@ import com.meftaul.aurum.domain.enumeration.Alloy;
  */
 @Entity
 @Table(name = "aurum_service")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AurumService implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -78,10 +79,10 @@ public class AurumService implements Serializable {
     private String weightOfFreeCheck;
 
     @ManyToOne
-    @JsonIgnoreProperties("aurumServices")
+    @JsonIgnoreProperties(value = "aurumServices", allowSetters = true)
     private Voucher voucher;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -297,7 +298,7 @@ public class AurumService implements Serializable {
     public void setVoucher(Voucher voucher) {
         this.voucher = voucher;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -315,6 +316,7 @@ public class AurumService implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "AurumService{" +

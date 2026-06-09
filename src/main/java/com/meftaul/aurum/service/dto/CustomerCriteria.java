@@ -42,10 +42,10 @@ public class CustomerCriteria implements Serializable, Criteria {
 
     private StringFilter customId;
 
-    public CustomerCriteria(){
+    public CustomerCriteria() {
     }
 
-    public CustomerCriteria(CustomerCriteria other){
+    public CustomerCriteria(CustomerCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.firstName = other.firstName == null ? null : other.firstName.copy();
         this.lastName = other.lastName == null ? null : other.lastName.copy();
@@ -171,6 +171,7 @@ public class CustomerCriteria implements Serializable, Criteria {
         );
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "CustomerCriteria{" +

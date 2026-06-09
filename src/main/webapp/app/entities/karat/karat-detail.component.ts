@@ -5,20 +5,18 @@ import { IKarat } from 'app/shared/model/karat.model';
 
 @Component({
   selector: 'jhi-karat-detail',
-  templateUrl: './karat-detail.component.html'
+  templateUrl: './karat-detail.component.html',
 })
 export class KaratDetailComponent implements OnInit {
-  karat: IKarat;
+  karat: IKarat | null = null;
 
   constructor(protected activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(({ karat }) => {
-      this.karat = karat;
-    });
+  ngOnInit(): void {
+    this.activatedRoute.data.subscribe(({ karat }) => (this.karat = karat));
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 }

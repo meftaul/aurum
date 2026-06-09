@@ -1,6 +1,5 @@
 import { TestBed, getTestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { take, map } from 'rxjs/operators';
 import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { VoucherService } from 'app/entities/voucher/voucher.service';
@@ -13,13 +12,14 @@ describe('Service Tests', () => {
     let service: VoucherService;
     let httpMock: HttpTestingController;
     let elemDefault: IVoucher;
-    let expectedResult;
+    let expectedResult: IVoucher | IVoucher[] | boolean | null;
     let currentDate: moment.Moment;
+
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule]
+        imports: [HttpClientTestingModule],
       });
-      expectedResult = {};
+      expectedResult = null;
       injector = getTestBed();
       service = injector.get(VoucherService);
       httpMock = injector.get(HttpTestingController);
@@ -33,18 +33,16 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             dateCreated: currentDate.format(DATE_TIME_FORMAT),
-            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT),
           },
           elemDefault
         );
-        service
-          .find(123)
-          .pipe(take(1))
-          .subscribe(resp => (expectedResult = resp));
+
+        service.find(123).subscribe(resp => (expectedResult = resp.body));
 
         const req = httpMock.expectOne({ method: 'GET' });
         req.flush(returnedFromService);
-        expect(expectedResult).toMatchObject({ body: elemDefault });
+        expect(expectedResult).toMatchObject(elemDefault);
       });
 
       it('should create a Voucher', () => {
@@ -52,24 +50,24 @@ describe('Service Tests', () => {
           {
             id: 0,
             dateCreated: currentDate.format(DATE_TIME_FORMAT),
-            deliveryDate: currentDate.format(DATE_TIME_FORMAT)
+            deliveryDate: currentDate.format(DATE_TIME_FORMAT),
           },
           elemDefault
         );
+
         const expected = Object.assign(
           {
             dateCreated: currentDate,
-            deliveryDate: currentDate
+            deliveryDate: currentDate,
           },
           returnedFromService
         );
-        service
-          .create(new Voucher(null))
-          .pipe(take(1))
-          .subscribe(resp => (expectedResult = resp));
+
+        service.create(new Voucher()).subscribe(resp => (expectedResult = resp.body));
+
         const req = httpMock.expectOne({ method: 'POST' });
         req.flush(returnedFromService);
-        expect(expectedResult).toMatchObject({ body: expected });
+        expect(expectedResult).toMatchObject(expected);
       });
 
       it('should update a Voucher', () => {
@@ -86,7 +84,7 @@ describe('Service Tests', () => {
             addedBy: 'BBBBBB',
             boxNumber: 'BBBBBB',
             deliveryDate: currentDate.format(DATE_TIME_FORMAT),
-            deliveryStatus: true
+            deliveryStatus: true,
           },
           elemDefault
         );
@@ -94,17 +92,16 @@ describe('Service Tests', () => {
         const expected = Object.assign(
           {
             dateCreated: currentDate,
-            deliveryDate: currentDate
+            deliveryDate: currentDate,
           },
           returnedFromService
         );
-        service
-          .update(expected)
-          .pipe(take(1))
-          .subscribe(resp => (expectedResult = resp));
+
+        service.update(expected).subscribe(resp => (expectedResult = resp.body));
+
         const req = httpMock.expectOne({ method: 'PUT' });
         req.flush(returnedFromService);
-        expect(expectedResult).toMatchObject({ body: expected });
+        expect(expectedResult).toMatchObject(expected);
       });
 
       it('should return a list of Voucher', () => {
@@ -121,24 +118,21 @@ describe('Service Tests', () => {
             addedBy: 'BBBBBB',
             boxNumber: 'BBBBBB',
             deliveryDate: currentDate.format(DATE_TIME_FORMAT),
-            deliveryStatus: true
+            deliveryStatus: true,
           },
           elemDefault
         );
+
         const expected = Object.assign(
           {
             dateCreated: currentDate,
-            deliveryDate: currentDate
+            deliveryDate: currentDate,
           },
           returnedFromService
         );
-        service
-          .query(expected)
-          .pipe(
-            take(1),
-            map(resp => resp.body)
-          )
-          .subscribe(body => (expectedResult = body));
+
+        service.query().subscribe(resp => (expectedResult = resp.body));
+
         const req = httpMock.expectOne({ method: 'GET' });
         req.flush([returnedFromService]);
         httpMock.verify();

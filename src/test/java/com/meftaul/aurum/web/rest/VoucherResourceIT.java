@@ -5,30 +5,24 @@ import com.meftaul.aurum.domain.Voucher;
 import com.meftaul.aurum.domain.AurumService;
 import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.service.VoucherService;
-import com.meftaul.aurum.web.rest.errors.ExceptionTranslator;
 import com.meftaul.aurum.service.dto.VoucherCriteria;
 import com.meftaul.aurum.service.VoucherQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
-
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static com.meftaul.aurum.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -39,6 +33,8 @@ import com.meftaul.aurum.domain.enumeration.VoucherStatus;
  * Integration tests for the {@link VoucherResource} REST controller.
  */
 @SpringBootTest(classes = AurumApp.class)
+@AutoConfigureMockMvc
+@WithMockUser
 public class VoucherResourceIT {
 
     private static final String DEFAULT_VOUCHER_NO = "AAAAAAAAAA";
@@ -69,7 +65,6 @@ public class VoucherResourceIT {
 
     private static final Instant DEFAULT_DATE_CREATED = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_DATE_CREATED = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-    private static final Instant SMALLER_DATE_CREATED = Instant.ofEpochMilli(-1L);
 
     private static final String DEFAULT_ADDED_BY = "AAAAAAAAAA";
     private static final String UPDATED_ADDED_BY = "BBBBBBBBBB";
@@ -79,7 +74,6 @@ public class VoucherResourceIT {
 
     private static final Instant DEFAULT_DELIVERY_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_DELIVERY_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-    private static final Instant SMALLER_DELIVERY_DATE = Instant.ofEpochMilli(-1L);
 
     private static final Boolean DEFAULT_DELIVERY_STATUS = false;
     private static final Boolean UPDATED_DELIVERY_STATUS = true;
@@ -94,35 +88,12 @@ public class VoucherResourceIT {
     private VoucherQueryService voucherQueryService;
 
     @Autowired
-    private MappingJackson2HttpMessageConverter jacksonMessageConverter;
-
-    @Autowired
-    private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
-
-    @Autowired
-    private ExceptionTranslator exceptionTranslator;
-
-    @Autowired
     private EntityManager em;
 
     @Autowired
-    private Validator validator;
-
     private MockMvc restVoucherMockMvc;
 
     private Voucher voucher;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        final VoucherResource voucherResource = new VoucherResource(voucherService, voucherQueryService);
-        this.restVoucherMockMvc = MockMvcBuilders.standaloneSetup(voucherResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-    }
 
     /**
      * Create an entity for this test.
@@ -178,10 +149,9 @@ public class VoucherResourceIT {
     @Transactional
     public void createVoucher() throws Exception {
         int databaseSizeBeforeCreate = voucherRepository.findAll().size();
-
         // Create the Voucher
         restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isCreated());
 
@@ -213,7 +183,7 @@ public class VoucherResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
@@ -232,8 +202,9 @@ public class VoucherResourceIT {
 
         // Create the Voucher, which fails.
 
+
         restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
@@ -250,8 +221,9 @@ public class VoucherResourceIT {
 
         // Create the Voucher, which fails.
 
+
         restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
@@ -268,8 +240,9 @@ public class VoucherResourceIT {
 
         // Create the Voucher, which fails.
 
+
         restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
@@ -286,8 +259,9 @@ public class VoucherResourceIT {
 
         // Create the Voucher, which fails.
 
+
         restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
@@ -304,9 +278,9 @@ public class VoucherResourceIT {
         // Get all the voucherList
         restVoucherMockMvc.perform(get("/api/vouchers?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(voucher.getId().intValue())))
-            .andExpect(jsonPath("$.[*].voucherNo").value(hasItem(DEFAULT_VOUCHER_NO.toString())))
+            .andExpect(jsonPath("$.[*].voucherNo").value(hasItem(DEFAULT_VOUCHER_NO)))
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
             .andExpect(jsonPath("$.[*].calculatedTotalAmount").value(hasItem(DEFAULT_CALCULATED_TOTAL_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].vat").value(hasItem(DEFAULT_VAT.intValue())))
@@ -314,8 +288,8 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].totalPayableAmount").value(hasItem(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
-            .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY.toString())))
-            .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER.toString())))
+            .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)))
+            .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER)))
             .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())))
             .andExpect(jsonPath("$.[*].deliveryStatus").value(hasItem(DEFAULT_DELIVERY_STATUS.booleanValue())));
     }
@@ -329,9 +303,9 @@ public class VoucherResourceIT {
         // Get the voucher
         restVoucherMockMvc.perform(get("/api/vouchers/{id}", voucher.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(voucher.getId().intValue()))
-            .andExpect(jsonPath("$.voucherNo").value(DEFAULT_VOUCHER_NO.toString()))
+            .andExpect(jsonPath("$.voucherNo").value(DEFAULT_VOUCHER_NO))
             .andExpect(jsonPath("$.customerId").value(DEFAULT_CUSTOMER_ID.intValue()))
             .andExpect(jsonPath("$.calculatedTotalAmount").value(DEFAULT_CALCULATED_TOTAL_AMOUNT.intValue()))
             .andExpect(jsonPath("$.vat").value(DEFAULT_VAT.intValue()))
@@ -339,11 +313,31 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.totalPayableAmount").value(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue()))
             .andExpect(jsonPath("$.dateCreated").value(DEFAULT_DATE_CREATED.toString()))
-            .andExpect(jsonPath("$.addedBy").value(DEFAULT_ADDED_BY.toString()))
-            .andExpect(jsonPath("$.boxNumber").value(DEFAULT_BOX_NUMBER.toString()))
+            .andExpect(jsonPath("$.addedBy").value(DEFAULT_ADDED_BY))
+            .andExpect(jsonPath("$.boxNumber").value(DEFAULT_BOX_NUMBER))
             .andExpect(jsonPath("$.deliveryDate").value(DEFAULT_DELIVERY_DATE.toString()))
             .andExpect(jsonPath("$.deliveryStatus").value(DEFAULT_DELIVERY_STATUS.booleanValue()));
     }
+
+
+    @Test
+    @Transactional
+    public void getVouchersByIdFiltering() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        Long id = voucher.getId();
+
+        defaultVoucherShouldBeFound("id.equals=" + id);
+        defaultVoucherShouldNotBeFound("id.notEquals=" + id);
+
+        defaultVoucherShouldBeFound("id.greaterThanOrEqual=" + id);
+        defaultVoucherShouldNotBeFound("id.greaterThan=" + id);
+
+        defaultVoucherShouldBeFound("id.lessThanOrEqual=" + id);
+        defaultVoucherShouldNotBeFound("id.lessThan=" + id);
+    }
+
 
     @Test
     @Transactional
@@ -356,6 +350,19 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where voucherNo equals to UPDATED_VOUCHER_NO
         defaultVoucherShouldNotBeFound("voucherNo.equals=" + UPDATED_VOUCHER_NO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByVoucherNoIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where voucherNo not equals to DEFAULT_VOUCHER_NO
+        defaultVoucherShouldNotBeFound("voucherNo.notEquals=" + DEFAULT_VOUCHER_NO);
+
+        // Get all the voucherList where voucherNo not equals to UPDATED_VOUCHER_NO
+        defaultVoucherShouldBeFound("voucherNo.notEquals=" + UPDATED_VOUCHER_NO);
     }
 
     @Test
@@ -383,6 +390,32 @@ public class VoucherResourceIT {
         // Get all the voucherList where voucherNo is null
         defaultVoucherShouldNotBeFound("voucherNo.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllVouchersByVoucherNoContainsSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where voucherNo contains DEFAULT_VOUCHER_NO
+        defaultVoucherShouldBeFound("voucherNo.contains=" + DEFAULT_VOUCHER_NO);
+
+        // Get all the voucherList where voucherNo contains UPDATED_VOUCHER_NO
+        defaultVoucherShouldNotBeFound("voucherNo.contains=" + UPDATED_VOUCHER_NO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByVoucherNoNotContainsSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where voucherNo does not contain DEFAULT_VOUCHER_NO
+        defaultVoucherShouldNotBeFound("voucherNo.doesNotContain=" + DEFAULT_VOUCHER_NO);
+
+        // Get all the voucherList where voucherNo does not contain UPDATED_VOUCHER_NO
+        defaultVoucherShouldBeFound("voucherNo.doesNotContain=" + UPDATED_VOUCHER_NO);
+    }
+
 
     @Test
     @Transactional
@@ -395,6 +428,19 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where customerId equals to UPDATED_CUSTOMER_ID
         defaultVoucherShouldNotBeFound("customerId.equals=" + UPDATED_CUSTOMER_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByCustomerIdIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where customerId not equals to DEFAULT_CUSTOMER_ID
+        defaultVoucherShouldNotBeFound("customerId.notEquals=" + DEFAULT_CUSTOMER_ID);
+
+        // Get all the voucherList where customerId not equals to UPDATED_CUSTOMER_ID
+        defaultVoucherShouldBeFound("customerId.notEquals=" + UPDATED_CUSTOMER_ID);
     }
 
     @Test
@@ -491,6 +537,19 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
+    public void getAllVouchersByCalculatedTotalAmountIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where calculatedTotalAmount not equals to DEFAULT_CALCULATED_TOTAL_AMOUNT
+        defaultVoucherShouldNotBeFound("calculatedTotalAmount.notEquals=" + DEFAULT_CALCULATED_TOTAL_AMOUNT);
+
+        // Get all the voucherList where calculatedTotalAmount not equals to UPDATED_CALCULATED_TOTAL_AMOUNT
+        defaultVoucherShouldBeFound("calculatedTotalAmount.notEquals=" + UPDATED_CALCULATED_TOTAL_AMOUNT);
+    }
+
+    @Test
+    @Transactional
     public void getAllVouchersByCalculatedTotalAmountIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
@@ -579,6 +638,19 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where vat equals to UPDATED_VAT
         defaultVoucherShouldNotBeFound("vat.equals=" + UPDATED_VAT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByVatIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where vat not equals to DEFAULT_VAT
+        defaultVoucherShouldNotBeFound("vat.notEquals=" + DEFAULT_VAT);
+
+        // Get all the voucherList where vat not equals to UPDATED_VAT
+        defaultVoucherShouldBeFound("vat.notEquals=" + UPDATED_VAT);
     }
 
     @Test
@@ -675,6 +747,19 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
+    public void getAllVouchersByDisountAmountIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where disountAmount not equals to DEFAULT_DISOUNT_AMOUNT
+        defaultVoucherShouldNotBeFound("disountAmount.notEquals=" + DEFAULT_DISOUNT_AMOUNT);
+
+        // Get all the voucherList where disountAmount not equals to UPDATED_DISOUNT_AMOUNT
+        defaultVoucherShouldBeFound("disountAmount.notEquals=" + UPDATED_DISOUNT_AMOUNT);
+    }
+
+    @Test
+    @Transactional
     public void getAllVouchersByDisountAmountIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
@@ -767,6 +852,19 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
+    public void getAllVouchersByStatusIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where status not equals to DEFAULT_STATUS
+        defaultVoucherShouldNotBeFound("status.notEquals=" + DEFAULT_STATUS);
+
+        // Get all the voucherList where status not equals to UPDATED_STATUS
+        defaultVoucherShouldBeFound("status.notEquals=" + UPDATED_STATUS);
+    }
+
+    @Test
+    @Transactional
     public void getAllVouchersByStatusIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
@@ -802,6 +900,19 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where totalPayableAmount equals to UPDATED_TOTAL_PAYABLE_AMOUNT
         defaultVoucherShouldNotBeFound("totalPayableAmount.equals=" + UPDATED_TOTAL_PAYABLE_AMOUNT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByTotalPayableAmountIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where totalPayableAmount not equals to DEFAULT_TOTAL_PAYABLE_AMOUNT
+        defaultVoucherShouldNotBeFound("totalPayableAmount.notEquals=" + DEFAULT_TOTAL_PAYABLE_AMOUNT);
+
+        // Get all the voucherList where totalPayableAmount not equals to UPDATED_TOTAL_PAYABLE_AMOUNT
+        defaultVoucherShouldBeFound("totalPayableAmount.notEquals=" + UPDATED_TOTAL_PAYABLE_AMOUNT);
     }
 
     @Test
@@ -898,6 +1009,19 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
+    public void getAllVouchersByDateCreatedIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where dateCreated not equals to DEFAULT_DATE_CREATED
+        defaultVoucherShouldNotBeFound("dateCreated.notEquals=" + DEFAULT_DATE_CREATED);
+
+        // Get all the voucherList where dateCreated not equals to UPDATED_DATE_CREATED
+        defaultVoucherShouldBeFound("dateCreated.notEquals=" + UPDATED_DATE_CREATED);
+    }
+
+    @Test
+    @Transactional
     public void getAllVouchersByDateCreatedIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
@@ -937,6 +1061,19 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
+    public void getAllVouchersByAddedByIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where addedBy not equals to DEFAULT_ADDED_BY
+        defaultVoucherShouldNotBeFound("addedBy.notEquals=" + DEFAULT_ADDED_BY);
+
+        // Get all the voucherList where addedBy not equals to UPDATED_ADDED_BY
+        defaultVoucherShouldBeFound("addedBy.notEquals=" + UPDATED_ADDED_BY);
+    }
+
+    @Test
+    @Transactional
     public void getAllVouchersByAddedByIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
@@ -960,6 +1097,32 @@ public class VoucherResourceIT {
         // Get all the voucherList where addedBy is null
         defaultVoucherShouldNotBeFound("addedBy.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllVouchersByAddedByContainsSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where addedBy contains DEFAULT_ADDED_BY
+        defaultVoucherShouldBeFound("addedBy.contains=" + DEFAULT_ADDED_BY);
+
+        // Get all the voucherList where addedBy contains UPDATED_ADDED_BY
+        defaultVoucherShouldNotBeFound("addedBy.contains=" + UPDATED_ADDED_BY);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByAddedByNotContainsSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where addedBy does not contain DEFAULT_ADDED_BY
+        defaultVoucherShouldNotBeFound("addedBy.doesNotContain=" + DEFAULT_ADDED_BY);
+
+        // Get all the voucherList where addedBy does not contain UPDATED_ADDED_BY
+        defaultVoucherShouldBeFound("addedBy.doesNotContain=" + UPDATED_ADDED_BY);
+    }
+
 
     @Test
     @Transactional
@@ -972,6 +1135,19 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where boxNumber equals to UPDATED_BOX_NUMBER
         defaultVoucherShouldNotBeFound("boxNumber.equals=" + UPDATED_BOX_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByBoxNumberIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where boxNumber not equals to DEFAULT_BOX_NUMBER
+        defaultVoucherShouldNotBeFound("boxNumber.notEquals=" + DEFAULT_BOX_NUMBER);
+
+        // Get all the voucherList where boxNumber not equals to UPDATED_BOX_NUMBER
+        defaultVoucherShouldBeFound("boxNumber.notEquals=" + UPDATED_BOX_NUMBER);
     }
 
     @Test
@@ -999,6 +1175,32 @@ public class VoucherResourceIT {
         // Get all the voucherList where boxNumber is null
         defaultVoucherShouldNotBeFound("boxNumber.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllVouchersByBoxNumberContainsSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where boxNumber contains DEFAULT_BOX_NUMBER
+        defaultVoucherShouldBeFound("boxNumber.contains=" + DEFAULT_BOX_NUMBER);
+
+        // Get all the voucherList where boxNumber contains UPDATED_BOX_NUMBER
+        defaultVoucherShouldNotBeFound("boxNumber.contains=" + UPDATED_BOX_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByBoxNumberNotContainsSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where boxNumber does not contain DEFAULT_BOX_NUMBER
+        defaultVoucherShouldNotBeFound("boxNumber.doesNotContain=" + DEFAULT_BOX_NUMBER);
+
+        // Get all the voucherList where boxNumber does not contain UPDATED_BOX_NUMBER
+        defaultVoucherShouldBeFound("boxNumber.doesNotContain=" + UPDATED_BOX_NUMBER);
+    }
+
 
     @Test
     @Transactional
@@ -1011,6 +1213,19 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where deliveryDate equals to UPDATED_DELIVERY_DATE
         defaultVoucherShouldNotBeFound("deliveryDate.equals=" + UPDATED_DELIVERY_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryDateIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryDate not equals to DEFAULT_DELIVERY_DATE
+        defaultVoucherShouldNotBeFound("deliveryDate.notEquals=" + DEFAULT_DELIVERY_DATE);
+
+        // Get all the voucherList where deliveryDate not equals to UPDATED_DELIVERY_DATE
+        defaultVoucherShouldBeFound("deliveryDate.notEquals=" + UPDATED_DELIVERY_DATE);
     }
 
     @Test
@@ -1050,6 +1265,19 @@ public class VoucherResourceIT {
 
         // Get all the voucherList where deliveryStatus equals to UPDATED_DELIVERY_STATUS
         defaultVoucherShouldNotBeFound("deliveryStatus.equals=" + UPDATED_DELIVERY_STATUS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVouchersByDeliveryStatusIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        // Get all the voucherList where deliveryStatus not equals to DEFAULT_DELIVERY_STATUS
+        defaultVoucherShouldNotBeFound("deliveryStatus.notEquals=" + DEFAULT_DELIVERY_STATUS);
+
+        // Get all the voucherList where deliveryStatus not equals to UPDATED_DELIVERY_STATUS
+        defaultVoucherShouldBeFound("deliveryStatus.notEquals=" + UPDATED_DELIVERY_STATUS);
     }
 
     @Test
@@ -1103,7 +1331,7 @@ public class VoucherResourceIT {
     private void defaultVoucherShouldBeFound(String filter) throws Exception {
         restVoucherMockMvc.perform(get("/api/vouchers?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(voucher.getId().intValue())))
             .andExpect(jsonPath("$.[*].voucherNo").value(hasItem(DEFAULT_VOUCHER_NO)))
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
@@ -1121,7 +1349,7 @@ public class VoucherResourceIT {
         // Check, that the count call also returns 1
         restVoucherMockMvc.perform(get("/api/vouchers/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("1"));
     }
 
@@ -1131,17 +1359,16 @@ public class VoucherResourceIT {
     private void defaultVoucherShouldNotBeFound(String filter) throws Exception {
         restVoucherMockMvc.perform(get("/api/vouchers?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
         restVoucherMockMvc.perform(get("/api/vouchers/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"));
     }
-
 
     @Test
     @Transactional
@@ -1178,7 +1405,7 @@ public class VoucherResourceIT {
             .deliveryStatus(UPDATED_DELIVERY_STATUS);
 
         restVoucherMockMvc.perform(put("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(updatedVoucher)))
             .andExpect(status().isOk());
 
@@ -1205,11 +1432,9 @@ public class VoucherResourceIT {
     public void updateNonExistingVoucher() throws Exception {
         int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
 
-        // Create the Voucher
-
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restVoucherMockMvc.perform(put("/api/vouchers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
@@ -1228,26 +1453,11 @@ public class VoucherResourceIT {
 
         // Delete the voucher
         restVoucherMockMvc.perform(delete("/api/vouchers/{id}", voucher.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         List<Voucher> voucherList = voucherRepository.findAll();
         assertThat(voucherList).hasSize(databaseSizeBeforeDelete - 1);
-    }
-
-    @Test
-    @Transactional
-    public void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(Voucher.class);
-        Voucher voucher1 = new Voucher();
-        voucher1.setId(1L);
-        Voucher voucher2 = new Voucher();
-        voucher2.setId(voucher1.getId());
-        assertThat(voucher1).isEqualTo(voucher2);
-        voucher2.setId(2L);
-        assertThat(voucher1).isNotEqualTo(voucher2);
-        voucher1.setId(null);
-        assertThat(voucher1).isNotEqualTo(voucher2);
     }
 }

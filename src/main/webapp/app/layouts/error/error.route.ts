@@ -8,29 +8,29 @@ export const errorRoute: Routes = [
     component: ErrorComponent,
     data: {
       authorities: [],
-      pageTitle: 'aurum'
-    }
+      pageTitle: 'Error page!',
+    },
   },
   {
     path: 'accessdenied',
     component: ErrorComponent,
     data: {
       authorities: [],
-      pageTitle: 'aurum',
-      error403: true
-    }
+      pageTitle: 'Error page!',
+      errorMessage: 'You are not authorized to access this page.',
+    },
   },
   {
     path: '404',
     component: ErrorComponent,
     data: {
       authorities: [],
-      pageTitle: 'aurum',
-      error404: true
-    }
+      pageTitle: 'Error page!',
+      errorMessage: 'The page does not exist.',
+    },
   },
   {
     path: '**',
-    redirectTo: '/404'
-  }
+    redirectTo: '/404',
+  },
 ];

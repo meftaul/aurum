@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -93,9 +92,7 @@ public class AurumServiceResource {
     /**
      * {@code GET  /aurum-services} : get all the aurumServices.
      *
-
      * @param pageable the pagination information.
-
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of aurumServices in body.
      */
@@ -108,11 +105,11 @@ public class AurumServiceResource {
     }
 
     /**
-    * {@code GET  /aurum-services/count} : count all the aurumServices.
-    *
-    * @param criteria the criteria which the requested entities should match.
-    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-    */
+     * {@code GET  /aurum-services/count} : count all the aurumServices.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
     @GetMapping("/aurum-services/count")
     public ResponseEntity<Long> countAurumServices(AurumServiceCriteria criteria) {
         log.debug("REST request to count AurumServices by criteria: {}", criteria);

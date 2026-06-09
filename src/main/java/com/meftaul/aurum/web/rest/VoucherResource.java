@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -93,9 +92,7 @@ public class VoucherResource {
     /**
      * {@code GET  /vouchers} : get all the vouchers.
      *
-
      * @param pageable the pagination information.
-
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of vouchers in body.
      */
@@ -108,11 +105,11 @@ public class VoucherResource {
     }
 
     /**
-    * {@code GET  /vouchers/count} : count all the vouchers.
-    *
-    * @param criteria the criteria which the requested entities should match.
-    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-    */
+     * {@code GET  /vouchers/count} : count all the vouchers.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
     @GetMapping("/vouchers/count")
     public ResponseEntity<Long> countVouchers(VoucherCriteria criteria) {
         log.debug("REST request to count Vouchers by criteria: {}", criteria);

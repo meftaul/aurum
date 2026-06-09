@@ -73,10 +73,10 @@ public class VoucherCriteria implements Serializable, Criteria {
 
     private LongFilter aurumServiceId;
 
-    public VoucherCriteria(){
+    public VoucherCriteria() {
     }
 
-    public VoucherCriteria(VoucherCriteria other){
+    public VoucherCriteria(VoucherCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.voucherNo = other.voucherNo == null ? null : other.voucherNo.copy();
         this.customerId = other.customerId == null ? null : other.customerId.copy();
@@ -257,6 +257,7 @@ public class VoucherCriteria implements Serializable, Criteria {
         );
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "VoucherCriteria{" +

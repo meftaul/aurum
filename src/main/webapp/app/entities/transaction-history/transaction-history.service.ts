@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import * as moment from 'moment';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DATE_FORMAT } from 'app/shared/constants/input.constants';
 import { map } from 'rxjs/operators';
+import * as moment from 'moment';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
@@ -46,21 +44,21 @@ export class TransactionHistoryService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  delete(id: number): Observable<HttpResponse<any>> {
-    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  delete(id: number): Observable<HttpResponse<{}>> {
+    return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
   protected convertDateFromClient(transactionHistory: ITransactionHistory): ITransactionHistory {
     const copy: ITransactionHistory = Object.assign({}, transactionHistory, {
       dateCreated:
-        transactionHistory.dateCreated != null && transactionHistory.dateCreated.isValid() ? transactionHistory.dateCreated.toJSON() : null
+        transactionHistory.dateCreated && transactionHistory.dateCreated.isValid() ? transactionHistory.dateCreated.toJSON() : undefined,
     });
     return copy;
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      res.body.dateCreated = res.body.dateCreated != null ? moment(res.body.dateCreated) : null;
+      res.body.dateCreated = res.body.dateCreated ? moment(res.body.dateCreated) : undefined;
     }
     return res;
   }
@@ -68,7 +66,7 @@ export class TransactionHistoryService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((transactionHistory: ITransactionHistory) => {
-        transactionHistory.dateCreated = transactionHistory.dateCreated != null ? moment(transactionHistory.dateCreated) : null;
+        transactionHistory.dateCreated = transactionHistory.dateCreated ? moment(transactionHistory.dateCreated) : undefined;
       });
     }
     return res;

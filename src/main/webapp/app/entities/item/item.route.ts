@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-import { JhiResolvePagingParams } from 'ng-jhipster';
+import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router';
+import { Observable, of, EMPTY } from 'rxjs';
+import { flatMap } from 'rxjs/operators';
+
+import { Authority } from 'app/shared/constants/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
-import { Observable, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { Item } from 'app/shared/model/item.model';
+import { IItem, Item } from 'app/shared/model/item.model';
 import { ItemService } from './item.service';
 import { ItemComponent } from './item.component';
 import { ItemDetailComponent } from './item-detail.component';
 import { ItemUpdateComponent } from './item-update.component';
-import { ItemDeletePopupComponent } from './item-delete-dialog.component';
-import { IItem } from 'app/shared/model/item.model';
 
 @Injectable({ providedIn: 'root' })
 export class ItemResolve implements Resolve<IItem> {
-  constructor(private service: ItemService) {}
+  constructor(private service: ItemService, private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IItem> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IItem> | Observable<never> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        filter((response: HttpResponse<Item>) => response.ok),
-        map((item: HttpResponse<Item>) => item.body)
+        flatMap((item: HttpResponse<Item>) => {
+          if (item.body) {
+            return of(item.body);
+          } else {
+            this.router.navigate(['404']);
+            return EMPTY;
+          }
+        })
       );
     }
     return of(new Item());
@@ -33,66 +38,47 @@ export const itemRoute: Routes = [
   {
     path: '',
     component: ItemComponent,
-    resolve: {
-      pagingParams: JhiResolvePagingParams
-    },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: [Authority.USER],
       defaultSort: 'id,asc',
-      pageTitle: 'Items'
+      pageTitle: 'Items',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':id/view',
     component: ItemDetailComponent,
     resolve: {
-      item: ItemResolve
+      item: ItemResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Items'
+      authorities: [Authority.USER],
+      pageTitle: 'Items',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: 'new',
     component: ItemUpdateComponent,
     resolve: {
-      item: ItemResolve
+      item: ItemResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Items'
+      authorities: [Authority.USER],
+      pageTitle: 'Items',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':id/edit',
     component: ItemUpdateComponent,
     resolve: {
-      item: ItemResolve
+      item: ItemResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Items'
-    },
-    canActivate: [UserRouteAccessService]
-  }
-];
-
-export const itemPopupRoute: Routes = [
-  {
-    path: ':id/delete',
-    component: ItemDeletePopupComponent,
-    resolve: {
-      item: ItemResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Items'
+      authorities: [Authority.USER],
+      pageTitle: 'Items',
     },
     canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+  },
 ];

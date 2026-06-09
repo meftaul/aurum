@@ -3,7 +3,7 @@
     "promptValues": {
       "packageName": "com.meftaul.aurum"
     },
-    "jhipsterVersion": "6.3.1",
+    "jhipsterVersion": "6.10.5",
     "applicationType": "monolith",
     "baseName": "aurum",
     "packageName": "com.meftaul.aurum",
@@ -34,6 +34,7 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
-    "blueprints": []
+    "blueprints": [],
+    "creationTimestamp": 1780992074044
   }
 }

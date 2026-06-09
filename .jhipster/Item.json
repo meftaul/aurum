@@ -1,30 +1,28 @@
 {
-    "fluentMethods": true,
-    "clientRootFolder": "",
-    "relationships": [],
-    "fields": [
-        {
-            "fieldName": "name",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
-            "fieldName": "description",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "code",
-            "fieldType": "String"
-        }
-    ],
-    "changelogDate": "20191116044840",
-    "dto": "no",
-    "searchEngine": false,
-    "service": "serviceImpl",
-    "entityTableName": "item",
-    "databaseType": "sql",
-    "jpaMetamodelFiltering": false,
-    "pagination": "pagination"
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "code",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20191116044840",
+  "dto": "no",
+  "searchEngine": false,
+  "service": "serviceImpl",
+  "entityTableName": "item",
+  "databaseType": "sql",
+  "jpaMetamodelFiltering": false,
+  "pagination": "pagination"
 }

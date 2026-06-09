@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-import { JhiResolvePagingParams } from 'ng-jhipster';
+import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router';
+import { Observable, of, EMPTY } from 'rxjs';
+import { flatMap } from 'rxjs/operators';
+
+import { Authority } from 'app/shared/constants/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
-import { Observable, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { Rate } from 'app/shared/model/rate.model';
+import { IRate, Rate } from 'app/shared/model/rate.model';
 import { RateService } from './rate.service';
 import { RateComponent } from './rate.component';
 import { RateDetailComponent } from './rate-detail.component';
 import { RateUpdateComponent } from './rate-update.component';
-import { RateDeletePopupComponent } from './rate-delete-dialog.component';
-import { IRate } from 'app/shared/model/rate.model';
 
 @Injectable({ providedIn: 'root' })
 export class RateResolve implements Resolve<IRate> {
-  constructor(private service: RateService) {}
+  constructor(private service: RateService, private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IRate> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IRate> | Observable<never> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        filter((response: HttpResponse<Rate>) => response.ok),
-        map((rate: HttpResponse<Rate>) => rate.body)
+        flatMap((rate: HttpResponse<Rate>) => {
+          if (rate.body) {
+            return of(rate.body);
+          } else {
+            this.router.navigate(['404']);
+            return EMPTY;
+          }
+        })
       );
     }
     return of(new Rate());
@@ -33,66 +38,47 @@ export const rateRoute: Routes = [
   {
     path: '',
     component: RateComponent,
-    resolve: {
-      pagingParams: JhiResolvePagingParams
-    },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: [Authority.USER],
       defaultSort: 'id,asc',
-      pageTitle: 'Rates'
+      pageTitle: 'Rates',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':id/view',
     component: RateDetailComponent,
     resolve: {
-      rate: RateResolve
+      rate: RateResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Rates'
+      authorities: [Authority.USER],
+      pageTitle: 'Rates',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: 'new',
     component: RateUpdateComponent,
     resolve: {
-      rate: RateResolve
+      rate: RateResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Rates'
+      authorities: [Authority.USER],
+      pageTitle: 'Rates',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':id/edit',
     component: RateUpdateComponent,
     resolve: {
-      rate: RateResolve
+      rate: RateResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Rates'
-    },
-    canActivate: [UserRouteAccessService]
-  }
-];
-
-export const ratePopupRoute: Routes = [
-  {
-    path: ':id/delete',
-    component: RateDeletePopupComponent,
-    resolve: {
-      rate: RateResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Rates'
+      authorities: [Authority.USER],
+      pageTitle: 'Rates',
     },
     canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+  },
 ];

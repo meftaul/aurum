@@ -4,27 +4,21 @@ import com.meftaul.aurum.AurumApp;
 import com.meftaul.aurum.domain.Customer;
 import com.meftaul.aurum.repository.CustomerRepository;
 import com.meftaul.aurum.service.CustomerService;
-import com.meftaul.aurum.web.rest.errors.ExceptionTranslator;
 import com.meftaul.aurum.service.dto.CustomerCriteria;
 import com.meftaul.aurum.service.CustomerQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
-
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.meftaul.aurum.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,6 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link CustomerResource} REST controller.
  */
 @SpringBootTest(classes = AurumApp.class)
+@AutoConfigureMockMvc
+@WithMockUser
 public class CustomerResourceIT {
 
     private static final String DEFAULT_FIRST_NAME = "AAAAAAAAAA";
@@ -71,35 +67,12 @@ public class CustomerResourceIT {
     private CustomerQueryService customerQueryService;
 
     @Autowired
-    private MappingJackson2HttpMessageConverter jacksonMessageConverter;
-
-    @Autowired
-    private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
-
-    @Autowired
-    private ExceptionTranslator exceptionTranslator;
-
-    @Autowired
     private EntityManager em;
 
     @Autowired
-    private Validator validator;
-
     private MockMvc restCustomerMockMvc;
 
     private Customer customer;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        final CustomerResource customerResource = new CustomerResource(customerService, customerQueryService);
-        this.restCustomerMockMvc = MockMvcBuilders.standaloneSetup(customerResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-    }
 
     /**
      * Create an entity for this test.
@@ -147,10 +120,9 @@ public class CustomerResourceIT {
     @Transactional
     public void createCustomer() throws Exception {
         int databaseSizeBeforeCreate = customerRepository.findAll().size();
-
         // Create the Customer
         restCustomerMockMvc.perform(post("/api/customers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(customer)))
             .andExpect(status().isCreated());
 
@@ -178,7 +150,7 @@ public class CustomerResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCustomerMockMvc.perform(post("/api/customers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(customer)))
             .andExpect(status().isBadRequest());
 
@@ -197,8 +169,9 @@ public class CustomerResourceIT {
 
         // Create the Customer, which fails.
 
+
         restCustomerMockMvc.perform(post("/api/customers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(customer)))
             .andExpect(status().isBadRequest());
 
@@ -215,16 +188,16 @@ public class CustomerResourceIT {
         // Get all the customerList
         restCustomerMockMvc.perform(get("/api/customers?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(customer.getId().intValue())))
-            .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
-            .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
-            .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE.toString())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS.toString())))
+            .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
+            .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
+            .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE)))
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
+            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)))
             .andExpect(jsonPath("$.[*].totalPoint").value(hasItem(DEFAULT_TOTAL_POINT.intValue())))
-            .andExpect(jsonPath("$.[*].reference").value(hasItem(DEFAULT_REFERENCE.toString())))
-            .andExpect(jsonPath("$.[*].customId").value(hasItem(DEFAULT_CUSTOM_ID.toString())));
+            .andExpect(jsonPath("$.[*].reference").value(hasItem(DEFAULT_REFERENCE)))
+            .andExpect(jsonPath("$.[*].customId").value(hasItem(DEFAULT_CUSTOM_ID)));
     }
     
     @Test
@@ -236,17 +209,37 @@ public class CustomerResourceIT {
         // Get the customer
         restCustomerMockMvc.perform(get("/api/customers/{id}", customer.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(customer.getId().intValue()))
-            .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME.toString()))
-            .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
-            .andExpect(jsonPath("$.phone").value(DEFAULT_PHONE.toString()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
-            .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
+            .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME))
+            .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME))
+            .andExpect(jsonPath("$.phone").value(DEFAULT_PHONE))
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
+            .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS))
             .andExpect(jsonPath("$.totalPoint").value(DEFAULT_TOTAL_POINT.intValue()))
-            .andExpect(jsonPath("$.reference").value(DEFAULT_REFERENCE.toString()))
-            .andExpect(jsonPath("$.customId").value(DEFAULT_CUSTOM_ID.toString()));
+            .andExpect(jsonPath("$.reference").value(DEFAULT_REFERENCE))
+            .andExpect(jsonPath("$.customId").value(DEFAULT_CUSTOM_ID));
     }
+
+
+    @Test
+    @Transactional
+    public void getCustomersByIdFiltering() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        Long id = customer.getId();
+
+        defaultCustomerShouldBeFound("id.equals=" + id);
+        defaultCustomerShouldNotBeFound("id.notEquals=" + id);
+
+        defaultCustomerShouldBeFound("id.greaterThanOrEqual=" + id);
+        defaultCustomerShouldNotBeFound("id.greaterThan=" + id);
+
+        defaultCustomerShouldBeFound("id.lessThanOrEqual=" + id);
+        defaultCustomerShouldNotBeFound("id.lessThan=" + id);
+    }
+
 
     @Test
     @Transactional
@@ -259,6 +252,19 @@ public class CustomerResourceIT {
 
         // Get all the customerList where firstName equals to UPDATED_FIRST_NAME
         defaultCustomerShouldNotBeFound("firstName.equals=" + UPDATED_FIRST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByFirstNameIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where firstName not equals to DEFAULT_FIRST_NAME
+        defaultCustomerShouldNotBeFound("firstName.notEquals=" + DEFAULT_FIRST_NAME);
+
+        // Get all the customerList where firstName not equals to UPDATED_FIRST_NAME
+        defaultCustomerShouldBeFound("firstName.notEquals=" + UPDATED_FIRST_NAME);
     }
 
     @Test
@@ -286,6 +292,32 @@ public class CustomerResourceIT {
         // Get all the customerList where firstName is null
         defaultCustomerShouldNotBeFound("firstName.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllCustomersByFirstNameContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where firstName contains DEFAULT_FIRST_NAME
+        defaultCustomerShouldBeFound("firstName.contains=" + DEFAULT_FIRST_NAME);
+
+        // Get all the customerList where firstName contains UPDATED_FIRST_NAME
+        defaultCustomerShouldNotBeFound("firstName.contains=" + UPDATED_FIRST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByFirstNameNotContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where firstName does not contain DEFAULT_FIRST_NAME
+        defaultCustomerShouldNotBeFound("firstName.doesNotContain=" + DEFAULT_FIRST_NAME);
+
+        // Get all the customerList where firstName does not contain UPDATED_FIRST_NAME
+        defaultCustomerShouldBeFound("firstName.doesNotContain=" + UPDATED_FIRST_NAME);
+    }
+
 
     @Test
     @Transactional
@@ -298,6 +330,19 @@ public class CustomerResourceIT {
 
         // Get all the customerList where lastName equals to UPDATED_LAST_NAME
         defaultCustomerShouldNotBeFound("lastName.equals=" + UPDATED_LAST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByLastNameIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where lastName not equals to DEFAULT_LAST_NAME
+        defaultCustomerShouldNotBeFound("lastName.notEquals=" + DEFAULT_LAST_NAME);
+
+        // Get all the customerList where lastName not equals to UPDATED_LAST_NAME
+        defaultCustomerShouldBeFound("lastName.notEquals=" + UPDATED_LAST_NAME);
     }
 
     @Test
@@ -325,6 +370,32 @@ public class CustomerResourceIT {
         // Get all the customerList where lastName is null
         defaultCustomerShouldNotBeFound("lastName.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllCustomersByLastNameContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where lastName contains DEFAULT_LAST_NAME
+        defaultCustomerShouldBeFound("lastName.contains=" + DEFAULT_LAST_NAME);
+
+        // Get all the customerList where lastName contains UPDATED_LAST_NAME
+        defaultCustomerShouldNotBeFound("lastName.contains=" + UPDATED_LAST_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByLastNameNotContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where lastName does not contain DEFAULT_LAST_NAME
+        defaultCustomerShouldNotBeFound("lastName.doesNotContain=" + DEFAULT_LAST_NAME);
+
+        // Get all the customerList where lastName does not contain UPDATED_LAST_NAME
+        defaultCustomerShouldBeFound("lastName.doesNotContain=" + UPDATED_LAST_NAME);
+    }
+
 
     @Test
     @Transactional
@@ -337,6 +408,19 @@ public class CustomerResourceIT {
 
         // Get all the customerList where phone equals to UPDATED_PHONE
         defaultCustomerShouldNotBeFound("phone.equals=" + UPDATED_PHONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByPhoneIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where phone not equals to DEFAULT_PHONE
+        defaultCustomerShouldNotBeFound("phone.notEquals=" + DEFAULT_PHONE);
+
+        // Get all the customerList where phone not equals to UPDATED_PHONE
+        defaultCustomerShouldBeFound("phone.notEquals=" + UPDATED_PHONE);
     }
 
     @Test
@@ -364,6 +448,32 @@ public class CustomerResourceIT {
         // Get all the customerList where phone is null
         defaultCustomerShouldNotBeFound("phone.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllCustomersByPhoneContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where phone contains DEFAULT_PHONE
+        defaultCustomerShouldBeFound("phone.contains=" + DEFAULT_PHONE);
+
+        // Get all the customerList where phone contains UPDATED_PHONE
+        defaultCustomerShouldNotBeFound("phone.contains=" + UPDATED_PHONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByPhoneNotContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where phone does not contain DEFAULT_PHONE
+        defaultCustomerShouldNotBeFound("phone.doesNotContain=" + DEFAULT_PHONE);
+
+        // Get all the customerList where phone does not contain UPDATED_PHONE
+        defaultCustomerShouldBeFound("phone.doesNotContain=" + UPDATED_PHONE);
+    }
+
 
     @Test
     @Transactional
@@ -376,6 +486,19 @@ public class CustomerResourceIT {
 
         // Get all the customerList where email equals to UPDATED_EMAIL
         defaultCustomerShouldNotBeFound("email.equals=" + UPDATED_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByEmailIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where email not equals to DEFAULT_EMAIL
+        defaultCustomerShouldNotBeFound("email.notEquals=" + DEFAULT_EMAIL);
+
+        // Get all the customerList where email not equals to UPDATED_EMAIL
+        defaultCustomerShouldBeFound("email.notEquals=" + UPDATED_EMAIL);
     }
 
     @Test
@@ -403,6 +526,32 @@ public class CustomerResourceIT {
         // Get all the customerList where email is null
         defaultCustomerShouldNotBeFound("email.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllCustomersByEmailContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where email contains DEFAULT_EMAIL
+        defaultCustomerShouldBeFound("email.contains=" + DEFAULT_EMAIL);
+
+        // Get all the customerList where email contains UPDATED_EMAIL
+        defaultCustomerShouldNotBeFound("email.contains=" + UPDATED_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByEmailNotContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where email does not contain DEFAULT_EMAIL
+        defaultCustomerShouldNotBeFound("email.doesNotContain=" + DEFAULT_EMAIL);
+
+        // Get all the customerList where email does not contain UPDATED_EMAIL
+        defaultCustomerShouldBeFound("email.doesNotContain=" + UPDATED_EMAIL);
+    }
+
 
     @Test
     @Transactional
@@ -415,6 +564,19 @@ public class CustomerResourceIT {
 
         // Get all the customerList where address equals to UPDATED_ADDRESS
         defaultCustomerShouldNotBeFound("address.equals=" + UPDATED_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByAddressIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where address not equals to DEFAULT_ADDRESS
+        defaultCustomerShouldNotBeFound("address.notEquals=" + DEFAULT_ADDRESS);
+
+        // Get all the customerList where address not equals to UPDATED_ADDRESS
+        defaultCustomerShouldBeFound("address.notEquals=" + UPDATED_ADDRESS);
     }
 
     @Test
@@ -442,6 +604,32 @@ public class CustomerResourceIT {
         // Get all the customerList where address is null
         defaultCustomerShouldNotBeFound("address.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllCustomersByAddressContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where address contains DEFAULT_ADDRESS
+        defaultCustomerShouldBeFound("address.contains=" + DEFAULT_ADDRESS);
+
+        // Get all the customerList where address contains UPDATED_ADDRESS
+        defaultCustomerShouldNotBeFound("address.contains=" + UPDATED_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByAddressNotContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where address does not contain DEFAULT_ADDRESS
+        defaultCustomerShouldNotBeFound("address.doesNotContain=" + DEFAULT_ADDRESS);
+
+        // Get all the customerList where address does not contain UPDATED_ADDRESS
+        defaultCustomerShouldBeFound("address.doesNotContain=" + UPDATED_ADDRESS);
+    }
+
 
     @Test
     @Transactional
@@ -454,6 +642,19 @@ public class CustomerResourceIT {
 
         // Get all the customerList where totalPoint equals to UPDATED_TOTAL_POINT
         defaultCustomerShouldNotBeFound("totalPoint.equals=" + UPDATED_TOTAL_POINT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByTotalPointIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where totalPoint not equals to DEFAULT_TOTAL_POINT
+        defaultCustomerShouldNotBeFound("totalPoint.notEquals=" + DEFAULT_TOTAL_POINT);
+
+        // Get all the customerList where totalPoint not equals to UPDATED_TOTAL_POINT
+        defaultCustomerShouldBeFound("totalPoint.notEquals=" + UPDATED_TOTAL_POINT);
     }
 
     @Test
@@ -550,6 +751,19 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
+    public void getAllCustomersByReferenceIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where reference not equals to DEFAULT_REFERENCE
+        defaultCustomerShouldNotBeFound("reference.notEquals=" + DEFAULT_REFERENCE);
+
+        // Get all the customerList where reference not equals to UPDATED_REFERENCE
+        defaultCustomerShouldBeFound("reference.notEquals=" + UPDATED_REFERENCE);
+    }
+
+    @Test
+    @Transactional
     public void getAllCustomersByReferenceIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
@@ -573,6 +787,32 @@ public class CustomerResourceIT {
         // Get all the customerList where reference is null
         defaultCustomerShouldNotBeFound("reference.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllCustomersByReferenceContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where reference contains DEFAULT_REFERENCE
+        defaultCustomerShouldBeFound("reference.contains=" + DEFAULT_REFERENCE);
+
+        // Get all the customerList where reference contains UPDATED_REFERENCE
+        defaultCustomerShouldNotBeFound("reference.contains=" + UPDATED_REFERENCE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByReferenceNotContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where reference does not contain DEFAULT_REFERENCE
+        defaultCustomerShouldNotBeFound("reference.doesNotContain=" + DEFAULT_REFERENCE);
+
+        // Get all the customerList where reference does not contain UPDATED_REFERENCE
+        defaultCustomerShouldBeFound("reference.doesNotContain=" + UPDATED_REFERENCE);
+    }
+
 
     @Test
     @Transactional
@@ -585,6 +825,19 @@ public class CustomerResourceIT {
 
         // Get all the customerList where customId equals to UPDATED_CUSTOM_ID
         defaultCustomerShouldNotBeFound("customId.equals=" + UPDATED_CUSTOM_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByCustomIdIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where customId not equals to DEFAULT_CUSTOM_ID
+        defaultCustomerShouldNotBeFound("customId.notEquals=" + DEFAULT_CUSTOM_ID);
+
+        // Get all the customerList where customId not equals to UPDATED_CUSTOM_ID
+        defaultCustomerShouldBeFound("customId.notEquals=" + UPDATED_CUSTOM_ID);
     }
 
     @Test
@@ -612,13 +865,39 @@ public class CustomerResourceIT {
         // Get all the customerList where customId is null
         defaultCustomerShouldNotBeFound("customId.specified=false");
     }
+                @Test
+    @Transactional
+    public void getAllCustomersByCustomIdContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where customId contains DEFAULT_CUSTOM_ID
+        defaultCustomerShouldBeFound("customId.contains=" + DEFAULT_CUSTOM_ID);
+
+        // Get all the customerList where customId contains UPDATED_CUSTOM_ID
+        defaultCustomerShouldNotBeFound("customId.contains=" + UPDATED_CUSTOM_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCustomersByCustomIdNotContainsSomething() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        // Get all the customerList where customId does not contain DEFAULT_CUSTOM_ID
+        defaultCustomerShouldNotBeFound("customId.doesNotContain=" + DEFAULT_CUSTOM_ID);
+
+        // Get all the customerList where customId does not contain UPDATED_CUSTOM_ID
+        defaultCustomerShouldBeFound("customId.doesNotContain=" + UPDATED_CUSTOM_ID);
+    }
+
     /**
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultCustomerShouldBeFound(String filter) throws Exception {
         restCustomerMockMvc.perform(get("/api/customers?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(customer.getId().intValue())))
             .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
@@ -632,7 +911,7 @@ public class CustomerResourceIT {
         // Check, that the count call also returns 1
         restCustomerMockMvc.perform(get("/api/customers/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("1"));
     }
 
@@ -642,17 +921,16 @@ public class CustomerResourceIT {
     private void defaultCustomerShouldNotBeFound(String filter) throws Exception {
         restCustomerMockMvc.perform(get("/api/customers?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
         restCustomerMockMvc.perform(get("/api/customers/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"));
     }
-
 
     @Test
     @Transactional
@@ -685,7 +963,7 @@ public class CustomerResourceIT {
             .customId(UPDATED_CUSTOM_ID);
 
         restCustomerMockMvc.perform(put("/api/customers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(updatedCustomer)))
             .andExpect(status().isOk());
 
@@ -708,11 +986,9 @@ public class CustomerResourceIT {
     public void updateNonExistingCustomer() throws Exception {
         int databaseSizeBeforeUpdate = customerRepository.findAll().size();
 
-        // Create the Customer
-
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCustomerMockMvc.perform(put("/api/customers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(customer)))
             .andExpect(status().isBadRequest());
 
@@ -731,26 +1007,11 @@ public class CustomerResourceIT {
 
         // Delete the customer
         restCustomerMockMvc.perform(delete("/api/customers/{id}", customer.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         List<Customer> customerList = customerRepository.findAll();
         assertThat(customerList).hasSize(databaseSizeBeforeDelete - 1);
-    }
-
-    @Test
-    @Transactional
-    public void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(Customer.class);
-        Customer customer1 = new Customer();
-        customer1.setId(1L);
-        Customer customer2 = new Customer();
-        customer2.setId(customer1.getId());
-        assertThat(customer1).isEqualTo(customer2);
-        customer2.setId(2L);
-        assertThat(customer1).isNotEqualTo(customer2);
-        customer1.setId(null);
-        assertThat(customer1).isNotEqualTo(customer2);
     }
 }

@@ -1,4 +1,5 @@
 package com.meftaul.aurum.domain;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -18,7 +19,7 @@ import com.meftaul.aurum.domain.enumeration.VoucherStatus;
  */
 @Entity
 @Table(name = "voucher")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Voucher implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -69,10 +70,10 @@ public class Voucher implements Serializable {
     private Boolean deliveryStatus;
 
     @OneToMany(mappedBy = "voucher")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<AurumService> aurumServices = new HashSet<>();
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -261,7 +262,7 @@ public class Voucher implements Serializable {
     public void setAurumServices(Set<AurumService> aurumServices) {
         this.aurumServices = aurumServices;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -279,6 +280,7 @@ public class Voucher implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "Voucher{" +

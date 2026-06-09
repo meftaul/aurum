@@ -28,24 +28,12 @@ public class KaratServiceImpl implements KaratService {
         this.karatRepository = karatRepository;
     }
 
-    /**
-     * Save a karat.
-     *
-     * @param karat the entity to save.
-     * @return the persisted entity.
-     */
     @Override
     public Karat save(Karat karat) {
         log.debug("Request to save Karat : {}", karat);
         return karatRepository.save(karat);
     }
 
-    /**
-     * Get all the karats.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<Karat> findAll(Pageable pageable) {
@@ -54,12 +42,6 @@ public class KaratServiceImpl implements KaratService {
     }
 
 
-    /**
-     * Get one karat by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Karat> findOne(Long id) {
@@ -67,11 +49,6 @@ public class KaratServiceImpl implements KaratService {
         return karatRepository.findById(id);
     }
 
-    /**
-     * Delete the karat by id.
-     *
-     * @param id the id of the entity.
-     */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Karat : {}", id);

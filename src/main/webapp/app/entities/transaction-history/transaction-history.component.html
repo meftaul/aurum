@@ -1,75 +1,81 @@
 <div>
     <h2 id="page-heading">
         <span>Transaction Histories</span>
+
         <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-transaction-history" [routerLink]="['/transaction-history/new']">
-            <fa-icon [icon]="'plus'"></fa-icon>
-            <span >
+            <fa-icon icon="plus"></fa-icon>
+            <span>
             Create a new Transaction History
             </span>
         </button>
     </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
     <jhi-alert></jhi-alert>
-    <br/>
-    <div class="alert alert-warning" *ngIf="transactionHistories?.length === 0">
+
+    <div class="alert alert-warning" id="no-result" *ngIf="transactionHistories?.length === 0">
         <span>No transactionHistories found</span>
     </div>
-    <div class="table-responsive" *ngIf="transactionHistories?.length > 0">
+
+    <div class="table-responsive" id="entities" *ngIf="transactionHistories && transactionHistories.length > 0">
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="voucherNo"><span>Voucher No</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="amount"><span>Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="dateCreated"><span>Date Created</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="tag"><span>Tag</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="customerId"><span>Customer Id</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="addedBy"><span>Added By</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th></th>
-            </tr>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
+                    <th scope="col"  jhiSortBy="id"><span>ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="voucherNo"><span>Voucher No</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="amount"><span>Amount</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="dateCreated"><span>Date Created</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="tag"><span>Tag</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="customerId"><span>Customer Id</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="addedBy"><span>Added By</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"></th>
+                </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let transactionHistory of transactionHistories ;trackBy: trackId">
-                <td><a [routerLink]="['/transaction-history', transactionHistory.id, 'view' ]">{{transactionHistory.id}}</a></td>
-                <td>{{transactionHistory.voucherNo}}</td>
-                <td>{{transactionHistory.amount}}</td>
-                <td>{{transactionHistory.dateCreated | date:'medium'}}</td>
-                <td>{{transactionHistory.tag}}</td>
-                <td>{{transactionHistory.customerId}}</td>
-                <td>{{transactionHistory.addedBy}}</td>
-                <td class="text-right">
-                    <div class="btn-group">
-                        <button type="submit"
-                                [routerLink]="['/transaction-history', transactionHistory.id, 'view' ]"
-                                class="btn btn-info btn-sm">
-                            <fa-icon [icon]="'eye'"></fa-icon>
-                            <span class="d-none d-md-inline">View</span>
-                        </button>
-                        <button type="submit"
-                                [routerLink]="['/transaction-history', transactionHistory.id, 'edit']"
-                                class="btn btn-primary btn-sm">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                            <span class="d-none d-md-inline">Edit</span>
-                        </button>
-                        <button type="submit"
-                                [routerLink]="['/transaction-history', { outlets: { popup: transactionHistory.id + '/delete'} }]"
-                                replaceUrl="true"
-                                queryParamsHandling="merge"
-                                class="btn btn-danger btn-sm">
-                            <fa-icon [icon]="'times'"></fa-icon>
-                            <span class="d-none d-md-inline">Delete</span>
-                        </button>
-                    </div>
-                </td>
-            </tr>
+                <tr *ngFor="let transactionHistory of transactionHistories ;trackBy: trackId">
+                    <td><a [routerLink]="['/transaction-history', transactionHistory.id, 'view']">{{ transactionHistory.id }}</a></td>
+                    <td>{{ transactionHistory.voucherNo }}</td>
+                    <td>{{ transactionHistory.amount }}</td>
+                    <td>{{ transactionHistory.dateCreated | date:'medium' }}</td>
+                    <td>{{ transactionHistory.tag }}</td>
+                    <td>{{ transactionHistory.customerId }}</td>
+                    <td>{{ transactionHistory.addedBy }}</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/transaction-history', transactionHistory.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/transaction-history', transactionHistory.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(transactionHistory)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-    <div [hidden]="transactionHistories?.length === 0">
+
+    <div *ngIf="transactionHistories && transactionHistories.length > 0">
         <div class="row justify-content-center">
             <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
+
         <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
         </div>
     </div>
 </div>

@@ -4,26 +4,20 @@ import com.meftaul.aurum.AurumApp;
 import com.meftaul.aurum.domain.Rate;
 import com.meftaul.aurum.repository.RateRepository;
 import com.meftaul.aurum.service.RateService;
-import com.meftaul.aurum.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
-
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.meftaul.aurum.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link RateResource} REST controller.
  */
 @SpringBootTest(classes = AurumApp.class)
+@AutoConfigureMockMvc
+@WithMockUser
 public class RateResourceIT {
 
     private static final String DEFAULT_RATE_TYPE = "AAAAAAAAAA";
@@ -40,7 +36,6 @@ public class RateResourceIT {
 
     private static final BigDecimal DEFAULT_UNIT_PRICE = new BigDecimal(0);
     private static final BigDecimal UPDATED_UNIT_PRICE = new BigDecimal(1);
-    private static final BigDecimal SMALLER_UNIT_PRICE = new BigDecimal(0 - 1);
 
     @Autowired
     private RateRepository rateRepository;
@@ -49,35 +44,12 @@ public class RateResourceIT {
     private RateService rateService;
 
     @Autowired
-    private MappingJackson2HttpMessageConverter jacksonMessageConverter;
-
-    @Autowired
-    private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
-
-    @Autowired
-    private ExceptionTranslator exceptionTranslator;
-
-    @Autowired
     private EntityManager em;
 
     @Autowired
-    private Validator validator;
-
     private MockMvc restRateMockMvc;
 
     private Rate rate;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        final RateResource rateResource = new RateResource(rateService);
-        this.restRateMockMvc = MockMvcBuilders.standaloneSetup(rateResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-    }
 
     /**
      * Create an entity for this test.
@@ -113,10 +85,9 @@ public class RateResourceIT {
     @Transactional
     public void createRate() throws Exception {
         int databaseSizeBeforeCreate = rateRepository.findAll().size();
-
         // Create the Rate
         restRateMockMvc.perform(post("/api/rates")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(rate)))
             .andExpect(status().isCreated());
 
@@ -138,7 +109,7 @@ public class RateResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restRateMockMvc.perform(post("/api/rates")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(rate)))
             .andExpect(status().isBadRequest());
 
@@ -157,9 +128,9 @@ public class RateResourceIT {
         // Get all the rateList
         restRateMockMvc.perform(get("/api/rates?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(rate.getId().intValue())))
-            .andExpect(jsonPath("$.[*].rateType").value(hasItem(DEFAULT_RATE_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].rateType").value(hasItem(DEFAULT_RATE_TYPE)))
             .andExpect(jsonPath("$.[*].unitPrice").value(hasItem(DEFAULT_UNIT_PRICE.intValue())));
     }
     
@@ -172,12 +143,11 @@ public class RateResourceIT {
         // Get the rate
         restRateMockMvc.perform(get("/api/rates/{id}", rate.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(rate.getId().intValue()))
-            .andExpect(jsonPath("$.rateType").value(DEFAULT_RATE_TYPE.toString()))
+            .andExpect(jsonPath("$.rateType").value(DEFAULT_RATE_TYPE))
             .andExpect(jsonPath("$.unitPrice").value(DEFAULT_UNIT_PRICE.intValue()));
     }
-
     @Test
     @Transactional
     public void getNonExistingRate() throws Exception {
@@ -203,7 +173,7 @@ public class RateResourceIT {
             .unitPrice(UPDATED_UNIT_PRICE);
 
         restRateMockMvc.perform(put("/api/rates")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(updatedRate)))
             .andExpect(status().isOk());
 
@@ -220,11 +190,9 @@ public class RateResourceIT {
     public void updateNonExistingRate() throws Exception {
         int databaseSizeBeforeUpdate = rateRepository.findAll().size();
 
-        // Create the Rate
-
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRateMockMvc.perform(put("/api/rates")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(rate)))
             .andExpect(status().isBadRequest());
 
@@ -243,26 +211,11 @@ public class RateResourceIT {
 
         // Delete the rate
         restRateMockMvc.perform(delete("/api/rates/{id}", rate.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         List<Rate> rateList = rateRepository.findAll();
         assertThat(rateList).hasSize(databaseSizeBeforeDelete - 1);
-    }
-
-    @Test
-    @Transactional
-    public void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(Rate.class);
-        Rate rate1 = new Rate();
-        rate1.setId(1L);
-        Rate rate2 = new Rate();
-        rate2.setId(rate1.getId());
-        assertThat(rate1).isEqualTo(rate2);
-        rate2.setId(2L);
-        assertThat(rate1).isNotEqualTo(rate2);
-        rate1.setId(null);
-        assertThat(rate1).isNotEqualTo(rate2);
     }
 }

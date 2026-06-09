@@ -1,4 +1,5 @@
 package com.meftaul.aurum.domain;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,7 +13,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "item")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Item implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,7 +32,7 @@ public class Item implements Serializable {
     @Column(name = "code")
     private String code;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -78,7 +79,7 @@ public class Item implements Serializable {
     public void setCode(String code) {
         this.code = code;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -96,6 +97,7 @@ public class Item implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "Item{" +

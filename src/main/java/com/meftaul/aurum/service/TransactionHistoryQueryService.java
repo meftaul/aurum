@@ -83,7 +83,7 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
         Specification<TransactionHistory> specification = Specification.where(null);
         if (criteria != null) {
             if (criteria.getId() != null) {
-                specification = specification.and(buildSpecification(criteria.getId(), TransactionHistory_.id));
+                specification = specification.and(buildRangeSpecification(criteria.getId(), TransactionHistory_.id));
             }
             if (criteria.getVoucherNo() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getVoucherNo(), TransactionHistory_.voucherNo));
