@@ -1,6 +1,36 @@
 /*
- * Bootstrap overrides https://getbootstrap.com/docs/5.1/customize/sass/
- * All values defined in bootstrap source
- * https://github.com/twbs/bootstrap/blob/v5.1.3/scss/_variables.scss can be overwritten here
- * Make sure not to add !default to values here
+ * Bootstrap overrides https://getbootstrap.com/docs/5.3/customize/sass/
+ * Compile-time layer for the Apple-style neutral + blue theme. Bakes the blue
+ * accent, system font, radii and pill buttons into generated Bootstrap classes.
+ * Runtime light/dark tokens live in _theme.scss.
  */
+
+// Accent — Apple blue
+$primary: #0071e3;
+
+// Apple-leaning semantic colors
+$success: #248a3d;
+$danger: #d70015;
+$warning: #c93400;
+$info: #0066cc;
+
+// Bootstrap 5.3 attribute-based dark mode ([data-bs-theme="dark"])
+$enable-dark-mode: true;
+$color-mode-type: data;
+
+$enable-shadows: false;
+
+// Typography — Apple system / SF stack
+$font-family-sans-serif:
+  -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$headings-font-weight: 600;
+
+// Corners
+$border-radius: 0.75rem;
+$border-radius-sm: 0.5rem;
+$border-radius-lg: 1.125rem;
+
+// Pill-shaped buttons
+$btn-border-radius: 980px;
+$btn-border-radius-sm: 980px;
+$btn-border-radius-lg: 980px;

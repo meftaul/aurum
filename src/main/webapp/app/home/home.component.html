@@ -1,18 +1,153 @@
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-3 text-center">
-      <img height="125" width="135" src="../../content/images/ng_gold.png" alt="Narayanganj Gold" /><br />
-      <div class="nauk-info-connections"></div>
-    </div>
+<div class="home-landing">
+  <!-- Sign-in tucked in the corner -->
+  <div class="home-topbar">
+    @if (account() === null) {
+      <a class="home-topbar__link" (click)="login()">
+        <fa-icon icon="sign-in-alt"></fa-icon>
+        <span>Sign in</span>
+      </a>
+    } @else {
+      <span class="home-topbar__welcome">Welcome, {{ account()?.login }}</span>
+    }
   </div>
 
-  @if (account() === null) {
-    <div class="row justify-content-center">
-      <div class="col-md-4">
-        <div class="alert alert-warning text-center">
-          <a class="alert-link" (click)="login()">Sign in</a>
+  <!-- ===================== HERO ===================== -->
+  <section class="home-hero">
+    <div class="home-hero__content">
+      <h1 class="home-hero__title">Narayanganj Gold</h1>
+      <!-- TODO(owner): replace tagline -->
+      <p class="home-hero__tagline">[Your headline here — e.g. “Precision gold testing, hallmarking and melting.”]</p>
+      <!-- TODO(owner): replace supporting line -->
+      <p class="home-hero__lead">[One short sentence describing what your business offers and why customers trust it.]</p>
+      <div class="home-hero__actions">
+        <a class="btn btn-primary btn-lg" href="#services">Our Services</a>
+        <a class="text-link home-hero__learn" href="#contact">Visit us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICES ===================== -->
+  <section class="home-section" id="services" jhiReveal>
+    <div class="home-section__head">
+      <h2 class="home-section__title">Our Services</h2>
+      <!-- TODO(owner): replace section subtitle -->
+      <p class="home-section__subtitle">[Short line introducing the services you provide.]</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3 col-sm-6">
+        <div class="service-card">
+          <span class="service-card__icon"><fa-icon icon="xray"></fa-icon></span>
+          <h3 class="service-card__title">X-Ray</h3>
+          <!-- TODO(owner): replace description -->
+          <p class="service-card__desc">[Describe your gold purity X-ray testing service.]</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="service-card">
+          <span class="service-card__icon"><fa-icon icon="certificate"></fa-icon></span>
+          <h3 class="service-card__title">Hallmark</h3>
+          <!-- TODO(owner): replace description -->
+          <p class="service-card__desc">[Describe your hallmarking &amp; certification service.]</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="service-card">
+          <span class="service-card__icon"><fa-icon icon="fire"></fa-icon></span>
+          <h3 class="service-card__title">Normal Melting</h3>
+          <!-- TODO(owner): replace description -->
+          <p class="service-card__desc">[Describe your standard gold melting service.]</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="service-card">
+          <span class="service-card__icon"><fa-icon icon="scale-balanced"></fa-icon></span>
+          <h3 class="service-card__title">Calculated Melting</h3>
+          <!-- TODO(owner): replace description -->
+          <p class="service-card__desc">[Describe your calculated melting &amp; alloy-mixing service.]</p>
         </div>
       </div>
     </div>
-  }
+  </section>
+
+  <!-- ===================== WHY CHOOSE US ===================== -->
+  <section class="home-section home-section--alt" jhiReveal>
+    <div class="home-section__head">
+      <h2 class="home-section__title">Why Choose Us</h2>
+      <!-- TODO(owner): replace section subtitle -->
+      <p class="home-section__subtitle">[Short line on what sets your business apart.]</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3 col-sm-6">
+        <div class="feature">
+          <span class="feature__icon"><fa-icon icon="shield-halved"></fa-icon></span>
+          <h3 class="feature__title">Trusted</h3>
+          <!-- TODO(owner): replace text -->
+          <p class="feature__text">[Why customers trust you.]</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="feature">
+          <span class="feature__icon"><fa-icon icon="bullseye"></fa-icon></span>
+          <h3 class="feature__title">Accurate</h3>
+          <!-- TODO(owner): replace text -->
+          <p class="feature__text">[Precision of your testing &amp; measurement.]</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="feature">
+          <span class="feature__icon"><fa-icon icon="clock"></fa-icon></span>
+          <h3 class="feature__title">Fast Turnaround</h3>
+          <!-- TODO(owner): replace text -->
+          <p class="feature__text">[How quickly you deliver results.]</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="feature">
+          <span class="feature__icon"><fa-icon icon="award"></fa-icon></span>
+          <h3 class="feature__title">Certified Quality</h3>
+          <!-- TODO(owner): replace text -->
+          <p class="feature__text">[Your certifications / quality standards.]</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section class="home-contact" id="contact" jhiReveal>
+    <h2 class="home-section__title">Visit Us</h2>
+    <div class="row g-4 home-contact__grid">
+      <div class="col-md-4">
+        <div class="contact-item">
+          <span class="contact-item__icon"><fa-icon icon="location-dot"></fa-icon></span>
+          <div>
+            <div class="contact-item__label">Address</div>
+            <!-- TODO(owner): replace address -->
+            <div class="contact-item__value">[Shop address, Narayanganj]</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="contact-item">
+          <span class="contact-item__icon"><fa-icon icon="phone"></fa-icon></span>
+          <div>
+            <div class="contact-item__label">Phone</div>
+            <!-- TODO(owner): replace phone -->
+            <div class="contact-item__value">[+880 1XXX-XXXXXX]</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="contact-item">
+          <span class="contact-item__icon"><fa-icon icon="clock"></fa-icon></span>
+          <div>
+            <div class="contact-item__label">Hours</div>
+            <!-- TODO(owner): replace hours -->
+            <div class="contact-item__value">[Sat–Thu, 10:00 AM – 8:00 PM]</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

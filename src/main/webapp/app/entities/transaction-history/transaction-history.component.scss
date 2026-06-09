@@ -1,23 +1,14 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background: #fbfbfb;
-}
 .card {
-  /*position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);*/
-  /*width: 300px;*/
   min-height: 250px;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  transition: 0.5s;
+  background: var(--aurum-surface);
+  border: 1px solid var(--aurum-border);
+  box-shadow: 0 2px 12px var(--aurum-shadow);
+  border-radius: 12px;
+  transition: 0.3s;
 }
 .card:hover {
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px var(--aurum-shadow);
+  border-color: color-mix(in srgb, var(--aurum-primary) 45%, var(--aurum-border));
 }
 .card .box {
   position: absolute;
@@ -42,19 +33,19 @@ body {
 }
 .card .box h2 {
   font-size: 20px;
-  color: #262626;
+  color: var(--aurum-text);
   margin: 20px auto;
 }
 .card .box h2 span {
   font-size: 14px;
-  background: #e91e63;
-  color: #fff;
+  background: var(--aurum-primary);
+  color: var(--aurum-primary-contrast);
   display: inline-block;
   padding: 4px 10px;
   border-radius: 15px;
 }
 .card .box p {
-  color: #262626;
+  color: var(--aurum-text);
 }
 .card .box span {
   display: inline-flex;
@@ -69,13 +60,13 @@ body {
 }
 .card .box ul li a {
   display: block;
-  color: #aaa;
+  color: var(--aurum-text-muted);
   margin: 0 10px;
   font-size: 20px;
   transition: 0.5s;
   text-align: center;
 }
 .card .box ul li:hover a {
-  color: #e91e63;
+  color: var(--aurum-primary);
   transform: rotateY(360deg);
 }

@@ -1,15 +1,16 @@
 /* after changing this file run 'npm run webapp:build' */
 
+/* Angular Material custom gold theme (must precede @import — Sass @use ordering) */
+@use 'material-theme';
+
 /***************************
-put Sass variables here:
-eg $input-color: red;
+Bootstrap with Aurum gold/luxury theme
 ****************************/
-@import 'bootswatch/dist/flatly/variables';
-// Override Bootstrap variables
+// Override Bootstrap Sass variables ($primary gold, fonts, radius, dark mode)
 @import 'bootstrap-variables';
 // Import Bootstrap source files from node_modules
 @import 'bootstrap/scss/bootstrap';
-@import 'bootswatch/dist/flatly/bootswatch';
+// Aurum runtime CSS-variable layer (light/dark tokens, print overrides)
+@import 'theme';
 
 /* jhipster-needle-scss-add-vendor JHipster will add new css style */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';

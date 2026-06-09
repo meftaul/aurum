@@ -1,4 +1,4 @@
-import { ApplicationConfig, LOCALE_ID, importProvidersFrom, inject } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import {
   NavigationError,
@@ -8,6 +8,7 @@ import {
   provideRouter,
   withComponentInputBinding,
   withDebugTracing,
+  withInMemoryScrolling,
   withNavigationErrorHandler,
 } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -22,9 +23,14 @@ import routes from './app.routes';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
 import { AppPageTitleStrategy } from './app-page-title-strategy';
+import { ThemeService } from './core/theme/theme.service';
 
 const routerFeatures: RouterFeatures[] = [
   withComponentInputBinding(),
+  // Reset scroll to top on forward navigation (restore on back/forward); also
+  // enables fragment/anchor scrolling. Without this, routing back to a page
+  // keeps the previous scroll position and reveal-on-scroll content stays hidden.
+  withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
   withNavigationErrorHandler((e: NavigationError) => {
     const router = inject(Router);
     if (e.error.status === 403) {
@@ -54,6 +60,10 @@ export const appConfig: ApplicationConfig = {
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     httpInterceptorProviders,
     { provide: TitleStrategy, useClass: AppPageTitleStrategy },
+    // Eagerly construct ThemeService so data-bs-theme is applied before first render
+    provideAppInitializer(() => {
+      inject(ThemeService);
+    }),
     // jhipster-needle-angular-add-module JHipster will add new module here
   ],
 };

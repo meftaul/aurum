@@ -6,8 +6,22 @@
     <title>aurum</title>
     <meta name="description" content="Description for aurum" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#ffffff" />
     <base href="/" />
+    <script>
+      // Apply the saved/system theme before first paint to avoid a flash of the wrong theme.
+      (function () {
+        try {
+          var saved = localStorage.getItem('aurum-theme');
+          var mode =
+            saved === 'light' || saved === 'dark' ? saved : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-bs-theme', mode);
+          document.documentElement.classList.remove('no-js');
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
     <link rel="icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webapp" />
     <link rel="stylesheet" href="content/css/loading.css" />

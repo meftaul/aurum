@@ -1,14 +1,10 @@
-@import 'bootstrap/scss/functions';
-@import 'bootswatch/dist/flatly/variables';
-@import 'bootstrap/scss/variables';
-
 /* ==========================================================================
-Navbar
+Navbar — Apple-style frosted sticky header
 ========================================================================== */
 
 .navbar-version {
   font-size: 0.65em;
-  color: $navbar-dark-color;
+  color: var(--aurum-text-muted);
 }
 
 .profile-image {
@@ -16,22 +12,53 @@ Navbar
   width: 1.75em;
 }
 
-.navbar {
-  padding: 0.2rem 1rem;
+.aurum-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  padding: 0.5rem 1rem;
+  /* solid fallback for browsers without backdrop-filter */
+  background-color: var(--aurum-surface);
+  background-color: var(--aurum-nav-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--aurum-border);
+
+  .navbar-title {
+    color: var(--aurum-text);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
   .dropdown-item.active,
   .dropdown-item.active:focus,
   .dropdown-item.active:hover {
-    background-color: $dark;
+    background-color: var(--aurum-primary);
+    color: var(--aurum-primary-contrast);
   }
 
   a.nav-link {
     font-weight: 400;
+    color: var(--aurum-text);
+
+    &:hover {
+      color: var(--aurum-primary);
+    }
   }
 
   .navbar-toggler {
     &:hover {
-      color: $navbar-dark-hover-color;
+      color: var(--aurum-primary);
     }
+  }
+}
+
+.aurum-theme-toggle {
+  color: var(--aurum-text);
+
+  &:hover,
+  &:focus {
+    color: var(--aurum-primary);
   }
 }
 
@@ -39,10 +66,10 @@ Navbar
 Logo styles
 ========================================================================== */
 .logo-img {
-  height: 45px;
-  width: 45px;
+  height: 40px;
+  width: 40px;
   display: inline-block;
   vertical-align: middle;
-  background: url('/content/images/logo-jhipster.png') no-repeat center center;
+  background: url('/content/images/ng_gold.png') no-repeat center center;
   background-size: contain;
 }

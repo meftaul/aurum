@@ -6,6 +6,7 @@ import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directiv
 import { AccountService } from 'app/core/auth/account.service';
 import { LoginService } from 'app/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
+import { ThemeService } from 'app/core/theme/theme.service';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 import { environment } from 'environments/environment';
 import NavbarItem from './navbar-item.model';
@@ -27,6 +28,9 @@ export default class NavbarComponent implements OnInit {
   private readonly loginService = inject(LoginService);
   private readonly profileService = inject(ProfileService);
   private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService);
+
+  theme = this.themeService.theme;
 
   constructor() {
     const { VERSION } = environment;
@@ -59,5 +63,9 @@ export default class NavbarComponent implements OnInit {
 
   toggleNavbar(): void {
     this.isNavbarCollapsed.update(isNavbarCollapsed => !isNavbarCollapsed);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 }

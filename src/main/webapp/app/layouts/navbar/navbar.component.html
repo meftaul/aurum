@@ -1,4 +1,4 @@
-<nav data-cy="navbar" class="navbar navbar-light navbar-expand-md bg-light">
+<nav data-cy="navbar" class="navbar navbar-expand-md aurum-navbar">
   <div class="container-fluid">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
       <span class="logo-img"></span>
@@ -242,6 +242,17 @@
               </li>
             }
           </ul>
+        </li>
+        <li class="nav-item d-flex align-items-center">
+          <button
+            type="button"
+            class="btn btn-link nav-link aurum-theme-toggle"
+            (click)="toggleTheme()"
+            [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+            data-cy="themeToggle"
+          >
+            <fa-icon [icon]="theme() === 'dark' ? 'sun' : 'moon'"></fa-icon>
+          </button>
         </li>
         <li
           ngbDropdown

@@ -1,19 +1,28 @@
-@import 'bootstrap-variables';
-@import 'bootstrap/scss/functions';
-@import 'bootswatch/dist/flatly/variables';
-@import 'bootstrap/scss/variables';
-
 /* ==============================================================
 Bootstrap tweaks
 ===============================================================*/
 
-body,
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apple-style display type scale: bold weights, tight tracking */
 h1,
 h2,
 h3,
-h4 {
-  font-weight: 300;
-  font-family: 'Nunito Sans', sans-serif;
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--aurum-text);
+}
+
+h1 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 a:hover {
@@ -22,7 +31,7 @@ a:hover {
 }
 
 .dropdown-item:hover {
-  color: $dropdown-link-hover-color;
+  color: var(--bs-dropdown-link-hover-color);
 }
 
 /* ==========================================================================
@@ -41,15 +50,63 @@ Generic styles
 
 /* other generic styles */
 
+/* Apple-flat content container: no border/shadow, sits on the airy page bg.
+   Keep padding at 1.5rem — the home landing breaks out with margin:-1.5rem. */
 .jh-card {
-  padding: 1.5%;
+  padding: 1.5rem;
   margin-top: 20px;
+  background-color: transparent;
   border: none;
+  box-shadow: none;
+}
+
+/* Pill-shaped buttons (radius from $btn-border-radius), Apple-light weight */
+.btn {
+  font-weight: 500;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* "Learn more ›" style text links */
+.text-link {
+  color: var(--aurum-link);
+  font-weight: 500;
+  text-decoration: none;
+  &::after {
+    content: ' ›';
+  }
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Scroll-reveal motion (driven by the [jhiReveal] directive) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .error {
-  color: white;
-  background-color: red;
+  color: var(--aurum-primary-contrast);
+  background-color: var(--aurum-danger);
 }
 
 .pad {
@@ -69,17 +126,19 @@ Generic styles
   word-break: break-all;
 }
 
-.form-control {
-  background-color: #fff;
-}
-
 .readonly {
-  background-color: #eee;
+  background-color: var(--aurum-surface-2);
   opacity: 1;
 }
 
+/* Apple-style slim footer: muted fine print on a light-grey band */
 .footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  margin-top: 2rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--aurum-border);
+  background-color: var(--aurum-surface-2);
+  color: var(--aurum-text-muted);
+  font-size: 0.8rem;
 }
 
 .hand,
@@ -137,6 +196,15 @@ entity list page css
   margin: auto 0;
 }
 
+.table > thead {
+  border-bottom: 1px solid var(--aurum-border);
+}
+
+.table > thead th {
+  font-weight: 600;
+  color: var(--aurum-text-muted);
+}
+
 /* ==========================================================================
 entity detail page css
 ========================================================================== */
@@ -159,7 +227,7 @@ entity detail page css
       padding: 0.5em 0;
     }
     dd {
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--aurum-border);
       padding: 0.5em 0;
       margin-left: 0;
     }

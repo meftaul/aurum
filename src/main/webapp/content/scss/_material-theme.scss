@@ -1,0 +1,101 @@
+/*
+ * Aurum Apple-style Angular Material theme (Material 19, M2 API).
+ * Replaces the prebuilt deeppurple-amber.css. Light theme at :root, dark colors
+ * re-emitted under [data-bs-theme="dark"] so Material flips in lockstep with the
+ * Bootstrap toggle that lives on <html>.
+ */
+@use '@angular/material' as mat;
+
+// Apple-blue accent palette (50 -> 900) with text-contrast map.
+$aurum-gold-palette: (
+  50: #e7f1fd,
+  100: #c3dcfb,
+  200: #9bc5f8,
+  300: #6fadf5,
+  400: #4a9bf0,
+  500: #0071e3,
+  600: #0066cc,
+  700: #0058b0,
+  800: #004a94,
+  900: #003a78,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  ),
+);
+
+// Warm red for warn/danger states.
+$aurum-warn-palette: (
+  50: #fbeceb,
+  100: #f3c8c5,
+  200: #e89f9b,
+  300: #dd7671,
+  400: #d25852,
+  500: #b23b3b,
+  600: #a03434,
+  700: #8a2c2c,
+  800: #742424,
+  900: #561818,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  ),
+);
+
+$aurum-primary: mat.m2-define-palette($aurum-gold-palette, 500, 300, 700);
+$aurum-accent: mat.m2-define-palette($aurum-gold-palette, 300, 100, 500);
+$aurum-warn: mat.m2-define-palette($aurum-warn-palette, 500);
+
+$aurum-typography: mat.m2-define-typography-config(
+  $font-family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+);
+
+$aurum-light-theme: mat.m2-define-light-theme(
+  (
+    color: (
+      primary: $aurum-primary,
+      accent: $aurum-accent,
+      warn: $aurum-warn,
+    ),
+    typography: $aurum-typography,
+    density: 0,
+  )
+);
+
+$aurum-dark-theme: mat.m2-define-dark-theme(
+  (
+    color: (
+      primary: $aurum-primary,
+      accent: $aurum-accent,
+      warn: $aurum-warn,
+    ),
+    typography: $aurum-typography,
+    density: 0,
+  )
+);
+
+// Emit full theme (base + typography + light colors) once...
+:root {
+  @include mat.all-component-themes($aurum-light-theme);
+}
+
+// ...then only the color tokens for dark mode to keep the bundle lean.
+[data-bs-theme='dark'] {
+  @include mat.all-component-colors($aurum-dark-theme);
+}

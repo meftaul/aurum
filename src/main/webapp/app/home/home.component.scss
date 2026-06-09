@@ -1,23 +1,187 @@
 /* ==========================================================================
-Main page styles
+Home — Apple-style marketing landing
 ========================================================================== */
 
-.hipster {
-  display: inline-block;
-  width: 347px;
-  height: 497px;
-  background: url('../../content/images/jhipster_family_member_2.svg') no-repeat center top;
-  background-size: contain;
+/* Break out of the .jh-card padding for full-bleed bands */
+.home-landing {
+  margin: -1.5rem;
+  overflow: hidden;
+  color: var(--aurum-text);
 }
 
-/* wait autoprefixer update to allow simple generation of high pixel density media query */
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-  only screen and (-moz-min-device-pixel-ratio: 2),
-  only screen and (-o-min-device-pixel-ratio: 2/1),
-  only screen and (min-resolution: 192dpi),
-  only screen and (min-resolution: 2dppx) {
-  .hipster {
-    background: url('../../content/images/jhipster_family_member_2.svg') no-repeat center top;
-    background-size: contain;
+/* --- Sign-in tucked in the corner --- */
+.home-topbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1.5rem;
+}
+.home-topbar__link {
+  color: var(--aurum-text-muted);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  fa-icon {
+    margin-right: 0.4rem;
   }
+  &:hover {
+    color: var(--aurum-primary);
+  }
+}
+.home-topbar__welcome {
+  color: var(--aurum-text-muted);
+  font-weight: 500;
+}
+
+/* --- Hero --- */
+.home-hero {
+  text-align: center;
+  padding: 6rem 1.5rem 7rem;
+  background: linear-gradient(180deg, var(--aurum-surface-2), var(--aurum-bg) 70%);
+}
+.home-hero__content {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.home-hero__title {
+  margin: 0;
+  font-size: clamp(2.75rem, 6vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--aurum-text);
+}
+.home-hero__tagline {
+  margin: 1.25rem auto 0.5rem;
+  max-width: 680px;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 500;
+  color: var(--aurum-text);
+}
+.home-hero__lead {
+  margin: 0 auto 2rem;
+  max-width: 600px;
+  font-size: 1.1rem;
+  color: var(--aurum-text-muted);
+}
+.home-hero__actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* --- Generic section --- */
+.home-section {
+  padding: 5.5rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.home-section--alt {
+  max-width: none;
+  background: var(--aurum-surface-2);
+}
+.home-section--alt > .home-section__head,
+.home-section--alt > .row {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.home-section__head {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.home-section__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--aurum-text);
+}
+.home-section__subtitle {
+  margin: 0.75rem auto 0;
+  max-width: 600px;
+  font-size: 1.15rem;
+  color: var(--aurum-text-muted);
+}
+
+/* --- Service cards & feature items --- */
+.service-card,
+.feature {
+  height: 100%;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: var(--aurum-surface);
+  border: 1px solid var(--aurum-border);
+  border-radius: 18px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.home-section--alt .feature {
+  background: var(--aurum-bg);
+}
+.service-card:hover,
+.feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px var(--aurum-shadow);
+}
+.service-card__icon,
+.feature__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1.25rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: var(--aurum-primary);
+  background: var(--aurum-primary-subtle);
+}
+.service-card__title,
+.feature__title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--aurum-text);
+}
+.service-card__desc,
+.feature__text {
+  margin: 0;
+  color: var(--aurum-text-muted);
+}
+
+/* --- Contact band --- */
+.home-contact {
+  padding: 5.5rem 1.5rem;
+  text-align: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.home-contact__grid {
+  margin-top: 3rem;
+  text-align: start;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}
+.contact-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: var(--aurum-primary);
+  background: var(--aurum-primary-subtle);
+}
+.contact-item__label {
+  font-weight: 600;
+  color: var(--aurum-text);
+}
+.contact-item__value {
+  color: var(--aurum-text-muted);
 }
