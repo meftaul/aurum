@@ -28,6 +28,7 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   font-size: 1.4rem;
+  transition: opacity 0.15s ease;
 }
 
 .sidebar__nav {
@@ -36,33 +37,25 @@
   padding: 0;
 }
 
-.sidebar__section {
-  margin: 1.25rem 0.6rem 0.4rem;
-  font-family: var(--aurum-font-mono);
-  font-size: 0.66rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--aurum-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  transition:
-    opacity 0.15s ease,
-    height 0.2s ease,
-    margin 0.2s ease;
-}
-
-.sidebar__link {
+/* ---- Shared link/header row ---- */
+.sidebar__link,
+.sidebar__group-header {
   position: relative;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  width: 100%;
   padding: 0.55rem 0.65rem;
   margin-bottom: 0.15rem;
-  border-radius: 5px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
   color: var(--aurum-text);
+  font: inherit;
+  text-align: left;
   text-decoration: none;
   white-space: nowrap;
+  cursor: pointer;
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -70,7 +63,9 @@
   &:hover {
     background-color: var(--aurum-surface-2);
   }
+}
 
+.sidebar__link {
   /* Active = gold tint + a gold leaf marker on the left edge */
   &.active {
     background-color: var(--aurum-primary-subtle);
@@ -97,16 +92,78 @@
 }
 
 .sidebar__label {
+  flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   transition: opacity 0.15s ease;
 }
-.sidebar__brand-text {
-  transition: opacity 0.15s ease;
+
+/* ---- Accordion groups ---- */
+.sidebar__group {
+  margin-top: 0.35rem;
 }
 
-/* Footer pinned to the bottom: account + settings/password/sign out */
+.sidebar__group-header {
+  .sidebar__label {
+    font-family: var(--aurum-font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--aurum-text-muted);
+    transition:
+      color 0.15s ease,
+      opacity 0.15s ease;
+  }
+
+  &:hover .sidebar__label {
+    color: var(--aurum-text);
+  }
+}
+
+/* Chevron drawn from a rotated caret — points right when closed, down when open */
+.sidebar__chevron {
+  flex: 0 0 auto;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.15rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  color: var(--aurum-text-muted);
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+}
+.sidebar__group.is-open .sidebar__chevron {
+  transform: rotate(45deg);
+}
+.sidebar__group.is-open .sidebar__group-header .sidebar__label {
+  color: var(--aurum-primary);
+}
+
+/* grid-rows trick gives a smooth height transition without measuring */
+.sidebar__group-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.22s ease;
+}
+.sidebar__group.is-open .sidebar__group-body {
+  grid-template-rows: 1fr;
+}
+.sidebar__group-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Nested links indent so they read as children of the group header */
+.sidebar__group-items .sidebar__link {
+  padding-left: 1.1rem;
+}
+
+/* ---- Footer pinned to the bottom: account + settings/password/sign out ---- */
 .sidebar__footer {
   margin-top: auto;
   padding-top: 0.5rem;
@@ -127,20 +184,25 @@
   width: 1.5rem;
 }
 
-/* Collapsed rail: fade labels/section headers out (clipped by overflow-x) */
+/* ---- Collapsed rail: flatten groups into a plain icon list ---- */
 .sidebar--collapsed {
   .sidebar__brand-text,
   .sidebar__label {
     opacity: 0;
   }
-  .sidebar__section {
-    height: 0;
-    margin: 0.4rem 0.65rem;
-    overflow: hidden;
-    opacity: 0;
-    transition:
-      opacity 0.15s ease,
-      height 0.2s ease,
-      margin 0.2s ease;
+
+  /* Hide group headers; reveal every destination as an icon */
+  .sidebar__group {
+    margin-top: 0;
+  }
+  .sidebar__group-header,
+  .sidebar__chevron {
+    display: none;
+  }
+  .sidebar__group-body {
+    grid-template-rows: 1fr;
+  }
+  .sidebar__group-items .sidebar__link {
+    padding-left: 0.65rem;
   }
 }

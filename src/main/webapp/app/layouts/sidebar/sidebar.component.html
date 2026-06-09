@@ -5,142 +5,195 @@
   </a>
 
   <ul class="sidebar__nav">
-    <li class="sidebar__section">Main</li>
-
+    <!-- Overview: single primary destination, no accordion chrome -->
     <li>
       <a class="sidebar__link" routerLink="/dashboard" routerLinkActive="active" (click)="onNavigate()" title="Dashboard">
         <fa-icon class="sidebar__icon" icon="gauge-high" [fixedWidth]="true" />
         <span class="sidebar__label">Dashboard</span>
       </a>
     </li>
-    <li>
-      <a class="sidebar__link" routerLink="/customer" routerLinkActive="active" (click)="onNavigate()" title="Customer">
-        <fa-icon class="sidebar__icon" icon="user" [fixedWidth]="true" />
-        <span class="sidebar__label">Customer</span>
-      </a>
-    </li>
-    <li>
-      <a class="sidebar__link" routerLink="/voucher" routerLinkActive="active" (click)="onNavigate()" title="Voucher Report">
-        <fa-icon class="sidebar__icon" icon="file-alt" [fixedWidth]="true" />
-        <span class="sidebar__label">Voucher Report</span>
-      </a>
-    </li>
-    <li>
-      <a
-        class="sidebar__link"
-        routerLink="/transaction-history"
-        routerLinkActive="active"
-        (click)="onNavigate()"
-        title="Transaction Report"
-      >
-        <fa-icon class="sidebar__icon" icon="tachometer-alt" [fixedWidth]="true" />
-        <span class="sidebar__label">Transaction Report</span>
-      </a>
-    </li>
-    <li>
-      <a class="sidebar__link" routerLink="/aurum-service" routerLinkActive="active" (click)="onNavigate()" title="Aurum Service">
-        <fa-icon class="sidebar__icon" icon="cogs" [fixedWidth]="true" />
-        <span class="sidebar__label">Aurum Service</span>
-      </a>
-    </li>
-    <li>
-      <a class="sidebar__link" routerLink="/rate" routerLinkActive="active" (click)="onNavigate()" title="Rate">
-        <fa-icon class="sidebar__icon" icon="asterisk" [fixedWidth]="true" />
-        <span class="sidebar__label">Rate</span>
-      </a>
-    </li>
-    <li>
-      <a class="sidebar__link" routerLink="/karat" routerLinkActive="active" (click)="onNavigate()" title="Karat">
-        <fa-icon class="sidebar__icon" icon="asterisk" [fixedWidth]="true" />
-        <span class="sidebar__label">Karat</span>
-      </a>
-    </li>
-    <li>
-      <a class="sidebar__link" routerLink="/item" routerLinkActive="active" (click)="onNavigate()" title="Item">
-        <fa-icon class="sidebar__icon" icon="asterisk" [fixedWidth]="true" />
-        <span class="sidebar__label">Item</span>
-      </a>
-    </li>
-    <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']">
-      <a class="sidebar__link" routerLink="/transactions" routerLinkActive="active" (click)="onNavigate()" title="Transaction">
-        <fa-icon class="sidebar__icon" icon="wallet" [fixedWidth]="true" />
-        <span class="sidebar__label">Transaction</span>
-      </a>
-    </li>
-    <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']">
-      <a class="sidebar__link" routerLink="/voucher-viewer" routerLinkActive="active" (click)="onNavigate()" title="Voucher Viewer">
-        <fa-icon class="sidebar__icon" icon="file-alt" [fixedWidth]="true" />
-        <span class="sidebar__label">Voucher Viewer</span>
-      </a>
-    </li>
-    <li *jhiHasAnyAuthority="'ROLE_ADMIN'">
-      <a class="sidebar__link" routerLink="/messaging" routerLinkActive="active" (click)="onNavigate()" title="Messaging">
-        <fa-icon class="sidebar__icon" icon="bell" [fixedWidth]="true" />
-        <span class="sidebar__label">Messaging</span>
-      </a>
+
+    <!-- Operations -->
+    <li class="sidebar__group" [class.is-open]="isOpen('operations')">
+      <button type="button" class="sidebar__group-header" (click)="toggleGroup('operations')" [attr.aria-expanded]="isOpen('operations')">
+        <fa-icon class="sidebar__icon" icon="sync" [fixedWidth]="true" />
+        <span class="sidebar__label">Operations</span>
+        <span class="sidebar__chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sidebar__group-body">
+        <ul class="sidebar__group-items">
+          <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']">
+            <a class="sidebar__link" routerLink="/transactions" routerLinkActive="active" (click)="onNavigate()" title="Transaction">
+              <fa-icon class="sidebar__icon" icon="wallet" [fixedWidth]="true" />
+              <span class="sidebar__label">Transaction</span>
+            </a>
+          </li>
+          <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']">
+            <a class="sidebar__link" routerLink="/voucher-viewer" routerLinkActive="active" (click)="onNavigate()" title="Voucher Viewer">
+              <fa-icon class="sidebar__icon" icon="eye" [fixedWidth]="true" />
+              <span class="sidebar__label">Voucher Viewer</span>
+            </a>
+          </li>
+          <li *jhiHasAnyAuthority="'ROLE_ADMIN'">
+            <a class="sidebar__link" routerLink="/messaging" routerLinkActive="active" (click)="onNavigate()" title="Messaging">
+              <fa-icon class="sidebar__icon" icon="envelope" [fixedWidth]="true" />
+              <span class="sidebar__label">Messaging</span>
+            </a>
+          </li>
+        </ul>
+      </div>
     </li>
 
-    <ng-container *jhiHasAnyAuthority="'ROLE_ADMIN'">
-      <li class="sidebar__section">Administration</li>
-      <li>
-        <a class="sidebar__link" routerLink="/authority" routerLinkActive="active" (click)="onNavigate()" title="Authority">
-          <fa-icon class="sidebar__icon" icon="asterisk" [fixedWidth]="true" />
-          <span class="sidebar__label">Authority</span>
-        </a>
-      </li>
-      <li>
-        <a
-          class="sidebar__link"
-          routerLink="/admin/user-management"
-          routerLinkActive="active"
-          (click)="onNavigate()"
-          title="User management"
-        >
-          <fa-icon class="sidebar__icon" icon="users" [fixedWidth]="true" />
-          <span class="sidebar__label">User management</span>
-        </a>
-      </li>
-      <li>
-        <a class="sidebar__link" routerLink="/admin/metrics" routerLinkActive="active" (click)="onNavigate()" title="Metrics">
-          <fa-icon class="sidebar__icon" icon="tachometer-alt" [fixedWidth]="true" />
-          <span class="sidebar__label">Metrics</span>
-        </a>
-      </li>
-      <li>
-        <a class="sidebar__link" routerLink="/admin/health" routerLinkActive="active" (click)="onNavigate()" title="Health">
-          <fa-icon class="sidebar__icon" icon="heart" [fixedWidth]="true" />
-          <span class="sidebar__label">Health</span>
-        </a>
-      </li>
-      <li>
-        <a class="sidebar__link" routerLink="/admin/configuration" routerLinkActive="active" (click)="onNavigate()" title="Configuration">
-          <fa-icon class="sidebar__icon" icon="cogs" [fixedWidth]="true" />
-          <span class="sidebar__label">Configuration</span>
-        </a>
-      </li>
-      <li>
-        <a class="sidebar__link" routerLink="/admin/logs" routerLinkActive="active" (click)="onNavigate()" title="Logs">
-          <fa-icon class="sidebar__icon" icon="tasks" [fixedWidth]="true" />
-          <span class="sidebar__label">Logs</span>
-        </a>
-      </li>
-      @if (openAPIEnabled) {
-        <li>
-          <a class="sidebar__link" routerLink="/admin/docs" routerLinkActive="active" (click)="onNavigate()" title="API">
-            <fa-icon class="sidebar__icon" icon="book" [fixedWidth]="true" />
-            <span class="sidebar__label">API</span>
-          </a>
-        </li>
-      }
-      @if (!inProduction) {
-        <li>
-          <a class="sidebar__link" href="./h2-console/" target="_tab" (click)="onNavigate()" title="Database">
-            <fa-icon class="sidebar__icon" icon="database" [fixedWidth]="true" />
-            <span class="sidebar__label">Database</span>
-          </a>
-        </li>
-      }
-    </ng-container>
+    <!-- Reports -->
+    <li class="sidebar__group" [class.is-open]="isOpen('reports')">
+      <button type="button" class="sidebar__group-header" (click)="toggleGroup('reports')" [attr.aria-expanded]="isOpen('reports')">
+        <fa-icon class="sidebar__icon" icon="th-list" [fixedWidth]="true" />
+        <span class="sidebar__label">Reports</span>
+        <span class="sidebar__chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sidebar__group-body">
+        <ul class="sidebar__group-items">
+          <li>
+            <a class="sidebar__link" routerLink="/voucher" routerLinkActive="active" (click)="onNavigate()" title="Voucher Report">
+              <fa-icon class="sidebar__icon" icon="file-alt" [fixedWidth]="true" />
+              <span class="sidebar__label">Voucher Report</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="sidebar__link"
+              routerLink="/transaction-history"
+              routerLinkActive="active"
+              (click)="onNavigate()"
+              title="Transaction Report"
+            >
+              <fa-icon class="sidebar__icon" icon="tachometer-alt" [fixedWidth]="true" />
+              <span class="sidebar__label">Transaction Report</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Catalog -->
+    <li class="sidebar__group" [class.is-open]="isOpen('catalog')">
+      <button type="button" class="sidebar__group-header" (click)="toggleGroup('catalog')" [attr.aria-expanded]="isOpen('catalog')">
+        <fa-icon class="sidebar__icon" icon="list" [fixedWidth]="true" />
+        <span class="sidebar__label">Catalog</span>
+        <span class="sidebar__chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sidebar__group-body">
+        <ul class="sidebar__group-items">
+          <li>
+            <a class="sidebar__link" routerLink="/customer" routerLinkActive="active" (click)="onNavigate()" title="Customer">
+              <fa-icon class="sidebar__icon" icon="user" [fixedWidth]="true" />
+              <span class="sidebar__label">Customer</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__link" routerLink="/item" routerLinkActive="active" (click)="onNavigate()" title="Item">
+              <fa-icon class="sidebar__icon" icon="th-list" [fixedWidth]="true" />
+              <span class="sidebar__label">Item</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__link" routerLink="/rate" routerLinkActive="active" (click)="onNavigate()" title="Rate">
+              <fa-icon class="sidebar__icon" icon="scale-balanced" [fixedWidth]="true" />
+              <span class="sidebar__label">Rate</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__link" routerLink="/karat" routerLinkActive="active" (click)="onNavigate()" title="Karat">
+              <fa-icon class="sidebar__icon" icon="certificate" [fixedWidth]="true" />
+              <span class="sidebar__label">Karat</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__link" routerLink="/aurum-service" routerLinkActive="active" (click)="onNavigate()" title="Aurum Service">
+              <fa-icon class="sidebar__icon" icon="cogs" [fixedWidth]="true" />
+              <span class="sidebar__label">Aurum Service</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Administration -->
+    <li class="sidebar__group" [class.is-open]="isOpen('admin')" *jhiHasAnyAuthority="'ROLE_ADMIN'">
+      <button type="button" class="sidebar__group-header" (click)="toggleGroup('admin')" [attr.aria-expanded]="isOpen('admin')">
+        <fa-icon class="sidebar__icon" icon="shield-halved" [fixedWidth]="true" />
+        <span class="sidebar__label">Administration</span>
+        <span class="sidebar__chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sidebar__group-body">
+        <ul class="sidebar__group-items">
+          <li>
+            <a class="sidebar__link" routerLink="/authority" routerLinkActive="active" (click)="onNavigate()" title="Authority">
+              <fa-icon class="sidebar__icon" icon="users-cog" [fixedWidth]="true" />
+              <span class="sidebar__label">Authority</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="sidebar__link"
+              routerLink="/admin/user-management"
+              routerLinkActive="active"
+              (click)="onNavigate()"
+              title="User management"
+            >
+              <fa-icon class="sidebar__icon" icon="users" [fixedWidth]="true" />
+              <span class="sidebar__label">User management</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__link" routerLink="/admin/metrics" routerLinkActive="active" (click)="onNavigate()" title="Metrics">
+              <fa-icon class="sidebar__icon" icon="tachometer-alt" [fixedWidth]="true" />
+              <span class="sidebar__label">Metrics</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__link" routerLink="/admin/health" routerLinkActive="active" (click)="onNavigate()" title="Health">
+              <fa-icon class="sidebar__icon" icon="heart" [fixedWidth]="true" />
+              <span class="sidebar__label">Health</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="sidebar__link"
+              routerLink="/admin/configuration"
+              routerLinkActive="active"
+              (click)="onNavigate()"
+              title="Configuration"
+            >
+              <fa-icon class="sidebar__icon" icon="cogs" [fixedWidth]="true" />
+              <span class="sidebar__label">Configuration</span>
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__link" routerLink="/admin/logs" routerLinkActive="active" (click)="onNavigate()" title="Logs">
+              <fa-icon class="sidebar__icon" icon="tasks" [fixedWidth]="true" />
+              <span class="sidebar__label">Logs</span>
+            </a>
+          </li>
+          @if (openAPIEnabled) {
+            <li>
+              <a class="sidebar__link" routerLink="/admin/docs" routerLinkActive="active" (click)="onNavigate()" title="API">
+                <fa-icon class="sidebar__icon" icon="book" [fixedWidth]="true" />
+                <span class="sidebar__label">API</span>
+              </a>
+            </li>
+          }
+          @if (!inProduction) {
+            <li>
+              <a class="sidebar__link" href="./h2-console/" target="_tab" (click)="onNavigate()" title="Database">
+                <fa-icon class="sidebar__icon" icon="database" [fixedWidth]="true" />
+                <span class="sidebar__label">Database</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    </li>
   </ul>
 
   <div class="sidebar__footer">
