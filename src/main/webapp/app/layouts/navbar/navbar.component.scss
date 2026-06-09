@@ -1,5 +1,5 @@
 /* ==========================================================================
-Navbar — Apple-style frosted sticky header
+Navbar — Parchment Atelier frosted sticky header
 ========================================================================== */
 
 .navbar-version {
@@ -22,12 +22,15 @@ Navbar — Apple-style frosted sticky header
   background-color: var(--aurum-nav-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid var(--aurum-border);
+  border-bottom: 1px solid var(--aurum-gold-soft);
 
   .navbar-title {
     color: var(--aurum-text);
+    font-family: var(--aurum-font-display);
     font-weight: 600;
-    letter-spacing: -0.01em;
+    font-size: 1.6rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
   }
 
   .dropdown-item.active,

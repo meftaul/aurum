@@ -3,7 +3,7 @@
   background: var(--aurum-surface);
   border: 1px solid var(--aurum-border);
   box-shadow: 0 2px 12px var(--aurum-shadow);
-  border-radius: 12px;
+  border-radius: 6px;
   transition: 0.3s;
 }
 .card:hover {
@@ -37,12 +37,13 @@
   margin: 20px auto;
 }
 .card .box h2 span {
-  font-size: 14px;
-  background: var(--aurum-primary);
-  color: var(--aurum-primary-contrast);
+  font-family: var(--aurum-font-mono);
+  font-size: 13px;
+  background: var(--aurum-gold);
+  color: #2b2017;
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 15px;
+  border-radius: 3px;
 }
 .card .box p {
   color: var(--aurum-text);

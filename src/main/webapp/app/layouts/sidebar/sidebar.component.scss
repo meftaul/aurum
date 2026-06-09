@@ -24,9 +24,10 @@
   background-size: contain;
 }
 .sidebar__brand-text {
+  font-family: var(--aurum-font-display);
   font-weight: 700;
-  letter-spacing: -0.01em;
-  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  font-size: 1.4rem;
 }
 
 .sidebar__nav {
@@ -36,12 +37,13 @@
 }
 
 .sidebar__section {
-  margin: 1rem 0.6rem 0.35rem;
-  font-size: 0.7rem;
-  font-weight: 600;
+  margin: 1.25rem 0.6rem 0.4rem;
+  font-family: var(--aurum-font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--aurum-text-muted);
+  letter-spacing: 0.16em;
+  color: var(--aurum-primary);
   white-space: nowrap;
   overflow: hidden;
   transition:
@@ -51,12 +53,13 @@
 }
 
 .sidebar__link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0.55rem 0.65rem;
   margin-bottom: 0.15rem;
-  border-radius: 10px;
+  border-radius: 5px;
   color: var(--aurum-text);
   text-decoration: none;
   white-space: nowrap;
@@ -68,10 +71,22 @@
     background-color: var(--aurum-surface-2);
   }
 
+  /* Active = gold tint + a gold leaf marker on the left edge */
   &.active {
     background-color: var(--aurum-primary-subtle);
     color: var(--aurum-primary);
     font-weight: 600;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -0.75rem;
+      top: 0.35rem;
+      bottom: 0.35rem;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--aurum-gold);
+    }
   }
 }
 

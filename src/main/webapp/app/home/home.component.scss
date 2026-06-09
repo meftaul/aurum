@@ -1,5 +1,5 @@
 /* ==========================================================================
-Home — Apple-style marketing landing
+Home — "Parchment Atelier" heritage marketing landing
 ========================================================================== */
 
 /* Break out of the .jh-card padding for full-bleed bands */
@@ -11,38 +11,49 @@ Home — Apple-style marketing landing
 
 /* --- Hero --- */
 .home-hero {
+  position: relative;
   text-align: center;
-  padding: 6rem 1.5rem 7rem;
-  background: linear-gradient(180deg, var(--aurum-surface-2), var(--aurum-bg) 70%);
+  padding: 7rem 1.5rem 7.5rem;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, var(--aurum-primary-subtle), transparent 70%),
+    linear-gradient(180deg, var(--aurum-surface-2), var(--aurum-bg) 72%);
+  border-bottom: 1px solid var(--aurum-gold-soft);
 }
 .home-hero__content {
   max-width: 820px;
   margin: 0 auto;
 }
+.home-hero__eyebrow {
+  margin-bottom: 1.25rem;
+}
 .home-hero__title {
   margin: 0;
-  font-size: clamp(2.75rem, 6vw, 5rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  font-family: var(--aurum-font-display);
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
   color: var(--aurum-text);
 }
 .home-hero__tagline {
-  margin: 1.25rem auto 0.5rem;
+  margin: 1.5rem auto 0.5rem;
   max-width: 680px;
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-family: var(--aurum-font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-style: italic;
   font-weight: 500;
   color: var(--aurum-text);
 }
 .home-hero__lead {
-  margin: 0 auto 2rem;
-  max-width: 600px;
+  margin: 0 auto 2.25rem;
+  max-width: 560px;
   font-size: 1.1rem;
+  line-height: 1.7;
   color: var(--aurum-text-muted);
 }
 .home-hero__actions {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.75rem;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
@@ -57,6 +68,8 @@ Home — Apple-style marketing landing
 .home-section--alt {
   max-width: none;
   background: var(--aurum-surface-2);
+  border-top: 1px solid var(--aurum-gold-soft);
+  border-bottom: 1px solid var(--aurum-gold-soft);
 }
 .home-section--alt > .home-section__head,
 .home-section--alt > .row {
@@ -66,33 +79,46 @@ Home — Apple-style marketing landing
 }
 .home-section__head {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 3.25rem;
 }
 .home-section__title {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  font-family: var(--aurum-font-display);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--aurum-text);
 }
 .home-section__subtitle {
   margin: 0.75rem auto 0;
   max-width: 600px;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
+  font-style: italic;
   color: var(--aurum-text-muted);
 }
 
-/* --- Service cards & feature items --- */
+/* --- Service cards & feature items: hairline frames with a gold top-rule --- */
 .service-card,
 .feature {
+  position: relative;
   height: 100%;
   text-align: center;
-  padding: 2.5rem 1.5rem;
+  padding: 2.75rem 1.5rem 2.25rem;
   background: var(--aurum-surface);
   border: 1px solid var(--aurum-border);
-  border-radius: 18px;
+  border-radius: 6px;
   transition:
     transform 0.25s ease,
+    border-color 0.25s ease,
     box-shadow 0.25s ease;
+}
+.service-card::before,
+.feature::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--aurum-gold) 50%, transparent);
+  border-radius: 6px 6px 0 0;
 }
 .home-section--alt .feature {
   background: var(--aurum-bg);
@@ -100,30 +126,36 @@ Home — Apple-style marketing landing
 .service-card:hover,
 .feature:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px var(--aurum-shadow);
+  border-color: var(--aurum-gold-soft);
+  box-shadow: 0 14px 34px var(--aurum-shadow);
 }
 .service-card__icon,
 .feature__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 1.25rem;
-  border-radius: 50%;
-  font-size: 1.5rem;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--aurum-gold-soft);
+  border-radius: 4px;
+  font-size: 1.4rem;
   color: var(--aurum-primary);
   background: var(--aurum-primary-subtle);
 }
 .service-card__title,
 .feature__title {
+  font-family: var(--aurum-font-display);
+  font-size: 1.5rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
   color: var(--aurum-text);
 }
 .service-card__desc,
 .feature__text {
-  margin: 0;
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
   color: var(--aurum-text-muted);
 }
 
@@ -133,6 +165,9 @@ Home — Apple-style marketing landing
   text-align: center;
   max-width: 1100px;
   margin: 0 auto;
+}
+.home-contact .home-section__title {
+  margin-top: 0;
 }
 .home-contact__grid {
   margin-top: 3rem;
@@ -148,17 +183,22 @@ Home — Apple-style marketing landing
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   flex: 0 0 auto;
-  border-radius: 50%;
+  border: 1px solid var(--aurum-gold-soft);
+  border-radius: 4px;
   color: var(--aurum-primary);
   background: var(--aurum-primary-subtle);
 }
 .contact-item__label {
-  font-weight: 600;
-  color: var(--aurum-text);
+  font-family: var(--aurum-font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--aurum-text-muted);
 }
 .contact-item__value {
-  color: var(--aurum-text-muted);
+  font-size: 1.05rem;
+  color: var(--aurum-text);
 }

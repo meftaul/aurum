@@ -1,29 +1,92 @@
 .dashboard__head {
-  margin-bottom: 2rem;
+  align-items: flex-start;
 }
 .dashboard__title {
   margin: 0;
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  font-size: clamp(2.25rem, 4vw, 3rem);
   color: var(--aurum-text);
 }
 .dashboard__subtitle {
   margin: 0.35rem 0 0;
+  font-style: italic;
   color: var(--aurum-text-muted);
 }
 
-/* Placeholder until the owner fills in content */
+/* --- Stat tiles: hairline-framed ledger figures with a gold top-rule --- */
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+.stat-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.5rem 1.5rem 1.4rem;
+  background: var(--aurum-surface);
+  border: 1px solid var(--aurum-border);
+  border-radius: 6px;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.stat-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--aurum-gold), var(--aurum-gold-soft) 70%, transparent);
+  border-radius: 6px 6px 0 0;
+}
+.stat-tile:hover {
+  border-color: var(--aurum-gold-soft);
+  box-shadow: 0 10px 28px var(--aurum-shadow);
+}
+.stat-tile__label {
+  font-family: var(--aurum-font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--aurum-text-muted);
+}
+.stat-tile__value {
+  font-family: var(--aurum-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 2.4rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--aurum-text);
+}
+.stat-tile__hint {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--aurum-text-muted);
+}
+
+/* --- Recent-activity panel --- */
+.dashboard__panel-head {
+  margin-bottom: 1.25rem;
+}
+.dashboard__panel-title {
+  margin: 0;
+  font-size: 1.75rem;
+  color: var(--aurum-text);
+}
 .dashboard__placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  min-height: 320px;
+  min-height: 280px;
   padding: 2rem;
-  border: 1px dashed var(--aurum-border);
-  border-radius: 18px;
+  border: 1px dashed var(--aurum-gold-soft);
+  border-radius: 6px;
+  background: var(--aurum-surface);
   color: var(--aurum-text-muted);
+  font-style: italic;
 }
 .dashboard__placeholder-icon {
   font-size: 2rem;
