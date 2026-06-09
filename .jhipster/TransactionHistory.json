@@ -1,4 +1,7 @@
 {
+  "annotations": {
+    "changelogDate": "20191023084044"
+  },
   "changelogDate": "20191023084044",
   "clientRootFolder": "",
   "databaseType": "sql",
@@ -43,6 +46,6 @@
   "name": "TransactionHistory",
   "pagination": "pagination",
   "relationships": [],
-  "searchEngine": false,
+  "searchEngine": "no",
   "service": "serviceImpl"
 }

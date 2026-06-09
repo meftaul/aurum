@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (transactionHistory(); as transactionHistoryRef) {
+      <div>
+        <h2 data-cy="transactionHistoryDetailsHeading"><span>Transaction History</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ transactionHistoryRef.id }}</span>
+          </dd>
+          <dt><span>Voucher No</span></dt>
+          <dd>
+            <span>{{ transactionHistoryRef.voucherNo }}</span>
+          </dd>
+          <dt><span>Amount</span></dt>
+          <dd>
+            <span>{{ transactionHistoryRef.amount }}</span>
+          </dd>
+          <dt><span>Date Created</span></dt>
+          <dd>
+            <span>{{ transactionHistoryRef.dateCreated | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Tag</span></dt>
+          <dd>
+            <span>{{
+              { null: '', RECEIVE: 'RECEIVE', VAT: 'VAT', REFUND: 'REFUND', DISCOUNT: 'DISCOUNT' }[transactionHistoryRef.tag ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span>Customer Id</span></dt>
+          <dd>
+            <span>{{ transactionHistoryRef.customerId }}</span>
+          </dd>
+          <dt><span>Added By</span></dt>
+          <dd>
+            <span>{{ transactionHistoryRef.addedBy }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/transaction-history', transactionHistoryRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

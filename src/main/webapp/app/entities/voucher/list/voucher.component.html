@@ -1,0 +1,203 @@
+<div>
+  <h2 id="page-heading" data-cy="VoucherHeading">
+    <span>Vouchers</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span>Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-voucher"
+        [routerLink]="['/voucher/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span>Create a new Voucher</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  <jhi-filter [filters]="filters" />
+
+  @if (vouchers().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span>No Vouchers found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span>ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="voucherNo">
+              <div class="d-flex">
+                <span>Voucher No</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="customerId">
+              <div class="d-flex">
+                <span>Customer Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="calculatedTotalAmount">
+              <div class="d-flex">
+                <span>Calculated Total Amount</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="vat">
+              <div class="d-flex">
+                <span>Vat</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="disountAmount">
+              <div class="d-flex">
+                <span>Disount Amount</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="status">
+              <div class="d-flex">
+                <span>Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="totalPayableAmount">
+              <div class="d-flex">
+                <span>Total Payable Amount</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateCreated">
+              <div class="d-flex">
+                <span>Date Created</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="addedBy">
+              <div class="d-flex">
+                <span>Added By</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="boxNumber">
+              <div class="d-flex">
+                <span>Box Number</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="deliveryDate">
+              <div class="d-flex">
+                <span>Delivery Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="deliveryStatus">
+              <div class="d-flex">
+                <span>Delivery Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (voucher of vouchers(); track trackId(voucher)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/voucher', voucher.id, 'view']">{{ voucher.id }}</a>
+              </td>
+              <td>{{ voucher.voucherNo }}</td>
+              <td>{{ voucher.customerId }}</td>
+              <td>{{ voucher.calculatedTotalAmount }}</td>
+              <td>{{ voucher.vat }}</td>
+              <td>{{ voucher.disountAmount }}</td>
+              <td>{{ { null: '', PAID: 'PAID', DUE: 'DUE', CANCEL: 'CANCEL' }[voucher.status ?? 'null'] }}</td>
+              <td>{{ voucher.totalPayableAmount }}</td>
+              <td>{{ voucher.dateCreated | formatMediumDatetime }}</td>
+              <td>{{ voucher.addedBy }}</td>
+              <td>{{ voucher.boxNumber }}</td>
+              <td>{{ voucher.deliveryDate | formatMediumDatetime }}</td>
+              <td>{{ voucher.deliveryStatus }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <button
+                    type="submit"
+                    [routerLink]="['/aurum-service']"
+                    [queryParams]="{ 'filter[voucherId.in]': voucher.id }"
+                    class="btn btn-info btn-sm"
+                    data-cy="filterOtherEntityButton"
+                  >
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline">Show Aurum Service</span>
+                  </button>
+                  <a [routerLink]="['/voucher', voucher.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline">View</span>
+                  </a>
+
+                  <a [routerLink]="['/voucher', voucher.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(voucher)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (vouchers().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

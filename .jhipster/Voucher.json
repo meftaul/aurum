@@ -1,4 +1,7 @@
 {
+  "annotations": {
+    "changelogDate": "20191023082216"
+  },
   "changelogDate": "20191023082216",
   "clientRootFolder": "",
   "databaseType": "sql",
@@ -71,9 +74,10 @@
       "otherEntityName": "aurumService",
       "otherEntityRelationshipName": "voucher",
       "relationshipName": "aurumService",
+      "relationshipSide": "left",
       "relationshipType": "one-to-many"
     }
   ],
-  "searchEngine": false,
+  "searchEngine": "no",
   "service": "serviceImpl"
 }
