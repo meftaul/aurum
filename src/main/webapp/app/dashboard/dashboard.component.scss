@@ -1,0 +1,31 @@
+.dashboard__head {
+  margin-bottom: 2rem;
+}
+.dashboard__title {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--aurum-text);
+}
+.dashboard__subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--aurum-text-muted);
+}
+
+/* Placeholder until the owner fills in content */
+.dashboard__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 320px;
+  padding: 2rem;
+  border: 1px dashed var(--aurum-border);
+  border-radius: 18px;
+  color: var(--aurum-text-muted);
+}
+.dashboard__placeholder-icon {
+  font-size: 2rem;
+  color: var(--aurum-primary);
+}

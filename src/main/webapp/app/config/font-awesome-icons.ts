@@ -1,4 +1,6 @@
 import {
+  faAnglesLeft,
+  faAnglesRight,
   faArrowLeft,
   faAsterisk,
   faBan,
@@ -13,6 +15,7 @@ import {
   faEye,
   faFileAlt,
   faFlag,
+  faGaugeHigh,
   faHeart,
   faHome,
   faList,
@@ -55,6 +58,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
+  faAnglesLeft,
+  faAnglesRight,
   faArrowLeft,
   faAsterisk,
   faBan,
@@ -69,6 +74,7 @@ export const fontAwesomeIcons = [
   faEye,
   faFileAlt,
   faFlag,
+  faGaugeHigh,
   faHeart,
   faHome,
   faList,

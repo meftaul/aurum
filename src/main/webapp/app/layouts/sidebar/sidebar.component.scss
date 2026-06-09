@@ -1,0 +1,131 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.75rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem 1rem;
+  text-decoration: none;
+  color: var(--aurum-text);
+  white-space: nowrap;
+}
+.sidebar__logo {
+  flex: 0 0 auto;
+  height: 32px;
+  width: 32px;
+  background: url('/content/images/ng_gold.png') no-repeat center center;
+  background-size: contain;
+}
+.sidebar__brand-text {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 1.15rem;
+}
+
+.sidebar__nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar__section {
+  margin: 1rem 0.6rem 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--aurum-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    opacity 0.15s ease,
+    height 0.2s ease,
+    margin 0.2s ease;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  margin-bottom: 0.15rem;
+  border-radius: 10px;
+  color: var(--aurum-text);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background-color: var(--aurum-surface-2);
+  }
+
+  &.active {
+    background-color: var(--aurum-primary-subtle);
+    color: var(--aurum-primary);
+    font-weight: 600;
+  }
+}
+
+.sidebar__icon {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  text-align: center;
+}
+
+.sidebar__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+.sidebar__brand-text {
+  transition: opacity 0.15s ease;
+}
+
+/* Footer pinned to the bottom: account + settings/password/sign out */
+.sidebar__footer {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--aurum-border);
+}
+.sidebar__account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  color: var(--aurum-text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.sidebar__avatar {
+  flex: 0 0 auto;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+/* Collapsed rail: fade labels/section headers out (clipped by overflow-x) */
+.sidebar--collapsed {
+  .sidebar__brand-text,
+  .sidebar__label {
+    opacity: 0;
+  }
+  .sidebar__section {
+    height: 0;
+    margin: 0.4rem 0.65rem;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      opacity 0.15s ease,
+      height 0.2s ease,
+      margin 0.2s ease;
+  }
+}

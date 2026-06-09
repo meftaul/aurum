@@ -9,29 +9,6 @@ Home — Apple-style marketing landing
   color: var(--aurum-text);
 }
 
-/* --- Sign-in tucked in the corner --- */
-.home-topbar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.75rem 1.5rem;
-}
-.home-topbar__link {
-  color: var(--aurum-text-muted);
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-  fa-icon {
-    margin-right: 0.4rem;
-  }
-  &:hover {
-    color: var(--aurum-primary);
-  }
-}
-.home-topbar__welcome {
-  color: var(--aurum-text-muted);
-  font-weight: 500;
-}
-
 /* --- Hero --- */
 .home-hero {
   text-align: center;

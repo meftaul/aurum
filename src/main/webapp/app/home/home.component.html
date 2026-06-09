@@ -1,16 +1,4 @@
 <div class="home-landing">
-  <!-- Sign-in tucked in the corner -->
-  <div class="home-topbar">
-    @if (account() === null) {
-      <a class="home-topbar__link" (click)="login()">
-        <fa-icon icon="sign-in-alt"></fa-icon>
-        <span>Sign in</span>
-      </a>
-    } @else {
-      <span class="home-topbar__welcome">Welcome, {{ account()?.login }}</span>
-    }
-  </div>
-
   <!-- ===================== HERO ===================== -->
   <section class="home-hero">
     <div class="home-hero__content">

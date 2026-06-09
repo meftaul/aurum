@@ -1,68 +1,25 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
-import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { AccountService } from 'app/core/auth/account.service';
-import { LoginService } from 'app/login/login.service';
-import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { ThemeService } from 'app/core/theme/theme.service';
-import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
-import { environment } from 'environments/environment';
-import NavbarItem from './navbar-item.model';
 
 @Component({
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective],
+  imports: [RouterModule, SharedModule],
 })
-export default class NavbarComponent implements OnInit {
-  inProduction?: boolean;
-  isNavbarCollapsed = signal(true);
-  openAPIEnabled?: boolean;
-  version = '';
+export default class NavbarComponent {
   account = inject(AccountService).trackCurrentAccount();
-  entitiesNavbarItems: NavbarItem[] = [];
+  theme = inject(ThemeService).theme;
 
-  private readonly loginService = inject(LoginService);
-  private readonly profileService = inject(ProfileService);
-  private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
-
-  theme = this.themeService.theme;
-
-  constructor() {
-    const { VERSION } = environment;
-    if (VERSION) {
-      this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
-    }
-  }
-
-  ngOnInit(): void {
-    this.entitiesNavbarItems = EntityNavbarItems;
-    this.profileService.getProfileInfo().subscribe(profileInfo => {
-      this.inProduction = profileInfo.inProduction;
-      this.openAPIEnabled = profileInfo.openAPIEnabled;
-    });
-  }
-
-  collapseNavbar(): void {
-    this.isNavbarCollapsed.set(true);
-  }
+  private readonly router = inject(Router);
 
   login(): void {
     this.router.navigate(['/login']);
-  }
-
-  logout(): void {
-    this.collapseNavbar();
-    this.loginService.logout();
-    this.router.navigate(['']);
-  }
-
-  toggleNavbar(): void {
-    this.isNavbarCollapsed.update(isNavbarCollapsed => !isNavbarCollapsed);
   }
 
   toggleTheme(): void {

@@ -1,0 +1,33 @@
+<div class="app-shell" [class.app-shell--collapsed]="collapsed()" [class.app-shell--drawer-open]="drawerOpen()">
+  <jhi-sidebar class="app-shell__sidebar" [collapsed]="collapsed()" (navigate)="closeDrawer()" />
+
+  <div class="app-shell__backdrop" (click)="closeDrawer()"></div>
+
+  <div class="app-shell__main">
+    <header class="app-topbar">
+      <!-- Desktop collapse toggle -->
+      <button type="button" class="app-topbar__btn d-none d-md-inline-flex" (click)="toggleCollapse()" aria-label="Toggle sidebar">
+        <fa-icon [icon]="collapsed() ? 'angles-right' : 'angles-left'" />
+      </button>
+      <!-- Mobile drawer toggle -->
+      <button type="button" class="app-topbar__btn d-md-none" (click)="toggleDrawer()" aria-label="Open menu">
+        <fa-icon icon="bars" />
+      </button>
+
+      <span class="app-topbar__spacer"></span>
+
+      <button
+        type="button"
+        class="app-topbar__btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+      >
+        <fa-icon [icon]="theme() === 'dark' ? 'sun' : 'moon'" />
+      </button>
+    </header>
+
+    <main class="app-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
