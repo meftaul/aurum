@@ -10,7 +10,6 @@ import { KaratService } from './karat.service';
 import { KaratComponent } from './karat.component';
 import { KaratDetailComponent } from './karat-detail.component';
 import { KaratUpdateComponent } from './karat-update.component';
-import { KaratDeletePopupComponent } from './karat-delete-dialog.component';
 import { IKarat } from 'app/shared/model/karat.model';
 
 @Injectable({ providedIn: 'root' })
@@ -81,18 +80,3 @@ export const karatRoute: Routes = [
   }
 ];
 
-export const karatPopupRoute: Routes = [
-  {
-    path: ':id/delete',
-    component: KaratDeletePopupComponent,
-    resolve: {
-      karat: KaratResolve
-    },
-    data: {
-      authorities: ['ROLE_ADMIN'],
-      pageTitle: 'Karats'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
-];

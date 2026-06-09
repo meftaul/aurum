@@ -107,7 +107,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.fetchRateList();
     this.fetchItemList();
 
-    this.accountService.identity().then((account: Account) => {
+    this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
     });
   }

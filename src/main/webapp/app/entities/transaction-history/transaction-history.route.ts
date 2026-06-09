@@ -10,7 +10,6 @@ import { TransactionHistoryService } from './transaction-history.service';
 import { TransactionHistoryComponent } from './transaction-history.component';
 import { TransactionHistoryDetailComponent } from './transaction-history-detail.component';
 import { TransactionHistoryUpdateComponent } from './transaction-history-update.component';
-import { TransactionHistoryDeletePopupComponent } from './transaction-history-delete-dialog.component';
 import { ITransactionHistory } from 'app/shared/model/transaction-history.model';
 
 @Injectable({ providedIn: 'root' })
@@ -81,18 +80,3 @@ export const transactionHistoryRoute: Routes = [
   }
 ];
 
-export const transactionHistoryPopupRoute: Routes = [
-  {
-    path: ':id/delete',
-    component: TransactionHistoryDeletePopupComponent,
-    resolve: {
-      transactionHistory: TransactionHistoryResolve
-    },
-    data: {
-      authorities: ['ROLE_ADMIN'],
-      pageTitle: 'Transaction Histories'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
-];

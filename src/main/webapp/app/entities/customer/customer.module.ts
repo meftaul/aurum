@@ -7,10 +7,10 @@ import { AurumSharedModule } from 'app/shared/shared.module';
 import { CustomerComponent } from './customer.component';
 import { CustomerDetailComponent } from './customer-detail.component';
 import { CustomerUpdateComponent } from './customer-update.component';
-import { CustomerDeletePopupComponent, CustomerDeleteDialogComponent } from './customer-delete-dialog.component';
-import { customerRoute, customerPopupRoute } from './customer.route';
+import { CustomerDeleteDialogComponent } from './customer-delete-dialog.component';
+import { customerRoute } from './customer.route';
 
-const ENTITY_STATES = [...customerRoute, ...customerPopupRoute];
+const ENTITY_STATES = [...customerRoute];
 
 @NgModule({
   imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES), MatFormFieldModule, MatInputModule],
@@ -18,8 +18,7 @@ const ENTITY_STATES = [...customerRoute, ...customerPopupRoute];
     CustomerComponent,
     CustomerDetailComponent,
     CustomerUpdateComponent,
-    CustomerDeleteDialogComponent,
-    CustomerDeletePopupComponent
+    CustomerDeleteDialogComponent
   ],
   entryComponents: [CustomerDeleteDialogComponent]
 })

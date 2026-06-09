@@ -10,7 +10,6 @@ import { CustomerService } from './customer.service';
 import { CustomerComponent } from './customer.component';
 import { CustomerDetailComponent } from './customer-detail.component';
 import { CustomerUpdateComponent } from './customer-update.component';
-import { CustomerDeletePopupComponent } from './customer-delete-dialog.component';
 import { ICustomer } from 'app/shared/model/customer.model';
 
 @Injectable({ providedIn: 'root' })
@@ -81,18 +80,3 @@ export const customerRoute: Routes = [
   }
 ];
 
-export const customerPopupRoute: Routes = [
-  {
-    path: ':id/delete',
-    component: CustomerDeletePopupComponent,
-    resolve: {
-      customer: CustomerResolve
-    },
-    data: {
-      authorities: ['ROLE_ADMIN'],
-      pageTitle: 'Customers'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
-];

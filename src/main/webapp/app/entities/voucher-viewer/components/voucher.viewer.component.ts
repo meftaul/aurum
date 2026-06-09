@@ -47,7 +47,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.prepareTransactionHistoryForm();
 
-    this.accountService.identity().then((account: Account) => {
+    this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
     });
   }

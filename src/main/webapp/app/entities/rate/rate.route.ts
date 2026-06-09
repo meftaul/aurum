@@ -10,7 +10,6 @@ import { RateService } from './rate.service';
 import { RateComponent } from './rate.component';
 import { RateDetailComponent } from './rate-detail.component';
 import { RateUpdateComponent } from './rate-update.component';
-import { RateDeletePopupComponent } from './rate-delete-dialog.component';
 import { IRate } from 'app/shared/model/rate.model';
 
 @Injectable({ providedIn: 'root' })
@@ -81,18 +80,3 @@ export const rateRoute: Routes = [
   }
 ];
 
-export const ratePopupRoute: Routes = [
-  {
-    path: ':id/delete',
-    component: RateDeletePopupComponent,
-    resolve: {
-      rate: RateResolve
-    },
-    data: {
-      authorities: ['ROLE_USER_1'],
-      pageTitle: 'Rates'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
-];

@@ -7,7 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -17,12 +17,11 @@ import { TransactionHistoryComponent } from './transaction-history.component';
 import { TransactionHistoryDetailComponent } from './transaction-history-detail.component';
 import { TransactionHistoryUpdateComponent } from './transaction-history-update.component';
 import {
-  TransactionHistoryDeletePopupComponent,
   TransactionHistoryDeleteDialogComponent
 } from './transaction-history-delete-dialog.component';
-import { transactionHistoryRoute, transactionHistoryPopupRoute } from './transaction-history.route';
+import { transactionHistoryRoute } from './transaction-history.route';
 
-const ENTITY_STATES = [...transactionHistoryRoute, ...transactionHistoryPopupRoute];
+const ENTITY_STATES = [...transactionHistoryRoute];
 
 @NgModule({
   imports: [
@@ -43,8 +42,7 @@ const ENTITY_STATES = [...transactionHistoryRoute, ...transactionHistoryPopupRou
     TransactionHistoryComponent,
     TransactionHistoryDetailComponent,
     TransactionHistoryUpdateComponent,
-    TransactionHistoryDeleteDialogComponent,
-    TransactionHistoryDeletePopupComponent
+    TransactionHistoryDeleteDialogComponent
   ],
   entryComponents: [TransactionHistoryDeleteDialogComponent]
 })

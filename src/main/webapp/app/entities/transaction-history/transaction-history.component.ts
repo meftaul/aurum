@@ -184,7 +184,7 @@ export class TransactionHistoryComponent implements OnInit, OnDestroy {
     this.startDate = new Date();
     this.endDate = new Date();
     this.loadAll();
-    this.accountService.identity().then(account => {
+    this.accountService.identity().subscribe(account => {
       this.currentAccount = account;
     });
     this.registerChangeInTransactionHistories();
