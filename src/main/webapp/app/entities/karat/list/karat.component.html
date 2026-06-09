@@ -1,11 +1,15 @@
 <div>
-  <h2 id="page-heading" data-cy="KaratHeading">
-    <span>Karats</span>
+  <header class="registry-head" data-cy="KaratHeading">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">Atelier Registry</span>
+      <h2 class="registry-head__title" id="page-heading">Karats</h2>
+      <p class="registry-head__subtitle">Browse and manage karat grades</p>
+    </div>
 
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+    <div class="registry-head__actions">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span>Refresh list</span>
+        <span class="d-none d-sm-inline">Refresh</span>
       </button>
 
       <button
@@ -15,57 +19,66 @@
         [routerLink]="['/karat/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span>Create a new Karat</span>
+        <span>New Karat</span>
       </button>
     </div>
-  </h2>
+
+    <hr class="registry-head__rule" />
+  </header>
 
   <jhi-alert-error />
 
   <jhi-alert />
 
   @if (karats().length === 0) {
-    <div class="alert alert-warning" id="no-result">
+    <div class="ledger-empty" id="no-result">
+      <fa-icon icon="certificate" class="ledger-empty__icon"></fa-icon>
       <span>No Karats found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
+    <div class="table-responsive ledger-frame" id="entities">
+      <table class="table ledger ledger--cards" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col">#</th>
             <th scope="col" jhiSortBy="id">
               <div class="d-flex">
                 <span>ID</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="karatType">
               <div class="d-flex">
                 <span>Karat Type</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="purityPercent">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="purityPercent">
+              <div class="d-flex justify-content-end">
                 <span>Purity Percent</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody>
-          @for (karat of karats(); track trackId(karat)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/karat', karat.id, 'view']">{{ karat.id }}</a>
+        <tbody class="stagger">
+          @for (karat of karats(); track trackId(karat); let i = $index) {
+            <tr data-cy="entityTable" class="ledger__row" [routerLink]="['/karat', karat.id, 'view']">
+              <td class="ledger__index" data-label="#">{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+              <td data-label="ID">
+                <a [routerLink]="['/karat', karat.id, 'view']" (click)="$event.stopPropagation()">{{ karat.id }}</a>
               </td>
-              <td>{{ karat.karatType }}</td>
-              <td>{{ karat.purityPercent }}</td>
-              <td class="text-end">
+              <td data-label="Karat Type">
+                <div class="ledger__identity">
+                  <span class="seal seal--sm" aria-hidden="true">{{ (karat.karatType || '?').charAt(0) | uppercase }}</span>
+                  <span class="ledger__identity-name">{{ karat.karatType || '—' }}</span>
+                </div>
+              </td>
+              <td data-label="Purity Percent" class="text-end">
+                <span class="ledger__assay">{{ karat.purityPercent }}</span>
+              </td>
+              <td class="text-end ledger__actions" (click)="$event.stopPropagation()">
                 <div class="btn-group">
                   <a [routerLink]="['/karat', karat.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
                     <fa-icon icon="eye"></fa-icon>
@@ -77,7 +90,7 @@
                     <span class="d-none d-md-inline">Edit</span>
                   </a>
 
-                  <button type="submit" (click)="delete(karat)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                  <button type="button" (click)="delete(karat)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
                     <fa-icon icon="times"></fa-icon>
                     <span class="d-none d-md-inline">Delete</span>
                   </button>
@@ -90,7 +103,7 @@
     </div>
   }
   @if (karats().length > 0) {
-    <div>
+    <div class="ledger-footer">
       <div class="d-flex justify-content-center">
         <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
       </div>

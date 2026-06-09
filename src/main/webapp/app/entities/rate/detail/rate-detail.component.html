@@ -1,38 +1,48 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (rate(); as rateRef) {
-      <div>
-        <h2 data-cy="rateDetailsHeading"><span>Rate</span></h2>
+@if (rate(); as rateRef) {
+  <div class="record-sheet">
+    <header class="registry-head">
+      <div class="registry-head__lede">
+        <span class="registry-head__eyebrow">Rate Record · No. {{ rateRef.id }}</span>
+        <h2 class="registry-head__title" data-cy="rateDetailsHeading">{{ rateRef.rateType || 'Rate ' + rateRef.id }}</h2>
+      </div>
 
-        <hr />
-
-        <jhi-alert-error />
-
-        <jhi-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span>ID</span></dt>
-          <dd>
-            <span>{{ rateRef.id }}</span>
-          </dd>
-          <dt><span>Rate Type</span></dt>
-          <dd>
-            <span>{{ rateRef.rateType }}</span>
-          </dd>
-          <dt><span>Unit Price</span></dt>
-          <dd>
-            <span>{{ rateRef.unitPrice }}</span>
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <div class="registry-head__actions">
+        <button type="button" (click)="previousState()" class="btn btn-outline-secondary" data-cy="entityDetailsBackButton">
           <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
         </button>
-
         <button type="button" [routerLink]="['/rate', rateRef.id, 'edit']" class="btn btn-primary">
           <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
         </button>
       </div>
-    }
+
+      <hr class="registry-head__rule" />
+    </header>
+
+    <jhi-alert-error />
+    <jhi-alert />
+
+    <div class="record-sheet__card">
+      <div class="record-sheet__identity">
+        <div class="seal seal--lg" aria-hidden="true">{{ (rateRef.rateType || '?').charAt(0) | uppercase }}</div>
+        <div>
+          <h3 class="record-sheet__name">{{ rateRef.rateType || '—' }}</h3>
+        </div>
+      </div>
+
+      <dl class="record-sheet__facts">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ rateRef.id }}</dd>
+        </div>
+        <div>
+          <dt>Rate Type</dt>
+          <dd>{{ rateRef.rateType || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Unit Price</dt>
+          <dd>{{ rateRef.unitPrice ?? '—' }}</dd>
+        </div>
+      </dl>
+    </div>
   </div>
-</div>
+}

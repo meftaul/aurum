@@ -1,19 +1,33 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-aurum-service-heading" data-cy="AurumServiceCreateUpdateHeading">Create or edit a Aurum Service</h2>
+<div class="atelier-form atelier-form--wide">
+  @let isEdit = editForm.controls.id.value !== null;
 
-      <div>
-        <jhi-alert-error />
+  <header class="registry-head">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">Atelier Registry</span>
+      <h2 class="registry-head__title" id="jhi-aurum-service-heading" data-cy="AurumServiceCreateUpdateHeading">
+        {{ isEdit ? 'Edit Aurum Service' : 'New Aurum Service' }}
+      </h2>
+      <p class="registry-head__subtitle">
+        {{ isEdit ? 'Amend this service record.' : 'Enter a new service record.' }}
+      </p>
+    </div>
+    <hr class="registry-head__rule" />
+  </header>
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
+  <form name="editForm" class="atelier-form__sheet" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <jhi-alert-error />
 
-        <div class="mb-3">
+    @if (isEdit) {
+      <div class="atelier-form__id">
+        <label class="form-label" for="field_id">ID</label>
+        <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+      </div>
+    }
+
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Service &amp; Item</legend>
+      <div class="atelier-form__grid">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_serviceType">Service Type</label>
           <input
             type="text"
@@ -25,17 +39,34 @@
           />
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_itemName">Item Name</label>
           <input type="text" class="form-control" name="itemName" id="field_itemName" data-cy="itemName" formControlName="itemName" />
         </div>
 
+        <div class="atelier-form__field">
+          <label class="form-label" for="field_serviceName">Service Name</label>
+          <input
+            type="text"
+            class="form-control"
+            name="serviceName"
+            id="field_serviceName"
+            data-cy="serviceName"
+            formControlName="serviceName"
+          />
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Measurements</legend>
+      <div class="atelier-form__grid">
         @let quantityRef = editForm.get('quantity')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_quantity">Quantity</label>
           <input type="number" class="form-control" name="quantity" id="field_quantity" data-cy="quantity" formControlName="quantity" />
           @if (quantityRef.invalid && (quantityRef.dirty || quantityRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('quantity')?.errors?.min) {
                 <small class="form-text text-danger">This field should be at least 0.</small>
               }
@@ -47,11 +78,11 @@
         </div>
 
         @let weightRef = editForm.get('weight')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_weight">Weight</label>
           <input type="number" class="form-control" name="weight" id="field_weight" data-cy="weight" formControlName="weight" />
           @if (weightRef.invalid && (weightRef.dirty || weightRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('weight')?.errors?.min) {
                 <small class="form-text text-danger">This field should be at least 0.</small>
               }
@@ -61,11 +92,11 @@
         </div>
 
         @let rateRef = editForm.get('rate')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_rate">Rate</label>
           <input type="number" class="form-control" name="rate" id="field_rate" data-cy="rate" formControlName="rate" />
           @if (rateRef.invalid && (rateRef.dirty || rateRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('rate')?.errors?.min) {
                 <small class="form-text text-danger">This field should be at least 0.</small>
               }
@@ -74,29 +105,22 @@
           }
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_amount">Amount</label>
           <input type="number" class="form-control" name="amount" id="field_amount" data-cy="amount" formControlName="amount" />
         </div>
+      </div>
+    </fieldset>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_serviceName">Service Name</label>
-          <input
-            type="text"
-            class="form-control"
-            name="serviceName"
-            id="field_serviceName"
-            data-cy="serviceName"
-            formControlName="serviceName"
-          />
-        </div>
-
-        <div class="mb-3">
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Karat &amp; Alloy</legend>
+      <div class="atelier-form__grid">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_karatType">Karat Type</label>
           <input type="text" class="form-control" name="karatType" id="field_karatType" data-cy="karatType" formControlName="karatType" />
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_expectedKaratType">Expected Karat Type</label>
           <input
             type="text"
@@ -108,7 +132,7 @@
           />
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_addedAlloy">Added Alloy</label>
           <select class="form-control" name="addedAlloy" formControlName="addedAlloy" id="field_addedAlloy" data-cy="addedAlloy">
             <option [ngValue]="null"></option>
@@ -119,7 +143,7 @@
         </div>
 
         @let alloyQuantityRef = editForm.get('alloyQuantity')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_alloyQuantity">Alloy Quantity</label>
           <input
             type="number"
@@ -130,7 +154,7 @@
             formControlName="alloyQuantity"
           />
           @if (alloyQuantityRef.invalid && (alloyQuantityRef.dirty || alloyQuantityRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('alloyQuantity')?.errors?.min) {
                 <small class="form-text text-danger">This field should be at least 0.</small>
               }
@@ -140,9 +164,14 @@
             </div>
           }
         </div>
+      </div>
+    </fieldset>
 
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Charges &amp; Marking</legend>
+      <div class="atelier-form__grid">
         @let serviceChargeRef = editForm.get('serviceCharge')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_serviceCharge">Service Charge</label>
           <input
             type="number"
@@ -153,7 +182,7 @@
             formControlName="serviceCharge"
           />
           @if (serviceChargeRef.invalid && (serviceChargeRef.dirty || serviceChargeRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('serviceCharge')?.errors?.min) {
                 <small class="form-text text-danger">This field should be at least 0.</small>
               }
@@ -165,11 +194,11 @@
         </div>
 
         @let freeCheckRef = editForm.get('freeCheck')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_freeCheck">Free Check</label>
           <input type="number" class="form-control" name="freeCheck" id="field_freeCheck" data-cy="freeCheck" formControlName="freeCheck" />
           @if (freeCheckRef.invalid && (freeCheckRef.dirty || freeCheckRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('freeCheck')?.errors?.min) {
                 <small class="form-text text-danger">This field should be at least 0.</small>
               }
@@ -180,7 +209,7 @@
           }
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_hallMarkedText">Hall Marked Text</label>
           <input
             type="text"
@@ -192,7 +221,7 @@
           />
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_weightOfFreeCheck">Weight Of Free Check</label>
           <input
             type="text"
@@ -203,40 +232,43 @@
             formControlName="weightOfFreeCheck"
           />
         </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_voucher">Voucher</label>
-          <select
-            class="form-control"
-            id="field_voucher"
-            data-cy="voucher"
-            name="voucher"
-            formControlName="voucher"
-            [compareWith]="compareVoucher"
-          >
-            <option [ngValue]="null"></option>
-            @for (voucherOption of vouchersSharedCollection; track $index) {
-              <option [ngValue]="voucherOption">{{ voucherOption.voucherNo }}</option>
-            }
-          </select>
-        </div>
       </div>
+    </fieldset>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Voucher</legend>
+      <div class="atelier-form__field">
+        <label class="form-label" for="field_voucher">Voucher</label>
+        <select
+          class="form-control"
+          id="field_voucher"
+          data-cy="voucher"
+          name="voucher"
+          formControlName="voucher"
+          [compareWith]="compareVoucher"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
-        </button>
+          <option [ngValue]="null"></option>
+          @for (voucherOption of vouchersSharedCollection; track $index) {
+            <option [ngValue]="voucherOption">{{ voucherOption.voucherNo }}</option>
+          }
+        </select>
       </div>
-    </form>
-  </div>
+    </fieldset>
+
+    <div class="atelier-form__actions">
+      <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+      </button>
+
+      <button
+        type="submit"
+        id="save-entity"
+        data-cy="entityCreateSaveButton"
+        [disabled]="editForm.invalid || isSaving"
+        class="btn btn-primary"
+      >
+        <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+      </button>
+    </div>
+  </form>
 </div>

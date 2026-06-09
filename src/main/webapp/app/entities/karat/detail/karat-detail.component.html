@@ -1,38 +1,48 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (karat(); as karatRef) {
-      <div>
-        <h2 data-cy="karatDetailsHeading"><span>Karat</span></h2>
+@if (karat(); as karatRef) {
+  <div class="record-sheet">
+    <header class="registry-head">
+      <div class="registry-head__lede">
+        <span class="registry-head__eyebrow">Karat Record · No. {{ karatRef.id }}</span>
+        <h2 class="registry-head__title" data-cy="karatDetailsHeading">{{ karatRef.karatType || 'Karat ' + karatRef.id }}</h2>
+      </div>
 
-        <hr />
-
-        <jhi-alert-error />
-
-        <jhi-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span>ID</span></dt>
-          <dd>
-            <span>{{ karatRef.id }}</span>
-          </dd>
-          <dt><span>Karat Type</span></dt>
-          <dd>
-            <span>{{ karatRef.karatType }}</span>
-          </dd>
-          <dt><span>Purity Percent</span></dt>
-          <dd>
-            <span>{{ karatRef.purityPercent }}</span>
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <div class="registry-head__actions">
+        <button type="button" (click)="previousState()" class="btn btn-outline-secondary" data-cy="entityDetailsBackButton">
           <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
         </button>
-
         <button type="button" [routerLink]="['/karat', karatRef.id, 'edit']" class="btn btn-primary">
           <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
         </button>
       </div>
-    }
+
+      <hr class="registry-head__rule" />
+    </header>
+
+    <jhi-alert-error />
+    <jhi-alert />
+
+    <div class="record-sheet__card">
+      <div class="record-sheet__identity">
+        <div class="seal seal--lg" aria-hidden="true">{{ (karatRef.karatType || '?').charAt(0) | uppercase }}</div>
+        <div>
+          <h3 class="record-sheet__name">{{ karatRef.karatType || '—' }}</h3>
+        </div>
+      </div>
+
+      <dl class="record-sheet__facts">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ karatRef.id }}</dd>
+        </div>
+        <div>
+          <dt>Karat Type</dt>
+          <dd>{{ karatRef.karatType || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Purity Percent</dt>
+          <dd>{{ karatRef.purityPercent ?? '—' }}</dd>
+        </div>
+      </dl>
+    </div>
   </div>
-</div>
+}

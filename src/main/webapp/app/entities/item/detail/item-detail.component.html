@@ -1,42 +1,55 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (item(); as itemRef) {
-      <div>
-        <h2 data-cy="itemDetailsHeading"><span>Item</span></h2>
+@if (item(); as itemRef) {
+  <div class="record-sheet">
+    <header class="registry-head">
+      <div class="registry-head__lede">
+        <span class="registry-head__eyebrow">Item Record · No. {{ itemRef.id }}</span>
+        <h2 class="registry-head__title" data-cy="itemDetailsHeading">{{ itemRef.name || 'Item ' + itemRef.id }}</h2>
+      </div>
 
-        <hr />
-
-        <jhi-alert-error />
-
-        <jhi-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span>ID</span></dt>
-          <dd>
-            <span>{{ itemRef.id }}</span>
-          </dd>
-          <dt><span>Name</span></dt>
-          <dd>
-            <span>{{ itemRef.name }}</span>
-          </dd>
-          <dt><span>Description</span></dt>
-          <dd>
-            <span>{{ itemRef.description }}</span>
-          </dd>
-          <dt><span>Code</span></dt>
-          <dd>
-            <span>{{ itemRef.code }}</span>
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <div class="registry-head__actions">
+        <button type="button" (click)="previousState()" class="btn btn-outline-secondary" data-cy="entityDetailsBackButton">
           <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
         </button>
-
         <button type="button" [routerLink]="['/item', itemRef.id, 'edit']" class="btn btn-primary">
           <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
         </button>
       </div>
-    }
+
+      <hr class="registry-head__rule" />
+    </header>
+
+    <jhi-alert-error />
+    <jhi-alert />
+
+    <div class="record-sheet__card">
+      <div class="record-sheet__identity">
+        <div class="seal seal--lg" aria-hidden="true">{{ (itemRef.name || itemRef.code || '?').charAt(0) | uppercase }}</div>
+        <div>
+          <h3 class="record-sheet__name">{{ itemRef.name || '—' }}</h3>
+          @if (itemRef.code) {
+            <p class="record-sheet__subname">{{ itemRef.code }}</p>
+          }
+        </div>
+      </div>
+
+      <dl class="record-sheet__facts">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ itemRef.id }}</dd>
+        </div>
+        <div>
+          <dt>Name</dt>
+          <dd>{{ itemRef.name || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Description</dt>
+          <dd>{{ itemRef.description || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Code</dt>
+          <dd>{{ itemRef.code || '—' }}</dd>
+        </div>
+      </dl>
+    </div>
   </div>
-</div>
+}

@@ -1,11 +1,15 @@
 <div>
-  <h2 id="page-heading" data-cy="AurumServiceHeading">
-    <span>Aurum Services</span>
+  <header class="registry-head" data-cy="AurumServiceHeading">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">Atelier Registry</span>
+      <h2 class="registry-head__title" id="page-heading">Aurum Services</h2>
+      <p class="registry-head__subtitle">Browse and manage service records</p>
+    </div>
 
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+    <div class="registry-head__actions">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span>Refresh list</span>
+        <span class="d-none d-sm-inline">Refresh</span>
       </button>
 
       <button
@@ -15,135 +19,125 @@
         [routerLink]="['/aurum-service/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span>Create a new Aurum Service</span>
+        <span>New Aurum Service</span>
       </button>
     </div>
-  </h2>
+
+    <hr class="registry-head__rule" />
+  </header>
 
   <jhi-alert-error />
 
   <jhi-alert />
 
-  <jhi-filter [filters]="filters" />
+  <div class="atelier-filter">
+    <jhi-filter [filters]="filters" />
+  </div>
 
   @if (aurumServices().length === 0) {
-    <div class="alert alert-warning" id="no-result">
+    <div class="ledger-empty" id="no-result">
+      <fa-icon icon="cogs" class="ledger-empty__icon"></fa-icon>
       <span>No Aurum Services found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
+    <div class="table-responsive ledger-frame" id="entities">
+      <table class="table ledger ledger--cards" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col">#</th>
             <th scope="col" jhiSortBy="id">
               <div class="d-flex">
                 <span>ID</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="serviceType">
               <div class="d-flex">
                 <span>Service Type</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="itemName">
               <div class="d-flex">
                 <span>Item Name</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="quantity">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="quantity">
+              <div class="d-flex justify-content-end">
                 <span>Quantity</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="weight">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="weight">
+              <div class="d-flex justify-content-end">
                 <span>Weight</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="rate">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="rate">
+              <div class="d-flex justify-content-end">
                 <span>Rate</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="amount">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="amount">
+              <div class="d-flex justify-content-end">
                 <span>Amount</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="serviceName">
               <div class="d-flex">
                 <span>Service Name</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="karatType">
               <div class="d-flex">
                 <span>Karat Type</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="expectedKaratType">
               <div class="d-flex">
                 <span>Expected Karat Type</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="addedAlloy">
               <div class="d-flex">
                 <span>Added Alloy</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="alloyQuantity">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="alloyQuantity">
+              <div class="d-flex justify-content-end">
                 <span>Alloy Quantity</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="serviceCharge">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="serviceCharge">
+              <div class="d-flex justify-content-end">
                 <span>Service Charge</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="freeCheck">
-              <div class="d-flex">
+            <th scope="col" class="text-end" jhiSortBy="freeCheck">
+              <div class="d-flex justify-content-end">
                 <span>Free Check</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="hallMarkedText">
               <div class="d-flex">
                 <span>Hall Marked Text</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="weightOfFreeCheck">
               <div class="d-flex">
                 <span>Weight Of Free Check</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
@@ -156,35 +150,57 @@
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody>
-          @for (aurumService of aurumServices(); track trackId(aurumService)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/aurum-service', aurumService.id, 'view']">{{ aurumService.id }}</a>
+        <tbody class="stagger">
+          @for (aurumService of aurumServices(); track trackId(aurumService); let i = $index) {
+            <tr data-cy="entityTable" class="ledger__row" [routerLink]="['/aurum-service', aurumService.id, 'view']">
+              <td class="ledger__index" data-label="#">{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+              <td data-label="ID">
+                <a [routerLink]="['/aurum-service', aurumService.id, 'view']" (click)="$event.stopPropagation()">{{ aurumService.id }}</a>
               </td>
-              <td>{{ aurumService.serviceType }}</td>
-              <td>{{ aurumService.itemName }}</td>
-              <td>{{ aurumService.quantity }}</td>
-              <td>{{ aurumService.weight }}</td>
-              <td>{{ aurumService.rate }}</td>
-              <td>{{ aurumService.amount }}</td>
-              <td>{{ aurumService.serviceName }}</td>
-              <td>{{ aurumService.karatType }}</td>
-              <td>{{ aurumService.expectedKaratType }}</td>
-              <td>{{ { null: '', AU: 'AU', SI: 'SI', CU: 'CU' }[aurumService.addedAlloy ?? 'null'] }}</td>
-              <td>{{ aurumService.alloyQuantity }}</td>
-              <td>{{ aurumService.serviceCharge }}</td>
-              <td>{{ aurumService.freeCheck }}</td>
-              <td>{{ aurumService.hallMarkedText }}</td>
-              <td>{{ aurumService.weightOfFreeCheck }}</td>
-              <td>
+              <td data-label="Service Type">
+                <div class="ledger__identity">
+                  <span class="seal seal--sm" aria-hidden="true">{{
+                    (aurumService.serviceType || aurumService.itemName || '?').charAt(0) | uppercase
+                  }}</span>
+                  <span class="ledger__identity-name">{{ aurumService.serviceType || '—' }}</span>
+                </div>
+              </td>
+              <td data-label="Item Name">{{ aurumService.itemName }}</td>
+              <td data-label="Quantity" class="text-end">
+                <span class="ledger__assay">{{ aurumService.quantity }}</span>
+              </td>
+              <td data-label="Weight" class="text-end">
+                <span class="ledger__assay">{{ aurumService.weight }}</span>
+              </td>
+              <td data-label="Rate" class="text-end">
+                <span class="ledger__assay">{{ aurumService.rate }}</span>
+              </td>
+              <td data-label="Amount" class="text-end">
+                <span class="ledger__assay">{{ aurumService.amount }}</span>
+              </td>
+              <td data-label="Service Name">{{ aurumService.serviceName }}</td>
+              <td data-label="Karat Type">{{ aurumService.karatType }}</td>
+              <td data-label="Expected Karat Type">{{ aurumService.expectedKaratType }}</td>
+              <td data-label="Added Alloy">{{ { null: '', AU: 'AU', SI: 'SI', CU: 'CU' }[aurumService.addedAlloy ?? 'null'] }}</td>
+              <td data-label="Alloy Quantity" class="text-end">
+                <span class="ledger__assay">{{ aurumService.alloyQuantity }}</span>
+              </td>
+              <td data-label="Service Charge" class="text-end">
+                <span class="ledger__assay">{{ aurumService.serviceCharge }}</span>
+              </td>
+              <td data-label="Free Check" class="text-end">
+                <span class="ledger__assay">{{ aurumService.freeCheck }}</span>
+              </td>
+              <td data-label="Hall Marked Text">{{ aurumService.hallMarkedText }}</td>
+              <td data-label="Weight Of Free Check">{{ aurumService.weightOfFreeCheck }}</td>
+              <td data-label="Voucher">
                 @if (aurumService.voucher) {
-                  <div>
-                    <a [routerLink]="['/voucher', aurumService.voucher.id, 'view']">{{ aurumService.voucher.voucherNo }}</a>
-                  </div>
+                  <a [routerLink]="['/voucher', aurumService.voucher.id, 'view']" (click)="$event.stopPropagation()">{{
+                    aurumService.voucher.voucherNo
+                  }}</a>
                 }
               </td>
-              <td class="text-end">
+              <td class="text-end ledger__actions" (click)="$event.stopPropagation()">
                 <div class="btn-group">
                   <a [routerLink]="['/aurum-service', aurumService.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
                     <fa-icon icon="eye"></fa-icon>
@@ -196,7 +212,7 @@
                     <span class="d-none d-md-inline">Edit</span>
                   </a>
 
-                  <button type="submit" (click)="delete(aurumService)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                  <button type="button" (click)="delete(aurumService)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
                     <fa-icon icon="times"></fa-icon>
                     <span class="d-none d-md-inline">Delete</span>
                   </button>
@@ -209,7 +225,7 @@
     </div>
   }
   @if (aurumServices().length > 0) {
-    <div>
+    <div class="ledger-footer">
       <div class="d-flex justify-content-center">
         <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
       </div>

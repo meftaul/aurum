@@ -1,24 +1,38 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-item-heading" data-cy="ItemCreateUpdateHeading">Create or edit a Item</h2>
+<div class="atelier-form">
+  @let isEdit = editForm.controls.id.value !== null;
 
-      <div>
-        <jhi-alert-error />
+  <header class="registry-head">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">Atelier Registry</span>
+      <h2 class="registry-head__title" id="jhi-item-heading" data-cy="ItemCreateUpdateHeading">
+        {{ isEdit ? 'Edit Item' : 'New Item' }}
+      </h2>
+      <p class="registry-head__subtitle">
+        {{ isEdit ? 'Amend this item in the catalogue.' : 'Enter a new item into the catalogue.' }}
+      </p>
+    </div>
+    <hr class="registry-head__rule" />
+  </header>
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
+  <form name="editForm" class="atelier-form__sheet" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <jhi-alert-error />
 
+    @if (isEdit) {
+      <div class="atelier-form__id">
+        <label class="form-label" for="field_id">ID</label>
+        <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+      </div>
+    }
+
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Identity</legend>
+      <div class="atelier-form__grid">
         @let nameRef = editForm.get('name')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_name">Name</label>
           <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
           @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('name')?.errors?.required) {
                 <small class="form-text text-danger">This field is required.</small>
               }
@@ -26,39 +40,42 @@
           }
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_description">Description</label>
-          <input
-            type="text"
-            class="form-control"
-            name="description"
-            id="field_description"
-            data-cy="description"
-            formControlName="description"
-          />
-        </div>
-
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_code">Code</label>
           <input type="text" class="form-control" name="code" id="field_code" data-cy="code" formControlName="code" />
         </div>
       </div>
+    </fieldset>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
-        </button>
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Details</legend>
+      <div class="atelier-form__field">
+        <label class="form-label" for="field_description">Description</label>
+        <input
+          type="text"
+          class="form-control"
+          name="description"
+          id="field_description"
+          data-cy="description"
+          formControlName="description"
+        />
       </div>
-    </form>
-  </div>
+    </fieldset>
+
+    <div class="atelier-form__actions">
+      <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+      </button>
+
+      <button
+        type="submit"
+        id="save-entity"
+        data-cy="entityCreateSaveButton"
+        [disabled]="editForm.invalid || isSaving"
+        class="btn btn-primary"
+      >
+        <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+      </button>
+    </div>
+  </form>
 </div>

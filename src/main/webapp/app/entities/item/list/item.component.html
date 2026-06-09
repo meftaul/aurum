@@ -1,11 +1,15 @@
 <div>
-  <h2 id="page-heading" data-cy="ItemHeading">
-    <span>Items</span>
+  <header class="registry-head" data-cy="ItemHeading">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">Atelier Registry</span>
+      <h2 class="registry-head__title" id="page-heading">Items</h2>
+      <p class="registry-head__subtitle">Browse and manage catalogue items</p>
+    </div>
 
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+    <div class="registry-head__actions">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span>Refresh list</span>
+        <span class="d-none d-sm-inline">Refresh</span>
       </button>
 
       <button
@@ -15,65 +19,71 @@
         [routerLink]="['/item/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span>Create a new Item</span>
+        <span>New Item</span>
       </button>
     </div>
-  </h2>
+
+    <hr class="registry-head__rule" />
+  </header>
 
   <jhi-alert-error />
 
   <jhi-alert />
 
   @if (items().length === 0) {
-    <div class="alert alert-warning" id="no-result">
+    <div class="ledger-empty" id="no-result">
+      <fa-icon icon="th-list" class="ledger-empty__icon"></fa-icon>
       <span>No Items found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
+    <div class="table-responsive ledger-frame" id="entities">
+      <table class="table ledger ledger--cards" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col">#</th>
             <th scope="col" jhiSortBy="id">
               <div class="d-flex">
                 <span>ID</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="name">
               <div class="d-flex">
                 <span>Name</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="description">
               <div class="d-flex">
                 <span>Description</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="code">
               <div class="d-flex">
                 <span>Code</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody>
-          @for (item of items(); track trackId(item)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/item', item.id, 'view']">{{ item.id }}</a>
+        <tbody class="stagger">
+          @for (item of items(); track trackId(item); let i = $index) {
+            <tr data-cy="entityTable" class="ledger__row" [routerLink]="['/item', item.id, 'view']">
+              <td class="ledger__index" data-label="#">{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+              <td data-label="ID">
+                <a [routerLink]="['/item', item.id, 'view']" (click)="$event.stopPropagation()">{{ item.id }}</a>
               </td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.description }}</td>
-              <td>{{ item.code }}</td>
-              <td class="text-end">
+              <td data-label="Name">
+                <div class="ledger__identity">
+                  <span class="seal seal--sm" aria-hidden="true">{{ (item.name || item.code || '?').charAt(0) | uppercase }}</span>
+                  <span class="ledger__identity-name">{{ item.name || '—' }}</span>
+                </div>
+              </td>
+              <td data-label="Description">{{ item.description }}</td>
+              <td data-label="Code" class="font-mono">{{ item.code }}</td>
+              <td class="text-end ledger__actions" (click)="$event.stopPropagation()">
                 <div class="btn-group">
                   <a [routerLink]="['/item', item.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
                     <fa-icon icon="eye"></fa-icon>
@@ -85,7 +95,7 @@
                     <span class="d-none d-md-inline">Edit</span>
                   </a>
 
-                  <button type="submit" (click)="delete(item)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                  <button type="button" (click)="delete(item)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
                     <fa-icon icon="times"></fa-icon>
                     <span class="d-none d-md-inline">Delete</span>
                   </button>
@@ -98,7 +108,7 @@
     </div>
   }
   @if (items().length > 0) {
-    <div>
+    <div class="ledger-footer">
       <div class="d-flex justify-content-center">
         <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
       </div>

@@ -1,98 +1,117 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (aurumService(); as aurumServiceRef) {
-      <div>
-        <h2 data-cy="aurumServiceDetailsHeading"><span>Aurum Service</span></h2>
+@if (aurumService(); as aurumServiceRef) {
+  <div class="record-sheet">
+    <header class="registry-head">
+      <div class="registry-head__lede">
+        <span class="registry-head__eyebrow">Service Record · No. {{ aurumServiceRef.id }}</span>
+        <h2 class="registry-head__title" data-cy="aurumServiceDetailsHeading">
+          {{ aurumServiceRef.serviceType || aurumServiceRef.itemName || 'Aurum Service ' + aurumServiceRef.id }}
+        </h2>
+      </div>
 
-        <hr />
-
-        <jhi-alert-error />
-
-        <jhi-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span>ID</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.id }}</span>
-          </dd>
-          <dt><span>Service Type</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.serviceType }}</span>
-          </dd>
-          <dt><span>Item Name</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.itemName }}</span>
-          </dd>
-          <dt><span>Quantity</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.quantity }}</span>
-          </dd>
-          <dt><span>Weight</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.weight }}</span>
-          </dd>
-          <dt><span>Rate</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.rate }}</span>
-          </dd>
-          <dt><span>Amount</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.amount }}</span>
-          </dd>
-          <dt><span>Service Name</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.serviceName }}</span>
-          </dd>
-          <dt><span>Karat Type</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.karatType }}</span>
-          </dd>
-          <dt><span>Expected Karat Type</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.expectedKaratType }}</span>
-          </dd>
-          <dt><span>Added Alloy</span></dt>
-          <dd>
-            <span>{{ { null: '', AU: 'AU', SI: 'SI', CU: 'CU' }[aurumServiceRef.addedAlloy ?? 'null'] }}</span>
-          </dd>
-          <dt><span>Alloy Quantity</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.alloyQuantity }}</span>
-          </dd>
-          <dt><span>Service Charge</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.serviceCharge }}</span>
-          </dd>
-          <dt><span>Free Check</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.freeCheck }}</span>
-          </dd>
-          <dt><span>Hall Marked Text</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.hallMarkedText }}</span>
-          </dd>
-          <dt><span>Weight Of Free Check</span></dt>
-          <dd>
-            <span>{{ aurumServiceRef.weightOfFreeCheck }}</span>
-          </dd>
-          <dt><span>Voucher</span></dt>
-          <dd>
-            @if (aurumService()!.voucher) {
-              <div>
-                <a [routerLink]="['/voucher', aurumService()!.voucher?.id, 'view']">{{ aurumServiceRef.voucher?.voucherNo }}</a>
-              </div>
-            }
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <div class="registry-head__actions">
+        <button type="button" (click)="previousState()" class="btn btn-outline-secondary" data-cy="entityDetailsBackButton">
           <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
         </button>
-
         <button type="button" [routerLink]="['/aurum-service', aurumServiceRef.id, 'edit']" class="btn btn-primary">
           <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
         </button>
       </div>
-    }
+
+      <hr class="registry-head__rule" />
+    </header>
+
+    <jhi-alert-error />
+    <jhi-alert />
+
+    <div class="record-sheet__card">
+      <div class="record-sheet__identity">
+        <div class="seal seal--lg" aria-hidden="true">
+          {{ (aurumServiceRef.serviceType || aurumServiceRef.itemName || '?').charAt(0) | uppercase }}
+        </div>
+        <div>
+          <h3 class="record-sheet__name">{{ aurumServiceRef.serviceType || '—' }}</h3>
+          @if (aurumServiceRef.itemName) {
+            <p class="record-sheet__subname">{{ aurumServiceRef.itemName }}</p>
+          }
+        </div>
+      </div>
+
+      <dl class="record-sheet__facts">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ aurumServiceRef.id }}</dd>
+        </div>
+        <div>
+          <dt>Service Type</dt>
+          <dd>{{ aurumServiceRef.serviceType || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Item Name</dt>
+          <dd>{{ aurumServiceRef.itemName || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Quantity</dt>
+          <dd>{{ aurumServiceRef.quantity ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Weight</dt>
+          <dd>{{ aurumServiceRef.weight ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Rate</dt>
+          <dd>{{ aurumServiceRef.rate ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Amount</dt>
+          <dd>{{ aurumServiceRef.amount ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Service Name</dt>
+          <dd>{{ aurumServiceRef.serviceName || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Karat Type</dt>
+          <dd>{{ aurumServiceRef.karatType || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Expected Karat Type</dt>
+          <dd>{{ aurumServiceRef.expectedKaratType || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Added Alloy</dt>
+          <dd>{{ { null: '—', AU: 'AU', SI: 'SI', CU: 'CU' }[aurumServiceRef.addedAlloy ?? 'null'] }}</dd>
+        </div>
+        <div>
+          <dt>Alloy Quantity</dt>
+          <dd>{{ aurumServiceRef.alloyQuantity ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Service Charge</dt>
+          <dd>{{ aurumServiceRef.serviceCharge ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Free Check</dt>
+          <dd>{{ aurumServiceRef.freeCheck ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Hall Marked Text</dt>
+          <dd>{{ aurumServiceRef.hallMarkedText || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Weight Of Free Check</dt>
+          <dd>{{ aurumServiceRef.weightOfFreeCheck || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Voucher</dt>
+          <dd>
+            @if (aurumServiceRef.voucher) {
+              <a [routerLink]="['/voucher', aurumServiceRef.voucher.id, 'view']">{{ aurumServiceRef.voucher.voucherNo }}</a>
+            } @else {
+              —
+            }
+          </dd>
+        </div>
+      </dl>
+    </div>
   </div>
-</div>
+}
