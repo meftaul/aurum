@@ -9,6 +9,7 @@ import { CustomerService } from '../service/customer.service';
 
 @Component({
   templateUrl: './customer-delete-dialog.component.html',
+  styleUrl: './customer-delete-dialog.component.scss',
   imports: [SharedModule, FormsModule],
 })
 export class CustomerDeleteDialogComponent {

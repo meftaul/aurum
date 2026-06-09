@@ -1,0 +1,88 @@
+.customer-form {
+  max-width: 720px;
+  margin: 0 auto;
+
+  /* The "atelier sheet" — a single framed form surface with a gold top-rule */
+  &__sheet {
+    position: relative;
+    padding: 1.75rem 1.5rem 1.5rem;
+    background: var(--aurum-surface);
+    border: 1px solid var(--aurum-border);
+    border-radius: 6px;
+    box-shadow: 0 1px 3px var(--aurum-shadow);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--aurum-gold), var(--aurum-gold-soft) 70%, transparent);
+      border-radius: 6px 6px 0 0;
+    }
+  }
+
+  &__id {
+    max-width: 200px;
+    margin-bottom: 1.5rem;
+  }
+
+  &__group {
+    margin: 0 0 1.75rem;
+    padding: 0;
+    border: 0;
+
+    legend {
+      float: none;
+      width: auto;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--aurum-gold-soft);
+      font-size: 0.66rem;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem 1.25rem;
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    .form-label {
+      margin-bottom: 0;
+      font-family: var(--aurum-font-mono);
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--aurum-text-muted);
+      font-weight: 500;
+    }
+  }
+
+  &__errors {
+    margin-top: 0.15rem;
+  }
+
+  /* Sticky action bar pinned to the bottom of the viewport */
+  &__actions {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin: 1.5rem -1.5rem -1.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--aurum-surface-2);
+    border-top: 1px solid var(--aurum-gold-soft);
+    border-radius: 0 0 6px 6px;
+  }
+}

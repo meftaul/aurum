@@ -14,6 +14,7 @@ import { CustomerFormGroup, CustomerFormService } from './customer-form.service'
 @Component({
   selector: 'jhi-customer-update',
   templateUrl: './customer-update.component.html',
+  styleUrl: './customer-update.component.scss',
   imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export class CustomerUpdateComponent implements OnInit {

@@ -1,15 +1,28 @@
 @if (customer) {
-  <form name="deleteForm" (ngSubmit)="confirmDelete(customer.id!)">
-    <div class="modal-header">
+  <form name="deleteForm" class="seal-break" (ngSubmit)="confirmDelete(customer.id!)">
+    <div class="modal-header seal-break__header">
       <h4 class="modal-title" data-cy="customerDeleteDialogHeading">Confirm delete operation</h4>
     </div>
 
-    <div class="modal-body">
+    <div class="modal-body seal-break__body">
       <jhi-alert-error />
-      <p id="jhi-delete-customer-heading">Are you sure you want to delete Customer {{ customer.id }}?</p>
+
+      <div class="seal-break__subject">
+        <div class="seal seal--lg seal-break__seal" aria-hidden="true">
+          {{ (customer.firstName || customer.phone || '?').charAt(0) | uppercase }}
+        </div>
+        <div>
+          <p class="seal-break__name" id="jhi-delete-customer-heading">
+            {{ customer.firstName || customer.lastName ? customer.firstName + ' ' + customer.lastName : 'Customer ' + customer.id }}
+          </p>
+          <p class="seal-break__id">Customer No. {{ customer.id }}</p>
+        </div>
+      </div>
+
+      <p class="seal-break__warning">This record will be permanently removed from the registry. This action cannot be undone.</p>
     </div>
 
-    <div class="modal-footer">
+    <div class="modal-footer seal-break__footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
         <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
       </button>

@@ -1,14 +1,15 @@
 <div class="customer-list">
-  <div class="customer-list__head" id="page-heading" data-cy="CustomerHeading">
-    <div>
-      <h2 class="customer-list__title">Customers</h2>
-      <p class="customer-list__subtitle">Search, browse and manage your customers</p>
+  <header class="registry-head" data-cy="CustomerHeading">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">Atelier Registry</span>
+      <h2 class="registry-head__title" id="page-heading">Customers</h2>
+      <p class="registry-head__subtitle">Search, browse and manage your customers</p>
     </div>
 
-    <div class="customer-list__actions">
+    <div class="registry-head__actions">
       <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span>Refresh</span>
+        <span class="d-none d-sm-inline">Refresh</span>
       </button>
 
       <button
@@ -21,46 +22,91 @@
         <span>New Customer</span>
       </button>
     </div>
-  </div>
+
+    <hr class="registry-head__rule" />
+  </header>
 
   <jhi-alert-error />
 
   <jhi-alert />
 
-  <form class="customer-search" (ngSubmit)="search()" novalidate>
-    <div class="customer-search__fields">
-      <div class="customer-search__field">
-        <label for="search-firstName">First name</label>
-        <input id="search-firstName" name="firstName" type="text" class="form-control" [(ngModel)]="searchCriteria.firstName" />
+  <form class="customer-filter" (ngSubmit)="search()" novalidate>
+    <div class="customer-filter__primary">
+      <div class="customer-filter__search">
+        <fa-icon icon="search" class="customer-filter__search-icon"></fa-icon>
+        <input
+          #searchInput
+          id="search-firstName"
+          name="firstName"
+          type="text"
+          class="customer-filter__input"
+          placeholder="Search customers by first name…"
+          aria-label="Search by first name"
+          [(ngModel)]="searchCriteria.firstName"
+        />
       </div>
-      <div class="customer-search__field">
-        <label for="search-lastName">Last name</label>
-        <input id="search-lastName" name="lastName" type="text" class="form-control" [(ngModel)]="searchCriteria.lastName" />
-      </div>
-      <div class="customer-search__field">
-        <label for="search-phone">Phone</label>
-        <input id="search-phone" name="phone" type="text" class="form-control" [(ngModel)]="searchCriteria.phone" />
-      </div>
-      <div class="customer-search__field">
-        <label for="search-reference">Reference</label>
-        <input id="search-reference" name="reference" type="text" class="form-control" [(ngModel)]="searchCriteria.reference" />
-      </div>
-      <div class="customer-search__field">
-        <label for="search-customId">Custom Id</label>
-        <input id="search-customId" name="customId" type="text" class="form-control" [(ngModel)]="searchCriteria.customId" />
-      </div>
-    </div>
 
-    <div class="customer-search__buttons">
       <button type="submit" class="btn btn-primary" [disabled]="isLoading" data-cy="customerSearchButton">
         <fa-icon icon="search"></fa-icon>
-        <span>Search</span>
+        <span class="d-none d-sm-inline">Search</span>
       </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary customer-filter__toggle"
+        [class.is-open]="showAdvanced"
+        [attr.aria-expanded]="showAdvanced"
+        (click)="toggleAdvanced()"
+      >
+        <span>Advanced</span>
+        <span class="customer-filter__chevron" aria-hidden="true"></span>
+      </button>
+
       <button type="button" class="btn btn-outline-secondary" (click)="clearSearch()" [disabled]="!hasActiveSearch()">
         <span>Clear</span>
       </button>
     </div>
+
+    @if (showAdvanced) {
+      <div class="customer-filter__advanced">
+        <div class="customer-filter__field">
+          <label for="search-lastName">Last name</label>
+          <input id="search-lastName" name="lastName" type="text" class="form-control" [(ngModel)]="searchCriteria.lastName" />
+        </div>
+        <div class="customer-filter__field">
+          <label for="search-phone">Phone</label>
+          <input id="search-phone" name="phone" type="text" class="form-control" [(ngModel)]="searchCriteria.phone" />
+        </div>
+        <div class="customer-filter__field">
+          <label for="search-reference">Reference</label>
+          <input id="search-reference" name="reference" type="text" class="form-control" [(ngModel)]="searchCriteria.reference" />
+        </div>
+        <div class="customer-filter__field">
+          <label for="search-customId">Custom Id</label>
+          <input id="search-customId" name="customId" type="text" class="form-control" [(ngModel)]="searchCriteria.customId" />
+        </div>
+      </div>
+    }
   </form>
+
+  @if (activeFilters().length > 0) {
+    <div class="customer-list__chips" aria-label="Active filters">
+      @for (filter of activeFilters(); track filter.key) {
+        <span class="filter-chip">
+          <span class="filter-chip__key">{{ filter.label }}</span>
+          <span>{{ filter.value }}</span>
+          <button
+            type="button"
+            class="filter-chip__remove"
+            [attr.aria-label]="'Remove ' + filter.label + ' filter'"
+            (click)="removeFilter(filter.key)"
+          >
+            ×
+          </button>
+        </span>
+      }
+    </div>
+  }
 
   @if (customers().length === 0) {
     <div class="customer-list__empty" id="no-result">
@@ -68,91 +114,93 @@
       <span>No customers found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities customer-list__table" id="entities">
-      <table class="table" aria-describedby="page-heading">
+    <div class="table-responsive ledger-frame customer-list__table" id="entities">
+      <table class="table ledger customer-ledger" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" class="customer-ledger__num">#</th>
             <th scope="col" jhiSortBy="id">
               <div class="d-flex">
                 <span>ID</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="firstName">
               <div class="d-flex">
-                <span>First Name</span>
-
+                <span>Customer</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="lastName">
               <div class="d-flex">
                 <span>Last Name</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="phone">
               <div class="d-flex">
                 <span>Phone</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="email">
               <div class="d-flex">
                 <span>Email</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="address">
               <div class="d-flex">
                 <span>Address</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="totalPoint">
-              <div class="d-flex">
-                <span>Total Point</span>
-
+            <th scope="col" class="text-end" jhiSortBy="totalPoint">
+              <div class="d-flex justify-content-end">
+                <span>Points</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="reference">
               <div class="d-flex">
                 <span>Reference</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="customId">
               <div class="d-flex">
                 <span>Custom Id</span>
-
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col"></th>
+            <th scope="col" class="customer-ledger__actions-head"></th>
           </tr>
         </thead>
-        <tbody>
-          @for (customer of customers(); track trackId(customer)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/customer', customer.id, 'view']">{{ customer.id }}</a>
+        <tbody class="stagger">
+          @for (customer of customers(); track trackId(customer); let i = $index) {
+            <tr data-cy="entityTable" class="customer-ledger__row" [routerLink]="['/customer', customer.id, 'view']">
+              <td class="ledger__index customer-ledger__num" data-label="#">{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+              <td data-label="ID">
+                <a [routerLink]="['/customer', customer.id, 'view']" (click)="$event.stopPropagation()">{{ customer.id }}</a>
               </td>
-              <td>{{ customer.firstName }}</td>
-              <td>{{ customer.lastName }}</td>
-              <td>{{ customer.phone }}</td>
-              <td>{{ customer.email }}</td>
-              <td>{{ customer.address }}</td>
-              <td>{{ customer.totalPoint }}</td>
-              <td>{{ customer.reference }}</td>
-              <td>{{ customer.customId }}</td>
-              <td class="text-end">
+              <td data-label="Customer">
+                <div class="customer-ledger__identity">
+                  <span class="seal seal--sm" aria-hidden="true">{{
+                    (customer.firstName || customer.phone || '?').charAt(0) | uppercase
+                  }}</span>
+                  <span class="customer-ledger__name">{{ customer.firstName || '—' }}</span>
+                </div>
+              </td>
+              <td data-label="Last Name">{{ customer.lastName }}</td>
+              <td data-label="Phone" class="font-mono">{{ customer.phone }}</td>
+              <td data-label="Email">{{ customer.email }}</td>
+              <td data-label="Address">{{ customer.address }}</td>
+              <td data-label="Points" class="text-end">
+                <span class="ledger__assay">{{ customer.totalPoint ?? 0 }}</span>
+              </td>
+              <td data-label="Reference">{{ customer.reference }}</td>
+              <td data-label="Custom Id" class="font-mono">{{ customer.customId }}</td>
+              <td class="text-end customer-ledger__actions" (click)="$event.stopPropagation()">
                 <div class="btn-group">
                   <a [routerLink]="['/customer', customer.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
                     <fa-icon icon="eye"></fa-icon>
@@ -164,7 +212,7 @@
                     <span class="d-none d-md-inline">Edit</span>
                   </a>
 
-                  <button type="submit" (click)="delete(customer)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                  <button type="button" (click)="delete(customer)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
                     <fa-icon icon="times"></fa-icon>
                     <span class="d-none d-md-inline">Delete</span>
                   </button>
@@ -177,7 +225,7 @@
     </div>
   }
   @if (customers().length > 0) {
-    <div>
+    <div class="customer-list__footer">
       <div class="d-flex justify-content-center">
         <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
       </div>

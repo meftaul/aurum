@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, NgZone, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
@@ -25,6 +25,17 @@ interface CustomerSearchCriteria {
 
 const SEARCH_FIELDS: (keyof CustomerSearchCriteria)[] = ['firstName', 'lastName', 'phone', 'reference', 'customId'];
 
+// Fields revealed by the "Advanced" disclosure (firstName is the always-visible primary search).
+const ADVANCED_FIELDS: (keyof CustomerSearchCriteria)[] = ['lastName', 'phone', 'reference', 'customId'];
+
+const SEARCH_FIELD_LABELS: Record<keyof CustomerSearchCriteria, string> = {
+  firstName: 'First name',
+  lastName: 'Last name',
+  phone: 'Phone',
+  reference: 'Reference',
+  customId: 'Custom Id',
+};
+
 @Component({
   selector: 'jhi-customer',
   templateUrl: './customer.component.html',
@@ -38,6 +49,9 @@ export class CustomerComponent implements OnInit {
 
   sortState = sortStateSignal({});
   searchCriteria: CustomerSearchCriteria = { firstName: '', lastName: '', phone: '', reference: '', customId: '' };
+  showAdvanced = false;
+
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
 
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
@@ -72,6 +86,39 @@ export class CustomerComponent implements OnInit {
 
   hasActiveSearch(): boolean {
     return SEARCH_FIELDS.some(field => this.searchCriteria[field].trim() !== '');
+  }
+
+  toggleAdvanced(): void {
+    this.showAdvanced = !this.showAdvanced;
+  }
+
+  /** Active criteria as removable chips (label + trimmed value), in field order. */
+  activeFilters(): { key: keyof CustomerSearchCriteria; label: string; value: string }[] {
+    return SEARCH_FIELDS.filter(field => this.searchCriteria[field].trim() !== '').map(field => ({
+      key: field,
+      label: SEARCH_FIELD_LABELS[field],
+      value: this.searchCriteria[field].trim(),
+    }));
+  }
+
+  removeFilter(field: keyof CustomerSearchCriteria): void {
+    this.searchCriteria[field] = '';
+    this.search();
+  }
+
+  /** "/" focuses the search box; Escape clears the filters while focused in the bar. */
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement;
+    const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable;
+
+    if (event.key === '/' && !isTyping) {
+      event.preventDefault();
+      this.searchInput?.nativeElement.focus();
+    } else if (event.key === 'Escape' && target.tagName === 'INPUT' && target.closest('.customer-filter') && this.hasActiveSearch()) {
+      this.clearSearch();
+      target.blur();
+    }
   }
 
   delete(customer: ICustomer): void {
@@ -109,6 +156,10 @@ export class CustomerComponent implements OnInit {
     SEARCH_FIELDS.forEach(field => {
       this.searchCriteria[field] = params.get(`${field}.contains`) ?? '';
     });
+    // Keep the advanced panel open when an advanced criterion arrives via the URL.
+    if (ADVANCED_FIELDS.some(field => this.searchCriteria[field].trim() !== '')) {
+      this.showAdvanced = true;
+    }
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {

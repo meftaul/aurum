@@ -2,6 +2,10 @@
 Parchment Atelier — global type, texture & components
 ===============================================================*/
 
+/* Shared "Atelier Registry" motifs for the customer experience
+   (.registry-head, .seal, .ledger, .filter-chip, stagger keyframes) */
+@import 'atelier';
+
 body {
   font-family: var(--aurum-font-body);
   -webkit-font-smoothing: antialiased;

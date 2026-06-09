@@ -1,0 +1,290 @@
+/* ==============================================================
+   The Atelier Registry — shared motifs for the customer experience
+   Reused across the list, dossier, form and delete-confirm pages.
+   Every colour resolves from --aurum-* runtime tokens so light/dark
+   parity and print overrides come for free. Motion is one-shot and
+   fully disabled under prefers-reduced-motion.
+   =============================================================== */
+
+/* ---- Motion -------------------------------------------------------------- */
+@keyframes atelier-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Deal child elements in one after another on load (rows, panels, fields). */
+.stagger > * {
+  opacity: 0;
+  animation: atelier-rise 0.45s ease forwards;
+}
+@for $i from 1 through 14 {
+  .stagger > *:nth-child(#{$i}) {
+    animation-delay: #{0.035s * $i};
+  }
+}
+
+/* ---- Registry header band ----------------------------------------------- */
+/* Eyebrow + display title + actions, closed by a gold hairline that draws in. */
+.registry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1.5rem;
+
+  &__lede {
+    min-width: 0;
+  }
+
+  &__eyebrow {
+    display: block;
+    font-family: var(--aurum-font-mono);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--aurum-primary);
+    margin-bottom: 0.45rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--aurum-font-display);
+    font-size: clamp(2rem, 3.6vw, 2.75rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.04;
+    color: var(--aurum-text);
+  }
+
+  &__subtitle {
+    margin: 0.3rem 0 0;
+    font-style: italic;
+    color: var(--aurum-text-muted);
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* full-width rule wraps onto its own line below title + actions */
+  &__rule {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 2px;
+    margin: 1rem 0 0;
+    border: 0;
+    opacity: 1;
+    background: linear-gradient(90deg, var(--aurum-gold), var(--aurum-gold-soft) 55%, transparent);
+    transform-origin: left center;
+    animation: rule-draw 0.6s ease-out both;
+  }
+}
+
+/* ---- Monogram seal ------------------------------------------------------- */
+/* Squared, gold-framed initial — the recurring "maker's mark" for a customer. */
+.seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid var(--aurum-gold);
+  background: var(--aurum-primary-subtle);
+  color: var(--aurum-primary);
+  font-family: var(--aurum-font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1;
+  flex-shrink: 0;
+  user-select: none;
+
+  &--sm {
+    width: 34px;
+    height: 34px;
+    font-size: 0.95rem;
+    border-radius: 4px;
+  }
+
+  &--lg {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    font-size: 2.1rem;
+    border-radius: 6px;
+
+    /* inner hairline — the wax-stamp double frame */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px solid var(--aurum-gold-soft);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+  }
+}
+
+/* ---- Ledger table -------------------------------------------------------- */
+/* Mono small-caps heads on a gold rule, warm zebra striping, tabular figures,
+   and a gold left marker on the active/hovered row (echoes the sidebar). */
+.ledger {
+  width: 100%;
+  margin-bottom: 0;
+
+  thead th {
+    font-family: var(--aurum-font-mono);
+    font-weight: 500;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--aurum-text-muted);
+    padding: 0.7rem 1rem;
+    white-space: nowrap;
+    border-bottom: 1.5px solid var(--aurum-gold-soft);
+  }
+
+  tbody td {
+    padding: 0.7rem 1rem;
+    vertical-align: middle;
+    border-top: 1px solid var(--aurum-border);
+    border-bottom: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  tbody tr {
+    transition: background-color 0.15s ease;
+  }
+
+  tbody tr:nth-of-type(even) {
+    background: rgba(201, 162, 39, 0.045);
+  }
+
+  tbody tr:hover,
+  tbody tr:focus-within {
+    background: var(--aurum-primary-subtle);
+  }
+
+  /* gold active-row marker, painted on the first cell */
+  tbody td:first-child {
+    position: relative;
+  }
+  tbody tr:hover td:first-child::before,
+  tbody tr:focus-within td:first-child::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--aurum-gold);
+  }
+
+  /* row index column — quiet mono figures */
+  &__index {
+    width: 1%;
+    color: var(--aurum-text-muted);
+    font-family: var(--aurum-font-mono);
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  /* gold "assay" figure for points and amounts */
+  &__assay {
+    font-family: var(--aurum-font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--aurum-primary);
+  }
+}
+
+/* Framed surface that wraps a ledger table */
+.ledger-frame {
+  background: var(--aurum-surface);
+  border: 1px solid var(--aurum-border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px var(--aurum-shadow);
+}
+
+/* ---- Removable active-filter chip --------------------------------------- */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.3rem 0.25rem 0.65rem;
+  border-radius: 3px;
+  border: 1px solid var(--aurum-gold-soft);
+  background: var(--aurum-primary-subtle);
+  font-family: var(--aurum-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  color: var(--aurum-primary);
+  line-height: 1.2;
+
+  &__key {
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: transparent;
+    color: var(--aurum-primary);
+    cursor: pointer;
+    font-size: 0.95rem;
+    line-height: 1;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+
+    &:hover {
+      background: var(--aurum-gold);
+      color: #2b2017;
+    }
+  }
+}
+
+/* ---- Section eyebrow (within panels / fieldsets) ------------------------ */
+.atelier-section-label {
+  font-family: var(--aurum-font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--aurum-text-muted);
+}
+
+/* ---- Reduced motion ------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .stagger > *,
+  .registry-head__rule {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
