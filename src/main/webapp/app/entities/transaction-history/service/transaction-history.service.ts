@@ -30,6 +30,13 @@ export class TransactionHistoryService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/transaction-histories');
+  protected reportUrl = this.applicationConfigService.getEndpointFor('api/transaction-report');
+
+  /** Returns the aggregated TxnReportDto for the given criteria (collection/due totals + per-service-type breakdown). */
+  queryReport(req?: any): Observable<HttpResponse<any>> {
+    const options = createRequestOption(req);
+    return this.http.get<any>(this.reportUrl, { params: options, observe: 'response' });
+  }
 
   create(transactionHistory: NewTransactionHistory): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(transactionHistory);

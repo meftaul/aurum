@@ -24,7 +24,136 @@
 
   <jhi-alert />
 
-  <jhi-filter [filters]="filters" />
+  <!-- Reporting dashboard (ADMIN only): date/tag/voucher filters + quick presets driving the aggregated cards and the table -->
+  <div *jhiHasAnyAuthority="['ROLE_ADMIN']">
+    <h3 class="text-center">Transaction - {{ title }}</h3>
+    <p class="text-center">
+      (
+      @if (startDate) {
+        <span>{{ startDate | date }}</span>
+      }
+      -
+      @if (endDate) {
+        <span>{{ endDate | date }}</span>
+      }
+      )
+    </p>
+
+    <div class="row justify-content-center g-2">
+      <div class="col-auto">
+        <input class="form-control" placeholder="Voucher Number" [(ngModel)]="voucherNo" />
+      </div>
+      <div class="col-auto">
+        <input type="date" class="form-control" aria-label="Start date" [(ngModel)]="startDate" />
+      </div>
+      <div class="col-auto">
+        <input type="date" class="form-control" aria-label="End date" [(ngModel)]="endDate" />
+      </div>
+      <div class="col-auto">
+        <select class="form-select" aria-label="Tag" [(ngModel)]="tag">
+          <option value="">All tags</option>
+          @for (t of tags; track t.value) {
+            <option [value]="t.value">{{ t.viewValue }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="row justify-content-center mt-2">
+      <div class="col-auto">
+        <button class="btn btn-info btn-sm" (click)="search()">Search</button>
+        <button class="btn btn-secondary btn-sm ms-2" (click)="resetFilter()">Reset</button>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <button class="btn btn-primary btn-sm" (click)="updateDate('daily')">Daily Report</button>
+        <button class="btn btn-success btn-sm ms-2" (click)="updateDate('week')">Weekly Report</button>
+        <button class="btn btn-warning btn-sm ms-2" (click)="updateDate('month')">Monthly Report</button>
+      </div>
+    </div>
+
+    <hr />
+  </div>
+
+  @if (txnReport) {
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>Total</h2>
+            <h1>{{ txnReport.totalReceived + txnReport.due }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>COLLECTION</h2>
+            <h1>{{ txnReport.totalReceived }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>DUE</h2>
+            <h1>{{ txnReport.due }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>Number of Vouchers</h2>
+            <h1>{{ txnReport.totalVoucherCount }}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>X-Ray</h2>
+            <h1>{{ txnReport.xRayAmount }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>Hallmark</h2>
+            <h1>{{ txnReport.hallMarkAmount }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>Normal Melting</h2>
+            <h1>{{ txnReport.normalMeltingAmount }}<br />+ {{ txnReport.normalMeltingServiceChargeAmount }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="box">
+            <h2>Calculated Melting</h2>
+            <h1>{{ txnReport.calculatedMeltingAmount }}<br />+ {{ txnReport.calculatedMeltingServiceChargeAmount }}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br /><br />
+  }
 
   @if (transactionHistories().length === 0) {
     <div class="alert alert-warning" id="no-result">

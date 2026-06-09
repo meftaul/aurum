@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   imports: [
     SharedModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule.forChild(TRANSACTION_ROUTE),
     MatButtonModule,
     MatIconModule,
@@ -33,9 +34,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     MatNativeDateModule,
     MatTableModule,
     MatSelectModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   declarations: [TransactionComponent],
-  providers: [MatDatepickerModule, NgbActiveModal]
+  providers: [MatDatepickerModule, NgbActiveModal],
 })
 export class AurumTransactionModule {}

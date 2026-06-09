@@ -39,7 +39,7 @@
             <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" data-cy="entity">
               <span>
                 <fa-icon icon="th-list"></fa-icon>
-                <span>Entities</span>
+                <span>Options</span>
               </span>
             </a>
             <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
@@ -64,7 +64,7 @@
                   (click)="collapseNavbar()"
                 >
                   <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
-                  <span>Voucher</span>
+                  <span>Voucher Report</span>
                 </a>
               </li>
               <li>
@@ -76,7 +76,7 @@
                   (click)="collapseNavbar()"
                 >
                   <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
-                  <span>Transaction History</span>
+                  <span>Transaction Report</span>
                 </a>
               </li>
               <li>
@@ -125,6 +125,42 @@
                 >
                   <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                   <span>Item</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']"
+                  class="dropdown-item"
+                  routerLink="/transactions"
+                  routerLinkActive="active"
+                  (click)="collapseNavbar()"
+                >
+                  <fa-icon icon="wallet" [fixedWidth]="true"></fa-icon>
+                  <span>Transaction</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']"
+                  class="dropdown-item"
+                  routerLink="/voucher-viewer"
+                  routerLinkActive="active"
+                  (click)="collapseNavbar()"
+                >
+                  <fa-icon icon="file-alt" [fixedWidth]="true"></fa-icon>
+                  <span>Voucher Viewer</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                  class="dropdown-item"
+                  routerLink="/messaging"
+                  routerLinkActive="active"
+                  (click)="collapseNavbar()"
+                >
+                  <fa-icon icon="file-alt" [fixedWidth]="true"></fa-icon>
+                  <span>Messaging</span>
                 </a>
               </li>
               <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
