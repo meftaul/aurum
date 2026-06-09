@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, map } from 'rxjs';
+
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
@@ -26,9 +26,10 @@ export type EntityArrayResponseType = HttpResponse<ITransactionHistory[]>;
 
 @Injectable({ providedIn: 'root' })
 export class TransactionHistoryService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/transaction-histories');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/transaction-histories');
 
   create(transactionHistory: NewTransactionHistory): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(transactionHistory);
@@ -86,8 +87,8 @@ export class TransactionHistoryService {
   ): Type[] {
     const transactionHistories: Type[] = transactionHistoriesToCheck.filter(isPresent);
     if (transactionHistories.length > 0) {
-      const transactionHistoryCollectionIdentifiers = transactionHistoryCollection.map(
-        transactionHistoryItem => this.getTransactionHistoryIdentifier(transactionHistoryItem)!
+      const transactionHistoryCollectionIdentifiers = transactionHistoryCollection.map(transactionHistoryItem =>
+        this.getTransactionHistoryIdentifier(transactionHistoryItem),
       );
       const transactionHistoriesToAdd = transactionHistories.filter(transactionHistoryItem => {
         const transactionHistoryIdentifier = this.getTransactionHistoryIdentifier(transactionHistoryItem);
@@ -103,7 +104,7 @@ export class TransactionHistoryService {
   }
 
   protected convertDateFromClient<T extends ITransactionHistory | NewTransactionHistory | PartialUpdateTransactionHistory>(
-    transactionHistory: T
+    transactionHistory: T,
   ): RestOf<T> {
     return {
       ...transactionHistory,

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../rate.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../rate.test-samples';
 
 import { RateFormService } from './rate-form.service';
 
@@ -22,7 +22,7 @@ describe('Rate Form Service', () => {
             id: expect.any(Object),
             rateType: expect.any(Object),
             unitPrice: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -34,14 +34,13 @@ describe('Rate Form Service', () => {
             id: expect.any(Object),
             rateType: expect.any(Object),
             unitPrice: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getRate', () => {
       it('should return NewRate for default Rate initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createRateFormGroup(sampleWithNewData);
 
         const rate = service.getRate(formGroup) as any;

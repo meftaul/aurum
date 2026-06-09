@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../karat.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../karat.test-samples';
 
 import { KaratFormService } from './karat-form.service';
 
@@ -22,7 +22,7 @@ describe('Karat Form Service', () => {
             id: expect.any(Object),
             karatType: expect.any(Object),
             purityPercent: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -34,14 +34,13 @@ describe('Karat Form Service', () => {
             id: expect.any(Object),
             karatType: expect.any(Object),
             purityPercent: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getKarat', () => {
       it('should return NewKarat for default Karat initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createKaratFormGroup(sampleWithNewData);
 
         const karat = service.getKarat(formGroup) as any;

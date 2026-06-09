@@ -3,7 +3,8 @@ package com.meftaul.aurum.service.criteria;
 import com.meftaul.aurum.domain.enumeration.VoucherStatus;
 import java.io.Serializable;
 import java.util.Objects;
-import org.springdoc.api.annotations.ParameterObject;
+import java.util.Optional;
+import org.springdoc.core.annotations.ParameterObject;
 import tech.jhipster.service.Criteria;
 import tech.jhipster.service.filter.*;
 
@@ -72,20 +73,20 @@ public class VoucherCriteria implements Serializable, Criteria {
     public VoucherCriteria() {}
 
     public VoucherCriteria(VoucherCriteria other) {
-        this.id = other.id == null ? null : other.id.copy();
-        this.voucherNo = other.voucherNo == null ? null : other.voucherNo.copy();
-        this.customerId = other.customerId == null ? null : other.customerId.copy();
-        this.calculatedTotalAmount = other.calculatedTotalAmount == null ? null : other.calculatedTotalAmount.copy();
-        this.vat = other.vat == null ? null : other.vat.copy();
-        this.disountAmount = other.disountAmount == null ? null : other.disountAmount.copy();
-        this.status = other.status == null ? null : other.status.copy();
-        this.totalPayableAmount = other.totalPayableAmount == null ? null : other.totalPayableAmount.copy();
-        this.dateCreated = other.dateCreated == null ? null : other.dateCreated.copy();
-        this.addedBy = other.addedBy == null ? null : other.addedBy.copy();
-        this.boxNumber = other.boxNumber == null ? null : other.boxNumber.copy();
-        this.deliveryDate = other.deliveryDate == null ? null : other.deliveryDate.copy();
-        this.deliveryStatus = other.deliveryStatus == null ? null : other.deliveryStatus.copy();
-        this.aurumServiceId = other.aurumServiceId == null ? null : other.aurumServiceId.copy();
+        this.id = other.optionalId().map(LongFilter::copy).orElse(null);
+        this.voucherNo = other.optionalVoucherNo().map(StringFilter::copy).orElse(null);
+        this.customerId = other.optionalCustomerId().map(LongFilter::copy).orElse(null);
+        this.calculatedTotalAmount = other.optionalCalculatedTotalAmount().map(BigDecimalFilter::copy).orElse(null);
+        this.vat = other.optionalVat().map(BigDecimalFilter::copy).orElse(null);
+        this.disountAmount = other.optionalDisountAmount().map(BigDecimalFilter::copy).orElse(null);
+        this.status = other.optionalStatus().map(VoucherStatusFilter::copy).orElse(null);
+        this.totalPayableAmount = other.optionalTotalPayableAmount().map(BigDecimalFilter::copy).orElse(null);
+        this.dateCreated = other.optionalDateCreated().map(InstantFilter::copy).orElse(null);
+        this.addedBy = other.optionalAddedBy().map(StringFilter::copy).orElse(null);
+        this.boxNumber = other.optionalBoxNumber().map(StringFilter::copy).orElse(null);
+        this.deliveryDate = other.optionalDeliveryDate().map(InstantFilter::copy).orElse(null);
+        this.deliveryStatus = other.optionalDeliveryStatus().map(BooleanFilter::copy).orElse(null);
+        this.aurumServiceId = other.optionalAurumServiceId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -98,9 +99,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return id;
     }
 
+    public Optional<LongFilter> optionalId() {
+        return Optional.ofNullable(id);
+    }
+
     public LongFilter id() {
         if (id == null) {
-            id = new LongFilter();
+            setId(new LongFilter());
         }
         return id;
     }
@@ -113,9 +118,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return voucherNo;
     }
 
+    public Optional<StringFilter> optionalVoucherNo() {
+        return Optional.ofNullable(voucherNo);
+    }
+
     public StringFilter voucherNo() {
         if (voucherNo == null) {
-            voucherNo = new StringFilter();
+            setVoucherNo(new StringFilter());
         }
         return voucherNo;
     }
@@ -128,9 +137,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return customerId;
     }
 
+    public Optional<LongFilter> optionalCustomerId() {
+        return Optional.ofNullable(customerId);
+    }
+
     public LongFilter customerId() {
         if (customerId == null) {
-            customerId = new LongFilter();
+            setCustomerId(new LongFilter());
         }
         return customerId;
     }
@@ -143,9 +156,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return calculatedTotalAmount;
     }
 
+    public Optional<BigDecimalFilter> optionalCalculatedTotalAmount() {
+        return Optional.ofNullable(calculatedTotalAmount);
+    }
+
     public BigDecimalFilter calculatedTotalAmount() {
         if (calculatedTotalAmount == null) {
-            calculatedTotalAmount = new BigDecimalFilter();
+            setCalculatedTotalAmount(new BigDecimalFilter());
         }
         return calculatedTotalAmount;
     }
@@ -158,9 +175,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return vat;
     }
 
+    public Optional<BigDecimalFilter> optionalVat() {
+        return Optional.ofNullable(vat);
+    }
+
     public BigDecimalFilter vat() {
         if (vat == null) {
-            vat = new BigDecimalFilter();
+            setVat(new BigDecimalFilter());
         }
         return vat;
     }
@@ -173,9 +194,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return disountAmount;
     }
 
+    public Optional<BigDecimalFilter> optionalDisountAmount() {
+        return Optional.ofNullable(disountAmount);
+    }
+
     public BigDecimalFilter disountAmount() {
         if (disountAmount == null) {
-            disountAmount = new BigDecimalFilter();
+            setDisountAmount(new BigDecimalFilter());
         }
         return disountAmount;
     }
@@ -188,9 +213,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return status;
     }
 
+    public Optional<VoucherStatusFilter> optionalStatus() {
+        return Optional.ofNullable(status);
+    }
+
     public VoucherStatusFilter status() {
         if (status == null) {
-            status = new VoucherStatusFilter();
+            setStatus(new VoucherStatusFilter());
         }
         return status;
     }
@@ -203,9 +232,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return totalPayableAmount;
     }
 
+    public Optional<BigDecimalFilter> optionalTotalPayableAmount() {
+        return Optional.ofNullable(totalPayableAmount);
+    }
+
     public BigDecimalFilter totalPayableAmount() {
         if (totalPayableAmount == null) {
-            totalPayableAmount = new BigDecimalFilter();
+            setTotalPayableAmount(new BigDecimalFilter());
         }
         return totalPayableAmount;
     }
@@ -218,9 +251,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return dateCreated;
     }
 
+    public Optional<InstantFilter> optionalDateCreated() {
+        return Optional.ofNullable(dateCreated);
+    }
+
     public InstantFilter dateCreated() {
         if (dateCreated == null) {
-            dateCreated = new InstantFilter();
+            setDateCreated(new InstantFilter());
         }
         return dateCreated;
     }
@@ -233,9 +270,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return addedBy;
     }
 
+    public Optional<StringFilter> optionalAddedBy() {
+        return Optional.ofNullable(addedBy);
+    }
+
     public StringFilter addedBy() {
         if (addedBy == null) {
-            addedBy = new StringFilter();
+            setAddedBy(new StringFilter());
         }
         return addedBy;
     }
@@ -248,9 +289,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return boxNumber;
     }
 
+    public Optional<StringFilter> optionalBoxNumber() {
+        return Optional.ofNullable(boxNumber);
+    }
+
     public StringFilter boxNumber() {
         if (boxNumber == null) {
-            boxNumber = new StringFilter();
+            setBoxNumber(new StringFilter());
         }
         return boxNumber;
     }
@@ -263,9 +308,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return deliveryDate;
     }
 
+    public Optional<InstantFilter> optionalDeliveryDate() {
+        return Optional.ofNullable(deliveryDate);
+    }
+
     public InstantFilter deliveryDate() {
         if (deliveryDate == null) {
-            deliveryDate = new InstantFilter();
+            setDeliveryDate(new InstantFilter());
         }
         return deliveryDate;
     }
@@ -278,9 +327,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return deliveryStatus;
     }
 
+    public Optional<BooleanFilter> optionalDeliveryStatus() {
+        return Optional.ofNullable(deliveryStatus);
+    }
+
     public BooleanFilter deliveryStatus() {
         if (deliveryStatus == null) {
-            deliveryStatus = new BooleanFilter();
+            setDeliveryStatus(new BooleanFilter());
         }
         return deliveryStatus;
     }
@@ -293,9 +346,13 @@ public class VoucherCriteria implements Serializable, Criteria {
         return aurumServiceId;
     }
 
+    public Optional<LongFilter> optionalAurumServiceId() {
+        return Optional.ofNullable(aurumServiceId);
+    }
+
     public LongFilter aurumServiceId() {
         if (aurumServiceId == null) {
-            aurumServiceId = new LongFilter();
+            setAurumServiceId(new LongFilter());
         }
         return aurumServiceId;
     }
@@ -305,6 +362,17 @@ public class VoucherCriteria implements Serializable, Criteria {
     }
 
     public Boolean getDistinct() {
+        return distinct;
+    }
+
+    public Optional<Boolean> optionalDistinct() {
+        return Optional.ofNullable(distinct);
+    }
+
+    public Boolean distinct() {
+        if (distinct == null) {
+            setDistinct(true);
+        }
         return distinct;
     }
 
@@ -365,21 +433,21 @@ public class VoucherCriteria implements Serializable, Criteria {
     @Override
     public String toString() {
         return "VoucherCriteria{" +
-            (id != null ? "id=" + id + ", " : "") +
-            (voucherNo != null ? "voucherNo=" + voucherNo + ", " : "") +
-            (customerId != null ? "customerId=" + customerId + ", " : "") +
-            (calculatedTotalAmount != null ? "calculatedTotalAmount=" + calculatedTotalAmount + ", " : "") +
-            (vat != null ? "vat=" + vat + ", " : "") +
-            (disountAmount != null ? "disountAmount=" + disountAmount + ", " : "") +
-            (status != null ? "status=" + status + ", " : "") +
-            (totalPayableAmount != null ? "totalPayableAmount=" + totalPayableAmount + ", " : "") +
-            (dateCreated != null ? "dateCreated=" + dateCreated + ", " : "") +
-            (addedBy != null ? "addedBy=" + addedBy + ", " : "") +
-            (boxNumber != null ? "boxNumber=" + boxNumber + ", " : "") +
-            (deliveryDate != null ? "deliveryDate=" + deliveryDate + ", " : "") +
-            (deliveryStatus != null ? "deliveryStatus=" + deliveryStatus + ", " : "") +
-            (aurumServiceId != null ? "aurumServiceId=" + aurumServiceId + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+            optionalId().map(f -> "id=" + f + ", ").orElse("") +
+            optionalVoucherNo().map(f -> "voucherNo=" + f + ", ").orElse("") +
+            optionalCustomerId().map(f -> "customerId=" + f + ", ").orElse("") +
+            optionalCalculatedTotalAmount().map(f -> "calculatedTotalAmount=" + f + ", ").orElse("") +
+            optionalVat().map(f -> "vat=" + f + ", ").orElse("") +
+            optionalDisountAmount().map(f -> "disountAmount=" + f + ", ").orElse("") +
+            optionalStatus().map(f -> "status=" + f + ", ").orElse("") +
+            optionalTotalPayableAmount().map(f -> "totalPayableAmount=" + f + ", ").orElse("") +
+            optionalDateCreated().map(f -> "dateCreated=" + f + ", ").orElse("") +
+            optionalAddedBy().map(f -> "addedBy=" + f + ", ").orElse("") +
+            optionalBoxNumber().map(f -> "boxNumber=" + f + ", ").orElse("") +
+            optionalDeliveryDate().map(f -> "deliveryDate=" + f + ", ").orElse("") +
+            optionalDeliveryStatus().map(f -> "deliveryStatus=" + f + ", ").orElse("") +
+            optionalAurumServiceId().map(f -> "aurumServiceId=" + f + ", ").orElse("") +
+            optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
+        "}";
     }
 }

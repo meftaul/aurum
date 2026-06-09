@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../voucher.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../voucher.test-samples';
 
 import { VoucherFormService } from './voucher-form.service';
 
@@ -32,7 +32,7 @@ describe('Voucher Form Service', () => {
             boxNumber: expect.any(Object),
             deliveryDate: expect.any(Object),
             deliveryStatus: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -54,14 +54,13 @@ describe('Voucher Form Service', () => {
             boxNumber: expect.any(Object),
             deliveryDate: expect.any(Object),
             deliveryStatus: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getVoucher', () => {
       it('should return NewVoucher for default Voucher initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createVoucherFormGroup(sampleWithNewData);
 
         const voucher = service.getVoucher(formGroup) as any;

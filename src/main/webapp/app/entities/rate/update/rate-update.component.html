@@ -1,30 +1,37 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="jhi-rate-heading" data-cy="RateCreateUpdateHeading">Create or edit a Rate</h2>
 
       <div>
-        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert-error />
 
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_rateType">Rate Type</label>
           <input type="text" class="form-control" name="rateType" id="field_rateType" data-cy="rateType" formControlName="rateType" />
         </div>
 
-        <div class="row mb-3">
+        @let unitPriceRef = editForm.get('unitPrice')!;
+        <div class="mb-3">
           <label class="form-label" for="field_unitPrice">Unit Price</label>
           <input type="number" class="form-control" name="unitPrice" id="field_unitPrice" data-cy="unitPrice" formControlName="unitPrice" />
-          <div *ngIf="editForm.get('unitPrice')!.invalid && (editForm.get('unitPrice')!.dirty || editForm.get('unitPrice')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('unitPrice')?.errors?.min"> This field should be at least 0. </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('unitPrice')?.errors?.number">
-              This field should be a number.
-            </small>
-          </div>
+          @if (unitPriceRef.invalid && (unitPriceRef.dirty || unitPriceRef.touched)) {
+            <div>
+              @if (editForm.get('unitPrice')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('unitPrice')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
       </div>
 

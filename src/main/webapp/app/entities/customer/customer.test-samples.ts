@@ -1,36 +1,31 @@
 import { ICustomer, NewCustomer } from './customer.model';
 
 export const sampleWithRequiredData: ICustomer = {
-  id: 24379,
-  phone: '1-952-496-8402',
+  id: 3366,
+  phone: '(752) 629-8657 x4628',
 };
 
 export const sampleWithPartialData: ICustomer = {
-  id: 85053,
-  firstName: 'Kristin',
-  lastName: 'Hansen',
-  phone: '(269) 931-4867',
-  email: 'Dolly_Hackett65@yahoo.com',
-  address: 'front-end Towels',
-  totalPoint: 60686,
-  reference: 'Philippines',
-  customId: 'North',
+  id: 30079,
+  phone: '1-641-443-5194 x6939',
+  totalPoint: 24554,
+  reference: 'smoggy yearly deliberately',
 };
 
 export const sampleWithFullData: ICustomer = {
-  id: 31591,
-  firstName: 'Kirstin',
-  lastName: 'Hintz',
-  phone: '529.878.2103',
-  email: 'Kaleigh76@gmail.com',
-  address: 'Berkshire invoice Metal',
-  totalPoint: 91626,
-  reference: 'Pants throughput',
-  customId: 'Awesome',
+  id: 4149,
+  firstName: 'Lyla',
+  lastName: 'Langosh',
+  phone: '306.812.3787 x40679',
+  email: 'Pearl.Mosciski36@gmail.com',
+  address: 'instead',
+  totalPoint: 10695,
+  reference: 'next',
+  customId: 'affect bolster',
 };
 
 export const sampleWithNewData: NewCustomer = {
-  phone: '796.424.5020',
+  phone: '815.843.9799 x216',
   id: null,
 };
 

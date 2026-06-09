@@ -1,22 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
+import SharedModule from 'app/shared/shared.module';
 import { IItem } from '../item.model';
 
 @Component({
   selector: 'jhi-item-detail',
   templateUrl: './item-detail.component.html',
+  imports: [SharedModule, RouterModule],
 })
-export class ItemDetailComponent implements OnInit {
-  item: IItem | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
-
-  ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ item }) => {
-      this.item = item;
-    });
-  }
+export class ItemDetailComponent {
+  item = input<IItem | null>(null);
 
   previousState(): void {
     window.history.back();

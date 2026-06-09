@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link Item}.
+ * Service Interface for managing {@link com.meftaul.aurum.domain.Item}.
  */
 public interface ItemService {
     /**

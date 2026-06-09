@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { AurumServiceFormService, AurumServiceFormGroup } from './aurum-service-form.service';
-import { IAurumService } from '../aurum-service.model';
-import { AurumServiceService } from '../service/aurum-service.service';
+import SharedModule from 'app/shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { IVoucher } from 'app/entities/voucher/voucher.model';
 import { VoucherService } from 'app/entities/voucher/service/voucher.service';
 import { Alloy } from 'app/entities/enumerations/alloy.model';
+import { AurumServiceService } from '../service/aurum-service.service';
+import { IAurumService } from '../aurum-service.model';
+import { AurumServiceFormGroup, AurumServiceFormService } from './aurum-service-form.service';
 
 @Component({
   selector: 'jhi-aurum-service-update',
   templateUrl: './aurum-service-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export class AurumServiceUpdateComponent implements OnInit {
   isSaving = false;
@@ -22,14 +26,13 @@ export class AurumServiceUpdateComponent implements OnInit {
 
   vouchersSharedCollection: IVoucher[] = [];
 
-  editForm: AurumServiceFormGroup = this.aurumServiceFormService.createAurumServiceFormGroup();
+  protected aurumServiceService = inject(AurumServiceService);
+  protected aurumServiceFormService = inject(AurumServiceFormService);
+  protected voucherService = inject(VoucherService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected aurumServiceService: AurumServiceService,
-    protected aurumServiceFormService: AurumServiceFormService,
-    protected voucherService: VoucherService,
-    protected activatedRoute: ActivatedRoute
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: AurumServiceFormGroup = this.aurumServiceFormService.createAurumServiceFormGroup();
 
   compareVoucher = (o1: IVoucher | null, o2: IVoucher | null): boolean => this.voucherService.compareVoucher(o1, o2);
 
@@ -50,7 +53,7 @@ export class AurumServiceUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const aurumService: any = this.aurumServiceFormService.getAurumService(this.editForm);
+    const aurumService = this.aurumServiceFormService.getAurumService(this.editForm);
     if (aurumService.id !== null) {
       this.subscribeToSaveResponse(this.aurumServiceService.update(aurumService));
     } else {
@@ -83,7 +86,7 @@ export class AurumServiceUpdateComponent implements OnInit {
 
     this.vouchersSharedCollection = this.voucherService.addVoucherToCollectionIfMissing<IVoucher>(
       this.vouchersSharedCollection,
-      aurumService.voucher
+      aurumService.voucher,
     );
   }
 
@@ -92,7 +95,7 @@ export class AurumServiceUpdateComponent implements OnInit {
       .query()
       .pipe(map((res: HttpResponse<IVoucher[]>) => res.body ?? []))
       .pipe(
-        map((vouchers: IVoucher[]) => this.voucherService.addVoucherToCollectionIfMissing<IVoucher>(vouchers, this.aurumService?.voucher))
+        map((vouchers: IVoucher[]) => this.voucherService.addVoucherToCollectionIfMissing<IVoucher>(vouchers, this.aurumService?.voucher)),
       )
       .subscribe((vouchers: IVoucher[]) => (this.vouchersSharedCollection = vouchers));
   }

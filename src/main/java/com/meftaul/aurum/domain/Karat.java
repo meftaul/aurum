@@ -1,9 +1,9 @@
 package com.meftaul.aurum.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -81,7 +81,7 @@ public class Karat implements Serializable {
         if (!(o instanceof Karat)) {
             return false;
         }
-        return id != null && id.equals(((Karat) o).id);
+        return getId() != null && getId().equals(((Karat) o).getId());
     }
 
     @Override

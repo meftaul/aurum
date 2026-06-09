@@ -1,16 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of, Subject, from } from 'rxjs';
+import { Subject, from, of } from 'rxjs';
 
-import { AurumServiceFormService } from './aurum-service-form.service';
-import { AurumServiceService } from '../service/aurum-service.service';
-import { IAurumService } from '../aurum-service.model';
 import { IVoucher } from 'app/entities/voucher/voucher.model';
 import { VoucherService } from 'app/entities/voucher/service/voucher.service';
+import { AurumServiceService } from '../service/aurum-service.service';
+import { IAurumService } from '../aurum-service.model';
+import { AurumServiceFormService } from './aurum-service-form.service';
 
 import { AurumServiceUpdateComponent } from './aurum-service-update.component';
 
@@ -24,9 +22,9 @@ describe('AurumService Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [AurumServiceUpdateComponent],
+      imports: [AurumServiceUpdateComponent],
       providers: [
+        provideHttpClient(),
         FormBuilder,
         {
           provide: ActivatedRoute,
@@ -49,12 +47,12 @@ describe('AurumService Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('Should call Voucher query and add missing value', () => {
-      const aurumService: IAurumService = { id: 456 };
-      const voucher: IVoucher = { id: 13586 };
+    it('should call Voucher query and add missing value', () => {
+      const aurumService: IAurumService = { id: 5287 };
+      const voucher: IVoucher = { id: 9972 };
       aurumService.voucher = voucher;
 
-      const voucherCollection: IVoucher[] = [{ id: 66553 }];
+      const voucherCollection: IVoucher[] = [{ id: 9972 }];
       jest.spyOn(voucherService, 'query').mockReturnValue(of(new HttpResponse({ body: voucherCollection })));
       const additionalVouchers = [voucher];
       const expectedCollection: IVoucher[] = [...additionalVouchers, ...voucherCollection];
@@ -66,29 +64,29 @@ describe('AurumService Management Update Component', () => {
       expect(voucherService.query).toHaveBeenCalled();
       expect(voucherService.addVoucherToCollectionIfMissing).toHaveBeenCalledWith(
         voucherCollection,
-        ...additionalVouchers.map(expect.objectContaining)
+        ...additionalVouchers.map(expect.objectContaining),
       );
       expect(comp.vouchersSharedCollection).toEqual(expectedCollection);
     });
 
-    it('Should update editForm', () => {
-      const aurumService: IAurumService = { id: 456 };
-      const voucher: IVoucher = { id: 74801 };
+    it('should update editForm', () => {
+      const aurumService: IAurumService = { id: 5287 };
+      const voucher: IVoucher = { id: 9972 };
       aurumService.voucher = voucher;
 
       activatedRoute.data = of({ aurumService });
       comp.ngOnInit();
 
-      expect(comp.vouchersSharedCollection).toContain(voucher);
+      expect(comp.vouchersSharedCollection).toContainEqual(voucher);
       expect(comp.aurumService).toEqual(aurumService);
     });
   });
 
   describe('save', () => {
-    it('Should call update service on save for existing entity', () => {
+    it('should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IAurumService>>();
-      const aurumService = { id: 123 };
+      const aurumService = { id: 7727 };
       jest.spyOn(aurumServiceFormService, 'getAurumService').mockReturnValue(aurumService);
       jest.spyOn(aurumServiceService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -108,10 +106,10 @@ describe('AurumService Management Update Component', () => {
       expect(comp.isSaving).toEqual(false);
     });
 
-    it('Should call create service on save for new entity', () => {
+    it('should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IAurumService>>();
-      const aurumService = { id: 123 };
+      const aurumService = { id: 7727 };
       jest.spyOn(aurumServiceFormService, 'getAurumService').mockReturnValue({ id: null });
       jest.spyOn(aurumServiceService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -131,10 +129,10 @@ describe('AurumService Management Update Component', () => {
       expect(comp.previousState).toHaveBeenCalled();
     });
 
-    it('Should set isSaving to false on error', () => {
+    it('should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IAurumService>>();
-      const aurumService = { id: 123 };
+      const aurumService = { id: 7727 };
       jest.spyOn(aurumServiceService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ aurumService });
@@ -154,9 +152,9 @@ describe('AurumService Management Update Component', () => {
 
   describe('Compare relationships', () => {
     describe('compareVoucher', () => {
-      it('Should forward to voucherService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+      it('should forward to voucherService', () => {
+        const entity = { id: 9972 };
+        const entity2 = { id: 7837 };
         jest.spyOn(voucherService, 'compareVoucher');
         comp.compareVoucher(entity, entity2);
         expect(voucherService.compareVoucher).toHaveBeenCalledWith(entity, entity2);

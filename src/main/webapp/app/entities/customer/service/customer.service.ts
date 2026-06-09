@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -14,9 +14,10 @@ export type EntityArrayResponseType = HttpResponse<ICustomer[]>;
 
 @Injectable({ providedIn: 'root' })
 export class CustomerService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/customers');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/customers');
 
   create(customer: NewCustomer): Observable<EntityResponseType> {
     return this.http.post<ICustomer>(this.resourceUrl, customer, { observe: 'response' });
@@ -57,7 +58,7 @@ export class CustomerService {
   ): Type[] {
     const customers: Type[] = customersToCheck.filter(isPresent);
     if (customers.length > 0) {
-      const customerCollectionIdentifiers = customerCollection.map(customerItem => this.getCustomerIdentifier(customerItem)!);
+      const customerCollectionIdentifiers = customerCollection.map(customerItem => this.getCustomerIdentifier(customerItem));
       const customersToAdd = customers.filter(customerItem => {
         const customerIdentifier = this.getCustomerIdentifier(customerItem);
         if (customerCollectionIdentifiers.includes(customerIdentifier)) {

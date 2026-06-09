@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link Karat}.
+ * Service Interface for managing {@link com.meftaul.aurum.domain.Karat}.
  */
 public interface KaratService {
     /**

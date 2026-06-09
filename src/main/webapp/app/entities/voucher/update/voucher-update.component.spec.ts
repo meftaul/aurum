@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of, Subject, from } from 'rxjs';
+import { Subject, from, of } from 'rxjs';
 
-import { VoucherFormService } from './voucher-form.service';
 import { VoucherService } from '../service/voucher.service';
 import { IVoucher } from '../voucher.model';
+import { VoucherFormService } from './voucher-form.service';
 
 import { VoucherUpdateComponent } from './voucher-update.component';
 
@@ -21,9 +19,9 @@ describe('Voucher Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [VoucherUpdateComponent],
+      imports: [VoucherUpdateComponent],
       providers: [
+        provideHttpClient(),
         FormBuilder,
         {
           provide: ActivatedRoute,
@@ -45,8 +43,8 @@ describe('Voucher Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('Should update editForm', () => {
-      const voucher: IVoucher = { id: 456 };
+    it('should update editForm', () => {
+      const voucher: IVoucher = { id: 7837 };
 
       activatedRoute.data = of({ voucher });
       comp.ngOnInit();
@@ -56,10 +54,10 @@ describe('Voucher Management Update Component', () => {
   });
 
   describe('save', () => {
-    it('Should call update service on save for existing entity', () => {
+    it('should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IVoucher>>();
-      const voucher = { id: 123 };
+      const voucher = { id: 9972 };
       jest.spyOn(voucherFormService, 'getVoucher').mockReturnValue(voucher);
       jest.spyOn(voucherService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -79,10 +77,10 @@ describe('Voucher Management Update Component', () => {
       expect(comp.isSaving).toEqual(false);
     });
 
-    it('Should call create service on save for new entity', () => {
+    it('should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IVoucher>>();
-      const voucher = { id: 123 };
+      const voucher = { id: 9972 };
       jest.spyOn(voucherFormService, 'getVoucher').mockReturnValue({ id: null });
       jest.spyOn(voucherService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -102,10 +100,10 @@ describe('Voucher Management Update Component', () => {
       expect(comp.previousState).toHaveBeenCalled();
     });
 
-    it('Should set isSaving to false on error', () => {
+    it('should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IVoucher>>();
-      const voucher = { id: 123 };
+      const voucher = { id: 9972 };
       jest.spyOn(voucherService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ voucher });

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../customer.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../customer.test-samples';
 
 import { CustomerFormService } from './customer-form.service';
 
@@ -28,7 +28,7 @@ describe('Customer Form Service', () => {
             totalPoint: expect.any(Object),
             reference: expect.any(Object),
             customId: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -46,14 +46,13 @@ describe('Customer Form Service', () => {
             totalPoint: expect.any(Object),
             reference: expect.any(Object),
             customId: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getCustomer', () => {
       it('should return NewCustomer for default Customer initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createCustomerFormGroup(sampleWithNewData);
 
         const customer = service.getCustomer(formGroup) as any;

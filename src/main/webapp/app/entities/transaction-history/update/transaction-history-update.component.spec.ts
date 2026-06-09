@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of, Subject, from } from 'rxjs';
+import { Subject, from, of } from 'rxjs';
 
-import { TransactionHistoryFormService } from './transaction-history-form.service';
 import { TransactionHistoryService } from '../service/transaction-history.service';
 import { ITransactionHistory } from '../transaction-history.model';
+import { TransactionHistoryFormService } from './transaction-history-form.service';
 
 import { TransactionHistoryUpdateComponent } from './transaction-history-update.component';
 
@@ -21,9 +19,9 @@ describe('TransactionHistory Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [TransactionHistoryUpdateComponent],
+      imports: [TransactionHistoryUpdateComponent],
       providers: [
+        provideHttpClient(),
         FormBuilder,
         {
           provide: ActivatedRoute,
@@ -45,8 +43,8 @@ describe('TransactionHistory Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('Should update editForm', () => {
-      const transactionHistory: ITransactionHistory = { id: 456 };
+    it('should update editForm', () => {
+      const transactionHistory: ITransactionHistory = { id: 22968 };
 
       activatedRoute.data = of({ transactionHistory });
       comp.ngOnInit();
@@ -56,10 +54,10 @@ describe('TransactionHistory Management Update Component', () => {
   });
 
   describe('save', () => {
-    it('Should call update service on save for existing entity', () => {
+    it('should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ITransactionHistory>>();
-      const transactionHistory = { id: 123 };
+      const transactionHistory = { id: 24341 };
       jest.spyOn(transactionHistoryFormService, 'getTransactionHistory').mockReturnValue(transactionHistory);
       jest.spyOn(transactionHistoryService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -79,10 +77,10 @@ describe('TransactionHistory Management Update Component', () => {
       expect(comp.isSaving).toEqual(false);
     });
 
-    it('Should call create service on save for new entity', () => {
+    it('should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ITransactionHistory>>();
-      const transactionHistory = { id: 123 };
+      const transactionHistory = { id: 24341 };
       jest.spyOn(transactionHistoryFormService, 'getTransactionHistory').mockReturnValue({ id: null });
       jest.spyOn(transactionHistoryService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -102,10 +100,10 @@ describe('TransactionHistory Management Update Component', () => {
       expect(comp.previousState).toHaveBeenCalled();
     });
 
-    it('Should set isSaving to false on error', () => {
+    it('should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ITransactionHistory>>();
-      const transactionHistory = { id: 123 };
+      const transactionHistory = { id: 24341 };
       jest.spyOn(transactionHistoryService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ transactionHistory });

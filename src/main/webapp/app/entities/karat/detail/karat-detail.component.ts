@@ -1,22 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
+import SharedModule from 'app/shared/shared.module';
 import { IKarat } from '../karat.model';
 
 @Component({
   selector: 'jhi-karat-detail',
   templateUrl: './karat-detail.component.html',
+  imports: [SharedModule, RouterModule],
 })
-export class KaratDetailComponent implements OnInit {
-  karat: IKarat | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
-
-  ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ karat }) => {
-      this.karat = karat;
-    });
-  }
+export class KaratDetailComponent {
+  karat = input<IKarat | null>(null);
 
   previousState(): void {
     window.history.back();

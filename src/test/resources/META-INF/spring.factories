@@ -1,1 +1,2 @@
-org.springframework.test.context.ContextCustomizerFactory = com.meftaul.aurum.config.TestContainersSpringContextCustomizerFactory
+org.springframework.test.context.ContextCustomizerFactory = \
+    com.meftaul.aurum.config.SqlTestContainersSpringContextCustomizerFactory

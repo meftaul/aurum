@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { IKarat, NewKarat } from '../karat.model';
 
@@ -37,7 +37,7 @@ export class KaratFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        }
+        },
       ),
       karatType: new FormControl(karatRawValue.karatType),
       purityPercent: new FormControl(karatRawValue.purityPercent, {
@@ -56,7 +56,7 @@ export class KaratFormService {
       {
         ...karatRawValue,
         id: { value: karatRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
   }
 

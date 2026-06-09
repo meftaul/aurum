@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link Rate}.
+ * Service Implementation for managing {@link com.meftaul.aurum.domain.Rate}.
  */
 @Service
 @Transactional
 public class RateServiceImpl implements RateService {
 
-    private final Logger log = LoggerFactory.getLogger(RateServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RateServiceImpl.class);
 
     private final RateRepository rateRepository;
 
@@ -28,19 +28,19 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public Rate save(Rate rate) {
-        log.debug("Request to save Rate : {}", rate);
+        LOG.debug("Request to save Rate : {}", rate);
         return rateRepository.save(rate);
     }
 
     @Override
     public Rate update(Rate rate) {
-        log.debug("Request to update Rate : {}", rate);
+        LOG.debug("Request to update Rate : {}", rate);
         return rateRepository.save(rate);
     }
 
     @Override
     public Optional<Rate> partialUpdate(Rate rate) {
-        log.debug("Request to partially update Rate : {}", rate);
+        LOG.debug("Request to partially update Rate : {}", rate);
 
         return rateRepository
             .findById(rate.getId())
@@ -60,20 +60,20 @@ public class RateServiceImpl implements RateService {
     @Override
     @Transactional(readOnly = true)
     public Page<Rate> findAll(Pageable pageable) {
-        log.debug("Request to get all Rates");
+        LOG.debug("Request to get all Rates");
         return rateRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Rate> findOne(Long id) {
-        log.debug("Request to get Rate : {}", id);
+        LOG.debug("Request to get Rate : {}", id);
         return rateRepository.findById(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete Rate : {}", id);
+        LOG.debug("Request to delete Rate : {}", id);
         rateRepository.deleteById(id);
     }
 }

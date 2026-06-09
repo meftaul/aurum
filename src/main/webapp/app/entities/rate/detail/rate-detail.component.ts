@@ -1,22 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
+import SharedModule from 'app/shared/shared.module';
 import { IRate } from '../rate.model';
 
 @Component({
   selector: 'jhi-rate-detail',
   templateUrl: './rate-detail.component.html',
+  imports: [SharedModule, RouterModule],
 })
-export class RateDetailComponent implements OnInit {
-  rate: IRate | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
-
-  ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ rate }) => {
-      this.rate = rate;
-    });
-  }
+export class RateDetailComponent {
+  rate = input<IRate | null>(null);
 
   previousState(): void {
     window.history.back();

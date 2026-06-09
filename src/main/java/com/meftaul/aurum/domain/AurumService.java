@@ -2,10 +2,10 @@ package com.meftaul.aurum.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.meftaul.aurum.domain.enumeration.Alloy;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -77,7 +77,7 @@ public class AurumService implements Serializable {
     @Column(name = "weight_of_free_check")
     private String weightOfFreeCheck;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "aurumServices" }, allowSetters = true)
     private Voucher voucher;
 
@@ -314,7 +314,7 @@ public class AurumService implements Serializable {
         if (!(o instanceof AurumService)) {
             return false;
         }
-        return id != null && id.equals(((AurumService) o).id);
+        return getId() != null && getId().equals(((AurumService) o).getId());
     }
 
     @Override

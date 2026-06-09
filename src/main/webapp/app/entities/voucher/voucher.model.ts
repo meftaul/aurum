@@ -8,7 +8,7 @@ export interface IVoucher {
   calculatedTotalAmount?: number | null;
   vat?: number | null;
   disountAmount?: number | null;
-  status?: VoucherStatus | null;
+  status?: keyof typeof VoucherStatus | null;
   totalPayableAmount?: number | null;
   dateCreated?: dayjs.Dayjs | null;
   addedBy?: string | null;

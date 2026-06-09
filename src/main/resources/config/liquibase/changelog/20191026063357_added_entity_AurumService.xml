@@ -11,7 +11,7 @@
     -->
     <changeSet id="20191026063357-1" author="jhipster">
         <createTable tableName="aurum_service">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1500">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="service_type" type="varchar(255)">

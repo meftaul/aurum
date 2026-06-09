@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../item.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../item.test-samples';
 
 import { ItemFormService } from './item-form.service';
 
@@ -23,7 +23,7 @@ describe('Item Form Service', () => {
             name: expect.any(Object),
             description: expect.any(Object),
             code: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -36,14 +36,13 @@ describe('Item Form Service', () => {
             name: expect.any(Object),
             description: expect.any(Object),
             code: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getItem', () => {
       it('should return NewItem for default Item initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createItemFormGroup(sampleWithNewData);
 
         const item = service.getItem(formGroup) as any;

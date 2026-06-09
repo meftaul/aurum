@@ -1,19 +1,22 @@
 package com.meftaul.aurum.web.rest;
 
+import static com.meftaul.aurum.domain.RateAsserts.*;
+import static com.meftaul.aurum.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.meftaul.aurum.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meftaul.aurum.IntegrationTest;
 import com.meftaul.aurum.domain.Rate;
 import com.meftaul.aurum.repository.RateRepository;
+import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,10 @@ class RateResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private RateRepository rateRepository;
@@ -54,15 +60,16 @@ class RateResourceIT {
 
     private Rate rate;
 
+    private Rate insertedRate;
+
     /**
      * Create an entity for this test.
      *
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Rate createEntity(EntityManager em) {
-        Rate rate = new Rate().rateType(DEFAULT_RATE_TYPE).unitPrice(DEFAULT_UNIT_PRICE);
-        return rate;
+    public static Rate createEntity() {
+        return new Rate().rateType(DEFAULT_RATE_TYPE).unitPrice(DEFAULT_UNIT_PRICE);
     }
 
     /**
@@ -71,31 +78,43 @@ class RateResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Rate createUpdatedEntity(EntityManager em) {
-        Rate rate = new Rate().rateType(UPDATED_RATE_TYPE).unitPrice(UPDATED_UNIT_PRICE);
-        return rate;
+    public static Rate createUpdatedEntity() {
+        return new Rate().rateType(UPDATED_RATE_TYPE).unitPrice(UPDATED_UNIT_PRICE);
     }
 
     @BeforeEach
-    public void initTest() {
-        rate = createEntity(em);
+    void initTest() {
+        rate = createEntity();
+    }
+
+    @AfterEach
+    void cleanup() {
+        if (insertedRate != null) {
+            rateRepository.delete(insertedRate);
+            insertedRate = null;
+        }
     }
 
     @Test
     @Transactional
     void createRate() throws Exception {
-        int databaseSizeBeforeCreate = rateRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Rate
-        restRateMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(rate)))
-            .andExpect(status().isCreated());
+        var returnedRate = om.readValue(
+            restRateMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(rate)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Rate.class
+        );
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeCreate + 1);
-        Rate testRate = rateList.get(rateList.size() - 1);
-        assertThat(testRate.getRateType()).isEqualTo(DEFAULT_RATE_TYPE);
-        assertThat(testRate.getUnitPrice()).isEqualByComparingTo(DEFAULT_UNIT_PRICE);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertRateUpdatableFieldsEquals(returnedRate, getPersistedRate(returnedRate));
+
+        insertedRate = returnedRate;
     }
 
     @Test
@@ -104,23 +123,22 @@ class RateResourceIT {
         // Create the Rate with an existing ID
         rate.setId(1L);
 
-        int databaseSizeBeforeCreate = rateRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restRateMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(rate)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(rate)))
             .andExpect(status().isBadRequest());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
     @Transactional
     void getAllRates() throws Exception {
         // Initialize the database
-        rateRepository.saveAndFlush(rate);
+        insertedRate = rateRepository.saveAndFlush(rate);
 
         // Get all the rateList
         restRateMockMvc
@@ -136,7 +154,7 @@ class RateResourceIT {
     @Transactional
     void getRate() throws Exception {
         // Initialize the database
-        rateRepository.saveAndFlush(rate);
+        insertedRate = rateRepository.saveAndFlush(rate);
 
         // Get the rate
         restRateMockMvc
@@ -159,12 +177,12 @@ class RateResourceIT {
     @Transactional
     void putExistingRate() throws Exception {
         // Initialize the database
-        rateRepository.saveAndFlush(rate);
+        insertedRate = rateRepository.saveAndFlush(rate);
 
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the rate
-        Rate updatedRate = rateRepository.findById(rate.getId()).get();
+        Rate updatedRate = rateRepository.findById(rate.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedRate are not directly saved in db
         em.detach(updatedRate);
         updatedRate.rateType(UPDATED_RATE_TYPE).unitPrice(UPDATED_UNIT_PRICE);
@@ -173,109 +191,71 @@ class RateResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, updatedRate.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedRate))
+                    .content(om.writeValueAsBytes(updatedRate))
             )
             .andExpect(status().isOk());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
-        Rate testRate = rateList.get(rateList.size() - 1);
-        assertThat(testRate.getRateType()).isEqualTo(UPDATED_RATE_TYPE);
-        assertThat(testRate.getUnitPrice()).isEqualByComparingTo(UPDATED_UNIT_PRICE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedRateToMatchAllProperties(updatedRate);
     }
 
     @Test
     @Transactional
     void putNonExistingRate() throws Exception {
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
-        rate.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        rate.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRateMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, rate.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(rate))
-            )
+            .perform(put(ENTITY_API_URL_ID, rate.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(rate)))
             .andExpect(status().isBadRequest());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchRate() throws Exception {
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
-        rate.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        rate.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRateMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(rate))
+                    .content(om.writeValueAsBytes(rate))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamRate() throws Exception {
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
-        rate.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        rate.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRateMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(rate)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(rate)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void partialUpdateRateWithPatch() throws Exception {
         // Initialize the database
-        rateRepository.saveAndFlush(rate);
+        insertedRate = rateRepository.saveAndFlush(rate);
 
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
-
-        // Update the rate using partial update
-        Rate partialUpdatedRate = new Rate();
-        partialUpdatedRate.setId(rate.getId());
-
-        restRateMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, partialUpdatedRate.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedRate))
-            )
-            .andExpect(status().isOk());
-
-        // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
-        Rate testRate = rateList.get(rateList.size() - 1);
-        assertThat(testRate.getRateType()).isEqualTo(DEFAULT_RATE_TYPE);
-        assertThat(testRate.getUnitPrice()).isEqualByComparingTo(DEFAULT_UNIT_PRICE);
-    }
-
-    @Test
-    @Transactional
-    void fullUpdateRateWithPatch() throws Exception {
-        // Initialize the database
-        rateRepository.saveAndFlush(rate);
-
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the rate using partial update
         Rate partialUpdatedRate = new Rate();
@@ -287,81 +267,100 @@ class RateResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedRate.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedRate))
+                    .content(om.writeValueAsBytes(partialUpdatedRate))
             )
             .andExpect(status().isOk());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
-        Rate testRate = rateList.get(rateList.size() - 1);
-        assertThat(testRate.getRateType()).isEqualTo(UPDATED_RATE_TYPE);
-        assertThat(testRate.getUnitPrice()).isEqualByComparingTo(UPDATED_UNIT_PRICE);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertRateUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedRate, rate), getPersistedRate(rate));
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateRateWithPatch() throws Exception {
+        // Initialize the database
+        insertedRate = rateRepository.saveAndFlush(rate);
+
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+
+        // Update the rate using partial update
+        Rate partialUpdatedRate = new Rate();
+        partialUpdatedRate.setId(rate.getId());
+
+        partialUpdatedRate.rateType(UPDATED_RATE_TYPE).unitPrice(UPDATED_UNIT_PRICE);
+
+        restRateMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedRate.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(om.writeValueAsBytes(partialUpdatedRate))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Rate in the database
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertRateUpdatableFieldsEquals(partialUpdatedRate, getPersistedRate(partialUpdatedRate));
     }
 
     @Test
     @Transactional
     void patchNonExistingRate() throws Exception {
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
-        rate.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        rate.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRateMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, rate.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(rate))
-            )
+            .perform(patch(ENTITY_API_URL_ID, rate.getId()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(rate)))
             .andExpect(status().isBadRequest());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchRate() throws Exception {
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
-        rate.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        rate.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRateMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(rate))
+                    .content(om.writeValueAsBytes(rate))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamRate() throws Exception {
-        int databaseSizeBeforeUpdate = rateRepository.findAll().size();
-        rate.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        rate.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRateMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(rate)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(rate)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Rate in the database
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void deleteRate() throws Exception {
         // Initialize the database
-        rateRepository.saveAndFlush(rate);
+        insertedRate = rateRepository.saveAndFlush(rate);
 
-        int databaseSizeBeforeDelete = rateRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the rate
         restRateMockMvc
@@ -369,7 +368,34 @@ class RateResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Rate> rateList = rateRepository.findAll();
-        assertThat(rateList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return rateRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Rate getPersistedRate(Rate rate) {
+        return rateRepository.findById(rate.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedRateToMatchAllProperties(Rate expectedRate) {
+        assertRateAllPropertiesEquals(expectedRate, getPersistedRate(expectedRate));
+    }
+
+    protected void assertPersistedRateToMatchUpdatableProperties(Rate expectedRate) {
+        assertRateAllUpdatablePropertiesEquals(expectedRate, getPersistedRate(expectedRate));
     }
 }

@@ -1,24 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { ItemFormService, ItemFormGroup } from './item-form.service';
+import SharedModule from 'app/shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { IItem } from '../item.model';
 import { ItemService } from '../service/item.service';
+import { ItemFormGroup, ItemFormService } from './item-form.service';
 
 @Component({
   selector: 'jhi-item-update',
   templateUrl: './item-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export class ItemUpdateComponent implements OnInit {
   isSaving = false;
   item: IItem | null = null;
 
-  editForm: ItemFormGroup = this.itemFormService.createItemFormGroup();
+  protected itemService = inject(ItemService);
+  protected itemFormService = inject(ItemFormService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(protected itemService: ItemService, protected itemFormService: ItemFormService, protected activatedRoute: ActivatedRoute) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: ItemFormGroup = this.itemFormService.createItemFormGroup();
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ item }) => {
@@ -35,7 +42,7 @@ export class ItemUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const item: any = this.itemFormService.getItem(this.editForm);
+    const item = this.itemFormService.getItem(this.editForm);
     if (item.id !== null) {
       this.subscribeToSaveResponse(this.itemService.update(item));
     } else {

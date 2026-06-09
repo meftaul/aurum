@@ -26,13 +26,15 @@ public class CacheConfiguration {
     public CacheConfiguration(JHipsterProperties jHipsterProperties) {
         JHipsterProperties.Cache.Ehcache ehcache = jHipsterProperties.getCache().getEhcache();
 
-        jcacheConfiguration =
-            Eh107Configuration.fromEhcacheCacheConfiguration(
-                CacheConfigurationBuilder
-                    .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
-                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
-                    .build()
-            );
+        jcacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
+            CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                Object.class,
+                Object.class,
+                ResourcePoolsBuilder.heap(ehcache.getMaxEntries())
+            )
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
+                .build()
+        );
     }
 
     @Bean
@@ -50,9 +52,9 @@ public class CacheConfiguration {
             createCache(cm, com.meftaul.aurum.domain.User.class.getName() + ".authorities");
             createCache(cm, com.meftaul.aurum.domain.Customer.class.getName());
             createCache(cm, com.meftaul.aurum.domain.Voucher.class.getName());
+            createCache(cm, com.meftaul.aurum.domain.Voucher.class.getName() + ".aurumServices");
             createCache(cm, com.meftaul.aurum.domain.TransactionHistory.class.getName());
             createCache(cm, com.meftaul.aurum.domain.AurumService.class.getName());
-            createCache(cm, com.meftaul.aurum.domain.Voucher.class.getName() + ".aurumServices");
             createCache(cm, com.meftaul.aurum.domain.Rate.class.getName());
             createCache(cm, com.meftaul.aurum.domain.Karat.class.getName());
             createCache(cm, com.meftaul.aurum.domain.Item.class.getName());

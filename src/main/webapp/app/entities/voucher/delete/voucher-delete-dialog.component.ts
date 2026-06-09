@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import SharedModule from 'app/shared/shared.module';
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { IVoucher } from '../voucher.model';
 import { VoucherService } from '../service/voucher.service';
-import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 
 @Component({
   templateUrl: './voucher-delete-dialog.component.html',
+  imports: [SharedModule, FormsModule],
 })
 export class VoucherDeleteDialogComponent {
   voucher?: IVoucher;
 
-  constructor(protected voucherService: VoucherService, protected activeModal: NgbActiveModal) {}
+  protected voucherService = inject(VoucherService);
+  protected activeModal = inject(NgbActiveModal);
 
   cancel(): void {
     this.activeModal.dismiss();

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { IAurumService, NewAurumService } from '../aurum-service.model';
 
@@ -51,7 +51,7 @@ export class AurumServiceFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        }
+        },
       ),
       serviceType: new FormControl(aurumServiceRawValue.serviceType),
       itemName: new FormControl(aurumServiceRawValue.itemName),
@@ -94,7 +94,7 @@ export class AurumServiceFormService {
       {
         ...aurumServiceRawValue,
         id: { value: aurumServiceRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
   }
 

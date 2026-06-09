@@ -4,20 +4,19 @@ import com.meftaul.aurum.domain.Item;
 import com.meftaul.aurum.repository.ItemRepository;
 import com.meftaul.aurum.service.ItemService;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,10 +28,10 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link com.meftaul.aurum.domain.Item}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/items")
 public class ItemResource {
 
-    private final Logger log = LoggerFactory.getLogger(ItemResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ItemResource.class);
 
     private static final String ENTITY_NAME = "item";
 
@@ -55,17 +54,16 @@ public class ItemResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new item, or with status {@code 400 (Bad Request)} if the item has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/items")
+    @PostMapping("")
     public ResponseEntity<Item> createItem(@Valid @RequestBody Item item) throws URISyntaxException {
-        log.debug("REST request to save Item : {}", item);
+        LOG.debug("REST request to save Item : {}", item);
         if (item.getId() != null) {
             throw new BadRequestAlertException("A new item cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Item result = itemService.save(item);
-        return ResponseEntity
-            .created(new URI("/api/items/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        item = itemService.save(item);
+        return ResponseEntity.created(new URI("/api/items/" + item.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, item.getId().toString()))
+            .body(item);
     }
 
     /**
@@ -78,10 +76,10 @@ public class ItemResource {
      * or with status {@code 500 (Internal Server Error)} if the item couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/items/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Item item)
         throws URISyntaxException {
-        log.debug("REST request to update Item : {}, {}", id, item);
+        LOG.debug("REST request to update Item : {}, {}", id, item);
         if (item.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -93,11 +91,10 @@ public class ItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Item result = itemService.update(item);
-        return ResponseEntity
-            .ok()
+        item = itemService.update(item);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, item.getId().toString()))
-            .body(result);
+            .body(item);
     }
 
     /**
@@ -111,12 +108,12 @@ public class ItemResource {
      * or with status {@code 500 (Internal Server Error)} if the item couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/items/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Item> partialUpdateItem(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Item item
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Item partially : {}, {}", id, item);
+        LOG.debug("REST request to partial update Item partially : {}, {}", id, item);
         if (item.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -142,9 +139,9 @@ public class ItemResource {
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
      */
-    @GetMapping("/items")
-    public ResponseEntity<List<Item>> getAllItems(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        log.debug("REST request to get a page of Items");
+    @GetMapping("")
+    public ResponseEntity<List<Item>> getAllItems(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+        LOG.debug("REST request to get a page of Items");
         Page<Item> page = itemService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -156,9 +153,9 @@ public class ItemResource {
      * @param id the id of the item to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the item, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/items/{id}")
-    public ResponseEntity<Item> getItem(@PathVariable Long id) {
-        log.debug("REST request to get Item : {}", id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Item> getItem(@PathVariable("id") Long id) {
+        LOG.debug("REST request to get Item : {}", id);
         Optional<Item> item = itemService.findOne(id);
         return ResponseUtil.wrapOrNotFound(item);
     }
@@ -169,12 +166,11 @@ public class ItemResource {
      * @param id the id of the item to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/items/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
-        log.debug("REST request to delete Item : {}", id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteItem(@PathVariable("id") Long id) {
+        LOG.debug("REST request to delete Item : {}", id);
         itemService.delete(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
     }

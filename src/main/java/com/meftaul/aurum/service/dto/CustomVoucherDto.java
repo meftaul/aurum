@@ -3,9 +3,9 @@ package com.meftaul.aurum.service.dto;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.Voucher;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class CustomVoucherDto {

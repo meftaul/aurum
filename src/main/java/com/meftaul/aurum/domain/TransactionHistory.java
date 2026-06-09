@@ -1,11 +1,11 @@
 package com.meftaul.aurum.domain;
 
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -153,7 +153,7 @@ public class TransactionHistory implements Serializable {
         if (!(o instanceof TransactionHistory)) {
             return false;
         }
-        return id != null && id.equals(((TransactionHistory) o).id);
+        return getId() != null && getId().equals(((TransactionHistory) o).getId());
     }
 
     @Override

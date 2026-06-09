@@ -1,22 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
+import SharedModule from 'app/shared/shared.module';
 import { IAurumService } from '../aurum-service.model';
 
 @Component({
   selector: 'jhi-aurum-service-detail',
   templateUrl: './aurum-service-detail.component.html',
+  imports: [SharedModule, RouterModule],
 })
-export class AurumServiceDetailComponent implements OnInit {
-  aurumService: IAurumService | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
-
-  ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ aurumService }) => {
-      this.aurumService = aurumService;
-    });
-  }
+export class AurumServiceDetailComponent {
+  aurumService = input<IAurumService | null>(null);
 
   previousState(): void {
     window.history.back();

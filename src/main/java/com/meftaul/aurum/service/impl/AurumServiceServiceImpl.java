@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link AurumService}.
+ * Service Implementation for managing {@link com.meftaul.aurum.domain.AurumService}.
  */
 @Service
 @Transactional
 public class AurumServiceServiceImpl implements AurumServiceService {
 
-    private final Logger log = LoggerFactory.getLogger(AurumServiceServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AurumServiceServiceImpl.class);
 
     private final AurumServiceRepository aurumServiceRepository;
 
@@ -28,19 +28,19 @@ public class AurumServiceServiceImpl implements AurumServiceService {
 
     @Override
     public AurumService save(AurumService aurumService) {
-        log.debug("Request to save AurumService : {}", aurumService);
+        LOG.debug("Request to save AurumService : {}", aurumService);
         return aurumServiceRepository.save(aurumService);
     }
 
     @Override
     public AurumService update(AurumService aurumService) {
-        log.debug("Request to update AurumService : {}", aurumService);
+        LOG.debug("Request to update AurumService : {}", aurumService);
         return aurumServiceRepository.save(aurumService);
     }
 
     @Override
     public Optional<AurumService> partialUpdate(AurumService aurumService) {
-        log.debug("Request to partially update AurumService : {}", aurumService);
+        LOG.debug("Request to partially update AurumService : {}", aurumService);
 
         return aurumServiceRepository
             .findById(aurumService.getId())
@@ -96,13 +96,6 @@ public class AurumServiceServiceImpl implements AurumServiceService {
             .map(aurumServiceRepository::save);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<AurumService> findAll(Pageable pageable) {
-        log.debug("Request to get all AurumServices");
-        return aurumServiceRepository.findAll(pageable);
-    }
-
     public Page<AurumService> findAllWithEagerRelationships(Pageable pageable) {
         return aurumServiceRepository.findAllWithEagerRelationships(pageable);
     }
@@ -110,13 +103,13 @@ public class AurumServiceServiceImpl implements AurumServiceService {
     @Override
     @Transactional(readOnly = true)
     public Optional<AurumService> findOne(Long id) {
-        log.debug("Request to get AurumService : {}", id);
+        LOG.debug("Request to get AurumService : {}", id);
         return aurumServiceRepository.findOneWithEagerRelationships(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete AurumService : {}", id);
+        LOG.debug("Request to delete AurumService : {}", id);
         aurumServiceRepository.deleteById(id);
     }
 }

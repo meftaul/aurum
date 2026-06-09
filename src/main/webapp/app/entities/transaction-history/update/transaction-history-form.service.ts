@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import dayjs from 'dayjs/esm';
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
@@ -54,7 +54,7 @@ export class TransactionHistoryFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        }
+        },
       ),
       voucherNo: new FormControl(transactionHistoryRawValue.voucherNo, {
         validators: [Validators.required],
@@ -79,7 +79,7 @@ export class TransactionHistoryFormService {
 
   getTransactionHistory(form: TransactionHistoryFormGroup): ITransactionHistory | NewTransactionHistory {
     return this.convertTransactionHistoryRawValueToTransactionHistory(
-      form.getRawValue() as TransactionHistoryFormRawValue | NewTransactionHistoryFormRawValue
+      form.getRawValue() as TransactionHistoryFormRawValue | NewTransactionHistoryFormRawValue,
     );
   }
 
@@ -92,7 +92,7 @@ export class TransactionHistoryFormService {
       {
         ...transactionHistoryRawValue,
         id: { value: transactionHistoryRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
   }
 
@@ -106,7 +106,7 @@ export class TransactionHistoryFormService {
   }
 
   private convertTransactionHistoryRawValueToTransactionHistory(
-    rawTransactionHistory: TransactionHistoryFormRawValue | NewTransactionHistoryFormRawValue
+    rawTransactionHistory: TransactionHistoryFormRawValue | NewTransactionHistoryFormRawValue,
   ): ITransactionHistory | NewTransactionHistory {
     return {
       ...rawTransactionHistory,
@@ -115,7 +115,7 @@ export class TransactionHistoryFormService {
   }
 
   private convertTransactionHistoryToTransactionHistoryRawValue(
-    transactionHistory: ITransactionHistory | (Partial<NewTransactionHistory> & TransactionHistoryFormDefaults)
+    transactionHistory: ITransactionHistory | (Partial<NewTransactionHistory> & TransactionHistoryFormDefaults),
   ): TransactionHistoryFormRawValue | PartialWithRequiredKeyOf<NewTransactionHistoryFormRawValue> {
     return {
       ...transactionHistory,

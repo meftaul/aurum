@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -14,9 +14,10 @@ export type EntityArrayResponseType = HttpResponse<IRate[]>;
 
 @Injectable({ providedIn: 'root' })
 export class RateService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/rates');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/rates');
 
   create(rate: NewRate): Observable<EntityResponseType> {
     return this.http.post<IRate>(this.resourceUrl, rate, { observe: 'response' });
@@ -57,7 +58,7 @@ export class RateService {
   ): Type[] {
     const rates: Type[] = ratesToCheck.filter(isPresent);
     if (rates.length > 0) {
-      const rateCollectionIdentifiers = rateCollection.map(rateItem => this.getRateIdentifier(rateItem)!);
+      const rateCollectionIdentifiers = rateCollection.map(rateItem => this.getRateIdentifier(rateItem));
       const ratesToAdd = rates.filter(rateItem => {
         const rateIdentifier = this.getRateIdentifier(rateItem);
         if (rateCollectionIdentifiers.includes(rateIdentifier)) {

@@ -3,7 +3,7 @@ package com.meftaul.aurum.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.JoinType;
 
 import com.meftaul.aurum.domain.*; // for static metamodels
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;

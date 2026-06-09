@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link Karat}.
+ * Service Implementation for managing {@link com.meftaul.aurum.domain.Karat}.
  */
 @Service
 @Transactional
 public class KaratServiceImpl implements KaratService {
 
-    private final Logger log = LoggerFactory.getLogger(KaratServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KaratServiceImpl.class);
 
     private final KaratRepository karatRepository;
 
@@ -28,19 +28,19 @@ public class KaratServiceImpl implements KaratService {
 
     @Override
     public Karat save(Karat karat) {
-        log.debug("Request to save Karat : {}", karat);
+        LOG.debug("Request to save Karat : {}", karat);
         return karatRepository.save(karat);
     }
 
     @Override
     public Karat update(Karat karat) {
-        log.debug("Request to update Karat : {}", karat);
+        LOG.debug("Request to update Karat : {}", karat);
         return karatRepository.save(karat);
     }
 
     @Override
     public Optional<Karat> partialUpdate(Karat karat) {
-        log.debug("Request to partially update Karat : {}", karat);
+        LOG.debug("Request to partially update Karat : {}", karat);
 
         return karatRepository
             .findById(karat.getId())
@@ -60,20 +60,20 @@ public class KaratServiceImpl implements KaratService {
     @Override
     @Transactional(readOnly = true)
     public Page<Karat> findAll(Pageable pageable) {
-        log.debug("Request to get all Karats");
+        LOG.debug("Request to get all Karats");
         return karatRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Karat> findOne(Long id) {
-        log.debug("Request to get Karat : {}", id);
+        LOG.debug("Request to get Karat : {}", id);
         return karatRepository.findById(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete Karat : {}", id);
+        LOG.debug("Request to delete Karat : {}", id);
         karatRepository.deleteById(id);
     }
 }

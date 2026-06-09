@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, map } from 'rxjs';
+
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
@@ -27,9 +27,10 @@ export type EntityArrayResponseType = HttpResponse<IVoucher[]>;
 
 @Injectable({ providedIn: 'root' })
 export class VoucherService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/vouchers');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/vouchers');
 
   create(voucher: NewVoucher): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(voucher);
@@ -83,7 +84,7 @@ export class VoucherService {
   ): Type[] {
     const vouchers: Type[] = vouchersToCheck.filter(isPresent);
     if (vouchers.length > 0) {
-      const voucherCollectionIdentifiers = voucherCollection.map(voucherItem => this.getVoucherIdentifier(voucherItem)!);
+      const voucherCollectionIdentifiers = voucherCollection.map(voucherItem => this.getVoucherIdentifier(voucherItem));
       const vouchersToAdd = vouchers.filter(voucherItem => {
         const voucherIdentifier = this.getVoucherIdentifier(voucherItem);
         if (voucherCollectionIdentifiers.includes(voucherIdentifier)) {

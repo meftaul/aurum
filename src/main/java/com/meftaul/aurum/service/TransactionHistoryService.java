@@ -2,11 +2,9 @@ package com.meftaul.aurum.service;
 
 import com.meftaul.aurum.domain.TransactionHistory;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link TransactionHistory}.
+ * Service Interface for managing {@link com.meftaul.aurum.domain.TransactionHistory}.
  */
 public interface TransactionHistoryService {
     /**
@@ -32,14 +30,6 @@ public interface TransactionHistoryService {
      * @return the persisted entity.
      */
     Optional<TransactionHistory> partialUpdate(TransactionHistory transactionHistory);
-
-    /**
-     * Get all the transactionHistories.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<TransactionHistory> findAll(Pageable pageable);
 
     /**
      * Get the "id" transactionHistory.

@@ -1,17 +1,19 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="jhi-aurum-service-heading" data-cy="AurumServiceCreateUpdateHeading">Create or edit a Aurum Service</h2>
 
       <div>
-        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert-error />
 
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_serviceType">Service Type</label>
           <input
             type="text"
@@ -23,46 +25,61 @@
           />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_itemName">Item Name</label>
           <input type="text" class="form-control" name="itemName" id="field_itemName" data-cy="itemName" formControlName="itemName" />
         </div>
 
-        <div class="row mb-3">
+        @let quantityRef = editForm.get('quantity')!;
+        <div class="mb-3">
           <label class="form-label" for="field_quantity">Quantity</label>
           <input type="number" class="form-control" name="quantity" id="field_quantity" data-cy="quantity" formControlName="quantity" />
-          <div *ngIf="editForm.get('quantity')!.invalid && (editForm.get('quantity')!.dirty || editForm.get('quantity')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('quantity')?.errors?.min"> This field should be at least 0. </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('quantity')?.errors?.number">
-              This field should be a number.
-            </small>
-          </div>
+          @if (quantityRef.invalid && (quantityRef.dirty || quantityRef.touched)) {
+            <div>
+              @if (editForm.get('quantity')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('quantity')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        @let weightRef = editForm.get('weight')!;
+        <div class="mb-3">
           <label class="form-label" for="field_weight">Weight</label>
           <input type="number" class="form-control" name="weight" id="field_weight" data-cy="weight" formControlName="weight" />
-          <div *ngIf="editForm.get('weight')!.invalid && (editForm.get('weight')!.dirty || editForm.get('weight')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('weight')?.errors?.min"> This field should be at least 0. </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('weight')?.errors?.number"> This field should be a number. </small>
-          </div>
+          @if (weightRef.invalid && (weightRef.dirty || weightRef.touched)) {
+            <div>
+              @if (editForm.get('weight')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('weight')?.errors?.number">This field should be a number.</small>
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        @let rateRef = editForm.get('rate')!;
+        <div class="mb-3">
           <label class="form-label" for="field_rate">Rate</label>
           <input type="number" class="form-control" name="rate" id="field_rate" data-cy="rate" formControlName="rate" />
-          <div *ngIf="editForm.get('rate')!.invalid && (editForm.get('rate')!.dirty || editForm.get('rate')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('rate')?.errors?.min"> This field should be at least 0. </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('rate')?.errors?.number"> This field should be a number. </small>
-          </div>
+          @if (rateRef.invalid && (rateRef.dirty || rateRef.touched)) {
+            <div>
+              @if (editForm.get('rate')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('rate')?.errors?.number">This field should be a number.</small>
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_amount">Amount</label>
           <input type="number" class="form-control" name="amount" id="field_amount" data-cy="amount" formControlName="amount" />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_serviceName">Service Name</label>
           <input
             type="text"
@@ -74,12 +91,12 @@
           />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_karatType">Karat Type</label>
           <input type="text" class="form-control" name="karatType" id="field_karatType" data-cy="karatType" formControlName="karatType" />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_expectedKaratType">Expected Karat Type</label>
           <input
             type="text"
@@ -91,15 +108,18 @@
           />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_addedAlloy">Added Alloy</label>
           <select class="form-control" name="addedAlloy" formControlName="addedAlloy" id="field_addedAlloy" data-cy="addedAlloy">
             <option [ngValue]="null"></option>
-            <option *ngFor="let alloy of alloyValues" [value]="alloy">alloy</option>
+            @for (alloy of alloyValues; track $index) {
+              <option [value]="alloy">{{ { null: '', AU: 'AU', SI: 'SI', CU: 'CU' }[alloy] }}</option>
+            }
           </select>
         </div>
 
-        <div class="row mb-3">
+        @let alloyQuantityRef = editForm.get('alloyQuantity')!;
+        <div class="mb-3">
           <label class="form-label" for="field_alloyQuantity">Alloy Quantity</label>
           <input
             type="number"
@@ -109,21 +129,20 @@
             data-cy="alloyQuantity"
             formControlName="alloyQuantity"
           />
-          <div
-            *ngIf="
-              editForm.get('alloyQuantity')!.invalid && (editForm.get('alloyQuantity')!.dirty || editForm.get('alloyQuantity')!.touched)
-            "
-          >
-            <small class="form-text text-danger" *ngIf="editForm.get('alloyQuantity')?.errors?.min">
-              This field should be at least 0.
-            </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('alloyQuantity')?.errors?.number">
-              This field should be a number.
-            </small>
-          </div>
+          @if (alloyQuantityRef.invalid && (alloyQuantityRef.dirty || alloyQuantityRef.touched)) {
+            <div>
+              @if (editForm.get('alloyQuantity')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('alloyQuantity')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        @let serviceChargeRef = editForm.get('serviceCharge')!;
+        <div class="mb-3">
           <label class="form-label" for="field_serviceCharge">Service Charge</label>
           <input
             type="number"
@@ -133,32 +152,35 @@
             data-cy="serviceCharge"
             formControlName="serviceCharge"
           />
-          <div
-            *ngIf="
-              editForm.get('serviceCharge')!.invalid && (editForm.get('serviceCharge')!.dirty || editForm.get('serviceCharge')!.touched)
-            "
-          >
-            <small class="form-text text-danger" *ngIf="editForm.get('serviceCharge')?.errors?.min">
-              This field should be at least 0.
-            </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('serviceCharge')?.errors?.number">
-              This field should be a number.
-            </small>
-          </div>
+          @if (serviceChargeRef.invalid && (serviceChargeRef.dirty || serviceChargeRef.touched)) {
+            <div>
+              @if (editForm.get('serviceCharge')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('serviceCharge')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        @let freeCheckRef = editForm.get('freeCheck')!;
+        <div class="mb-3">
           <label class="form-label" for="field_freeCheck">Free Check</label>
           <input type="number" class="form-control" name="freeCheck" id="field_freeCheck" data-cy="freeCheck" formControlName="freeCheck" />
-          <div *ngIf="editForm.get('freeCheck')!.invalid && (editForm.get('freeCheck')!.dirty || editForm.get('freeCheck')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('freeCheck')?.errors?.min"> This field should be at least 0. </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('freeCheck')?.errors?.number">
-              This field should be a number.
-            </small>
-          </div>
+          @if (freeCheckRef.invalid && (freeCheckRef.dirty || freeCheckRef.touched)) {
+            <div>
+              @if (editForm.get('freeCheck')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('freeCheck')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_hallMarkedText">Hall Marked Text</label>
           <input
             type="text"
@@ -170,7 +192,7 @@
           />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_weightOfFreeCheck">Weight Of Free Check</label>
           <input
             type="text"
@@ -182,7 +204,7 @@
           />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_voucher">Voucher</label>
           <select
             class="form-control"
@@ -193,7 +215,9 @@
             [compareWith]="compareVoucher"
           >
             <option [ngValue]="null"></option>
-            <option [ngValue]="voucherOption" *ngFor="let voucherOption of vouchersSharedCollection">{{ voucherOption.voucherNo }}</option>
+            @for (voucherOption of vouchersSharedCollection; track $index) {
+              <option [ngValue]="voucherOption">{{ voucherOption.voucherNo }}</option>
+            }
           </select>
         </div>
       </div>

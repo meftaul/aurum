@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of, Subject, from } from 'rxjs';
+import { Subject, from, of } from 'rxjs';
 
-import { KaratFormService } from './karat-form.service';
 import { KaratService } from '../service/karat.service';
 import { IKarat } from '../karat.model';
+import { KaratFormService } from './karat-form.service';
 
 import { KaratUpdateComponent } from './karat-update.component';
 
@@ -21,9 +19,9 @@ describe('Karat Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [KaratUpdateComponent],
+      imports: [KaratUpdateComponent],
       providers: [
+        provideHttpClient(),
         FormBuilder,
         {
           provide: ActivatedRoute,
@@ -45,8 +43,8 @@ describe('Karat Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('Should update editForm', () => {
-      const karat: IKarat = { id: 456 };
+    it('should update editForm', () => {
+      const karat: IKarat = { id: 32675 };
 
       activatedRoute.data = of({ karat });
       comp.ngOnInit();
@@ -56,10 +54,10 @@ describe('Karat Management Update Component', () => {
   });
 
   describe('save', () => {
-    it('Should call update service on save for existing entity', () => {
+    it('should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IKarat>>();
-      const karat = { id: 123 };
+      const karat = { id: 27109 };
       jest.spyOn(karatFormService, 'getKarat').mockReturnValue(karat);
       jest.spyOn(karatService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -79,10 +77,10 @@ describe('Karat Management Update Component', () => {
       expect(comp.isSaving).toEqual(false);
     });
 
-    it('Should call create service on save for new entity', () => {
+    it('should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IKarat>>();
-      const karat = { id: 123 };
+      const karat = { id: 27109 };
       jest.spyOn(karatFormService, 'getKarat').mockReturnValue({ id: null });
       jest.spyOn(karatService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -102,10 +100,10 @@ describe('Karat Management Update Component', () => {
       expect(comp.previousState).toHaveBeenCalled();
     });
 
-    it('Should set isSaving to false on error', () => {
+    it('should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IKarat>>();
-      const karat = { id: 123 };
+      const karat = { id: 27109 };
       jest.spyOn(karatService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ karat });

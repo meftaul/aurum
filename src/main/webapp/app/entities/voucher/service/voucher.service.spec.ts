@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { IVoucher } from '../voucher.model';
-import { sampleWithRequiredData, sampleWithNewData, sampleWithPartialData, sampleWithFullData } from '../voucher.test-samples';
+import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../voucher.test-samples';
 
-import { VoucherService, RestVoucher } from './voucher.service';
+import { RestVoucher, VoucherService } from './voucher.service';
 
 const requireRestSample: RestVoucher = {
   ...sampleWithRequiredData,
@@ -19,7 +20,7 @@ describe('Voucher Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(VoucherService);
@@ -39,7 +40,6 @@ describe('Voucher Service', () => {
     });
 
     it('should create a Voucher', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const voucher = { ...sampleWithNewData };
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
@@ -157,7 +157,7 @@ describe('Voucher Service', () => {
     });
 
     describe('compareVoucher', () => {
-      it('Should return true if both entities are null', () => {
+      it('should return true if both entities are null', () => {
         const entity1 = null;
         const entity2 = null;
 
@@ -166,8 +166,8 @@ describe('Voucher Service', () => {
         expect(compareResult).toEqual(true);
       });
 
-      it('Should return false if one entity is null', () => {
-        const entity1 = { id: 123 };
+      it('should return false if one entity is null', () => {
+        const entity1 = { id: 9972 };
         const entity2 = null;
 
         const compareResult1 = service.compareVoucher(entity1, entity2);
@@ -177,9 +177,9 @@ describe('Voucher Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('Should return false if primaryKey differs', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 456 };
+      it('should return false if primaryKey differs', () => {
+        const entity1 = { id: 9972 };
+        const entity2 = { id: 7837 };
 
         const compareResult1 = service.compareVoucher(entity1, entity2);
         const compareResult2 = service.compareVoucher(entity2, entity1);
@@ -188,9 +188,9 @@ describe('Voucher Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('Should return false if primaryKey matches', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 123 };
+      it('should return false if primaryKey matches', () => {
+        const entity1 = { id: 9972 };
+        const entity2 = { id: 9972 };
 
         const compareResult1 = service.compareVoucher(entity1, entity2);
         const compareResult2 = service.compareVoucher(entity2, entity1);

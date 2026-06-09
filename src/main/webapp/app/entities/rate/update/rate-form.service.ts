@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { IRate, NewRate } from '../rate.model';
 
@@ -37,7 +37,7 @@ export class RateFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        }
+        },
       ),
       rateType: new FormControl(rateRawValue.rateType),
       unitPrice: new FormControl(rateRawValue.unitPrice, {
@@ -56,7 +56,7 @@ export class RateFormService {
       {
         ...rateRawValue,
         id: { value: rateRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
   }
 

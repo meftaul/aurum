@@ -2,13 +2,13 @@ package com.meftaul.aurum.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.meftaul.aurum.domain.enumeration.VoucherStatus;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -69,7 +69,7 @@ public class Voucher implements Serializable {
     @Column(name = "delivery_status")
     private Boolean deliveryStatus;
 
-    @OneToMany(mappedBy = "voucher")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "voucher")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "voucher" }, allowSetters = true)
     private Set<AurumService> aurumServices = new HashSet<>();
@@ -286,7 +286,7 @@ public class Voucher implements Serializable {
         if (!(o instanceof Voucher)) {
             return false;
         }
-        return id != null && id.equals(((Voucher) o).id);
+        return getId() != null && getId().equals(((Voucher) o).getId());
     }
 
     @Override

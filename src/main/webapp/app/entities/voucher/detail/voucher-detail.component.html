@@ -1,76 +1,78 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="voucher">
-      <h2 data-cy="voucherDetailsHeading"><span>Voucher</span></h2>
+    @if (voucher(); as voucherRef) {
+      <div>
+        <h2 data-cy="voucherDetailsHeading"><span>Voucher</span></h2>
 
-      <hr />
+        <hr />
 
-      <jhi-alert-error></jhi-alert-error>
+        <jhi-alert-error />
 
-      <jhi-alert></jhi-alert>
+        <jhi-alert />
 
-      <dl class="row-md jh-entity-details">
-        <dt><span>ID</span></dt>
-        <dd>
-          <span>{{ voucher.id }}</span>
-        </dd>
-        <dt><span>Voucher No</span></dt>
-        <dd>
-          <span>{{ voucher.voucherNo }}</span>
-        </dd>
-        <dt><span>Customer Id</span></dt>
-        <dd>
-          <span>{{ voucher.customerId }}</span>
-        </dd>
-        <dt><span>Calculated Total Amount</span></dt>
-        <dd>
-          <span>{{ voucher.calculatedTotalAmount }}</span>
-        </dd>
-        <dt><span>Vat</span></dt>
-        <dd>
-          <span>{{ voucher.vat }}</span>
-        </dd>
-        <dt><span>Disount Amount</span></dt>
-        <dd>
-          <span>{{ voucher.disountAmount }}</span>
-        </dd>
-        <dt><span>Status</span></dt>
-        <dd>
-          <span>{{ voucher.status }}</span>
-        </dd>
-        <dt><span>Total Payable Amount</span></dt>
-        <dd>
-          <span>{{ voucher.totalPayableAmount }}</span>
-        </dd>
-        <dt><span>Date Created</span></dt>
-        <dd>
-          <span>{{ voucher.dateCreated | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span>Added By</span></dt>
-        <dd>
-          <span>{{ voucher.addedBy }}</span>
-        </dd>
-        <dt><span>Box Number</span></dt>
-        <dd>
-          <span>{{ voucher.boxNumber }}</span>
-        </dd>
-        <dt><span>Delivery Date</span></dt>
-        <dd>
-          <span>{{ voucher.deliveryDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span>Delivery Status</span></dt>
-        <dd>
-          <span>{{ voucher.deliveryStatus }}</span>
-        </dd>
-      </dl>
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ voucherRef.id }}</span>
+          </dd>
+          <dt><span>Voucher No</span></dt>
+          <dd>
+            <span>{{ voucherRef.voucherNo }}</span>
+          </dd>
+          <dt><span>Customer Id</span></dt>
+          <dd>
+            <span>{{ voucherRef.customerId }}</span>
+          </dd>
+          <dt><span>Calculated Total Amount</span></dt>
+          <dd>
+            <span>{{ voucherRef.calculatedTotalAmount }}</span>
+          </dd>
+          <dt><span>Vat</span></dt>
+          <dd>
+            <span>{{ voucherRef.vat }}</span>
+          </dd>
+          <dt><span>Disount Amount</span></dt>
+          <dd>
+            <span>{{ voucherRef.disountAmount }}</span>
+          </dd>
+          <dt><span>Status</span></dt>
+          <dd>
+            <span>{{ { null: '', PAID: 'PAID', DUE: 'DUE', CANCEL: 'CANCEL' }[voucherRef.status ?? 'null'] }}</span>
+          </dd>
+          <dt><span>Total Payable Amount</span></dt>
+          <dd>
+            <span>{{ voucherRef.totalPayableAmount }}</span>
+          </dd>
+          <dt><span>Date Created</span></dt>
+          <dd>
+            <span>{{ voucherRef.dateCreated | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Added By</span></dt>
+          <dd>
+            <span>{{ voucherRef.addedBy }}</span>
+          </dd>
+          <dt><span>Box Number</span></dt>
+          <dd>
+            <span>{{ voucherRef.boxNumber }}</span>
+          </dd>
+          <dt><span>Delivery Date</span></dt>
+          <dd>
+            <span>{{ voucherRef.deliveryDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Delivery Status</span></dt>
+          <dd>
+            <span>{{ voucherRef.deliveryStatus }}</span>
+          </dd>
+        </dl>
 
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
-      </button>
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
 
-      <button type="button" [routerLink]="['/voucher', voucher.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
-      </button>
-    </div>
+        <button type="button" [routerLink]="['/voucher', voucherRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
   </div>
 </div>

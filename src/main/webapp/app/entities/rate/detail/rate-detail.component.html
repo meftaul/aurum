@@ -1,36 +1,38 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="rate">
-      <h2 data-cy="rateDetailsHeading"><span>Rate</span></h2>
+    @if (rate(); as rateRef) {
+      <div>
+        <h2 data-cy="rateDetailsHeading"><span>Rate</span></h2>
 
-      <hr />
+        <hr />
 
-      <jhi-alert-error></jhi-alert-error>
+        <jhi-alert-error />
 
-      <jhi-alert></jhi-alert>
+        <jhi-alert />
 
-      <dl class="row-md jh-entity-details">
-        <dt><span>ID</span></dt>
-        <dd>
-          <span>{{ rate.id }}</span>
-        </dd>
-        <dt><span>Rate Type</span></dt>
-        <dd>
-          <span>{{ rate.rateType }}</span>
-        </dd>
-        <dt><span>Unit Price</span></dt>
-        <dd>
-          <span>{{ rate.unitPrice }}</span>
-        </dd>
-      </dl>
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ rateRef.id }}</span>
+          </dd>
+          <dt><span>Rate Type</span></dt>
+          <dd>
+            <span>{{ rateRef.rateType }}</span>
+          </dd>
+          <dt><span>Unit Price</span></dt>
+          <dd>
+            <span>{{ rateRef.unitPrice }}</span>
+          </dd>
+        </dl>
 
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
-      </button>
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
 
-      <button type="button" [routerLink]="['/rate', rate.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
-      </button>
-    </div>
+        <button type="button" [routerLink]="['/rate', rateRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
   </div>
 </div>

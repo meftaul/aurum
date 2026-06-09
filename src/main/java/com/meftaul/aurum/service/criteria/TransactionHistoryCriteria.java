@@ -3,7 +3,8 @@ package com.meftaul.aurum.service.criteria;
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import java.io.Serializable;
 import java.util.Objects;
-import org.springdoc.api.annotations.ParameterObject;
+import java.util.Optional;
+import org.springdoc.core.annotations.ParameterObject;
 import tech.jhipster.service.Criteria;
 import tech.jhipster.service.filter.*;
 
@@ -58,13 +59,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
     public TransactionHistoryCriteria() {}
 
     public TransactionHistoryCriteria(TransactionHistoryCriteria other) {
-        this.id = other.id == null ? null : other.id.copy();
-        this.voucherNo = other.voucherNo == null ? null : other.voucherNo.copy();
-        this.amount = other.amount == null ? null : other.amount.copy();
-        this.dateCreated = other.dateCreated == null ? null : other.dateCreated.copy();
-        this.tag = other.tag == null ? null : other.tag.copy();
-        this.customerId = other.customerId == null ? null : other.customerId.copy();
-        this.addedBy = other.addedBy == null ? null : other.addedBy.copy();
+        this.id = other.optionalId().map(LongFilter::copy).orElse(null);
+        this.voucherNo = other.optionalVoucherNo().map(StringFilter::copy).orElse(null);
+        this.amount = other.optionalAmount().map(BigDecimalFilter::copy).orElse(null);
+        this.dateCreated = other.optionalDateCreated().map(InstantFilter::copy).orElse(null);
+        this.tag = other.optionalTag().map(TransactionStatusFilter::copy).orElse(null);
+        this.customerId = other.optionalCustomerId().map(LongFilter::copy).orElse(null);
+        this.addedBy = other.optionalAddedBy().map(StringFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -77,9 +78,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         return id;
     }
 
+    public Optional<LongFilter> optionalId() {
+        return Optional.ofNullable(id);
+    }
+
     public LongFilter id() {
         if (id == null) {
-            id = new LongFilter();
+            setId(new LongFilter());
         }
         return id;
     }
@@ -92,9 +97,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         return voucherNo;
     }
 
+    public Optional<StringFilter> optionalVoucherNo() {
+        return Optional.ofNullable(voucherNo);
+    }
+
     public StringFilter voucherNo() {
         if (voucherNo == null) {
-            voucherNo = new StringFilter();
+            setVoucherNo(new StringFilter());
         }
         return voucherNo;
     }
@@ -107,9 +116,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         return amount;
     }
 
+    public Optional<BigDecimalFilter> optionalAmount() {
+        return Optional.ofNullable(amount);
+    }
+
     public BigDecimalFilter amount() {
         if (amount == null) {
-            amount = new BigDecimalFilter();
+            setAmount(new BigDecimalFilter());
         }
         return amount;
     }
@@ -122,9 +135,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         return dateCreated;
     }
 
+    public Optional<InstantFilter> optionalDateCreated() {
+        return Optional.ofNullable(dateCreated);
+    }
+
     public InstantFilter dateCreated() {
         if (dateCreated == null) {
-            dateCreated = new InstantFilter();
+            setDateCreated(new InstantFilter());
         }
         return dateCreated;
     }
@@ -137,9 +154,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         return tag;
     }
 
+    public Optional<TransactionStatusFilter> optionalTag() {
+        return Optional.ofNullable(tag);
+    }
+
     public TransactionStatusFilter tag() {
         if (tag == null) {
-            tag = new TransactionStatusFilter();
+            setTag(new TransactionStatusFilter());
         }
         return tag;
     }
@@ -152,9 +173,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         return customerId;
     }
 
+    public Optional<LongFilter> optionalCustomerId() {
+        return Optional.ofNullable(customerId);
+    }
+
     public LongFilter customerId() {
         if (customerId == null) {
-            customerId = new LongFilter();
+            setCustomerId(new LongFilter());
         }
         return customerId;
     }
@@ -167,9 +192,13 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         return addedBy;
     }
 
+    public Optional<StringFilter> optionalAddedBy() {
+        return Optional.ofNullable(addedBy);
+    }
+
     public StringFilter addedBy() {
         if (addedBy == null) {
-            addedBy = new StringFilter();
+            setAddedBy(new StringFilter());
         }
         return addedBy;
     }
@@ -179,6 +208,17 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
     }
 
     public Boolean getDistinct() {
+        return distinct;
+    }
+
+    public Optional<Boolean> optionalDistinct() {
+        return Optional.ofNullable(distinct);
+    }
+
+    public Boolean distinct() {
+        if (distinct == null) {
+            setDistinct(true);
+        }
         return distinct;
     }
 
@@ -216,14 +256,14 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
     @Override
     public String toString() {
         return "TransactionHistoryCriteria{" +
-            (id != null ? "id=" + id + ", " : "") +
-            (voucherNo != null ? "voucherNo=" + voucherNo + ", " : "") +
-            (amount != null ? "amount=" + amount + ", " : "") +
-            (dateCreated != null ? "dateCreated=" + dateCreated + ", " : "") +
-            (tag != null ? "tag=" + tag + ", " : "") +
-            (customerId != null ? "customerId=" + customerId + ", " : "") +
-            (addedBy != null ? "addedBy=" + addedBy + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+            optionalId().map(f -> "id=" + f + ", ").orElse("") +
+            optionalVoucherNo().map(f -> "voucherNo=" + f + ", ").orElse("") +
+            optionalAmount().map(f -> "amount=" + f + ", ").orElse("") +
+            optionalDateCreated().map(f -> "dateCreated=" + f + ", ").orElse("") +
+            optionalTag().map(f -> "tag=" + f + ", ").orElse("") +
+            optionalCustomerId().map(f -> "customerId=" + f + ", ").orElse("") +
+            optionalAddedBy().map(f -> "addedBy=" + f + ", ").orElse("") +
+            optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
+        "}";
     }
 }

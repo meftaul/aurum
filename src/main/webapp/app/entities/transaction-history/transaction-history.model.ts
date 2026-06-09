@@ -6,7 +6,7 @@ export interface ITransactionHistory {
   voucherNo?: string | null;
   amount?: number | null;
   dateCreated?: dayjs.Dayjs | null;
-  tag?: TransactionStatus | null;
+  tag?: keyof typeof TransactionStatus | null;
   customerId?: number | null;
   addedBy?: string | null;
 }

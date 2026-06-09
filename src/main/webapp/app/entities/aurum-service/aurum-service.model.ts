@@ -12,13 +12,13 @@ export interface IAurumService {
   serviceName?: string | null;
   karatType?: string | null;
   expectedKaratType?: string | null;
-  addedAlloy?: Alloy | null;
+  addedAlloy?: keyof typeof Alloy | null;
   alloyQuantity?: number | null;
   serviceCharge?: number | null;
   freeCheck?: number | null;
   hallMarkedText?: string | null;
   weightOfFreeCheck?: string | null;
-  voucher?: Pick<IVoucher, 'id' | 'voucherNo'> | null;
+  voucher?: IVoucher | null;
 }
 
 export type NewAurumService = Omit<IAurumService, 'id'> & { id: null };

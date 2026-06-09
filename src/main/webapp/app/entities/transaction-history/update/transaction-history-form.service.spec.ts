@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../transaction-history.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../transaction-history.test-samples';
 
 import { TransactionHistoryFormService } from './transaction-history-form.service';
 
@@ -26,7 +26,7 @@ describe('TransactionHistory Form Service', () => {
             tag: expect.any(Object),
             customerId: expect.any(Object),
             addedBy: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -42,14 +42,13 @@ describe('TransactionHistory Form Service', () => {
             tag: expect.any(Object),
             customerId: expect.any(Object),
             addedBy: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getTransactionHistory', () => {
       it('should return NewTransactionHistory for default TransactionHistory initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createTransactionHistoryFormGroup(sampleWithNewData);
 
         const transactionHistory = service.getTransactionHistory(formGroup) as any;

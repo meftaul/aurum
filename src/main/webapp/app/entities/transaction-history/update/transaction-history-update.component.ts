@@ -1,30 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { TransactionHistoryFormService, TransactionHistoryFormGroup } from './transaction-history-form.service';
+import SharedModule from 'app/shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { TransactionStatus } from 'app/entities/enumerations/transaction-status.model';
 import { ITransactionHistory } from '../transaction-history.model';
 import { TransactionHistoryService } from '../service/transaction-history.service';
-import { TransactionStatus } from 'app/entities/enumerations/transaction-status.model';
+import { TransactionHistoryFormGroup, TransactionHistoryFormService } from './transaction-history-form.service';
 
 @Component({
   selector: 'jhi-transaction-history-update',
   templateUrl: './transaction-history-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export class TransactionHistoryUpdateComponent implements OnInit {
   isSaving = false;
   transactionHistory: ITransactionHistory | null = null;
   transactionStatusValues = Object.keys(TransactionStatus);
 
-  editForm: TransactionHistoryFormGroup = this.transactionHistoryFormService.createTransactionHistoryFormGroup();
+  protected transactionHistoryService = inject(TransactionHistoryService);
+  protected transactionHistoryFormService = inject(TransactionHistoryFormService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected transactionHistoryService: TransactionHistoryService,
-    protected transactionHistoryFormService: TransactionHistoryFormService,
-    protected activatedRoute: ActivatedRoute
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: TransactionHistoryFormGroup = this.transactionHistoryFormService.createTransactionHistoryFormGroup();
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ transactionHistory }) => {
@@ -41,7 +44,7 @@ export class TransactionHistoryUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const transactionHistory: any = this.transactionHistoryFormService.getTransactionHistory(this.editForm);
+    const transactionHistory = this.transactionHistoryFormService.getTransactionHistory(this.editForm);
     if (transactionHistory.id !== null) {
       this.subscribeToSaveResponse(this.transactionHistoryService.update(transactionHistory));
     } else {

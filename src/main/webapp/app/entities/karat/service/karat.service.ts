@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -14,9 +14,10 @@ export type EntityArrayResponseType = HttpResponse<IKarat[]>;
 
 @Injectable({ providedIn: 'root' })
 export class KaratService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/karats');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/karats');
 
   create(karat: NewKarat): Observable<EntityResponseType> {
     return this.http.post<IKarat>(this.resourceUrl, karat, { observe: 'response' });
@@ -57,7 +58,7 @@ export class KaratService {
   ): Type[] {
     const karats: Type[] = karatsToCheck.filter(isPresent);
     if (karats.length > 0) {
-      const karatCollectionIdentifiers = karatCollection.map(karatItem => this.getKaratIdentifier(karatItem)!);
+      const karatCollectionIdentifiers = karatCollection.map(karatItem => this.getKaratIdentifier(karatItem));
       const karatsToAdd = karats.filter(karatItem => {
         const karatIdentifier = this.getKaratIdentifier(karatItem);
         if (karatCollectionIdentifiers.includes(karatIdentifier)) {

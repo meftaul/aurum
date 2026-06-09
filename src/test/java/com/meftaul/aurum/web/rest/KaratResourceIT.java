@@ -1,19 +1,22 @@
 package com.meftaul.aurum.web.rest;
 
+import static com.meftaul.aurum.domain.KaratAsserts.*;
+import static com.meftaul.aurum.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.meftaul.aurum.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meftaul.aurum.IntegrationTest;
 import com.meftaul.aurum.domain.Karat;
 import com.meftaul.aurum.repository.KaratRepository;
+import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,10 @@ class KaratResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private KaratRepository karatRepository;
@@ -54,15 +60,16 @@ class KaratResourceIT {
 
     private Karat karat;
 
+    private Karat insertedKarat;
+
     /**
      * Create an entity for this test.
      *
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Karat createEntity(EntityManager em) {
-        Karat karat = new Karat().karatType(DEFAULT_KARAT_TYPE).purityPercent(DEFAULT_PURITY_PERCENT);
-        return karat;
+    public static Karat createEntity() {
+        return new Karat().karatType(DEFAULT_KARAT_TYPE).purityPercent(DEFAULT_PURITY_PERCENT);
     }
 
     /**
@@ -71,31 +78,43 @@ class KaratResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Karat createUpdatedEntity(EntityManager em) {
-        Karat karat = new Karat().karatType(UPDATED_KARAT_TYPE).purityPercent(UPDATED_PURITY_PERCENT);
-        return karat;
+    public static Karat createUpdatedEntity() {
+        return new Karat().karatType(UPDATED_KARAT_TYPE).purityPercent(UPDATED_PURITY_PERCENT);
     }
 
     @BeforeEach
-    public void initTest() {
-        karat = createEntity(em);
+    void initTest() {
+        karat = createEntity();
+    }
+
+    @AfterEach
+    void cleanup() {
+        if (insertedKarat != null) {
+            karatRepository.delete(insertedKarat);
+            insertedKarat = null;
+        }
     }
 
     @Test
     @Transactional
     void createKarat() throws Exception {
-        int databaseSizeBeforeCreate = karatRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Karat
-        restKaratMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(karat)))
-            .andExpect(status().isCreated());
+        var returnedKarat = om.readValue(
+            restKaratMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(karat)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Karat.class
+        );
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeCreate + 1);
-        Karat testKarat = karatList.get(karatList.size() - 1);
-        assertThat(testKarat.getKaratType()).isEqualTo(DEFAULT_KARAT_TYPE);
-        assertThat(testKarat.getPurityPercent()).isEqualByComparingTo(DEFAULT_PURITY_PERCENT);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertKaratUpdatableFieldsEquals(returnedKarat, getPersistedKarat(returnedKarat));
+
+        insertedKarat = returnedKarat;
     }
 
     @Test
@@ -104,23 +123,22 @@ class KaratResourceIT {
         // Create the Karat with an existing ID
         karat.setId(1L);
 
-        int databaseSizeBeforeCreate = karatRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restKaratMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(karat)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(karat)))
             .andExpect(status().isBadRequest());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
     @Transactional
     void getAllKarats() throws Exception {
         // Initialize the database
-        karatRepository.saveAndFlush(karat);
+        insertedKarat = karatRepository.saveAndFlush(karat);
 
         // Get all the karatList
         restKaratMockMvc
@@ -136,7 +154,7 @@ class KaratResourceIT {
     @Transactional
     void getKarat() throws Exception {
         // Initialize the database
-        karatRepository.saveAndFlush(karat);
+        insertedKarat = karatRepository.saveAndFlush(karat);
 
         // Get the karat
         restKaratMockMvc
@@ -159,12 +177,12 @@ class KaratResourceIT {
     @Transactional
     void putExistingKarat() throws Exception {
         // Initialize the database
-        karatRepository.saveAndFlush(karat);
+        insertedKarat = karatRepository.saveAndFlush(karat);
 
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the karat
-        Karat updatedKarat = karatRepository.findById(karat.getId()).get();
+        Karat updatedKarat = karatRepository.findById(karat.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedKarat are not directly saved in db
         em.detach(updatedKarat);
         updatedKarat.karatType(UPDATED_KARAT_TYPE).purityPercent(UPDATED_PURITY_PERCENT);
@@ -173,111 +191,99 @@ class KaratResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, updatedKarat.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedKarat))
+                    .content(om.writeValueAsBytes(updatedKarat))
             )
             .andExpect(status().isOk());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
-        Karat testKarat = karatList.get(karatList.size() - 1);
-        assertThat(testKarat.getKaratType()).isEqualTo(UPDATED_KARAT_TYPE);
-        assertThat(testKarat.getPurityPercent()).isEqualByComparingTo(UPDATED_PURITY_PERCENT);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedKaratToMatchAllProperties(updatedKarat);
     }
 
     @Test
     @Transactional
     void putNonExistingKarat() throws Exception {
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
-        karat.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        karat.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restKaratMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, karat.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(karat))
-            )
+            .perform(put(ENTITY_API_URL_ID, karat.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(karat)))
             .andExpect(status().isBadRequest());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchKarat() throws Exception {
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
-        karat.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        karat.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restKaratMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(karat))
+                    .content(om.writeValueAsBytes(karat))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamKarat() throws Exception {
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
-        karat.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        karat.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restKaratMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(karat)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(karat)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void partialUpdateKaratWithPatch() throws Exception {
         // Initialize the database
-        karatRepository.saveAndFlush(karat);
+        insertedKarat = karatRepository.saveAndFlush(karat);
 
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the karat using partial update
         Karat partialUpdatedKarat = new Karat();
         partialUpdatedKarat.setId(karat.getId());
 
-        partialUpdatedKarat.karatType(UPDATED_KARAT_TYPE).purityPercent(UPDATED_PURITY_PERCENT);
+        partialUpdatedKarat.purityPercent(UPDATED_PURITY_PERCENT);
 
         restKaratMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedKarat.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedKarat))
+                    .content(om.writeValueAsBytes(partialUpdatedKarat))
             )
             .andExpect(status().isOk());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
-        Karat testKarat = karatList.get(karatList.size() - 1);
-        assertThat(testKarat.getKaratType()).isEqualTo(UPDATED_KARAT_TYPE);
-        assertThat(testKarat.getPurityPercent()).isEqualByComparingTo(UPDATED_PURITY_PERCENT);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertKaratUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedKarat, karat), getPersistedKarat(karat));
     }
 
     @Test
     @Transactional
     void fullUpdateKaratWithPatch() throws Exception {
         // Initialize the database
-        karatRepository.saveAndFlush(karat);
+        insertedKarat = karatRepository.saveAndFlush(karat);
 
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the karat using partial update
         Karat partialUpdatedKarat = new Karat();
@@ -289,81 +295,74 @@ class KaratResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedKarat.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedKarat))
+                    .content(om.writeValueAsBytes(partialUpdatedKarat))
             )
             .andExpect(status().isOk());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
-        Karat testKarat = karatList.get(karatList.size() - 1);
-        assertThat(testKarat.getKaratType()).isEqualTo(UPDATED_KARAT_TYPE);
-        assertThat(testKarat.getPurityPercent()).isEqualByComparingTo(UPDATED_PURITY_PERCENT);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertKaratUpdatableFieldsEquals(partialUpdatedKarat, getPersistedKarat(partialUpdatedKarat));
     }
 
     @Test
     @Transactional
     void patchNonExistingKarat() throws Exception {
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
-        karat.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        karat.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restKaratMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, karat.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(karat))
+                patch(ENTITY_API_URL_ID, karat.getId()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(karat))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchKarat() throws Exception {
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
-        karat.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        karat.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restKaratMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(karat))
+                    .content(om.writeValueAsBytes(karat))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamKarat() throws Exception {
-        int databaseSizeBeforeUpdate = karatRepository.findAll().size();
-        karat.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        karat.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restKaratMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(karat)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(karat)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Karat in the database
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void deleteKarat() throws Exception {
         // Initialize the database
-        karatRepository.saveAndFlush(karat);
+        insertedKarat = karatRepository.saveAndFlush(karat);
 
-        int databaseSizeBeforeDelete = karatRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the karat
         restKaratMockMvc
@@ -371,7 +370,34 @@ class KaratResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Karat> karatList = karatRepository.findAll();
-        assertThat(karatList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return karatRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Karat getPersistedKarat(Karat karat) {
+        return karatRepository.findById(karat.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedKaratToMatchAllProperties(Karat expectedKarat) {
+        assertKaratAllPropertiesEquals(expectedKarat, getPersistedKarat(expectedKarat));
+    }
+
+    protected void assertPersistedKaratToMatchUpdatableProperties(Karat expectedKarat) {
+        assertKaratAllUpdatablePropertiesEquals(expectedKarat, getPersistedKarat(expectedKarat));
     }
 }

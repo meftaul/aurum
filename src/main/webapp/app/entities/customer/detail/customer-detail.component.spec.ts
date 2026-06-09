@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { CustomerDetailComponent } from './customer-detail.component';
@@ -8,29 +9,46 @@ describe('Customer Management Detail Component', () => {
   let comp: CustomerDetailComponent;
   let fixture: ComponentFixture<CustomerDetailComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [CustomerDetailComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CustomerDetailComponent],
       providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: { data: of({ customer: { id: 123 } }) },
-        },
+        provideRouter(
+          [
+            {
+              path: '**',
+              loadComponent: () => import('./customer-detail.component').then(m => m.CustomerDetailComponent),
+              resolve: { customer: () => of({ id: 26915 }) },
+            },
+          ],
+          withComponentInputBinding(),
+        ),
       ],
     })
       .overrideTemplate(CustomerDetailComponent, '')
       .compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(CustomerDetailComponent);
     comp = fixture.componentInstance;
   });
 
   describe('OnInit', () => {
-    it('Should load customer on init', () => {
-      // WHEN
-      comp.ngOnInit();
+    it('should load customer on init', async () => {
+      const harness = await RouterTestingHarness.create();
+      const instance = await harness.navigateByUrl('/', CustomerDetailComponent);
 
       // THEN
-      expect(comp.customer).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.customer()).toEqual(expect.objectContaining({ id: 26915 }));
+    });
+  });
+
+  describe('PreviousState', () => {
+    it('should navigate to previous state', () => {
+      jest.spyOn(window.history, 'back');
+      comp.previousState();
+      expect(window.history.back).toHaveBeenCalled();
     });
   });
 });

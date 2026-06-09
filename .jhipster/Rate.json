@@ -1,4 +1,7 @@
 {
+  "annotations": {
+    "changelogDate": "20191028092823"
+  },
   "changelogDate": "20191028092823",
   "clientRootFolder": "",
   "databaseType": "sql",
@@ -21,6 +24,6 @@
   "name": "Rate",
   "pagination": "pagination",
   "relationships": [],
-  "searchEngine": false,
+  "searchEngine": "no",
   "service": "serviceImpl"
 }

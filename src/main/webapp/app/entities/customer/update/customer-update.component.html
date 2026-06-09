@@ -1,45 +1,53 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="jhi-customer-heading" data-cy="CustomerCreateUpdateHeading">Create or edit a Customer</h2>
 
       <div>
-        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert-error />
 
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_firstName">First Name</label>
           <input type="text" class="form-control" name="firstName" id="field_firstName" data-cy="firstName" formControlName="firstName" />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_lastName">Last Name</label>
           <input type="text" class="form-control" name="lastName" id="field_lastName" data-cy="lastName" formControlName="lastName" />
         </div>
 
-        <div class="row mb-3">
+        @let phoneRef = editForm.get('phone')!;
+        <div class="mb-3">
           <label class="form-label" for="field_phone">Phone</label>
           <input type="text" class="form-control" name="phone" id="field_phone" data-cy="phone" formControlName="phone" />
-          <div *ngIf="editForm.get('phone')!.invalid && (editForm.get('phone')!.dirty || editForm.get('phone')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('phone')?.errors?.required"> This field is required. </small>
-          </div>
+          @if (phoneRef.invalid && (phoneRef.dirty || phoneRef.touched)) {
+            <div>
+              @if (editForm.get('phone')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_email">Email</label>
           <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_address">Address</label>
           <input type="text" class="form-control" name="address" id="field_address" data-cy="address" formControlName="address" />
         </div>
 
-        <div class="row mb-3">
+        @let totalPointRef = editForm.get('totalPoint')!;
+        <div class="mb-3">
           <label class="form-label" for="field_totalPoint">Total Point</label>
           <input
             type="number"
@@ -49,23 +57,30 @@
             data-cy="totalPoint"
             formControlName="totalPoint"
           />
-          <div *ngIf="editForm.get('totalPoint')!.invalid && (editForm.get('totalPoint')!.dirty || editForm.get('totalPoint')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('totalPoint')?.errors?.min"> This field should be at least 0. </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('totalPoint')?.errors?.number">
-              This field should be a number.
-            </small>
-          </div>
+          @if (totalPointRef.invalid && (totalPointRef.dirty || totalPointRef.touched)) {
+            <div>
+              @if (editForm.get('totalPoint')?.errors?.min) {
+                <small class="form-text text-danger">This field should be at least 0.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('totalPoint')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
 
-        <div class="row mb-3">
+        <div class="mb-3">
           <label class="form-label" for="field_reference">Reference</label>
           <input type="text" class="form-control" name="reference" id="field_reference" data-cy="reference" formControlName="reference" />
         </div>
 
-        <div class="row mb-3">
+        @let customIdRef = editForm.get('customId')!;
+        <div class="mb-3">
           <label class="form-label" for="field_customId">Custom Id</label>
           <input type="text" class="form-control" name="customId" id="field_customId" data-cy="customId" formControlName="customId" />
-          <div *ngIf="editForm.get('customId')!.invalid && (editForm.get('customId')!.dirty || editForm.get('customId')!.touched)"></div>
+          @if (customIdRef.invalid && (customIdRef.dirty || customIdRef.touched)) {
+            <div></div>
+          }
         </div>
       </div>
 

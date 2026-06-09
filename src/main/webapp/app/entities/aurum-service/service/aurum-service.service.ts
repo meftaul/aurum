@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -14,9 +14,10 @@ export type EntityArrayResponseType = HttpResponse<IAurumService[]>;
 
 @Injectable({ providedIn: 'root' })
 export class AurumServiceService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/aurum-services');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/aurum-services');
 
   create(aurumService: NewAurumService): Observable<EntityResponseType> {
     return this.http.post<IAurumService>(this.resourceUrl, aurumService, { observe: 'response' });
@@ -61,8 +62,8 @@ export class AurumServiceService {
   ): Type[] {
     const aurumServices: Type[] = aurumServicesToCheck.filter(isPresent);
     if (aurumServices.length > 0) {
-      const aurumServiceCollectionIdentifiers = aurumServiceCollection.map(
-        aurumServiceItem => this.getAurumServiceIdentifier(aurumServiceItem)!
+      const aurumServiceCollectionIdentifiers = aurumServiceCollection.map(aurumServiceItem =>
+        this.getAurumServiceIdentifier(aurumServiceItem),
       );
       const aurumServicesToAdd = aurumServices.filter(aurumServiceItem => {
         const aurumServiceIdentifier = this.getAurumServiceIdentifier(aurumServiceItem);

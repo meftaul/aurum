@@ -1,28 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { KaratFormService, KaratFormGroup } from './karat-form.service';
+import SharedModule from 'app/shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { IKarat } from '../karat.model';
 import { KaratService } from '../service/karat.service';
+import { KaratFormGroup, KaratFormService } from './karat-form.service';
 
 @Component({
   selector: 'jhi-karat-update',
   templateUrl: './karat-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export class KaratUpdateComponent implements OnInit {
   isSaving = false;
   karat: IKarat | null = null;
 
-  editForm: KaratFormGroup = this.karatFormService.createKaratFormGroup();
+  protected karatService = inject(KaratService);
+  protected karatFormService = inject(KaratFormService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected karatService: KaratService,
-    protected karatFormService: KaratFormService,
-    protected activatedRoute: ActivatedRoute
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: KaratFormGroup = this.karatFormService.createKaratFormGroup();
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ karat }) => {
@@ -39,7 +42,7 @@ export class KaratUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const karat: any = this.karatFormService.getKarat(this.editForm);
+    const karat = this.karatFormService.getKarat(this.editForm);
     if (karat.id !== null) {
       this.subscribeToSaveResponse(this.karatService.update(karat));
     } else {

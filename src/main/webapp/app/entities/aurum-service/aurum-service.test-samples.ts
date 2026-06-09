@@ -1,38 +1,36 @@
-import { Alloy } from 'app/entities/enumerations/alloy.model';
-
 import { IAurumService, NewAurumService } from './aurum-service.model';
 
 export const sampleWithRequiredData: IAurumService = {
-  id: 66636,
+  id: 9393,
 };
 
 export const sampleWithPartialData: IAurumService = {
-  id: 3488,
-  weight: 65412,
-  rate: 62801,
-  serviceName: 'front-end payment',
-  freeCheck: 48532,
-  hallMarkedText: 'system Producer',
-  weightOfFreeCheck: 'Sleek',
+  id: 28688,
+  serviceType: 'pixellate unlike cinder',
+  itemName: 'who dowse',
+  weight: 27151.61,
+  rate: 2790.76,
+  expectedKaratType: 'pfft stark utilization',
+  alloyQuantity: 27592.72,
 };
 
 export const sampleWithFullData: IAurumService = {
-  id: 73392,
-  serviceType: 'Sausages Customer',
-  itemName: 'Synchronised Concrete',
-  quantity: 8701,
-  weight: 53756,
-  rate: 9521,
-  amount: 35616,
-  serviceName: 'payment Avon',
-  karatType: 'Executive Account',
-  expectedKaratType: 'e-business',
-  addedAlloy: Alloy['SI'],
-  alloyQuantity: 84713,
-  serviceCharge: 32942,
-  freeCheck: 3307,
-  hallMarkedText: 'Credit cross-platform Forward',
-  weightOfFreeCheck: 'Personal COM dot-com',
+  id: 7157,
+  serviceType: 'glorious after',
+  itemName: 'beard tame',
+  quantity: 4398,
+  weight: 15820.27,
+  rate: 10367.12,
+  amount: 22051.36,
+  serviceName: 'and',
+  karatType: 'underneath neatly gaseous',
+  expectedKaratType: 'tensely',
+  addedAlloy: 'CU',
+  alloyQuantity: 31156.35,
+  serviceCharge: 32214.9,
+  freeCheck: 25923.17,
+  hallMarkedText: 'dramatize till sandbar',
+  weightOfFreeCheck: 'with wee',
 };
 
 export const sampleWithNewData: NewAurumService = {

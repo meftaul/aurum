@@ -3,7 +3,8 @@ package com.meftaul.aurum.service.criteria;
 import com.meftaul.aurum.domain.enumeration.Alloy;
 import java.io.Serializable;
 import java.util.Objects;
-import org.springdoc.api.annotations.ParameterObject;
+import java.util.Optional;
+import org.springdoc.core.annotations.ParameterObject;
 import tech.jhipster.service.Criteria;
 import tech.jhipster.service.filter.*;
 
@@ -78,23 +79,23 @@ public class AurumServiceCriteria implements Serializable, Criteria {
     public AurumServiceCriteria() {}
 
     public AurumServiceCriteria(AurumServiceCriteria other) {
-        this.id = other.id == null ? null : other.id.copy();
-        this.serviceType = other.serviceType == null ? null : other.serviceType.copy();
-        this.itemName = other.itemName == null ? null : other.itemName.copy();
-        this.quantity = other.quantity == null ? null : other.quantity.copy();
-        this.weight = other.weight == null ? null : other.weight.copy();
-        this.rate = other.rate == null ? null : other.rate.copy();
-        this.amount = other.amount == null ? null : other.amount.copy();
-        this.serviceName = other.serviceName == null ? null : other.serviceName.copy();
-        this.karatType = other.karatType == null ? null : other.karatType.copy();
-        this.expectedKaratType = other.expectedKaratType == null ? null : other.expectedKaratType.copy();
-        this.addedAlloy = other.addedAlloy == null ? null : other.addedAlloy.copy();
-        this.alloyQuantity = other.alloyQuantity == null ? null : other.alloyQuantity.copy();
-        this.serviceCharge = other.serviceCharge == null ? null : other.serviceCharge.copy();
-        this.freeCheck = other.freeCheck == null ? null : other.freeCheck.copy();
-        this.hallMarkedText = other.hallMarkedText == null ? null : other.hallMarkedText.copy();
-        this.weightOfFreeCheck = other.weightOfFreeCheck == null ? null : other.weightOfFreeCheck.copy();
-        this.voucherId = other.voucherId == null ? null : other.voucherId.copy();
+        this.id = other.optionalId().map(LongFilter::copy).orElse(null);
+        this.serviceType = other.optionalServiceType().map(StringFilter::copy).orElse(null);
+        this.itemName = other.optionalItemName().map(StringFilter::copy).orElse(null);
+        this.quantity = other.optionalQuantity().map(IntegerFilter::copy).orElse(null);
+        this.weight = other.optionalWeight().map(BigDecimalFilter::copy).orElse(null);
+        this.rate = other.optionalRate().map(BigDecimalFilter::copy).orElse(null);
+        this.amount = other.optionalAmount().map(BigDecimalFilter::copy).orElse(null);
+        this.serviceName = other.optionalServiceName().map(StringFilter::copy).orElse(null);
+        this.karatType = other.optionalKaratType().map(StringFilter::copy).orElse(null);
+        this.expectedKaratType = other.optionalExpectedKaratType().map(StringFilter::copy).orElse(null);
+        this.addedAlloy = other.optionalAddedAlloy().map(AlloyFilter::copy).orElse(null);
+        this.alloyQuantity = other.optionalAlloyQuantity().map(BigDecimalFilter::copy).orElse(null);
+        this.serviceCharge = other.optionalServiceCharge().map(BigDecimalFilter::copy).orElse(null);
+        this.freeCheck = other.optionalFreeCheck().map(BigDecimalFilter::copy).orElse(null);
+        this.hallMarkedText = other.optionalHallMarkedText().map(StringFilter::copy).orElse(null);
+        this.weightOfFreeCheck = other.optionalWeightOfFreeCheck().map(StringFilter::copy).orElse(null);
+        this.voucherId = other.optionalVoucherId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -107,9 +108,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return id;
     }
 
+    public Optional<LongFilter> optionalId() {
+        return Optional.ofNullable(id);
+    }
+
     public LongFilter id() {
         if (id == null) {
-            id = new LongFilter();
+            setId(new LongFilter());
         }
         return id;
     }
@@ -122,9 +127,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return serviceType;
     }
 
+    public Optional<StringFilter> optionalServiceType() {
+        return Optional.ofNullable(serviceType);
+    }
+
     public StringFilter serviceType() {
         if (serviceType == null) {
-            serviceType = new StringFilter();
+            setServiceType(new StringFilter());
         }
         return serviceType;
     }
@@ -137,9 +146,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return itemName;
     }
 
+    public Optional<StringFilter> optionalItemName() {
+        return Optional.ofNullable(itemName);
+    }
+
     public StringFilter itemName() {
         if (itemName == null) {
-            itemName = new StringFilter();
+            setItemName(new StringFilter());
         }
         return itemName;
     }
@@ -152,9 +165,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return quantity;
     }
 
+    public Optional<IntegerFilter> optionalQuantity() {
+        return Optional.ofNullable(quantity);
+    }
+
     public IntegerFilter quantity() {
         if (quantity == null) {
-            quantity = new IntegerFilter();
+            setQuantity(new IntegerFilter());
         }
         return quantity;
     }
@@ -167,9 +184,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return weight;
     }
 
+    public Optional<BigDecimalFilter> optionalWeight() {
+        return Optional.ofNullable(weight);
+    }
+
     public BigDecimalFilter weight() {
         if (weight == null) {
-            weight = new BigDecimalFilter();
+            setWeight(new BigDecimalFilter());
         }
         return weight;
     }
@@ -182,9 +203,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return rate;
     }
 
+    public Optional<BigDecimalFilter> optionalRate() {
+        return Optional.ofNullable(rate);
+    }
+
     public BigDecimalFilter rate() {
         if (rate == null) {
-            rate = new BigDecimalFilter();
+            setRate(new BigDecimalFilter());
         }
         return rate;
     }
@@ -197,9 +222,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return amount;
     }
 
+    public Optional<BigDecimalFilter> optionalAmount() {
+        return Optional.ofNullable(amount);
+    }
+
     public BigDecimalFilter amount() {
         if (amount == null) {
-            amount = new BigDecimalFilter();
+            setAmount(new BigDecimalFilter());
         }
         return amount;
     }
@@ -212,9 +241,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return serviceName;
     }
 
+    public Optional<StringFilter> optionalServiceName() {
+        return Optional.ofNullable(serviceName);
+    }
+
     public StringFilter serviceName() {
         if (serviceName == null) {
-            serviceName = new StringFilter();
+            setServiceName(new StringFilter());
         }
         return serviceName;
     }
@@ -227,9 +260,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return karatType;
     }
 
+    public Optional<StringFilter> optionalKaratType() {
+        return Optional.ofNullable(karatType);
+    }
+
     public StringFilter karatType() {
         if (karatType == null) {
-            karatType = new StringFilter();
+            setKaratType(new StringFilter());
         }
         return karatType;
     }
@@ -242,9 +279,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return expectedKaratType;
     }
 
+    public Optional<StringFilter> optionalExpectedKaratType() {
+        return Optional.ofNullable(expectedKaratType);
+    }
+
     public StringFilter expectedKaratType() {
         if (expectedKaratType == null) {
-            expectedKaratType = new StringFilter();
+            setExpectedKaratType(new StringFilter());
         }
         return expectedKaratType;
     }
@@ -257,9 +298,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return addedAlloy;
     }
 
+    public Optional<AlloyFilter> optionalAddedAlloy() {
+        return Optional.ofNullable(addedAlloy);
+    }
+
     public AlloyFilter addedAlloy() {
         if (addedAlloy == null) {
-            addedAlloy = new AlloyFilter();
+            setAddedAlloy(new AlloyFilter());
         }
         return addedAlloy;
     }
@@ -272,9 +317,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return alloyQuantity;
     }
 
+    public Optional<BigDecimalFilter> optionalAlloyQuantity() {
+        return Optional.ofNullable(alloyQuantity);
+    }
+
     public BigDecimalFilter alloyQuantity() {
         if (alloyQuantity == null) {
-            alloyQuantity = new BigDecimalFilter();
+            setAlloyQuantity(new BigDecimalFilter());
         }
         return alloyQuantity;
     }
@@ -287,9 +336,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return serviceCharge;
     }
 
+    public Optional<BigDecimalFilter> optionalServiceCharge() {
+        return Optional.ofNullable(serviceCharge);
+    }
+
     public BigDecimalFilter serviceCharge() {
         if (serviceCharge == null) {
-            serviceCharge = new BigDecimalFilter();
+            setServiceCharge(new BigDecimalFilter());
         }
         return serviceCharge;
     }
@@ -302,9 +355,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return freeCheck;
     }
 
+    public Optional<BigDecimalFilter> optionalFreeCheck() {
+        return Optional.ofNullable(freeCheck);
+    }
+
     public BigDecimalFilter freeCheck() {
         if (freeCheck == null) {
-            freeCheck = new BigDecimalFilter();
+            setFreeCheck(new BigDecimalFilter());
         }
         return freeCheck;
     }
@@ -317,9 +374,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return hallMarkedText;
     }
 
+    public Optional<StringFilter> optionalHallMarkedText() {
+        return Optional.ofNullable(hallMarkedText);
+    }
+
     public StringFilter hallMarkedText() {
         if (hallMarkedText == null) {
-            hallMarkedText = new StringFilter();
+            setHallMarkedText(new StringFilter());
         }
         return hallMarkedText;
     }
@@ -332,9 +393,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return weightOfFreeCheck;
     }
 
+    public Optional<StringFilter> optionalWeightOfFreeCheck() {
+        return Optional.ofNullable(weightOfFreeCheck);
+    }
+
     public StringFilter weightOfFreeCheck() {
         if (weightOfFreeCheck == null) {
-            weightOfFreeCheck = new StringFilter();
+            setWeightOfFreeCheck(new StringFilter());
         }
         return weightOfFreeCheck;
     }
@@ -347,9 +412,13 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         return voucherId;
     }
 
+    public Optional<LongFilter> optionalVoucherId() {
+        return Optional.ofNullable(voucherId);
+    }
+
     public LongFilter voucherId() {
         if (voucherId == null) {
-            voucherId = new LongFilter();
+            setVoucherId(new LongFilter());
         }
         return voucherId;
     }
@@ -359,6 +428,17 @@ public class AurumServiceCriteria implements Serializable, Criteria {
     }
 
     public Boolean getDistinct() {
+        return distinct;
+    }
+
+    public Optional<Boolean> optionalDistinct() {
+        return Optional.ofNullable(distinct);
+    }
+
+    public Boolean distinct() {
+        if (distinct == null) {
+            setDistinct(true);
+        }
         return distinct;
     }
 
@@ -425,24 +505,24 @@ public class AurumServiceCriteria implements Serializable, Criteria {
     @Override
     public String toString() {
         return "AurumServiceCriteria{" +
-            (id != null ? "id=" + id + ", " : "") +
-            (serviceType != null ? "serviceType=" + serviceType + ", " : "") +
-            (itemName != null ? "itemName=" + itemName + ", " : "") +
-            (quantity != null ? "quantity=" + quantity + ", " : "") +
-            (weight != null ? "weight=" + weight + ", " : "") +
-            (rate != null ? "rate=" + rate + ", " : "") +
-            (amount != null ? "amount=" + amount + ", " : "") +
-            (serviceName != null ? "serviceName=" + serviceName + ", " : "") +
-            (karatType != null ? "karatType=" + karatType + ", " : "") +
-            (expectedKaratType != null ? "expectedKaratType=" + expectedKaratType + ", " : "") +
-            (addedAlloy != null ? "addedAlloy=" + addedAlloy + ", " : "") +
-            (alloyQuantity != null ? "alloyQuantity=" + alloyQuantity + ", " : "") +
-            (serviceCharge != null ? "serviceCharge=" + serviceCharge + ", " : "") +
-            (freeCheck != null ? "freeCheck=" + freeCheck + ", " : "") +
-            (hallMarkedText != null ? "hallMarkedText=" + hallMarkedText + ", " : "") +
-            (weightOfFreeCheck != null ? "weightOfFreeCheck=" + weightOfFreeCheck + ", " : "") +
-            (voucherId != null ? "voucherId=" + voucherId + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+            optionalId().map(f -> "id=" + f + ", ").orElse("") +
+            optionalServiceType().map(f -> "serviceType=" + f + ", ").orElse("") +
+            optionalItemName().map(f -> "itemName=" + f + ", ").orElse("") +
+            optionalQuantity().map(f -> "quantity=" + f + ", ").orElse("") +
+            optionalWeight().map(f -> "weight=" + f + ", ").orElse("") +
+            optionalRate().map(f -> "rate=" + f + ", ").orElse("") +
+            optionalAmount().map(f -> "amount=" + f + ", ").orElse("") +
+            optionalServiceName().map(f -> "serviceName=" + f + ", ").orElse("") +
+            optionalKaratType().map(f -> "karatType=" + f + ", ").orElse("") +
+            optionalExpectedKaratType().map(f -> "expectedKaratType=" + f + ", ").orElse("") +
+            optionalAddedAlloy().map(f -> "addedAlloy=" + f + ", ").orElse("") +
+            optionalAlloyQuantity().map(f -> "alloyQuantity=" + f + ", ").orElse("") +
+            optionalServiceCharge().map(f -> "serviceCharge=" + f + ", ").orElse("") +
+            optionalFreeCheck().map(f -> "freeCheck=" + f + ", ").orElse("") +
+            optionalHallMarkedText().map(f -> "hallMarkedText=" + f + ", ").orElse("") +
+            optionalWeightOfFreeCheck().map(f -> "weightOfFreeCheck=" + f + ", ").orElse("") +
+            optionalVoucherId().map(f -> "voucherId=" + f + ", ").orElse("") +
+            optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
+        "}";
     }
 }

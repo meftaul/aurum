@@ -2,7 +2,8 @@ package com.meftaul.aurum.service.criteria;
 
 import java.io.Serializable;
 import java.util.Objects;
-import org.springdoc.api.annotations.ParameterObject;
+import java.util.Optional;
+import org.springdoc.core.annotations.ParameterObject;
 import tech.jhipster.service.Criteria;
 import tech.jhipster.service.filter.*;
 
@@ -44,15 +45,15 @@ public class CustomerCriteria implements Serializable, Criteria {
     public CustomerCriteria() {}
 
     public CustomerCriteria(CustomerCriteria other) {
-        this.id = other.id == null ? null : other.id.copy();
-        this.firstName = other.firstName == null ? null : other.firstName.copy();
-        this.lastName = other.lastName == null ? null : other.lastName.copy();
-        this.phone = other.phone == null ? null : other.phone.copy();
-        this.email = other.email == null ? null : other.email.copy();
-        this.address = other.address == null ? null : other.address.copy();
-        this.totalPoint = other.totalPoint == null ? null : other.totalPoint.copy();
-        this.reference = other.reference == null ? null : other.reference.copy();
-        this.customId = other.customId == null ? null : other.customId.copy();
+        this.id = other.optionalId().map(LongFilter::copy).orElse(null);
+        this.firstName = other.optionalFirstName().map(StringFilter::copy).orElse(null);
+        this.lastName = other.optionalLastName().map(StringFilter::copy).orElse(null);
+        this.phone = other.optionalPhone().map(StringFilter::copy).orElse(null);
+        this.email = other.optionalEmail().map(StringFilter::copy).orElse(null);
+        this.address = other.optionalAddress().map(StringFilter::copy).orElse(null);
+        this.totalPoint = other.optionalTotalPoint().map(LongFilter::copy).orElse(null);
+        this.reference = other.optionalReference().map(StringFilter::copy).orElse(null);
+        this.customId = other.optionalCustomId().map(StringFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -65,9 +66,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return id;
     }
 
+    public Optional<LongFilter> optionalId() {
+        return Optional.ofNullable(id);
+    }
+
     public LongFilter id() {
         if (id == null) {
-            id = new LongFilter();
+            setId(new LongFilter());
         }
         return id;
     }
@@ -80,9 +85,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return firstName;
     }
 
+    public Optional<StringFilter> optionalFirstName() {
+        return Optional.ofNullable(firstName);
+    }
+
     public StringFilter firstName() {
         if (firstName == null) {
-            firstName = new StringFilter();
+            setFirstName(new StringFilter());
         }
         return firstName;
     }
@@ -95,9 +104,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return lastName;
     }
 
+    public Optional<StringFilter> optionalLastName() {
+        return Optional.ofNullable(lastName);
+    }
+
     public StringFilter lastName() {
         if (lastName == null) {
-            lastName = new StringFilter();
+            setLastName(new StringFilter());
         }
         return lastName;
     }
@@ -110,9 +123,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return phone;
     }
 
+    public Optional<StringFilter> optionalPhone() {
+        return Optional.ofNullable(phone);
+    }
+
     public StringFilter phone() {
         if (phone == null) {
-            phone = new StringFilter();
+            setPhone(new StringFilter());
         }
         return phone;
     }
@@ -125,9 +142,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return email;
     }
 
+    public Optional<StringFilter> optionalEmail() {
+        return Optional.ofNullable(email);
+    }
+
     public StringFilter email() {
         if (email == null) {
-            email = new StringFilter();
+            setEmail(new StringFilter());
         }
         return email;
     }
@@ -140,9 +161,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return address;
     }
 
+    public Optional<StringFilter> optionalAddress() {
+        return Optional.ofNullable(address);
+    }
+
     public StringFilter address() {
         if (address == null) {
-            address = new StringFilter();
+            setAddress(new StringFilter());
         }
         return address;
     }
@@ -155,9 +180,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return totalPoint;
     }
 
+    public Optional<LongFilter> optionalTotalPoint() {
+        return Optional.ofNullable(totalPoint);
+    }
+
     public LongFilter totalPoint() {
         if (totalPoint == null) {
-            totalPoint = new LongFilter();
+            setTotalPoint(new LongFilter());
         }
         return totalPoint;
     }
@@ -170,9 +199,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return reference;
     }
 
+    public Optional<StringFilter> optionalReference() {
+        return Optional.ofNullable(reference);
+    }
+
     public StringFilter reference() {
         if (reference == null) {
-            reference = new StringFilter();
+            setReference(new StringFilter());
         }
         return reference;
     }
@@ -185,9 +218,13 @@ public class CustomerCriteria implements Serializable, Criteria {
         return customId;
     }
 
+    public Optional<StringFilter> optionalCustomId() {
+        return Optional.ofNullable(customId);
+    }
+
     public StringFilter customId() {
         if (customId == null) {
-            customId = new StringFilter();
+            setCustomId(new StringFilter());
         }
         return customId;
     }
@@ -197,6 +234,17 @@ public class CustomerCriteria implements Serializable, Criteria {
     }
 
     public Boolean getDistinct() {
+        return distinct;
+    }
+
+    public Optional<Boolean> optionalDistinct() {
+        return Optional.ofNullable(distinct);
+    }
+
+    public Boolean distinct() {
+        if (distinct == null) {
+            setDistinct(true);
+        }
         return distinct;
     }
 
@@ -236,16 +284,16 @@ public class CustomerCriteria implements Serializable, Criteria {
     @Override
     public String toString() {
         return "CustomerCriteria{" +
-            (id != null ? "id=" + id + ", " : "") +
-            (firstName != null ? "firstName=" + firstName + ", " : "") +
-            (lastName != null ? "lastName=" + lastName + ", " : "") +
-            (phone != null ? "phone=" + phone + ", " : "") +
-            (email != null ? "email=" + email + ", " : "") +
-            (address != null ? "address=" + address + ", " : "") +
-            (totalPoint != null ? "totalPoint=" + totalPoint + ", " : "") +
-            (reference != null ? "reference=" + reference + ", " : "") +
-            (customId != null ? "customId=" + customId + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+            optionalId().map(f -> "id=" + f + ", ").orElse("") +
+            optionalFirstName().map(f -> "firstName=" + f + ", ").orElse("") +
+            optionalLastName().map(f -> "lastName=" + f + ", ").orElse("") +
+            optionalPhone().map(f -> "phone=" + f + ", ").orElse("") +
+            optionalEmail().map(f -> "email=" + f + ", ").orElse("") +
+            optionalAddress().map(f -> "address=" + f + ", ").orElse("") +
+            optionalTotalPoint().map(f -> "totalPoint=" + f + ", ").orElse("") +
+            optionalReference().map(f -> "reference=" + f + ", ").orElse("") +
+            optionalCustomId().map(f -> "customId=" + f + ", ").orElse("") +
+            optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
+        "}";
     }
 }

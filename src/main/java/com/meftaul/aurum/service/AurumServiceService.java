@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link AurumService}.
+ * Service Interface for managing {@link com.meftaul.aurum.domain.AurumService}.
  */
 public interface AurumServiceService {
     /**
@@ -32,14 +32,6 @@ public interface AurumServiceService {
      * @return the persisted entity.
      */
     Optional<AurumService> partialUpdate(AurumService aurumService);
-
-    /**
-     * Get all the aurumServices.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<AurumService> findAll(Pageable pageable);
 
     /**
      * Get all the aurumServices with eager load of many-to-many relationships.

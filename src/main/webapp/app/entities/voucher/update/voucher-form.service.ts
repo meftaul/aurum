@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import dayjs from 'dayjs/esm';
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
@@ -61,7 +61,7 @@ export class VoucherFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        }
+        },
       ),
       voucherNo: new FormControl(voucherRawValue.voucherNo),
       customerId: new FormControl(voucherRawValue.customerId),
@@ -96,7 +96,7 @@ export class VoucherFormService {
       {
         ...voucherRawValue,
         id: { value: voucherRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
   }
 
@@ -120,7 +120,7 @@ export class VoucherFormService {
   }
 
   private convertVoucherToVoucherRawValue(
-    voucher: IVoucher | (Partial<NewVoucher> & VoucherFormDefaults)
+    voucher: IVoucher | (Partial<NewVoucher> & VoucherFormDefaults),
   ): VoucherFormRawValue | PartialWithRequiredKeyOf<NewVoucherFormRawValue> {
     return {
       ...voucher,

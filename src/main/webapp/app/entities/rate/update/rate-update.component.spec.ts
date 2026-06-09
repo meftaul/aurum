@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of, Subject, from } from 'rxjs';
+import { Subject, from, of } from 'rxjs';
 
-import { RateFormService } from './rate-form.service';
 import { RateService } from '../service/rate.service';
 import { IRate } from '../rate.model';
+import { RateFormService } from './rate-form.service';
 
 import { RateUpdateComponent } from './rate-update.component';
 
@@ -21,9 +19,9 @@ describe('Rate Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [RateUpdateComponent],
+      imports: [RateUpdateComponent],
       providers: [
+        provideHttpClient(),
         FormBuilder,
         {
           provide: ActivatedRoute,
@@ -45,8 +43,8 @@ describe('Rate Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('Should update editForm', () => {
-      const rate: IRate = { id: 456 };
+    it('should update editForm', () => {
+      const rate: IRate = { id: 3137 };
 
       activatedRoute.data = of({ rate });
       comp.ngOnInit();
@@ -56,10 +54,10 @@ describe('Rate Management Update Component', () => {
   });
 
   describe('save', () => {
-    it('Should call update service on save for existing entity', () => {
+    it('should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IRate>>();
-      const rate = { id: 123 };
+      const rate = { id: 15902 };
       jest.spyOn(rateFormService, 'getRate').mockReturnValue(rate);
       jest.spyOn(rateService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -79,10 +77,10 @@ describe('Rate Management Update Component', () => {
       expect(comp.isSaving).toEqual(false);
     });
 
-    it('Should call create service on save for new entity', () => {
+    it('should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IRate>>();
-      const rate = { id: 123 };
+      const rate = { id: 15902 };
       jest.spyOn(rateFormService, 'getRate').mockReturnValue({ id: null });
       jest.spyOn(rateService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -102,10 +100,10 @@ describe('Rate Management Update Component', () => {
       expect(comp.previousState).toHaveBeenCalled();
     });
 
-    it('Should set isSaving to false on error', () => {
+    it('should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IRate>>();
-      const rate = { id: 123 };
+      const rate = { id: 15902 };
       jest.spyOn(rateService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ rate });

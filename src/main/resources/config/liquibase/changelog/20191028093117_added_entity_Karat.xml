@@ -11,7 +11,7 @@
     -->
     <changeSet id="20191028093117-1" author="jhipster">
         <createTable tableName="karat">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1500">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="karat_type" type="varchar(255)">

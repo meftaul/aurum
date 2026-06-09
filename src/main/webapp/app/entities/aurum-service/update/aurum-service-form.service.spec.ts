@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../aurum-service.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../aurum-service.test-samples';
 
 import { AurumServiceFormService } from './aurum-service-form.service';
 
@@ -36,7 +36,7 @@ describe('AurumService Form Service', () => {
             hallMarkedText: expect.any(Object),
             weightOfFreeCheck: expect.any(Object),
             voucher: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -62,14 +62,13 @@ describe('AurumService Form Service', () => {
             hallMarkedText: expect.any(Object),
             weightOfFreeCheck: expect.any(Object),
             voucher: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getAurumService', () => {
       it('should return NewAurumService for default AurumService initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createAurumServiceFormGroup(sampleWithNewData);
 
         const aurumService = service.getAurumService(formGroup) as any;

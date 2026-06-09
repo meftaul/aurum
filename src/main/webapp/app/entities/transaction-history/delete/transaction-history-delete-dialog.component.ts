@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import SharedModule from 'app/shared/shared.module';
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { ITransactionHistory } from '../transaction-history.model';
 import { TransactionHistoryService } from '../service/transaction-history.service';
-import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 
 @Component({
   templateUrl: './transaction-history-delete-dialog.component.html',
+  imports: [SharedModule, FormsModule],
 })
 export class TransactionHistoryDeleteDialogComponent {
   transactionHistory?: ITransactionHistory;
 
-  constructor(protected transactionHistoryService: TransactionHistoryService, protected activeModal: NgbActiveModal) {}
+  protected transactionHistoryService = inject(TransactionHistoryService);
+  protected activeModal = inject(NgbActiveModal);
 
   cancel(): void {
     this.activeModal.dismiss();

@@ -1,24 +1,26 @@
 import { IItem, NewItem } from './item.model';
 
 export const sampleWithRequiredData: IItem = {
-  id: 89800,
-  name: 'Bedfordshire input',
+  id: 27990,
+  name: 'yippee',
 };
 
 export const sampleWithPartialData: IItem = {
-  id: 64827,
-  name: 'mobile Account',
+  id: 21197,
+  name: 'yahoo decouple curiously',
+  description: 'elegant',
+  code: 'ick pearl',
 };
 
 export const sampleWithFullData: IItem = {
-  id: 42728,
-  name: 'Place Profit-focused',
-  description: 'content-based next-generation Tasty',
-  code: 'web-enabled Cotton',
+  id: 23534,
+  name: 'evince',
+  description: 'um grumpy cod',
+  code: 'bewail dependency readily',
 };
 
 export const sampleWithNewData: NewItem = {
-  name: 'Malaysian methodical',
+  name: 'considering whose',
   id: null,
 };
 

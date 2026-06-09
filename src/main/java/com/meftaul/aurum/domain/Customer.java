@@ -1,8 +1,8 @@
 package com.meftaul.aurum.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -177,7 +177,7 @@ public class Customer implements Serializable {
         if (!(o instanceof Customer)) {
             return false;
         }
-        return id != null && id.equals(((Customer) o).id);
+        return getId() != null && getId().equals(((Customer) o).getId());
     }
 
     @Override

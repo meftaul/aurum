@@ -1,46 +1,44 @@
 import dayjs from 'dayjs/esm';
 
-import { TransactionStatus } from 'app/entities/enumerations/transaction-status.model';
-
 import { ITransactionHistory, NewTransactionHistory } from './transaction-history.model';
 
 export const sampleWithRequiredData: ITransactionHistory = {
-  id: 37869,
-  voucherNo: 'EXE Samoa Soft',
-  amount: 26111,
-  dateCreated: dayjs('2019-10-22T17:43'),
-  tag: TransactionStatus['RECEIVE'],
-  customerId: 24484,
-  addedBy: 'payment Garden Trafficway',
+  id: 9003,
+  voucherNo: 'ha',
+  amount: 22189.71,
+  dateCreated: dayjs('2019-10-23T08:13'),
+  tag: 'VAT',
+  customerId: 5563,
+  addedBy: 'mundane',
 };
 
 export const sampleWithPartialData: ITransactionHistory = {
-  id: 18572,
-  voucherNo: 'Regional Mobility',
-  amount: 74925,
-  dateCreated: dayjs('2019-10-22T11:01'),
-  tag: TransactionStatus['RECEIVE'],
-  customerId: 39673,
-  addedBy: 'blue',
+  id: 14262,
+  voucherNo: 'excluding',
+  amount: 5369.13,
+  dateCreated: dayjs('2019-10-22T14:14'),
+  tag: 'DISCOUNT',
+  customerId: 17567,
+  addedBy: 'safely than wetly',
 };
 
 export const sampleWithFullData: ITransactionHistory = {
-  id: 17688,
-  voucherNo: 'Licensed Vista withdrawal',
-  amount: 86937,
-  dateCreated: dayjs('2019-10-22T15:30'),
-  tag: TransactionStatus['REFUND'],
-  customerId: 3510,
-  addedBy: 'Borders Concrete UIC-Franc',
+  id: 9343,
+  voucherNo: 'abaft gah hmph',
+  amount: 20558.76,
+  dateCreated: dayjs('2019-10-22T09:14'),
+  tag: 'REFUND',
+  customerId: 10260,
+  addedBy: 'wisely prickly rebound',
 };
 
 export const sampleWithNewData: NewTransactionHistory = {
-  voucherNo: 'Innovative Louisiana',
-  amount: 74747,
-  dateCreated: dayjs('2019-10-22T18:53'),
-  tag: TransactionStatus['RECEIVE'],
-  customerId: 67324,
-  addedBy: 'Usability Cambridgeshire',
+  voucherNo: 'furthermore bitter',
+  amount: 28372.66,
+  dateCreated: dayjs('2019-10-22T09:35'),
+  tag: 'VAT',
+  customerId: 14955,
+  addedBy: 'that',
   id: null,
 };
 
