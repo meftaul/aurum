@@ -12,7 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
-import { SharedModule } from 'app/shared/shared.module';
+import SharedModule from 'app/shared/shared.module';
 // import { InvoiceComponent } from './components/invoice.component';
 import { INVOICE_ROUTE } from './invoice.routes';
 import { InvoiceNewComponent } from './component-new/invoice.component';

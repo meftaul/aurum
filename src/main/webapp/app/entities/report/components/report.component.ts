@@ -8,6 +8,7 @@ import { Report } from 'app/entities/report/domain/report.model';
 /*import * as Plotly from 'plotly.js';*/
 
 @Component({
+  standalone: false,
   selector: 'jhi-aurum-voucher-viewer',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss']

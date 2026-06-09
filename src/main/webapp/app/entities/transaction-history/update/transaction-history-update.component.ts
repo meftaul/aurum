@@ -44,7 +44,7 @@ export class TransactionHistoryUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const transactionHistory = this.transactionHistoryFormService.getTransactionHistory(this.editForm);
+    const transactionHistory: any = this.transactionHistoryFormService.getTransactionHistory(this.editForm);
     if (transactionHistory.id !== null) {
       this.subscribeToSaveResponse(this.transactionHistoryService.update(transactionHistory));
     } else {

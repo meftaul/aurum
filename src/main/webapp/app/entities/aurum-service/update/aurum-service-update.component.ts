@@ -53,7 +53,7 @@ export class AurumServiceUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const aurumService = this.aurumServiceFormService.getAurumService(this.editForm);
+    const aurumService: any = this.aurumServiceFormService.getAurumService(this.editForm);
     if (aurumService.id !== null) {
       this.subscribeToSaveResponse(this.aurumServiceService.update(aurumService));
     } else {

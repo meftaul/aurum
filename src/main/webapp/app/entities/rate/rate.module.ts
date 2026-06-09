@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
+import SharedModule from 'app/shared/shared.module';
 import { RateComponent } from './list/rate.component';
 import { RateDetailComponent } from './detail/rate-detail.component';
 import { RateUpdateComponent } from './update/rate-update.component';

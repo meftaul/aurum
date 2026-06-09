@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
+import SharedModule from 'app/shared/shared.module';
 import { TransactionHistoryComponent } from './list/transaction-history.component';
 import { TransactionHistoryDetailComponent } from './detail/transaction-history-detail.component';
 import { TransactionHistoryUpdateComponent } from './update/transaction-history-update.component';

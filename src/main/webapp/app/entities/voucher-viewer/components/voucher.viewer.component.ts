@@ -18,6 +18,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VoucherStatus } from 'app/entities/enumerations/voucher-status.model';
 
 @Component({
+  standalone: false,
   selector: 'jhi-aurum-voucher-viewer',
   templateUrl: './voucher.viewer.component.html',
   styleUrls: ['./voucher.viewer.component.scss']

@@ -17,6 +17,7 @@
 // }
 
 // @Component({
+  standalone: false,
 //   selector: 'jhi-aurum-invoice',
 //   templateUrl: './invoice.component.html',
 //   styleUrls: ['./invoice.component.scss']

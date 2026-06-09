@@ -7,6 +7,7 @@ import { ICustomer } from 'app/entities/customer/customer.model';
 import { AlertService } from 'app/core/util/alert.service';
 
 @Component({
+  standalone: false,
   selector: 'jhi-aurum-messaging',
   templateUrl: './messaging.component.html',
   styleUrls: ['./messaging.component.scss']

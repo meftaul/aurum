@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
+import { FormsModule } from '@angular/forms';
+import SharedModule from 'app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { VOUCHER_VIEWER_ROUTE } from './voucher.viewer.routes';
 import { VoucherViewerComponent } from './components/voucher.viewer.component';
@@ -13,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 @NgModule({
   imports: [
     SharedModule,
+    FormsModule,
     RouterModule.forChild(VOUCHER_VIEWER_ROUTE),
     MatButtonModule,
     MatIconModule,

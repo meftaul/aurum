@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
+import SharedModule from 'app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';

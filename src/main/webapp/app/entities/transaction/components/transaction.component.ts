@@ -29,6 +29,7 @@ const VORI_TO_GRAM = 11.6638125; // = 1 vori
 // const POINT_TO_GRAM = 0.0121498046875;
 
 @Component({
+  standalone: false,
   selector: 'jhi-aurum-transaction',
   templateUrl: './transaction.component.html',
   styleUrls: ['./transaction.component.scss']

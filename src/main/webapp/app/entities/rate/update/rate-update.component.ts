@@ -42,7 +42,7 @@ export class RateUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const rate = this.rateFormService.getRate(this.editForm);
+    const rate: any = this.rateFormService.getRate(this.editForm);
     if (rate.id !== null) {
       this.subscribeToSaveResponse(this.rateService.update(rate));
     } else {

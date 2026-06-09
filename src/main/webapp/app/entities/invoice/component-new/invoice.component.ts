@@ -17,6 +17,7 @@ export class TypedAurumService {
 }
 
 @Component({
+  standalone: false,
   selector: 'jhi-aurum-invoice-new',
   templateUrl: './invoice.component.html',
   styleUrls: ['./invoice.component.scss']

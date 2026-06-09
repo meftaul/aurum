@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
+import SharedModule from 'app/shared/shared.module';
 import { KaratComponent } from './list/karat.component';
 import { KaratDetailComponent } from './detail/karat-detail.component';
 import { KaratUpdateComponent } from './update/karat-update.component';
