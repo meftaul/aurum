@@ -14,10 +14,21 @@
   <div class="txn-lookup" *ngIf="!customer">
     <div class="txn-lookup__sheet">
       <span class="atelier-section-label">Find customer</span>
+
+      <!-- search-by segmented toggle -->
+      <div class="txn-lookup__modes" role="group" aria-label="Search by">
+        <button
+          type="button"
+          *ngFor="let item of searchCategories"
+          class="txn-segment__btn"
+          [class.is-active]="searchCategory === item.value"
+          (click)="setSearchCategory(item.value)"
+        >
+          {{ item.viewValue }}
+        </button>
+      </div>
+
       <form class="txn-lookup__row" (ngSubmit)="searchCustomer()">
-        <select class="form-select form-select-sm txn-lookup__cat" [(ngModel)]="searchCategory" [ngModelOptions]="{ standalone: true }">
-          <option *ngFor="let item of searchCategories" [value]="item.value">{{ item.viewValue }}</option>
-        </select>
         <input
           type="text"
           class="form-control form-control-sm"
@@ -33,6 +44,19 @@
           <fa-icon [icon]="'plus'"></fa-icon> New
         </button>
       </form>
+
+      <!-- inline results: pick a customer to open the counter -->
+      <div class="txn-results" *ngIf="searched">
+        <p class="txn-results__empty" *ngIf="customerResults.length === 0">No customer found — try another number, or add a new one.</p>
+        <button type="button" class="txn-result" *ngFor="let c of customerResults" (click)="selectCustomer(c)">
+          <span class="seal seal--sm">{{ c.firstName ? c.firstName.charAt(0) : '?' }}</span>
+          <span class="txn-result__body">
+            <span class="txn-result__name">{{ c.firstName }} {{ c.lastName }}</span>
+            <span class="txn-result__meta">#{{ c.customId }} · {{ c.phone }} · {{ c.totalPoint || 0 }} pts</span>
+          </span>
+          <span class="txn-result__use">Use</span>
+        </button>
+      </div>
     </div>
   </div>
 

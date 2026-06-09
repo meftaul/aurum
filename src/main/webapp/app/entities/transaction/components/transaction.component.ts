@@ -42,6 +42,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   cusromerSearchingValue: string;
   searchCategory: string;
   customer: ICustomer;
+  customerResults: ICustomer[] = [];
+  searched = false;
   voucherForm: FormGroup;
   aurumServiceForm: FormGroup;
 
@@ -67,8 +69,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   loading = false;
 
   searchCategories: any[] = [
-    { value: 'id', viewValue: 'Customer ID' },
     { value: 'phone', viewValue: 'Phone Number' },
+    { value: 'id', viewValue: 'Customer ID' },
   ];
 
   aurumServiceDropdownData: any[] = AURUM_SERVICE_LIST;
@@ -112,6 +114,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   // ******************** CUSTOMER ******************** START
+  // Switch the search mode (phone / id). Wipe any prior result list so a stale match
+  // from the other mode never lingers under the input.
+  setSearchCategory(value: string) {
+    this.searchCategory = value;
+    this.customerResults = [];
+    this.searched = false;
+    this.cusromerSearchingValue = null;
+  }
+
+  // Run the lookup and surface ALL matches inline — staff pick one via selectCustomer().
+  // The counter grid is never revealed here, only on an explicit selection.
   searchCustomer() {
     if (!this.cusromerSearchingValue) {
       return;
@@ -120,17 +133,22 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.searchCategory === 'id' ? { 'customId.equals': this.cusromerSearchingValue } : { 'phone.equals': this.cusromerSearchingValue };
     this.customerService.query(criteria).subscribe(
       data => {
-        if (data.body && data.body.length === 0) {
-          this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
-        }
-        this.customer = data.body[0];
-        this.customerID = this.customer ? this.customer.id : 0;
+        this.customerResults = data.body || [];
+        this.searched = true;
       },
       () => {
-        this.customer = null;
-        this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
+        this.customerResults = [];
+        this.searched = true;
       },
     );
+  }
+
+  // Commit a customer from the inline results — the only path that opens the counter.
+  selectCustomer(customer: ICustomer) {
+    this.customer = customer;
+    this.customerID = customer ? customer.id : 0;
+    this.customerResults = [];
+    this.searched = false;
   }
 
   // Clear the selected customer so staff can look up a different one without leaving the page.
@@ -138,6 +156,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.customer = null;
     this.customerID = 0;
     this.cusromerSearchingValue = null;
+    this.customerResults = [];
+    this.searched = false;
   }
 
   prepareCustomerForm(customerData: ICustomer) {
@@ -550,6 +570,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.amountDue = 0;
     this.customer = null;
     this.cusromerSearchingValue = null;
+    this.customerResults = [];
+    this.searched = false;
   }
   // ****************************** VOUCHER ****************************** END
 
