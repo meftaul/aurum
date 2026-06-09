@@ -104,7 +104,6 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
             .map(transactionHistoryRepository::save);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Page<TransactionHistory> findAll(Pageable pageable) {
         log.debug("Request to get all TransactionHistories");

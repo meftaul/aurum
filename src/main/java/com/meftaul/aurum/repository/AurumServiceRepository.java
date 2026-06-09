@@ -1,6 +1,7 @@
 package com.meftaul.aurum.repository;
 
 import com.meftaul.aurum.domain.AurumService;
+import com.meftaul.aurum.domain.Voucher;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AurumServiceRepository extends JpaRepository<AurumService, Long>, JpaSpecificationExecutor<AurumService> {
+    List<AurumService> findAllByVoucher(Voucher voucher);
+
     default Optional<AurumService> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
