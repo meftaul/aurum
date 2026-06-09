@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import * as moment from 'moment';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DATE_FORMAT } from 'app/shared/constants/input.constants';
 import { map } from 'rxjs/operators';
+import * as moment from 'moment';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
@@ -46,22 +44,22 @@ export class VoucherService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  delete(id: number): Observable<HttpResponse<any>> {
-    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  delete(id: number): Observable<HttpResponse<{}>> {
+    return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
   protected convertDateFromClient(voucher: IVoucher): IVoucher {
     const copy: IVoucher = Object.assign({}, voucher, {
-      dateCreated: voucher.dateCreated != null && voucher.dateCreated.isValid() ? voucher.dateCreated.toJSON() : null,
-      deliveryDate: voucher.deliveryDate != null && voucher.deliveryDate.isValid() ? voucher.deliveryDate.toJSON() : null
+      dateCreated: voucher.dateCreated && voucher.dateCreated.isValid() ? voucher.dateCreated.toJSON() : undefined,
+      deliveryDate: voucher.deliveryDate && voucher.deliveryDate.isValid() ? voucher.deliveryDate.toJSON() : undefined,
     });
     return copy;
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      res.body.dateCreated = res.body.dateCreated != null ? moment(res.body.dateCreated) : null;
-      res.body.deliveryDate = res.body.deliveryDate != null ? moment(res.body.deliveryDate) : null;
+      res.body.dateCreated = res.body.dateCreated ? moment(res.body.dateCreated) : undefined;
+      res.body.deliveryDate = res.body.deliveryDate ? moment(res.body.deliveryDate) : undefined;
     }
     return res;
   }
@@ -69,8 +67,8 @@ export class VoucherService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((voucher: IVoucher) => {
-        voucher.dateCreated = voucher.dateCreated != null ? moment(voucher.dateCreated) : null;
-        voucher.deliveryDate = voucher.deliveryDate != null ? moment(voucher.deliveryDate) : null;
+        voucher.dateCreated = voucher.dateCreated ? moment(voucher.dateCreated) : undefined;
+        voucher.deliveryDate = voucher.deliveryDate ? moment(voucher.deliveryDate) : undefined;
       });
     }
     return res;

@@ -5,20 +5,18 @@ import { IVoucher } from 'app/shared/model/voucher.model';
 
 @Component({
   selector: 'jhi-voucher-detail',
-  templateUrl: './voucher-detail.component.html'
+  templateUrl: './voucher-detail.component.html',
 })
 export class VoucherDetailComponent implements OnInit {
-  voucher: IVoucher;
+  voucher: IVoucher | null = null;
 
   constructor(protected activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(({ voucher }) => {
-      this.voucher = voucher;
-    });
+  ngOnInit(): void {
+    this.activatedRoute.data.subscribe(({ voucher }) => (this.voucher = voucher));
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 }

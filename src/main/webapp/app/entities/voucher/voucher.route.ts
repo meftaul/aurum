@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-import { JhiResolvePagingParams } from 'ng-jhipster';
+import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router';
+import { Observable, of, EMPTY } from 'rxjs';
+import { flatMap } from 'rxjs/operators';
+
+import { Authority } from 'app/shared/constants/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
-import { Observable, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { Voucher } from 'app/shared/model/voucher.model';
+import { IVoucher, Voucher } from 'app/shared/model/voucher.model';
 import { VoucherService } from './voucher.service';
 import { VoucherComponent } from './voucher.component';
 import { VoucherDetailComponent } from './voucher-detail.component';
 import { VoucherUpdateComponent } from './voucher-update.component';
-import { VoucherDeletePopupComponent } from './voucher-delete-dialog.component';
-import { IVoucher } from 'app/shared/model/voucher.model';
 
 @Injectable({ providedIn: 'root' })
 export class VoucherResolve implements Resolve<IVoucher> {
-  constructor(private service: VoucherService) {}
+  constructor(private service: VoucherService, private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IVoucher> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IVoucher> | Observable<never> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        filter((response: HttpResponse<Voucher>) => response.ok),
-        map((voucher: HttpResponse<Voucher>) => voucher.body)
+        flatMap((voucher: HttpResponse<Voucher>) => {
+          if (voucher.body) {
+            return of(voucher.body);
+          } else {
+            this.router.navigate(['404']);
+            return EMPTY;
+          }
+        })
       );
     }
     return of(new Voucher());
@@ -33,66 +38,47 @@ export const voucherRoute: Routes = [
   {
     path: '',
     component: VoucherComponent,
-    resolve: {
-      pagingParams: JhiResolvePagingParams
-    },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: [Authority.USER],
       defaultSort: 'id,asc',
-      pageTitle: 'Vouchers'
+      pageTitle: 'Vouchers',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':id/view',
     component: VoucherDetailComponent,
     resolve: {
-      voucher: VoucherResolve
+      voucher: VoucherResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Vouchers'
+      authorities: [Authority.USER],
+      pageTitle: 'Vouchers',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: 'new',
     component: VoucherUpdateComponent,
     resolve: {
-      voucher: VoucherResolve
+      voucher: VoucherResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Vouchers'
+      authorities: [Authority.USER],
+      pageTitle: 'Vouchers',
     },
-    canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':id/edit',
     component: VoucherUpdateComponent,
     resolve: {
-      voucher: VoucherResolve
+      voucher: VoucherResolve,
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Vouchers'
-    },
-    canActivate: [UserRouteAccessService]
-  }
-];
-
-export const voucherPopupRoute: Routes = [
-  {
-    path: ':id/delete',
-    component: VoucherDeletePopupComponent,
-    resolve: {
-      voucher: VoucherResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Vouchers'
+      authorities: [Authority.USER],
+      pageTitle: 'Vouchers',
     },
     canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+  },
 ];

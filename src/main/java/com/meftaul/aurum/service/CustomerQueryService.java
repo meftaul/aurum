@@ -83,7 +83,7 @@ public class CustomerQueryService extends QueryService<Customer> {
         Specification<Customer> specification = Specification.where(null);
         if (criteria != null) {
             if (criteria.getId() != null) {
-                specification = specification.and(buildSpecification(criteria.getId(), Customer_.id));
+                specification = specification.and(buildRangeSpecification(criteria.getId(), Customer_.id));
             }
             if (criteria.getFirstName() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getFirstName(), Customer_.firstName));

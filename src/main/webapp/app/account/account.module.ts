@@ -21,7 +21,7 @@ import { accountState } from './account.route';
     PasswordStrengthBarComponent,
     PasswordResetInitComponent,
     PasswordResetFinishComponent,
-    SettingsComponent
-  ]
+    SettingsComponent,
+  ],
 })
-export class AurumAccountModule {}
+export class AccountModule {}

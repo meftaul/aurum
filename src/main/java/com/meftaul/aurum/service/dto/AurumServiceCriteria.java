@@ -78,10 +78,10 @@ public class AurumServiceCriteria implements Serializable, Criteria {
 
     private LongFilter voucherId;
 
-    public AurumServiceCriteria(){
+    public AurumServiceCriteria() {
     }
 
-    public AurumServiceCriteria(AurumServiceCriteria other){
+    public AurumServiceCriteria(AurumServiceCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.serviceType = other.serviceType == null ? null : other.serviceType.copy();
         this.itemName = other.itemName == null ? null : other.itemName.copy();
@@ -295,6 +295,7 @@ public class AurumServiceCriteria implements Serializable, Criteria {
         );
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "AurumServiceCriteria{" +

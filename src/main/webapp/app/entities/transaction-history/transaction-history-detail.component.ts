@@ -5,20 +5,18 @@ import { ITransactionHistory } from 'app/shared/model/transaction-history.model'
 
 @Component({
   selector: 'jhi-transaction-history-detail',
-  templateUrl: './transaction-history-detail.component.html'
+  templateUrl: './transaction-history-detail.component.html',
 })
 export class TransactionHistoryDetailComponent implements OnInit {
-  transactionHistory: ITransactionHistory;
+  transactionHistory: ITransactionHistory | null = null;
 
   constructor(protected activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(({ transactionHistory }) => {
-      this.transactionHistory = transactionHistory;
-    });
+  ngOnInit(): void {
+    this.activatedRoute.data.subscribe(({ transactionHistory }) => (this.transactionHistory = transactionHistory));
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 }

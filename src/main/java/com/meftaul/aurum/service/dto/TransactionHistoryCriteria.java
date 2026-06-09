@@ -59,10 +59,10 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
 
     private StringFilter addedBy;
 
-    public TransactionHistoryCriteria(){
+    public TransactionHistoryCriteria() {
     }
 
-    public TransactionHistoryCriteria(TransactionHistoryCriteria other){
+    public TransactionHistoryCriteria(TransactionHistoryCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.voucherNo = other.voucherNo == null ? null : other.voucherNo.copy();
         this.amount = other.amount == null ? null : other.amount.copy();
@@ -166,6 +166,7 @@ public class TransactionHistoryCriteria implements Serializable, Criteria {
         );
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "TransactionHistoryCriteria{" +

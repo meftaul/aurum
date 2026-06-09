@@ -1,4 +1,5 @@
 package com.meftaul.aurum.domain;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -16,7 +17,7 @@ import com.meftaul.aurum.domain.enumeration.TransactionStatus;
  */
 @Entity
 @Table(name = "transaction_history")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TransactionHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +51,7 @@ public class TransactionHistory implements Serializable {
     @Column(name = "added_by", nullable = false)
     private String addedBy;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -136,7 +137,7 @@ public class TransactionHistory implements Serializable {
     public void setAddedBy(String addedBy) {
         this.addedBy = addedBy;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -154,6 +155,7 @@ public class TransactionHistory implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "TransactionHistory{" +

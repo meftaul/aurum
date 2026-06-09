@@ -28,24 +28,12 @@ public class AurumServiceServiceImpl implements AurumServiceService {
         this.aurumServiceRepository = aurumServiceRepository;
     }
 
-    /**
-     * Save a aurumService.
-     *
-     * @param aurumService the entity to save.
-     * @return the persisted entity.
-     */
     @Override
     public AurumService save(AurumService aurumService) {
         log.debug("Request to save AurumService : {}", aurumService);
         return aurumServiceRepository.save(aurumService);
     }
 
-    /**
-     * Get all the aurumServices.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<AurumService> findAll(Pageable pageable) {
@@ -54,12 +42,6 @@ public class AurumServiceServiceImpl implements AurumServiceService {
     }
 
 
-    /**
-     * Get one aurumService by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<AurumService> findOne(Long id) {
@@ -67,11 +49,6 @@ public class AurumServiceServiceImpl implements AurumServiceService {
         return aurumServiceRepository.findById(id);
     }
 
-    /**
-     * Delete the aurumService by id.
-     *
-     * @param id the id of the entity.
-     */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete AurumService : {}", id);

@@ -1,54 +1,57 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="customer">
-            <h2><span>Customer</span> {{customer.id}}</h2>
+            <h2><span>Customer</span> {{ customer.id }}</h2>
+
             <hr>
+
             <jhi-alert-error></jhi-alert-error>
+
             <dl class="row-md jh-entity-details">
                 <dt><span>First Name</span></dt>
                 <dd>
-                    <span>{{customer.firstName}}</span>
+                    <span>{{ customer.firstName }}</span>
                 </dd>
                 <dt><span>Last Name</span></dt>
                 <dd>
-                    <span>{{customer.lastName}}</span>
+                    <span>{{ customer.lastName }}</span>
                 </dd>
                 <dt><span>Phone</span></dt>
                 <dd>
-                    <span>{{customer.phone}}</span>
+                    <span>{{ customer.phone }}</span>
                 </dd>
                 <dt><span>Email</span></dt>
                 <dd>
-                    <span>{{customer.email}}</span>
+                    <span>{{ customer.email }}</span>
                 </dd>
                 <dt><span>Address</span></dt>
                 <dd>
-                    <span>{{customer.address}}</span>
+                    <span>{{ customer.address }}</span>
                 </dd>
                 <dt><span>Total Point</span></dt>
                 <dd>
-                    <span>{{customer.totalPoint}}</span>
+                    <span>{{ customer.totalPoint }}</span>
                 </dd>
                 <dt><span>Reference</span></dt>
                 <dd>
-                    <span>{{customer.reference}}</span>
+                    <span>{{ customer.reference }}</span>
                 </dd>
                 <dt><span>Custom Id</span></dt>
                 <dd>
-                    <span>{{customer.customId}}</span>
+                    <span>{{ customer.customId }}</span>
                 </dd>
             </dl>
 
             <button type="submit"
                     (click)="previousState()"
                     class="btn btn-info">
-                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
             </button>
 
             <button type="button"
                     [routerLink]="['/customer', customer.id, 'edit']"
                     class="btn btn-primary">
-                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
             </button>
         </div>
     </div>

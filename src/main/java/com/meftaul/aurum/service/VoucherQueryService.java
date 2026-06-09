@@ -83,7 +83,7 @@ public class VoucherQueryService extends QueryService<Voucher> {
         Specification<Voucher> specification = Specification.where(null);
         if (criteria != null) {
             if (criteria.getId() != null) {
-                specification = specification.and(buildSpecification(criteria.getId(), Voucher_.id));
+                specification = specification.and(buildRangeSpecification(criteria.getId(), Voucher_.id));
             }
             if (criteria.getVoucherNo() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getVoucherNo(), Voucher_.voucherNo));

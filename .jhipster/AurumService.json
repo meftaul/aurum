@@ -1,108 +1,96 @@
 {
-    "fluentMethods": true,
-    "clientRootFolder": "",
-    "relationships": [
-        {
-            "relationshipName": "voucher",
-            "otherEntityName": "voucher",
-            "relationshipType": "many-to-one",
-            "otherEntityField": "voucherNo",
-            "otherEntityRelationshipName": "aurumService"
-        }
-    ],
-    "fields": [
-        {
-            "fieldName": "serviceType",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "itemName",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "quantity",
-            "fieldType": "Integer",
-            "fieldValidateRules": [
-                "min"
-            ],
-            "fieldValidateRulesMin": "0"
-        },
-        {
-            "fieldName": "weight",
-            "fieldType": "BigDecimal",
-            "fieldValidateRules": [
-                "min"
-            ],
-            "fieldValidateRulesMin": "0"
-        },
-        {
-            "fieldName": "rate",
-            "fieldType": "BigDecimal",
-            "fieldValidateRules": [
-                "min"
-            ],
-            "fieldValidateRulesMin": "0"
-        },
-        {
-            "fieldName": "amount",
-            "fieldType": "BigDecimal"
-        },
-        {
-            "fieldName": "serviceName",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "karatType",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "expectedKaratType",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "addedAlloy",
-            "fieldType": "Alloy",
-            "fieldValues": "AU,SI,CU"
-        },
-        {
-            "fieldName": "alloyQuantity",
-            "fieldType": "BigDecimal",
-            "fieldValidateRules": [
-                "min"
-            ],
-            "fieldValidateRulesMin": "0"
-        },
-        {
-            "fieldName": "serviceCharge",
-            "fieldType": "BigDecimal",
-            "fieldValidateRules": [
-                "min"
-            ],
-            "fieldValidateRulesMin": "0"
-        },
-        {
-            "fieldName": "freeCheck",
-            "fieldType": "BigDecimal",
-            "fieldValidateRules": [
-                "min"
-            ],
-            "fieldValidateRulesMin": 0
-        },
-        {
-            "fieldName": "hallMarkedText",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "weightOfFreeCheck",
-            "fieldType": "String"
-        }
-    ],
-    "changelogDate": "20191026063357",
-    "dto": "no",
-    "searchEngine": false,
-    "service": "serviceImpl",
-    "entityTableName": "aurum_service",
-    "databaseType": "sql",
-    "jpaMetamodelFiltering": true,
-    "pagination": "pagination"
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [
+    {
+      "relationshipName": "voucher",
+      "otherEntityName": "voucher",
+      "relationshipType": "many-to-one",
+      "otherEntityField": "voucherNo",
+      "otherEntityRelationshipName": "aurumService"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "serviceType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "itemName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "quantity",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "weight",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "rate",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "serviceName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "karatType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "expectedKaratType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "addedAlloy",
+      "fieldType": "Alloy",
+      "fieldValues": "AU,SI,CU"
+    },
+    {
+      "fieldName": "alloyQuantity",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "serviceCharge",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "freeCheck",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": 0
+    },
+    {
+      "fieldName": "hallMarkedText",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "weightOfFreeCheck",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20191026063357",
+  "dto": "no",
+  "searchEngine": false,
+  "service": "serviceImpl",
+  "entityTableName": "aurum_service",
+  "databaseType": "sql",
+  "jpaMetamodelFiltering": true,
+  "pagination": "pagination"
 }

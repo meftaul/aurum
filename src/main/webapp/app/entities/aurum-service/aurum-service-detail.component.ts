@@ -5,20 +5,18 @@ import { IAurumService } from 'app/shared/model/aurum-service.model';
 
 @Component({
   selector: 'jhi-aurum-service-detail',
-  templateUrl: './aurum-service-detail.component.html'
+  templateUrl: './aurum-service-detail.component.html',
 })
 export class AurumServiceDetailComponent implements OnInit {
-  aurumService: IAurumService;
+  aurumService: IAurumService | null = null;
 
   constructor(protected activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(({ aurumService }) => {
-      this.aurumService = aurumService;
-    });
+  ngOnInit(): void {
+    this.activatedRoute.data.subscribe(({ aurumService }) => (this.aurumService = aurumService));
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 }

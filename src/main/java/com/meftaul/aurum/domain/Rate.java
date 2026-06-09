@@ -1,4 +1,5 @@
 package com.meftaul.aurum.domain;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "rate")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Rate implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,7 +30,7 @@ public class Rate implements Serializable {
     @Column(name = "unit_price", precision = 21, scale = 2)
     private BigDecimal unitPrice;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -63,7 +64,7 @@ public class Rate implements Serializable {
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -81,6 +82,7 @@ public class Rate implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "Rate{" +

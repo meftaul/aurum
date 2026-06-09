@@ -5,14 +5,12 @@ import { AurumSharedModule } from 'app/shared/shared.module';
 import { KaratComponent } from './karat.component';
 import { KaratDetailComponent } from './karat-detail.component';
 import { KaratUpdateComponent } from './karat-update.component';
-import { KaratDeletePopupComponent, KaratDeleteDialogComponent } from './karat-delete-dialog.component';
-import { karatRoute, karatPopupRoute } from './karat.route';
-
-const ENTITY_STATES = [...karatRoute, ...karatPopupRoute];
+import { KaratDeleteDialogComponent } from './karat-delete-dialog.component';
+import { karatRoute } from './karat.route';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES)],
-  declarations: [KaratComponent, KaratDetailComponent, KaratUpdateComponent, KaratDeleteDialogComponent, KaratDeletePopupComponent],
-  entryComponents: [KaratDeleteDialogComponent]
+  imports: [AurumSharedModule, RouterModule.forChild(karatRoute)],
+  declarations: [KaratComponent, KaratDetailComponent, KaratUpdateComponent, KaratDeleteDialogComponent],
+  entryComponents: [KaratDeleteDialogComponent],
 })
 export class AurumKaratModule {}

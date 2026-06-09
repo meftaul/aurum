@@ -28,24 +28,12 @@ public class ItemServiceImpl implements ItemService {
         this.itemRepository = itemRepository;
     }
 
-    /**
-     * Save a item.
-     *
-     * @param item the entity to save.
-     * @return the persisted entity.
-     */
     @Override
     public Item save(Item item) {
         log.debug("Request to save Item : {}", item);
         return itemRepository.save(item);
     }
 
-    /**
-     * Get all the items.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<Item> findAll(Pageable pageable) {
@@ -54,12 +42,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
-    /**
-     * Get one item by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Item> findOne(Long id) {
@@ -67,11 +49,6 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findById(id);
     }
 
-    /**
-     * Delete the item by id.
-     *
-     * @param id the id of the entity.
-     */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Item : {}", id);

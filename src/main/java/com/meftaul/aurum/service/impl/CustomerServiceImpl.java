@@ -28,24 +28,12 @@ public class CustomerServiceImpl implements CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    /**
-     * Save a customer.
-     *
-     * @param customer the entity to save.
-     * @return the persisted entity.
-     */
     @Override
     public Customer save(Customer customer) {
         log.debug("Request to save Customer : {}", customer);
         return customerRepository.save(customer);
     }
 
-    /**
-     * Get all the customers.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<Customer> findAll(Pageable pageable) {
@@ -54,12 +42,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-    /**
-     * Get one customer by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Customer> findOne(Long id) {
@@ -67,11 +49,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findById(id);
     }
 
-    /**
-     * Delete the customer by id.
-     *
-     * @param id the id of the entity.
-     */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Customer : {}", id);

@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -101,9 +100,7 @@ public class TransactionHistoryResource {
     /**
      * {@code GET  /transaction-histories} : get all the transactionHistories.
      *
-
      * @param pageable the pagination information.
-
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of transactionHistories in body.
      */
@@ -124,11 +121,11 @@ public class TransactionHistoryResource {
     }
 
     /**
-    * {@code GET  /transaction-histories/count} : count all the transactionHistories.
-    *
-    * @param criteria the criteria which the requested entities should match.
-    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-    */
+     * {@code GET  /transaction-histories/count} : count all the transactionHistories.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
     @GetMapping("/transaction-histories/count")
     public ResponseEntity<Long> countTransactionHistories(TransactionHistoryCriteria criteria) {
         log.debug("REST request to count TransactionHistories by criteria: {}", criteria);

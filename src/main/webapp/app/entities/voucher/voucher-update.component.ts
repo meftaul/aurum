@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
+
 import { IVoucher, Voucher } from 'app/shared/model/voucher.model';
 import { VoucherService } from './voucher.service';
 
 @Component({
   selector: 'jhi-voucher-update',
-  templateUrl: './voucher-update.component.html'
+  templateUrl: './voucher-update.component.html',
 })
 export class VoucherUpdateComponent implements OnInit {
-  isSaving: boolean;
+  isSaving = false;
 
   editForm = this.fb.group({
     id: [],
@@ -30,19 +30,24 @@ export class VoucherUpdateComponent implements OnInit {
     addedBy: [null, [Validators.required]],
     boxNumber: [],
     deliveryDate: [],
-    deliveryStatus: []
+    deliveryStatus: [],
   });
 
   constructor(protected voucherService: VoucherService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
 
-  ngOnInit() {
-    this.isSaving = false;
+  ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ voucher }) => {
+      if (!voucher.id) {
+        const today = moment().startOf('day');
+        voucher.dateCreated = today;
+        voucher.deliveryDate = today;
+      }
+
       this.updateForm(voucher);
     });
   }
 
-  updateForm(voucher: IVoucher) {
+  updateForm(voucher: IVoucher): void {
     this.editForm.patchValue({
       id: voucher.id,
       voucherNo: voucher.voucherNo,
@@ -52,19 +57,19 @@ export class VoucherUpdateComponent implements OnInit {
       disountAmount: voucher.disountAmount,
       status: voucher.status,
       totalPayableAmount: voucher.totalPayableAmount,
-      dateCreated: voucher.dateCreated != null ? voucher.dateCreated.format(DATE_TIME_FORMAT) : null,
+      dateCreated: voucher.dateCreated ? voucher.dateCreated.format(DATE_TIME_FORMAT) : null,
       addedBy: voucher.addedBy,
       boxNumber: voucher.boxNumber,
-      deliveryDate: voucher.deliveryDate != null ? voucher.deliveryDate.format(DATE_TIME_FORMAT) : null,
-      deliveryStatus: voucher.deliveryStatus
+      deliveryDate: voucher.deliveryDate ? voucher.deliveryDate.format(DATE_TIME_FORMAT) : null,
+      deliveryStatus: voucher.deliveryStatus,
     });
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 
-  save() {
+  save(): void {
     this.isSaving = true;
     const voucher = this.createFromForm();
     if (voucher.id !== undefined) {
@@ -77,34 +82,39 @@ export class VoucherUpdateComponent implements OnInit {
   private createFromForm(): IVoucher {
     return {
       ...new Voucher(),
-      id: this.editForm.get(['id']).value,
-      voucherNo: this.editForm.get(['voucherNo']).value,
-      customerId: this.editForm.get(['customerId']).value,
-      calculatedTotalAmount: this.editForm.get(['calculatedTotalAmount']).value,
-      vat: this.editForm.get(['vat']).value,
-      disountAmount: this.editForm.get(['disountAmount']).value,
-      status: this.editForm.get(['status']).value,
-      totalPayableAmount: this.editForm.get(['totalPayableAmount']).value,
-      dateCreated:
-        this.editForm.get(['dateCreated']).value != null ? moment(this.editForm.get(['dateCreated']).value, DATE_TIME_FORMAT) : undefined,
-      addedBy: this.editForm.get(['addedBy']).value,
-      boxNumber: this.editForm.get(['boxNumber']).value,
-      deliveryDate:
-        this.editForm.get(['deliveryDate']).value != null ? moment(this.editForm.get(['deliveryDate']).value, DATE_TIME_FORMAT) : undefined,
-      deliveryStatus: this.editForm.get(['deliveryStatus']).value
+      id: this.editForm.get(['id'])!.value,
+      voucherNo: this.editForm.get(['voucherNo'])!.value,
+      customerId: this.editForm.get(['customerId'])!.value,
+      calculatedTotalAmount: this.editForm.get(['calculatedTotalAmount'])!.value,
+      vat: this.editForm.get(['vat'])!.value,
+      disountAmount: this.editForm.get(['disountAmount'])!.value,
+      status: this.editForm.get(['status'])!.value,
+      totalPayableAmount: this.editForm.get(['totalPayableAmount'])!.value,
+      dateCreated: this.editForm.get(['dateCreated'])!.value
+        ? moment(this.editForm.get(['dateCreated'])!.value, DATE_TIME_FORMAT)
+        : undefined,
+      addedBy: this.editForm.get(['addedBy'])!.value,
+      boxNumber: this.editForm.get(['boxNumber'])!.value,
+      deliveryDate: this.editForm.get(['deliveryDate'])!.value
+        ? moment(this.editForm.get(['deliveryDate'])!.value, DATE_TIME_FORMAT)
+        : undefined,
+      deliveryStatus: this.editForm.get(['deliveryStatus'])!.value,
     };
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<IVoucher>>) {
-    result.subscribe(() => this.onSaveSuccess(), () => this.onSaveError());
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<IVoucher>>): void {
+    result.subscribe(
+      () => this.onSaveSuccess(),
+      () => this.onSaveError()
+    );
   }
 
-  protected onSaveSuccess() {
+  protected onSaveSuccess(): void {
     this.isSaving = false;
     this.previousState();
   }
 
-  protected onSaveError() {
+  protected onSaveError(): void {
     this.isSaving = false;
   }
 }

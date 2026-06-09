@@ -36,12 +36,6 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
         this.voucherRepository = voucherRepository;
     }
 
-    /**
-     * Save a transactionHistory.
-     *
-     * @param transactionHistory the entity to save.
-     * @return the persisted entity.
-     */
     @Override
     public TransactionHistory save(TransactionHistory transactionHistory) {
         log.debug("Request to save TransactionHistory : {}", transactionHistory);
@@ -75,12 +69,6 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
         return discountHistory;
     }
 
-    /**
-     * Get all the transactionHistories.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionHistory> findAll(Pageable pageable) {
@@ -89,12 +77,6 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
     }
 
 
-    /**
-     * Get one transactionHistory by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<TransactionHistory> findOne(Long id) {
@@ -102,11 +84,6 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
         return transactionHistoryRepository.findById(id);
     }
 
-    /**
-     * Delete the transactionHistory by id.
-     *
-     * @param id the id of the entity.
-     */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete TransactionHistory : {}", id);

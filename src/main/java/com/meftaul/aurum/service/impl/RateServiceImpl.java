@@ -28,24 +28,12 @@ public class RateServiceImpl implements RateService {
         this.rateRepository = rateRepository;
     }
 
-    /**
-     * Save a rate.
-     *
-     * @param rate the entity to save.
-     * @return the persisted entity.
-     */
     @Override
     public Rate save(Rate rate) {
         log.debug("Request to save Rate : {}", rate);
         return rateRepository.save(rate);
     }
 
-    /**
-     * Get all the rates.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<Rate> findAll(Pageable pageable) {
@@ -54,12 +42,6 @@ public class RateServiceImpl implements RateService {
     }
 
 
-    /**
-     * Get one rate by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Rate> findOne(Long id) {
@@ -67,11 +49,6 @@ public class RateServiceImpl implements RateService {
         return rateRepository.findById(id);
     }
 
-    /**
-     * Delete the rate by id.
-     *
-     * @param id the id of the entity.
-     */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Rate : {}", id);

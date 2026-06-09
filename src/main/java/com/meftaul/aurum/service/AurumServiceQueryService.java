@@ -83,7 +83,7 @@ public class AurumServiceQueryService extends QueryService<AurumService> {
         Specification<AurumService> specification = Specification.where(null);
         if (criteria != null) {
             if (criteria.getId() != null) {
-                specification = specification.and(buildSpecification(criteria.getId(), AurumService_.id));
+                specification = specification.and(buildRangeSpecification(criteria.getId(), AurumService_.id));
             }
             if (criteria.getServiceType() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getServiceType(), AurumService_.serviceType));

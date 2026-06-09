@@ -5,14 +5,12 @@ import { AurumSharedModule } from 'app/shared/shared.module';
 import { ItemComponent } from './item.component';
 import { ItemDetailComponent } from './item-detail.component';
 import { ItemUpdateComponent } from './item-update.component';
-import { ItemDeletePopupComponent, ItemDeleteDialogComponent } from './item-delete-dialog.component';
-import { itemRoute, itemPopupRoute } from './item.route';
-
-const ENTITY_STATES = [...itemRoute, ...itemPopupRoute];
+import { ItemDeleteDialogComponent } from './item-delete-dialog.component';
+import { itemRoute } from './item.route';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES)],
-  declarations: [ItemComponent, ItemDetailComponent, ItemUpdateComponent, ItemDeleteDialogComponent, ItemDeletePopupComponent],
-  entryComponents: [ItemDeleteDialogComponent]
+  imports: [AurumSharedModule, RouterModule.forChild(itemRoute)],
+  declarations: [ItemComponent, ItemDetailComponent, ItemUpdateComponent, ItemDeleteDialogComponent],
+  entryComponents: [ItemDeleteDialogComponent],
 })
 export class AurumItemModule {}

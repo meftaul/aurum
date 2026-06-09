@@ -5,20 +5,18 @@ import { IItem } from 'app/shared/model/item.model';
 
 @Component({
   selector: 'jhi-item-detail',
-  templateUrl: './item-detail.component.html'
+  templateUrl: './item-detail.component.html',
 })
 export class ItemDetailComponent implements OnInit {
-  item: IItem;
+  item: IItem | null = null;
 
   constructor(protected activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(({ item }) => {
-      this.item = item;
-    });
+  ngOnInit(): void {
+    this.activatedRoute.data.subscribe(({ item }) => (this.item = item));
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 }
