@@ -1,607 +1,390 @@
-<div class="no-print">
-    <div class="row">
-        <mat-card class="col-md-12">
-            <form class="">
-                <mat-form-field class="col-md-2">
-                    <mat-select placeholder="Select search category" [(ngModel)]="searchCategory"
-                        [ngModelOptions]="{standalone: true}">
-                        <mat-option *ngFor="let item of searchCategories" [value]="item.value">
-                            {{item.viewValue}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field class="col-md-3">
-                    <input type="text" matInput placeholder="Search customer" [(ngModel)]="cusromerSearchingValue"
-                        [ngModelOptions]="{standalone: true}" maxlength="11" (keypress)="numberOnly($event)">
-                </mat-form-field>
-                <button type="button" class="btn btn-primary" (click)="searchCustomer()">Search</button>
-                <button type="button" class="btn btn-primary"
-                    (click)="showCreateCustomerDialog(createCustomerDialog)">Create Customer</button>
-                <jhi-alert></jhi-alert>
-            </form>
-        </mat-card>
+<div class="txn no-print">
+  <div class="registry-head">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">The Counter</span>
+      <h1 class="registry-head__title">New Transaction</h1>
+      <p class="registry-head__subtitle" *ngIf="!customer">Find a customer to begin the ledger.</p>
     </div>
+    <hr class="registry-head__rule" />
+  </div>
 
-    <div *ngIf="customer">
-        <div class="row" style="margin-top: 15px;">
-            <div class="col-md-6 m-0 p-0">
-                <mat-card style="margin-right: 5px;">
-                    <mat-card-title>Invoice Information:</mat-card-title>
-                    <form [formGroup]="aurumServiceForm" class="row">
-                        <mat-form-field class="col-md-6">
-                            <mat-select placeholder="Select Service" formControlName="serviceType"
-                                (ngModelChange)="serviceTypeChange($event)" [disabled]="aurumServiceList.length > 0">
-                                <mat-option *ngFor="let item of aurumServiceDropdownData" [value]="item.value">
-                                    {{item.viewValue}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['serviceType'].errors && !aurumServiceForm.controls['serviceType'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['serviceType'].errors.required">Service type
-                                    is required</div>
-                            </mat-error>
-                        </mat-form-field>
+  <jhi-alert></jhi-alert>
 
-                        <mat-form-field class="col-md-6"
-                            [hidden]="selectedService === 'Normal Melting' || selectedService === 'Calculated Melting'">
-                            <mat-select placeholder="Select Item" formControlName="itemName">
-                                <mat-option *ngFor="let item of itemDropdownList" [value]="item.value">
-                                    {{item.viewValue}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['itemName'].errors && !aurumServiceForm.controls['itemName'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['itemName'].errors.required">Item name is
-                                    required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6">
-                            <input type="number" matInput placeholder="Weight(Gram)" formControlName="weight"
-                                (input)="onWeightValueChange($event)">
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['weight'].errors && !aurumServiceForm.controls['weight'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['weight'].errors.required">Weight is
-                                    required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6"
-                            [hidden]="selectedService === 'Normal Melting' || selectedService === 'Calculated Melting'">
-                            <input type="number" matInput placeholder="Quantity" formControlName="quantity">
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['quantity'].errors && !aurumServiceForm.controls['quantity'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['quantity'].errors.required">Quantity is
-                                    required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6"
-                            [hidden]="selectedService === 'X-Ray' || selectedService === 'Normal Melting'">
-                            <mat-select placeholder="Select Karat Type" formControlName="karatType"
-                                (ngModelChange)="onKaratTypeChange($event)">
-                                <mat-option *ngFor="let item of karatList" [value]="item.value">
-                                    {{item.viewValue}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['karatType'].errors && !aurumServiceForm.controls['karatType'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['karatType'].errors.required">Karat type is
-                                    required</div>
-                                <div
-                                    *ngIf="aurumServiceForm.controls['karatType'].errors && aurumServiceForm.controls['karatType'].errors?.percentDiffError">
-                                    Karat
-                                    type must be heigher then expected karat type</div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
-                            <mat-select placeholder="Select Expected Karat Type" formControlName="expectedKaratType"
-                                (ngModelChange)="onExpectedKaratTypeChange($event)">
-                                <mat-option *ngFor="let item of karatList" [value]="item.value">
-                                    {{item.viewValue}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['expectedKaratType'].errors && !aurumServiceForm.controls['expectedKaratType'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['expectedKaratType'].errors.required">Expected
-                                    karat type is required</div>
-                                <div
-                                    *ngIf="aurumServiceForm.controls['expectedKaratType'].errors && aurumServiceForm.controls['expectedKaratType'].errors?.percentDiffError">
-                                    Expected
-                                    karat type must be lower then karat type</div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
-                            <input matInput placeholder="Alloy Quantity" formControlName="alloyQuantity">
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['alloyQuantity'].errors && !aurumServiceForm.controls['alloyQuantity'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['alloyQuantity'].errors.required">Alloy
-                                    quantity is required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6" *ngIf="showBtnForCalculatedMelting">
-                            <mat-select placeholder="Select Alloy Type" formControlName="addedAlloy"
-                                (ngModelChange)="onAddedAlloyChange($event)">
-                                <mat-option *ngFor="let item of alloyTypeList" [value]="item.value">
-                                    {{item.viewValue}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['addedAlloy'].errors && !aurumServiceForm.controls['addedAlloy'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['addedAlloy'].errors.required">Added alloy is
-                                    required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6">
-                            <input type="number" matInput placeholder="Rate" formControlName="rate">
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['rate'].errors && !aurumServiceForm.controls['rate'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['rate'].errors.required">Rate is required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6" [hidden]="selectedService != 'Hallmark'">
-                            <input type="text" matInput placeholder="Hallmark Text" formControlName="hallMarkedText">
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['hallMarkedText'].errors && !aurumServiceForm.controls['hallMarkedText'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['hallMarkedText'].errors.required">Hallmark
-                                    text is required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6" [hidden]="selectedService != 'X-Ray'">
-                            <input type="number" matInput placeholder="Check" formControlName="freeCheck">
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['freeCheck'].errors && !aurumServiceForm.controls['freeCheck'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['freeCheck'].errors.required">Check is
-                                    required
-                                </div>
-                                <div [hidden]="!aurumServiceForm.controls['freeCheck'].errors.min">Free check
-                                    minimum value is 0</div>
-                                <div [hidden]="!aurumServiceForm.controls['freeCheck'].errors.max">Free check
-                                    maximum value is 1</div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field class="col-md-6" [hidden]="selectedService != 'X-Ray'">
-                            <input type="number" matInput placeholder="Weight Of Free Check" formControlName="weightOfFreeCheck">
-                            <mat-error
-                                *ngIf="aurumServiceForm.controls['weightOfFreeCheck'].errors && !aurumServiceForm.controls['weightOfFreeCheck'].pristine">
-                                <div [hidden]="!aurumServiceForm.controls['weightOfFreeCheck'].errors.required">Weight Of Free Check is
-                                    required
-                                </div>
-                            </mat-error>
-                        </mat-form-field>
-
-                        <div>
-                            <mat-form-field class="col-md-3">
-                                <input matInput placeholder="Weight(Vori)" formControlName="weightVori" readonly>
-                            </mat-form-field>
-                            <mat-form-field class="col-md-3" style="margin-left: -8px;">
-                                <input matInput placeholder="Weight(Ana)" formControlName="weightAna" readonly>
-                            </mat-form-field>
-                            <mat-form-field class="col-md-3">
-                                <input matInput placeholder="Weight(Rotti)" formControlName="weightRotti" readonly>
-                            </mat-form-field>
-                            <mat-form-field class="col-md-3" style="margin-left: -8px;">
-                                <input matInput placeholder="Weight(Point)" formControlName="weightPoint" readonly>
-                            </mat-form-field>
-                        </div>
-
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-primary float-right" (click)="resetServiceForm()"
-                                style="margin-left: 2px;">Clear</button>
-                            <button type="button" class="btn btn-primary float-right"
-                                (click)="addService()">Add</button>
-                        </div>
-                    </form>
-                </mat-card>
-            </div>
-
-            <div class="col-md-6 m-0 p-0">
-                <mat-card style="margin-right: 5px;">
-                    <mat-card-title>Customer Information:</mat-card-title>
-                    <table class="table table-striped">
-                        <tbody>
-                            <tr>
-                                <td>Custom ID</td>
-                                <td>{{customer?.customId}}</td>
-                            </tr>
-                            <tr>
-                                <td>Name</td>
-                                <td>{{customer?.firstName}} {{customer?.lastName}}</td>
-                            </tr>
-                            <tr>
-                                <td>Phone</td>
-                                <td>{{customer?.phone}}</td>
-                            </tr>
-                            <tr>
-                                <td>Email</td>
-                                <td>{{customer?.email}}</td>
-                            </tr>
-                            <tr>
-                                <td>Address</td>
-                                <td>{{customer?.address}}</td>
-                            </tr>
-                            <tr>
-                                <td>Reference</td>
-                                <td>{{customer?.reference}}</td>
-                            </tr>
-                            <tr>
-                                <td>Total Point</td>
-                                <td>{{customer?.totalPoint}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </mat-card>
-            </div>
-
-        </div>
-
-        <div class="row" style="margin-top: 15px;">
-            <mat-card class="col-md-12">
-                <mat-card-title>Services Served:</mat-card-title>
-
-                <table class="table table-bordered">
-                    <thead style="text-align: center;">
-                        <tr>
-                            <th style="width: 50px;">#</th>
-                            <th *ngIf="selectedService === 'Hallmark' || selectedService === 'X-Ray'">
-                                Item Name
-                            </th>
-                            <th>Weight(Gram)</th>
-                            <th *ngIf="selectedService === 'X-Ray'">Free Check</th>
-                            <th *ngIf="selectedService === 'X-Ray'">Free Check Weight(Gram)</th>
-                            <th *ngIf="selectedService === 'Hallmark'">Hall Marked Text</th>
-                            <th *ngIf="selectedService === 'Calculated Melting' || selectedService === 'Hallmark'">
-                                Karat Type</th>
-                            <th *ngIf="selectedService === 'Calculated Melting'">Expected
-                                Karat Type</th>
-                            <th *ngIf="selectedService === 'Calculated Melting'">Added Alloy
-                            </th>
-                            <th *ngIf="selectedService === 'Calculated Melting'">Alloy
-                                Quantity</th>
-                            <th>Rate</th>
-                            <th>Quantity</th>
-                            <th>Amount</th>
-                            <th style="width: 100px;">Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody style="text-align: center;">
-                        <tr *ngFor="let service of aurumServiceList; let i = index">
-                            <td>{{i + 1}}</td>
-                            <td *ngIf="service.serviceType === 'Hallmark' || service.serviceType === 'X-Ray'">
-                                {{service.itemName}}</td>
-                            <td>{{service.weight}}</td>
-                            <td *ngIf="service.serviceType === 'X-Ray'">{{service.freeCheck}}</td>
-                            <td *ngIf="service.serviceType === 'X-Ray'">{{service.weightOfFreeCheck}}</td>
-                            <td *ngIf="service.serviceType === 'Hallmark'">
-                                {{service.hallMarkedText}}
-                            </td>
-                            <td
-                                *ngIf="service.serviceType === 'Calculated Melting' || service.serviceType === 'Hallmark'">
-                                {{service.karatType}}</td>
-                            <td *ngIf="service.serviceType === 'Calculated Melting'">
-                                {{service.expectedKaratType ? service.expectedKaratType : 'N/A'}}</td>
-                            <td *ngIf="service.serviceType === 'Calculated Melting'">
-                                {{service.addedAlloy ? service.addedAlloy : 'N/A'}}</td>
-                            <td *ngIf="service.serviceType === 'Calculated Melting'">
-                                {{(service.alloyQuantity && service.alloyQuantity !== 0) ? service.alloyQuantity : 'N/A'}}
-                            </td>
-                            <td>{{service.rate | currency: ' '}}</td>
-                            <td>{{service.quantity}}</td>
-                            <td>{{service.amount | currency: ' '}}</td>
-                            <td>
-                                <button type="submit" class="btn btn-danger btn-sm" (click)="deleteService(i)">
-                                    <fa-icon [icon]="'times'"></fa-icon>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </mat-card>
-        </div>
-
-        <!-- <div class="row" style="margin-top: 15px;">
-            <mat-card class="col-md-12">
-                <mat-card-title>Services Served:</mat-card-title>
-                <table mat-table [dataSource]="aurumServiceList" class="col-md-12">
-                    <ng-container matColumnDef="index">
-                        <th mat-header-cell *matHeaderCellDef>No.</th>
-                        <td mat-cell *matCellDef="let i = index;"> {{i + 1}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="serviceType">
-                        <th mat-header-cell *matHeaderCellDef>Service Type</th>
-                        <td mat-cell *matCellDef="let element"> {{element.serviceType}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="itemName">
-                        <th mat-header-cell *matHeaderCellDef>Item Name</th>
-                        <td mat-cell *matCellDef="let element"> {{element.itemName}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="freeCheck">
-                        <th mat-header-cell *matHeaderCellDef>Free Check</th>
-                        <td mat-cell *matCellDef="let element"> {{element.freeCheck}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="hallMarkedText">
-                        <th mat-header-cell *matHeaderCellDef>Hallnarked Text</th>
-                        <td mat-cell *matCellDef="let element"> {{element.hallMarkedText}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="karatType">
-                        <th mat-header-cell *matHeaderCellDef>Karat Type</th>
-                        <td mat-cell *matCellDef="let element"> {{element.karatType}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="expectedKaratType">
-                        <th mat-header-cell *matHeaderCellDef>Expected Karat Type</th>
-                        <td mat-cell *matCellDef="let element"> {{element.expectedKaratType}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="weight">
-                        <th mat-header-cell *matHeaderCellDef>Weight(Gram)</th>
-                        <td mat-cell *matCellDef="let element"> {{element.weight}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="rate">
-                        <th mat-header-cell *matHeaderCellDef>Rate</th>
-                        <td mat-cell *matCellDef="let element"> {{element.rate}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="quantity">
-                        <th mat-header-cell *matHeaderCellDef>Quantity</th>
-                        <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="amount">
-                        <th mat-header-cell *matHeaderCellDef>Amount</th>
-                        <td mat-cell *matCellDef="let element"> {{element.amount}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="action">
-                        <th mat-header-cell *matHeaderCellDef style="width: 140px;"> Action</th>
-                        <td mat-cell *matCellDef="let i = index;">
-                            <button type="submit" class="btn btn-danger btn-sm" (click)="deleteService(i)">
-                                <fa-icon [icon]="'times'"></fa-icon>
-                            </button>
-                        </td>
-                    </ng-container>
-
-                    <tr mat-header-row *matHeaderRowDef="serviceListColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: serviceListColumns;"></tr>
-                </table>
-            </mat-card>
-        </div> -->
-
-        <div class="row" style="margin-top: 15px;">
-            <mat-card class="col-md-12">
-                <mat-card-title>Billing Information:</mat-card-title>
-                <form [formGroup]="voucherForm">
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <mat-form-field class="col-md-12">
-                                <input matInput placeholder="Box Number" formControlName="boxNumber">
-                                <mat-error
-                                    *ngIf="voucherForm.controls['boxNumber'].errors && !voucherForm.controls['boxNumber'].pristine">
-                                    <div [hidden]="!voucherForm.controls['boxNumber'].errors.required">Box number is
-                                        required</div>
-                                </mat-error>
-                            </mat-form-field>
-                            <mat-form-field class="col-md-12" style="margin-top: 10px;;">
-                                <input matInput type="datetime-local" name="deliveryDate" formControlName="deliveryDate"
-                                    placeholder="YYYY-MM-DD HH:mm" />
-                                <mat-error
-                                    *ngIf="voucherForm.controls['deliveryDate'].errors && !voucherForm.controls['deliveryDate'].pristine">
-                                    <div [hidden]="!voucherForm.controls['deliveryDate'].errors.required">Delivery date
-                                        is required</div>
-                                </mat-error>
-                            </mat-form-field>
-
-                            <div class="row" style="margin-left: 0px;">
-                                <div class="col-md-6" style="margin-top: 20px;">
-                                    <mat-checkbox [labelPosition]="'after'"
-                                        (change)="onReportChargeCheckboxValueChange($event)"
-                                        [(ngModel)]="reportChargeChecked" [ngModelOptions]="{standalone: true}"
-                                        [disabled]="isReportChargeDisabled ? 'disabled' : null">Report
-                                        Charge
-                                    </mat-checkbox>
-                                </div>
-                                <div class="col-md-6">
-                                    <mat-form-field>
-                                        <input type="number" matInput placeholder="Report Charge"
-                                            (input)="onReportChargeValueChange($event)" [(ngModel)]="reportCharge"
-                                            [ngModelOptions]="{standalone: true}"
-                                            [disabled]="(isReportChargeDisabled || reportChargeChecked) ? 'disabled' : null">
-                                    </mat-form-field>
-                                </div>
-                            </div>
-
-                            <!-- <mat-form-field class="col-md-12">
-                                <input matInput [matDatepicker]="deliveryDate" placeholder="Delivery Date"
-                                    formControlName="deliveryDate" readonly>
-                                <mat-datepicker-toggle matSuffix [for]="deliveryDate"></mat-datepicker-toggle>
-                                <mat-datepicker #deliveryDate disabled="false"></mat-datepicker>
-                            </mat-form-field> -->
-                        </div>
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-md-6">Calculated Amount</div>
-                                <div class="col-md-6">
-                                    <span>{{calculateTotalAmount}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6" style="margin-top: 12px;">
-                                    <mat-checkbox [labelPosition]="'after'" (change)="onVatCheckboxValueChange($event)"
-                                        [(ngModel)]="vatChecked" [ngModelOptions]="{standalone: true}">Vat(15%)
-                                    </mat-checkbox>
-                                </div>
-                                <div class="col-md-6">
-                                    <mat-form-field>
-                                        <input type="number" matInput placeholder="Vat" formControlName="vat" [maxlength]="11"
-                                            (input)="onVatValueChange($event)"
-                                            [attr.disabled]="vatChecked ? 'disabled' : null">
-                                    </mat-form-field>
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <div class="row">
-                                <div class="col-md-6">Total Amount</div>
-                                <div class="col-md-6">
-                                    <span>{{totalAmount}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6" style="margin-top: 12px;">Discount</div>
-                                <div class="col-md-6">
-                                    <mat-form-field>
-                                        <input type="number" matInput placeholder="Discount Amount" [maxlength]="11"
-                                            formControlName="disountAmount" (input)="onDiscountValueChange($event)">
-                                    </mat-form-field>
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <div class="row">
-                                <div class="col-md-6">Total Payable Amount</div>
-                                <div class="col-md-6">
-                                    <span>{{payableTotalAmount}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6" style="margin-top: 12px;">Paid Amount</div>
-                                <div class="col-md-6">
-                                    <mat-form-field>
-                                        <input type="number" matInput placeholder="Paid Amount" [maxlength]="11"
-                                            formControlName="paidAmount" (input)="onTotalPayableValueChange($event)">
-                                        <mat-error *ngIf="voucherForm.controls['paidAmount'].errors && !voucherForm.controls['paidAmount'].pristine">
-                                            <div [hidden]="!voucherForm.controls['paidAmount'].errors.required">Paid Amount is required</div>
-                                            <!--<div *ngIf="voucherForm.controls['paidAmount'].errors && voucherForm.controls['paidAmount'].errors?.invalidAmount">-->
-                                                <!--Paid amount can't be greater then Payable total amount</div>-->
-                                        </mat-error>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">Amount Due</div>
-                                <div class="col-md-6">
-                                    <span>{{amountDue}}</span>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-primary float-right" (click)="resetVoucherForm()"
-                                style="margin-left: 2px;">Cancel</button>
-                            <button type="button" class="btn btn-primary float-right"
-                                (click)="confirmMakePayment(confirmDialog)">Make
-                                Payment</button>
-                            <!-- <button type="button" class="btn btn-primary float-right" (click)="makePayment()"
-                                style="margin-left: 2px;">Make Payment</button> -->
-                        </div>
-                    </div>
-                </form>
-            </mat-card>
-        </div>
+  <!-- ============================= CUSTOMER LOOKUP ============================= -->
+  <div class="txn-lookup" *ngIf="!customer">
+    <div class="txn-lookup__sheet">
+      <span class="atelier-section-label">Find customer</span>
+      <form class="txn-lookup__row" (ngSubmit)="searchCustomer()">
+        <select class="form-select form-select-sm txn-lookup__cat" [(ngModel)]="searchCategory" [ngModelOptions]="{ standalone: true }">
+          <option *ngFor="let item of searchCategories" [value]="item.value">{{ item.viewValue }}</option>
+        </select>
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Search by {{ searchCategory === 'id' ? 'customer ID' : 'phone number' }}…"
+          [(ngModel)]="cusromerSearchingValue"
+          [ngModelOptions]="{ standalone: true }"
+          maxlength="11"
+          (keypress)="numberOnly($event)"
+          autofocus
+        />
+        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="showCreateCustomerDialog(createCustomerDialog)">
+          <fa-icon [icon]="'plus'"></fa-icon> New
+        </button>
+      </form>
     </div>
+  </div>
+
+  <!-- ============================= COUNTER GRID ============================= -->
+  <div class="txn-counter stagger" *ngIf="customer">
+    <!-- ---------- LEFT RAIL: customer + entry ---------- -->
+    <section class="txn-rail">
+      <!-- customer chip -->
+      <div class="txn-cust">
+        <span class="seal seal--sm">{{ customer.firstName ? customer.firstName.charAt(0) : '?' }}</span>
+        <div class="txn-cust__body">
+          <div class="txn-cust__name">{{ customer.firstName }} {{ customer.lastName }}</div>
+          <div class="txn-cust__meta">#{{ customer.customId }} · {{ customer.phone }}</div>
+          <div class="txn-cust__points">{{ customer.totalPoint || 0 }} pts</div>
+        </div>
+        <button type="button" class="txn-cust__change" (click)="changeCustomer()">Change</button>
+      </div>
+
+      <!-- service-type segmented control -->
+      <div class="txn-segment" role="group" aria-label="Service type">
+        <button
+          type="button"
+          *ngFor="let s of aurumServiceDropdownData"
+          class="txn-segment__btn"
+          [class.is-active]="selectedService === s.value"
+          [disabled]="aurumServiceList.length > 0"
+          (click)="selectService(s.value)"
+        >
+          {{ s.viewValue }}
+        </button>
+      </div>
+      <p class="txn-segment__lock" *ngIf="aurumServiceList.length > 0">
+        <fa-icon [icon]="'lock'"></fa-icon> Locked to {{ selectedService }} for this voucher
+      </p>
+
+      <!-- entry form -->
+      <form [formGroup]="aurumServiceForm" class="txn-entry" (keydown.enter)="$event.preventDefault(); addService()">
+        <div class="txn-entry__grid">
+          <!-- Item (X-Ray, Hallmark) -->
+          <div class="atelier-form__field" *ngIf="selectedService === 'X-Ray' || selectedService === 'Hallmark'">
+            <label class="form-label">Item</label>
+            <select class="form-select form-select-sm" formControlName="itemName">
+              <option [ngValue]="null" disabled>Select item</option>
+              <option *ngFor="let item of itemDropdownList" [value]="item.value">{{ item.viewValue }}</option>
+            </select>
+          </div>
+
+          <!-- Weight (all types) -->
+          <div class="atelier-form__field">
+            <label class="form-label">Weight (gram)</label>
+            <input
+              #firstField
+              type="number"
+              class="form-control form-control-sm"
+              formControlName="weight"
+              (input)="onWeightValueChange($event)"
+            />
+          </div>
+
+          <!-- Quantity (X-Ray, Hallmark) -->
+          <div class="atelier-form__field" *ngIf="selectedService === 'X-Ray' || selectedService === 'Hallmark'">
+            <label class="form-label">Quantity</label>
+            <input type="number" class="form-control form-control-sm" formControlName="quantity" />
+          </div>
+
+          <!-- Karat (Hallmark, Calculated Melting) -->
+          <div class="atelier-form__field" *ngIf="selectedService === 'Hallmark' || selectedService === 'Calculated Melting'">
+            <label class="form-label">Karat type</label>
+            <select class="form-select form-select-sm" formControlName="karatType" (change)="onKaratTypeChange($event)">
+              <option [ngValue]="null" disabled>Select karat</option>
+              <option *ngFor="let item of karatList" [value]="item.value">{{ item.viewValue }}</option>
+            </select>
+          </div>
+
+          <!-- Expected karat (Calculated Melting) -->
+          <div class="atelier-form__field" *ngIf="showBtnForCalculatedMelting">
+            <label class="form-label">Expected karat</label>
+            <select class="form-select form-select-sm" formControlName="expectedKaratType" (change)="onExpectedKaratTypeChange($event)">
+              <option [ngValue]="null" disabled>Select karat</option>
+              <option *ngFor="let item of karatList" [value]="item.value">{{ item.viewValue }}</option>
+            </select>
+          </div>
+
+          <!-- Alloy type (Calculated Melting) -->
+          <div class="atelier-form__field" *ngIf="showBtnForCalculatedMelting">
+            <label class="form-label">Added alloy</label>
+            <select class="form-select form-select-sm" formControlName="addedAlloy" (change)="onAddedAlloyChange($event)">
+              <option [ngValue]="null" disabled>Select alloy</option>
+              <option *ngFor="let item of alloyTypeList" [value]="item.value">{{ item.viewValue }}</option>
+            </select>
+          </div>
+
+          <!-- Alloy quantity (Calculated Melting, auto) -->
+          <div class="atelier-form__field" *ngIf="showBtnForCalculatedMelting">
+            <label class="form-label">Alloy qty (auto)</label>
+            <input type="number" class="form-control form-control-sm" formControlName="alloyQuantity" readonly />
+          </div>
+
+          <!-- Hallmark text (Hallmark) -->
+          <div class="atelier-form__field" *ngIf="selectedService === 'Hallmark'">
+            <label class="form-label">Hallmark text</label>
+            <input type="text" class="form-control form-control-sm" formControlName="hallMarkedText" />
+          </div>
+
+          <!-- Free check + weight (X-Ray) -->
+          <div class="atelier-form__field" *ngIf="selectedService === 'X-Ray'">
+            <label class="form-label">Free check (0/1)</label>
+            <input type="number" class="form-control form-control-sm" formControlName="freeCheck" min="0" max="1" />
+          </div>
+          <div class="atelier-form__field" *ngIf="selectedService === 'X-Ray'">
+            <label class="form-label">Free check weight</label>
+            <input type="number" class="form-control form-control-sm" formControlName="weightOfFreeCheck" />
+          </div>
+
+          <!-- Rate (all types) -->
+          <div class="atelier-form__field">
+            <label class="form-label">Rate</label>
+            <input type="number" class="form-control form-control-sm" formControlName="rate" />
+          </div>
+        </div>
+
+        <!-- karat-diff error -->
+        <p class="txn-entry__error" *ngIf="aurumServiceForm.controls['karatType'].errors?.percentDiffError">
+          Karat type must be higher than the expected karat type.
+        </p>
+
+        <!-- weight read-out -->
+        <div class="txn-readout" *ngIf="aurumServiceForm.controls['weight'].value">
+          <span class="txn-readout__label">Weight</span>
+          <span class="ledger__assay">
+            {{ aurumServiceForm.controls['weightVori'].value || 0 }}<small>vori</small>
+            {{ aurumServiceForm.controls['weightAna'].value || 0 }}<small>ana</small>
+            {{ aurumServiceForm.controls['weightRotti'].value || 0 }}<small>rotti</small>
+            {{ aurumServiceForm.controls['weightPoint'].value || 0 }}<small>point</small>
+          </span>
+        </div>
+
+        <div class="txn-entry__actions">
+          <button type="button" class="btn btn-secondary btn-sm" (click)="resetServiceForm()">Clear</button>
+          <button type="button" class="btn btn-primary btn-sm txn-entry__add" (click)="addService()">
+            <fa-icon [icon]="'plus'"></fa-icon> Add to ticket
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ---------- CENTER: running ticket ---------- -->
+    <section class="txn-ticket">
+      <div class="txn-ticket__head">
+        <span class="atelier-section-label">Ticket</span>
+        <span class="txn-ticket__count">{{ aurumServiceList.length }} line{{ aurumServiceList.length === 1 ? '' : 's' }}</span>
+      </div>
+
+      <div class="ledger-frame txn-ticket__frame" *ngIf="aurumServiceList.length > 0">
+        <table class="ledger">
+          <thead>
+            <tr>
+              <th class="ledger__index">#</th>
+              <th *ngIf="selectedService === 'Hallmark' || selectedService === 'X-Ray'">Item</th>
+              <th>Weight</th>
+              <th *ngIf="selectedService === 'X-Ray'">Check</th>
+              <th *ngIf="selectedService === 'X-Ray'">Chk wt</th>
+              <th *ngIf="selectedService === 'Hallmark'">Hallmark</th>
+              <th *ngIf="selectedService === 'Calculated Melting' || selectedService === 'Hallmark'">Karat</th>
+              <th *ngIf="selectedService === 'Calculated Melting'">Exp. karat</th>
+              <th *ngIf="selectedService === 'Calculated Melting'">Alloy</th>
+              <th *ngIf="selectedService === 'Calculated Melting'">Alloy qty</th>
+              <th class="txn-num">Rate</th>
+              <th class="txn-num">Qty</th>
+              <th class="txn-num">Amount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let service of aurumServiceList; let i = index">
+              <td class="ledger__index">{{ i + 1 }}</td>
+              <td *ngIf="service.serviceType === 'Hallmark' || service.serviceType === 'X-Ray'">{{ service.itemName }}</td>
+              <td>{{ service.weight }}</td>
+              <td *ngIf="service.serviceType === 'X-Ray'">{{ service.freeCheck }}</td>
+              <td *ngIf="service.serviceType === 'X-Ray'">{{ service.weightOfFreeCheck }}</td>
+              <td *ngIf="service.serviceType === 'Hallmark'">{{ service.hallMarkedText }}</td>
+              <td *ngIf="service.serviceType === 'Calculated Melting' || service.serviceType === 'Hallmark'">{{ service.karatType }}</td>
+              <td *ngIf="service.serviceType === 'Calculated Melting'">{{ service.expectedKaratType || 'N/A' }}</td>
+              <td *ngIf="service.serviceType === 'Calculated Melting'">{{ service.addedAlloy || 'N/A' }}</td>
+              <td *ngIf="service.serviceType === 'Calculated Melting'">{{ service.alloyQuantity || 'N/A' }}</td>
+              <td class="txn-num">{{ service.rate | number: '1.2-2' }}</td>
+              <td class="txn-num">{{ service.quantity }}</td>
+              <td class="txn-num ledger__assay">{{ service.amount | number: '1.2-2' }}</td>
+              <td class="txn-ticket__remove">
+                <button type="button" class="btn btn-sm btn-link txn-ticket__del" (click)="deleteService(i)" aria-label="Remove line">
+                  <fa-icon [icon]="'times'"></fa-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ledger-empty txn-ticket__empty" *ngIf="aurumServiceList.length === 0">
+        <fa-icon class="ledger-empty__icon" [icon]="'list'"></fa-icon>
+        <span>No lines yet — set the service, enter a weight, and add to the ticket.</span>
+      </div>
+    </section>
+
+    <!-- ---------- RIGHT RAIL: bill ---------- -->
+    <aside class="txn-bill">
+      <form [formGroup]="voucherForm" class="txn-bill__form">
+        <div class="txn-bill__scroll">
+          <span class="atelier-section-label">Voucher</span>
+          <div class="atelier-form__field">
+            <label class="form-label">Box number</label>
+            <input class="form-control form-control-sm" formControlName="boxNumber" />
+          </div>
+          <div class="atelier-form__field">
+            <label class="form-label">Delivery date</label>
+            <input type="datetime-local" class="form-control form-control-sm" formControlName="deliveryDate" />
+          </div>
+
+          <hr class="txn-bill__rule" />
+
+          <div class="txn-bill__toggle" *ngIf="!isReportChargeDisabled">
+            <label class="txn-check">
+              <input
+                type="checkbox"
+                [(ngModel)]="reportChargeChecked"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="onReportChargeCheckboxValueChange($event.target)"
+              />
+              <span>Report charge</span>
+            </label>
+            <input
+              type="number"
+              class="form-control form-control-sm txn-bill__inlineinput"
+              [(ngModel)]="reportCharge"
+              [ngModelOptions]="{ standalone: true }"
+              (input)="onReportChargeValueChange($event)"
+              [disabled]="!reportChargeChecked"
+            />
+          </div>
+
+          <div class="txn-bill__toggle">
+            <label class="txn-check">
+              <input
+                type="checkbox"
+                [(ngModel)]="vatChecked"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="onVatCheckboxValueChange($event.target)"
+              />
+              <span>VAT (15%)</span>
+            </label>
+            <span class="txn-bill__inlinefig ledger__assay">{{ voucherForm.controls['vat'].value | number: '1.2-2' }}</span>
+          </div>
+
+          <div class="txn-bill__toggle">
+            <label class="txn-check txn-check--plain"><span>Discount</span></label>
+            <input
+              type="number"
+              class="form-control form-control-sm txn-bill__inlineinput"
+              formControlName="disountAmount"
+              (input)="onDiscountValueChange($event)"
+            />
+          </div>
+        </div>
+
+        <!-- summary + pay (pinned) -->
+        <div class="txn-bill__summary">
+          <div class="txn-bill__line">
+            <span>Subtotal</span><span class="ledger__assay">{{ calculateTotalAmount | number: '1.2-2' }}</span>
+          </div>
+          <div class="txn-bill__line" *ngIf="vatChecked">
+            <span>VAT</span><span class="ledger__assay">{{ voucherForm.controls['vat'].value | number: '1.2-2' }}</span>
+          </div>
+          <div class="txn-bill__line">
+            <span>Total</span><span class="ledger__assay">{{ totalAmount | number: '1.2-2' }}</span>
+          </div>
+          <div class="txn-bill__line txn-bill__line--major">
+            <span>Payable</span><span class="ledger__assay">{{ payableTotalAmount | number: '1.2-2' }}</span>
+          </div>
+
+          <div class="txn-bill__paid">
+            <label class="form-label">Paid amount</label>
+            <input type="number" class="form-control" formControlName="paidAmount" (input)="onTotalPayableValueChange($event)" />
+          </div>
+
+          <div class="txn-bill__line txn-bill__line--due" [class.is-clear]="amountDue <= 0">
+            <span>Due</span><span class="ledger__assay">{{ amountDue | number: '1.2-2' }}</span>
+          </div>
+
+          <div class="txn-bill__actions">
+            <button type="button" class="btn btn-secondary" (click)="resetVoucherForm()">Cancel</button>
+            <button type="button" class="btn btn-primary txn-bill__pay" (click)="makePayment()" [disabled]="loading">
+              {{ loading ? 'Saving…' : 'Take Payment' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </aside>
+  </div>
 </div>
 
-
+<!-- ============================= CREATE CUSTOMER MODAL ============================= -->
 <ng-template #createCustomerDialog let-cusModal>
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Create Customer</h4>
-        <button type="button" class="close" aria-label="Close" (click)="cusModal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="customerForm" class="row">
-            <mat-form-field class="col-md-6">
-                <input matInput placeholder="First Name" formControlName="firstName">
-                <mat-error
-                    *ngIf="customerForm.controls['firstName'].errors && !customerForm.controls['firstName'].pristine">
-                    <div [hidden]="!customerForm.controls['firstName'].errors.required">First name is required</div>
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field class="col-md-6">
-                <input matInput placeholder="Last Name" formControlName="lastName">
-            </mat-form-field>
-
-            <mat-form-field class="col-md-6" style="margin-top: 5px;">
-                <input type="text" matInput placeholder="Phone" formControlName="phone" maxlength="11"
-                    (keypress)="numberOnly($event)">
-                <mat-error *ngIf="customerForm.controls['phone'].errors && !customerForm.controls['phone'].pristine">
-                    <div [hidden]="!customerForm.controls['phone'].errors.required">Phone number is required</div>
-                    <div [hidden]="!customerForm.controls['phone'].errors.minlength">Phone number minimum length is 11
-                    </div>
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field class="col-md-6" style="margin-top: 5px;">
-                <input type="email" matInput placeholder="Email" formControlName="email">
-                <mat-error *ngIf="customerForm.controls['email'].errors && !customerForm.controls['email'].pristine">
-                    <div [hidden]="!customerForm.controls['email'].errors.required">Email is required</div>
-                    <div [hidden]="!customerForm.controls['email'].errors.email">Email is not valid</div>
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="col-md-6" style="margin-top: 5px;">
-                <input matInput placeholder="Address" formControlName="address">
-            </mat-form-field>
-            <mat-form-field class="col-md-6" style="margin-top: 5px;">
-                <input matInput placeholder="Reference" formControlName="reference">
-            </mat-form-field>
-            <mat-form-field class="col-md-6" style="margin-top: 5px;">
-                <input matInput placeholder="Custom ID" formControlName="customId" (keypress)="numberOnly($event)">
-                <mat-error *ngIf="customerForm.controls['customId'].errors && !customerForm.controls['customId'].pristine">
-                    <div [hidden]="!customerForm.controls['customId'].errors.required">Customer ID is required</div>
-                    <div [hidden]="!customerForm.controls['customId'].errors.email">Customer ID is not valid</div>
-                </mat-error>
-            </mat-form-field>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="createCustomer(cusModal);">Save</button>
-        <button type="button" class="btn btn-danger" (click)="closeCreateCustomerDialog(cusModal)">Cancel</button>
-    </div>
-</ng-template>
-
-<ng-template #confirmDialog let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Confirm Payment</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        Are you sure you want to make payment?
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="makePayment(); modal.close()">Yes</button>
-        <button type="button" class="btn btn-danger" (click)="modal.close()">Cancel</button>
-    </div>
+  <div class="modal-header">
+    <h4 class="modal-title">Create Customer</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="cusModal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="customerForm" class="atelier-form__grid">
+      <div class="atelier-form__field">
+        <label class="form-label">First name</label>
+        <input class="form-control form-control-sm" formControlName="firstName" />
+        <div class="text-danger small" *ngIf="customerForm.controls['firstName'].errors && !customerForm.controls['firstName'].pristine">
+          First name is required
+        </div>
+      </div>
+      <div class="atelier-form__field">
+        <label class="form-label">Last name</label>
+        <input class="form-control form-control-sm" formControlName="lastName" />
+      </div>
+      <div class="atelier-form__field">
+        <label class="form-label">Phone</label>
+        <input type="text" class="form-control form-control-sm" formControlName="phone" maxlength="11" (keypress)="numberOnly($event)" />
+        <div class="text-danger small" *ngIf="customerForm.controls['phone'].errors && !customerForm.controls['phone'].pristine">
+          Valid 11-digit phone required
+        </div>
+      </div>
+      <div class="atelier-form__field">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control form-control-sm" formControlName="email" />
+        <div class="text-danger small" *ngIf="customerForm.controls['email'].errors?.email && !customerForm.controls['email'].pristine">
+          Email is not valid
+        </div>
+      </div>
+      <div class="atelier-form__field">
+        <label class="form-label">Address</label>
+        <input class="form-control form-control-sm" formControlName="address" />
+      </div>
+      <div class="atelier-form__field">
+        <label class="form-label">Reference</label>
+        <input class="form-control form-control-sm" formControlName="reference" />
+      </div>
+      <div class="atelier-form__field">
+        <label class="form-label">Custom ID</label>
+        <input class="form-control form-control-sm" formControlName="customId" (keypress)="numberOnly($event)" />
+        <div class="text-danger small" *ngIf="customerForm.controls['customId'].errors && !customerForm.controls['customId'].pristine">
+          Customer ID is required
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeCreateCustomerDialog(cusModal)">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="createCustomer(cusModal)">Save</button>
+  </div>
 </ng-template>
