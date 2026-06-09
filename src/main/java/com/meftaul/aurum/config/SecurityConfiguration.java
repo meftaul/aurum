@@ -61,7 +61,11 @@ public class SecurityConfiguration {
                 authz
                     .requestMatchers(HttpMethod.OPTIONS, "/**")
                     .permitAll()
-                    .requestMatchers("/app/**/*.{js,html}")
+                    .requestMatchers("/", "/index.html", "/*.js", "/*.txt", "/*.json", "/*.map", "/*.css", "/*.webapp")
+                    .permitAll()
+                    .requestMatchers("/*.ico", "/*.png", "/*.svg", "/*.webp", "/*.ttf", "/*.woff", "/*.woff2")
+                    .permitAll()
+                    .requestMatchers("/app/**")
                     .permitAll()
                     .requestMatchers("/i18n/**")
                     .permitAll()
