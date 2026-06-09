@@ -1,13 +1,14 @@
 package com.meftaul.aurum.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.meftaul.aurum.web.rest.TestUtil;
 
-public class RateTest {
+import com.meftaul.aurum.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class RateTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Rate.class);
         Rate rate1 = new Rate();
         rate1.setId(1L);

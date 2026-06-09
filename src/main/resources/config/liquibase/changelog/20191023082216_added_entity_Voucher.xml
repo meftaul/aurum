@@ -3,17 +3,15 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-
-        <property name="autoIncrement" value="true"/>
 
     <!--
         Added the entity Voucher.
     -->
     <changeSet id="20191023082216-1" author="jhipster">
         <createTable tableName="voucher">
-            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+            <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="voucher_no" type="varchar(255)">
@@ -37,7 +35,7 @@
             <column name="total_payable_amount" type="decimal(21,2)">
                 <constraints nullable="false" />
             </column>
-            <column name="date_created" type="datetime">
+            <column name="date_created" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
             <column name="added_by" type="varchar(255)">
@@ -46,7 +44,7 @@
             <column name="box_number" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="delivery_date" type="datetime">
+            <column name="delivery_date" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
             <column name="delivery_status" type="boolean">
@@ -54,13 +52,10 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="voucher" columnName="date_created" columnDataType="datetime"/>
-        <dropDefaultValue tableName="voucher" columnName="delivery_date" columnDataType="datetime"/>
+        <dropDefaultValue tableName="voucher" columnName="date_created" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="voucher" columnName="delivery_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
-    <changeSet id="20191023082216-1-relations" author="jhipster">
-
-    </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
 
     <!--
@@ -75,7 +70,8 @@
         <loadData
                   file="config/liquibase/fake-data/voucher.csv"
                   separator=";"
-                  tableName="voucher">
+                  tableName="voucher"
+                  usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="voucher_no" type="string"/>
             <column name="customer_id" type="numeric"/>
@@ -84,13 +80,12 @@
             <column name="disount_amount" type="numeric"/>
             <column name="status" type="string"/>
             <column name="total_payable_amount" type="numeric"/>
-            <column name="date_created" type="datetime"/>
+            <column name="date_created" type="date"/>
             <column name="added_by" type="string"/>
             <column name="box_number" type="string"/>
-            <column name="delivery_date" type="datetime"/>
+            <column name="delivery_date" type="date"/>
             <column name="delivery_status" type="boolean"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>
-
 </databaseChangeLog>

@@ -1,7 +1,9 @@
 {
-  "fluentMethods": true,
+  "changelogDate": "20191116044840",
   "clientRootFolder": "",
-  "relationships": [],
+  "databaseType": "sql",
+  "dto": "no",
+  "entityTableName": "item",
   "fields": [
     {
       "fieldName": "name",
@@ -17,12 +19,11 @@
       "fieldType": "String"
     }
   ],
-  "changelogDate": "20191116044840",
-  "dto": "no",
-  "searchEngine": false,
-  "service": "serviceImpl",
-  "entityTableName": "item",
-  "databaseType": "sql",
+  "fluentMethods": true,
   "jpaMetamodelFiltering": false,
-  "pagination": "pagination"
+  "name": "Item",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": false,
+  "service": "serviceImpl"
 }

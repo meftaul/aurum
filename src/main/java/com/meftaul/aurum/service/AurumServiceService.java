@@ -1,17 +1,14 @@
 package com.meftaul.aurum.service;
 
 import com.meftaul.aurum.domain.AurumService;
-
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 /**
  * Service Interface for managing {@link AurumService}.
  */
 public interface AurumServiceService {
-
     /**
      * Save a aurumService.
      *
@@ -21,6 +18,22 @@ public interface AurumServiceService {
     AurumService save(AurumService aurumService);
 
     /**
+     * Updates a aurumService.
+     *
+     * @param aurumService the entity to update.
+     * @return the persisted entity.
+     */
+    AurumService update(AurumService aurumService);
+
+    /**
+     * Partially updates a aurumService.
+     *
+     * @param aurumService the entity to update partially.
+     * @return the persisted entity.
+     */
+    Optional<AurumService> partialUpdate(AurumService aurumService);
+
+    /**
      * Get all the aurumServices.
      *
      * @param pageable the pagination information.
@@ -28,6 +41,13 @@ public interface AurumServiceService {
      */
     Page<AurumService> findAll(Pageable pageable);
 
+    /**
+     * Get all the aurumServices with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<AurumService> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Get the "id" aurumService.

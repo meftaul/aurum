@@ -1,30 +1,30 @@
 package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.domain.AurumService;
-import com.meftaul.aurum.service.AurumServiceService;
-import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
-import com.meftaul.aurum.service.dto.AurumServiceCriteria;
+import com.meftaul.aurum.repository.AurumServiceRepository;
 import com.meftaul.aurum.service.AurumServiceQueryService;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import com.meftaul.aurum.service.AurumServiceService;
+import com.meftaul.aurum.service.criteria.AurumServiceCriteria;
+import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.meftaul.aurum.domain.AurumService}.
@@ -42,10 +42,17 @@ public class AurumServiceResource {
 
     private final AurumServiceService aurumServiceService;
 
+    private final AurumServiceRepository aurumServiceRepository;
+
     private final AurumServiceQueryService aurumServiceQueryService;
 
-    public AurumServiceResource(AurumServiceService aurumServiceService, AurumServiceQueryService aurumServiceQueryService) {
+    public AurumServiceResource(
+        AurumServiceService aurumServiceService,
+        AurumServiceRepository aurumServiceRepository,
+        AurumServiceQueryService aurumServiceQueryService
+    ) {
         this.aurumServiceService = aurumServiceService;
+        this.aurumServiceRepository = aurumServiceRepository;
         this.aurumServiceQueryService = aurumServiceQueryService;
     }
 
@@ -63,30 +70,80 @@ public class AurumServiceResource {
             throw new BadRequestAlertException("A new aurumService cannot already have an ID", ENTITY_NAME, "idexists");
         }
         AurumService result = aurumServiceService.save(aurumService);
-        return ResponseEntity.created(new URI("/api/aurum-services/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/aurum-services/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /aurum-services} : Updates an existing aurumService.
+     * {@code PUT  /aurum-services/:id} : Updates an existing aurumService.
      *
+     * @param id the id of the aurumService to save.
      * @param aurumService the aurumService to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated aurumService,
      * or with status {@code 400 (Bad Request)} if the aurumService is not valid,
      * or with status {@code 500 (Internal Server Error)} if the aurumService couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/aurum-services")
-    public ResponseEntity<AurumService> updateAurumService(@Valid @RequestBody AurumService aurumService) throws URISyntaxException {
-        log.debug("REST request to update AurumService : {}", aurumService);
+    @PutMapping("/aurum-services/{id}")
+    public ResponseEntity<AurumService> updateAurumService(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody AurumService aurumService
+    ) throws URISyntaxException {
+        log.debug("REST request to update AurumService : {}, {}", id, aurumService);
         if (aurumService.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        AurumService result = aurumServiceService.save(aurumService);
-        return ResponseEntity.ok()
+        if (!Objects.equals(id, aurumService.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!aurumServiceRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        AurumService result = aurumServiceService.update(aurumService);
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, aurumService.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /aurum-services/:id} : Partial updates given fields of an existing aurumService, field will ignore if it is null
+     *
+     * @param id the id of the aurumService to save.
+     * @param aurumService the aurumService to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated aurumService,
+     * or with status {@code 400 (Bad Request)} if the aurumService is not valid,
+     * or with status {@code 404 (Not Found)} if the aurumService is not found,
+     * or with status {@code 500 (Internal Server Error)} if the aurumService couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/aurum-services/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<AurumService> partialUpdateAurumService(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody AurumService aurumService
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update AurumService partially : {}, {}", id, aurumService);
+        if (aurumService.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, aurumService.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!aurumServiceRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<AurumService> result = aurumServiceService.partialUpdate(aurumService);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, aurumService.getId().toString())
+        );
     }
 
     /**
@@ -97,7 +154,10 @@ public class AurumServiceResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of aurumServices in body.
      */
     @GetMapping("/aurum-services")
-    public ResponseEntity<List<AurumService>> getAllAurumServices(AurumServiceCriteria criteria, Pageable pageable) {
+    public ResponseEntity<List<AurumService>> getAllAurumServices(
+        AurumServiceCriteria criteria,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
         log.debug("REST request to get AurumServices by criteria: {}", criteria);
         Page<AurumService> page = aurumServiceQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -139,6 +199,9 @@ public class AurumServiceResource {
     public ResponseEntity<Void> deleteAurumService(@PathVariable Long id) {
         log.debug("REST request to delete AurumService : {}", id);
         aurumServiceService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { RateComponent } from './rate.component';
-import { RateDetailComponent } from './rate-detail.component';
-import { RateUpdateComponent } from './rate-update.component';
-import { RateDeleteDialogComponent } from './rate-delete-dialog.component';
-import { rateRoute } from './rate.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { RateComponent } from './list/rate.component';
+import { RateDetailComponent } from './detail/rate-detail.component';
+import { RateUpdateComponent } from './update/rate-update.component';
+import { RateDeleteDialogComponent } from './delete/rate-delete-dialog.component';
+import { RateRoutingModule } from './route/rate-routing.module';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(rateRoute)],
+  imports: [SharedModule, RateRoutingModule],
   declarations: [RateComponent, RateDetailComponent, RateUpdateComponent, RateDeleteDialogComponent],
-  entryComponents: [RateDeleteDialogComponent],
 })
-export class AurumRateModule {}
+export class RateModule {}

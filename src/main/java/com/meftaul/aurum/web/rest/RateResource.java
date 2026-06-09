@@ -1,12 +1,16 @@
 package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.domain.Rate;
+import com.meftaul.aurum.repository.RateRepository;
 import com.meftaul.aurum.service.RateService;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,15 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.meftaul.aurum.domain.Rate}.
@@ -40,8 +41,11 @@ public class RateResource {
 
     private final RateService rateService;
 
-    public RateResource(RateService rateService) {
+    private final RateRepository rateRepository;
+
+    public RateResource(RateService rateService, RateRepository rateRepository) {
         this.rateService = rateService;
+        this.rateRepository = rateRepository;
     }
 
     /**
@@ -58,30 +62,78 @@ public class RateResource {
             throw new BadRequestAlertException("A new rate cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Rate result = rateService.save(rate);
-        return ResponseEntity.created(new URI("/api/rates/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/rates/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /rates} : Updates an existing rate.
+     * {@code PUT  /rates/:id} : Updates an existing rate.
      *
+     * @param id the id of the rate to save.
      * @param rate the rate to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated rate,
      * or with status {@code 400 (Bad Request)} if the rate is not valid,
      * or with status {@code 500 (Internal Server Error)} if the rate couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/rates")
-    public ResponseEntity<Rate> updateRate(@Valid @RequestBody Rate rate) throws URISyntaxException {
-        log.debug("REST request to update Rate : {}", rate);
+    @PutMapping("/rates/{id}")
+    public ResponseEntity<Rate> updateRate(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Rate rate)
+        throws URISyntaxException {
+        log.debug("REST request to update Rate : {}, {}", id, rate);
         if (rate.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Rate result = rateService.save(rate);
-        return ResponseEntity.ok()
+        if (!Objects.equals(id, rate.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!rateRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Rate result = rateService.update(rate);
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, rate.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /rates/:id} : Partial updates given fields of an existing rate, field will ignore if it is null
+     *
+     * @param id the id of the rate to save.
+     * @param rate the rate to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated rate,
+     * or with status {@code 400 (Bad Request)} if the rate is not valid,
+     * or with status {@code 404 (Not Found)} if the rate is not found,
+     * or with status {@code 500 (Internal Server Error)} if the rate couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/rates/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Rate> partialUpdateRate(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody Rate rate
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Rate partially : {}, {}", id, rate);
+        if (rate.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, rate.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!rateRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<Rate> result = rateService.partialUpdate(rate);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, rate.getId().toString())
+        );
     }
 
     /**
@@ -91,7 +143,7 @@ public class RateResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rates in body.
      */
     @GetMapping("/rates")
-    public ResponseEntity<List<Rate>> getAllRates(Pageable pageable) {
+    public ResponseEntity<List<Rate>> getAllRates(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Rates");
         Page<Rate> page = rateService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -121,6 +173,9 @@ public class RateResource {
     public ResponseEntity<Void> deleteRate(@PathVariable Long id) {
         log.debug("REST request to delete Rate : {}", id);
         rateService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

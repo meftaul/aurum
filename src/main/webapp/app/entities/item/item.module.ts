@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { ItemComponent } from './item.component';
-import { ItemDetailComponent } from './item-detail.component';
-import { ItemUpdateComponent } from './item-update.component';
-import { ItemDeleteDialogComponent } from './item-delete-dialog.component';
-import { itemRoute } from './item.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { ItemComponent } from './list/item.component';
+import { ItemDetailComponent } from './detail/item-detail.component';
+import { ItemUpdateComponent } from './update/item-update.component';
+import { ItemDeleteDialogComponent } from './delete/item-delete-dialog.component';
+import { ItemRoutingModule } from './route/item-routing.module';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(itemRoute)],
+  imports: [SharedModule, ItemRoutingModule],
   declarations: [ItemComponent, ItemDetailComponent, ItemUpdateComponent, ItemDeleteDialogComponent],
-  entryComponents: [ItemDeleteDialogComponent],
 })
-export class AurumItemModule {}
+export class ItemModule {}

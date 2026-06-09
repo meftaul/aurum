@@ -1,17 +1,14 @@
 package com.meftaul.aurum.service;
 
 import com.meftaul.aurum.domain.Voucher;
-
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 /**
  * Service Interface for managing {@link Voucher}.
  */
 public interface VoucherService {
-
     /**
      * Save a voucher.
      *
@@ -21,13 +18,28 @@ public interface VoucherService {
     Voucher save(Voucher voucher);
 
     /**
+     * Updates a voucher.
+     *
+     * @param voucher the entity to update.
+     * @return the persisted entity.
+     */
+    Voucher update(Voucher voucher);
+
+    /**
+     * Partially updates a voucher.
+     *
+     * @param voucher the entity to update partially.
+     * @return the persisted entity.
+     */
+    Optional<Voucher> partialUpdate(Voucher voucher);
+
+    /**
      * Get all the vouchers.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
     Page<Voucher> findAll(Pageable pageable);
-
 
     /**
      * Get the "id" voucher.

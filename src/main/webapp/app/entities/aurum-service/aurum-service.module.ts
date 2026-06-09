@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { AurumServiceComponent } from './aurum-service.component';
-import { AurumServiceDetailComponent } from './aurum-service-detail.component';
-import { AurumServiceUpdateComponent } from './aurum-service-update.component';
-import { AurumServiceDeleteDialogComponent } from './aurum-service-delete-dialog.component';
-import { aurumServiceRoute } from './aurum-service.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { AurumServiceComponent } from './list/aurum-service.component';
+import { AurumServiceDetailComponent } from './detail/aurum-service-detail.component';
+import { AurumServiceUpdateComponent } from './update/aurum-service-update.component';
+import { AurumServiceDeleteDialogComponent } from './delete/aurum-service-delete-dialog.component';
+import { AurumServiceRoutingModule } from './route/aurum-service-routing.module';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(aurumServiceRoute)],
+  imports: [SharedModule, AurumServiceRoutingModule],
   declarations: [AurumServiceComponent, AurumServiceDetailComponent, AurumServiceUpdateComponent, AurumServiceDeleteDialogComponent],
-  entryComponents: [AurumServiceDeleteDialogComponent],
 })
-export class AurumAurumServiceModule {}
+export class AurumServiceModule {}

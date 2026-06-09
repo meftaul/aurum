@@ -1,13 +1,11 @@
 package com.meftaul.aurum.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Rate.
@@ -15,12 +13,14 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "rate")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Rate implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "rate_type")
@@ -31,8 +31,14 @@ public class Rate implements Serializable {
     private BigDecimal unitPrice;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Rate id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -40,11 +46,11 @@ public class Rate implements Serializable {
     }
 
     public String getRateType() {
-        return rateType;
+        return this.rateType;
     }
 
     public Rate rateType(String rateType) {
-        this.rateType = rateType;
+        this.setRateType(rateType);
         return this;
     }
 
@@ -53,17 +59,18 @@ public class Rate implements Serializable {
     }
 
     public BigDecimal getUnitPrice() {
-        return unitPrice;
+        return this.unitPrice;
     }
 
     public Rate unitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
+        this.setUnitPrice(unitPrice);
         return this;
     }
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -79,7 +86,8 @@ public class Rate implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

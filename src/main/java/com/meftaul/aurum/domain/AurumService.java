@@ -1,16 +1,13 @@
 package com.meftaul.aurum.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import com.meftaul.aurum.domain.enumeration.Alloy;
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import com.meftaul.aurum.domain.enumeration.Alloy;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A AurumService.
@@ -18,12 +15,14 @@ import com.meftaul.aurum.domain.enumeration.Alloy;
 @Entity
 @Table(name = "aurum_service")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class AurumService implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "service_type")
@@ -79,12 +78,18 @@ public class AurumService implements Serializable {
     private String weightOfFreeCheck;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "aurumServices", allowSetters = true)
+    @JsonIgnoreProperties(value = { "aurumServices" }, allowSetters = true)
     private Voucher voucher;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public AurumService id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -92,11 +97,11 @@ public class AurumService implements Serializable {
     }
 
     public String getServiceType() {
-        return serviceType;
+        return this.serviceType;
     }
 
     public AurumService serviceType(String serviceType) {
-        this.serviceType = serviceType;
+        this.setServiceType(serviceType);
         return this;
     }
 
@@ -105,11 +110,11 @@ public class AurumService implements Serializable {
     }
 
     public String getItemName() {
-        return itemName;
+        return this.itemName;
     }
 
     public AurumService itemName(String itemName) {
-        this.itemName = itemName;
+        this.setItemName(itemName);
         return this;
     }
 
@@ -118,11 +123,11 @@ public class AurumService implements Serializable {
     }
 
     public Integer getQuantity() {
-        return quantity;
+        return this.quantity;
     }
 
     public AurumService quantity(Integer quantity) {
-        this.quantity = quantity;
+        this.setQuantity(quantity);
         return this;
     }
 
@@ -131,11 +136,11 @@ public class AurumService implements Serializable {
     }
 
     public BigDecimal getWeight() {
-        return weight;
+        return this.weight;
     }
 
     public AurumService weight(BigDecimal weight) {
-        this.weight = weight;
+        this.setWeight(weight);
         return this;
     }
 
@@ -144,11 +149,11 @@ public class AurumService implements Serializable {
     }
 
     public BigDecimal getRate() {
-        return rate;
+        return this.rate;
     }
 
     public AurumService rate(BigDecimal rate) {
-        this.rate = rate;
+        this.setRate(rate);
         return this;
     }
 
@@ -157,11 +162,11 @@ public class AurumService implements Serializable {
     }
 
     public BigDecimal getAmount() {
-        return amount;
+        return this.amount;
     }
 
     public AurumService amount(BigDecimal amount) {
-        this.amount = amount;
+        this.setAmount(amount);
         return this;
     }
 
@@ -170,11 +175,11 @@ public class AurumService implements Serializable {
     }
 
     public String getServiceName() {
-        return serviceName;
+        return this.serviceName;
     }
 
     public AurumService serviceName(String serviceName) {
-        this.serviceName = serviceName;
+        this.setServiceName(serviceName);
         return this;
     }
 
@@ -183,11 +188,11 @@ public class AurumService implements Serializable {
     }
 
     public String getKaratType() {
-        return karatType;
+        return this.karatType;
     }
 
     public AurumService karatType(String karatType) {
-        this.karatType = karatType;
+        this.setKaratType(karatType);
         return this;
     }
 
@@ -196,11 +201,11 @@ public class AurumService implements Serializable {
     }
 
     public String getExpectedKaratType() {
-        return expectedKaratType;
+        return this.expectedKaratType;
     }
 
     public AurumService expectedKaratType(String expectedKaratType) {
-        this.expectedKaratType = expectedKaratType;
+        this.setExpectedKaratType(expectedKaratType);
         return this;
     }
 
@@ -209,11 +214,11 @@ public class AurumService implements Serializable {
     }
 
     public Alloy getAddedAlloy() {
-        return addedAlloy;
+        return this.addedAlloy;
     }
 
     public AurumService addedAlloy(Alloy addedAlloy) {
-        this.addedAlloy = addedAlloy;
+        this.setAddedAlloy(addedAlloy);
         return this;
     }
 
@@ -222,11 +227,11 @@ public class AurumService implements Serializable {
     }
 
     public BigDecimal getAlloyQuantity() {
-        return alloyQuantity;
+        return this.alloyQuantity;
     }
 
     public AurumService alloyQuantity(BigDecimal alloyQuantity) {
-        this.alloyQuantity = alloyQuantity;
+        this.setAlloyQuantity(alloyQuantity);
         return this;
     }
 
@@ -235,11 +240,11 @@ public class AurumService implements Serializable {
     }
 
     public BigDecimal getServiceCharge() {
-        return serviceCharge;
+        return this.serviceCharge;
     }
 
     public AurumService serviceCharge(BigDecimal serviceCharge) {
-        this.serviceCharge = serviceCharge;
+        this.setServiceCharge(serviceCharge);
         return this;
     }
 
@@ -248,11 +253,11 @@ public class AurumService implements Serializable {
     }
 
     public BigDecimal getFreeCheck() {
-        return freeCheck;
+        return this.freeCheck;
     }
 
     public AurumService freeCheck(BigDecimal freeCheck) {
-        this.freeCheck = freeCheck;
+        this.setFreeCheck(freeCheck);
         return this;
     }
 
@@ -261,11 +266,11 @@ public class AurumService implements Serializable {
     }
 
     public String getHallMarkedText() {
-        return hallMarkedText;
+        return this.hallMarkedText;
     }
 
     public AurumService hallMarkedText(String hallMarkedText) {
-        this.hallMarkedText = hallMarkedText;
+        this.setHallMarkedText(hallMarkedText);
         return this;
     }
 
@@ -274,11 +279,11 @@ public class AurumService implements Serializable {
     }
 
     public String getWeightOfFreeCheck() {
-        return weightOfFreeCheck;
+        return this.weightOfFreeCheck;
     }
 
     public AurumService weightOfFreeCheck(String weightOfFreeCheck) {
-        this.weightOfFreeCheck = weightOfFreeCheck;
+        this.setWeightOfFreeCheck(weightOfFreeCheck);
         return this;
     }
 
@@ -287,17 +292,18 @@ public class AurumService implements Serializable {
     }
 
     public Voucher getVoucher() {
-        return voucher;
-    }
-
-    public AurumService voucher(Voucher voucher) {
-        this.voucher = voucher;
-        return this;
+        return this.voucher;
     }
 
     public void setVoucher(Voucher voucher) {
         this.voucher = voucher;
     }
+
+    public AurumService voucher(Voucher voucher) {
+        this.setVoucher(voucher);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -313,7 +319,8 @@ public class AurumService implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

@@ -1,41 +1,40 @@
 package com.meftaul.aurum.web.rest;
 
-import com.meftaul.aurum.AurumApp;
-import com.meftaul.aurum.domain.Voucher;
-import com.meftaul.aurum.domain.AurumService;
-import com.meftaul.aurum.repository.VoucherRepository;
-import com.meftaul.aurum.service.VoucherService;
-import com.meftaul.aurum.service.dto.VoucherCriteria;
-import com.meftaul.aurum.service.VoucherQueryService;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
+import static com.meftaul.aurum.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.meftaul.aurum.IntegrationTest;
+import com.meftaul.aurum.domain.AurumService;
+import com.meftaul.aurum.domain.Voucher;
 import com.meftaul.aurum.domain.enumeration.VoucherStatus;
+import com.meftaul.aurum.repository.VoucherRepository;
+import com.meftaul.aurum.service.criteria.VoucherCriteria;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Integration tests for the {@link VoucherResource} REST controller.
  */
-@SpringBootTest(classes = AurumApp.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-public class VoucherResourceIT {
+class VoucherResourceIT {
 
     private static final String DEFAULT_VOUCHER_NO = "AAAAAAAAAA";
     private static final String UPDATED_VOUCHER_NO = "BBBBBBBBBB";
@@ -78,14 +77,14 @@ public class VoucherResourceIT {
     private static final Boolean DEFAULT_DELIVERY_STATUS = false;
     private static final Boolean UPDATED_DELIVERY_STATUS = true;
 
+    private static final String ENTITY_API_URL = "/api/vouchers";
+    private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
     @Autowired
     private VoucherRepository voucherRepository;
-
-    @Autowired
-    private VoucherService voucherService;
-
-    @Autowired
-    private VoucherQueryService voucherQueryService;
 
     @Autowired
     private EntityManager em;
@@ -117,6 +116,7 @@ public class VoucherResourceIT {
             .deliveryStatus(DEFAULT_DELIVERY_STATUS);
         return voucher;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -147,12 +147,11 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void createVoucher() throws Exception {
+    void createVoucher() throws Exception {
         int databaseSizeBeforeCreate = voucherRepository.findAll().size();
         // Create the Voucher
-        restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(voucher)))
+        restVoucherMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isCreated());
 
         // Validate the Voucher in the database
@@ -161,30 +160,29 @@ public class VoucherResourceIT {
         Voucher testVoucher = voucherList.get(voucherList.size() - 1);
         assertThat(testVoucher.getVoucherNo()).isEqualTo(DEFAULT_VOUCHER_NO);
         assertThat(testVoucher.getCustomerId()).isEqualTo(DEFAULT_CUSTOMER_ID);
-        assertThat(testVoucher.getCalculatedTotalAmount()).isEqualTo(DEFAULT_CALCULATED_TOTAL_AMOUNT);
-        assertThat(testVoucher.getVat()).isEqualTo(DEFAULT_VAT);
-        assertThat(testVoucher.getDisountAmount()).isEqualTo(DEFAULT_DISOUNT_AMOUNT);
+        assertThat(testVoucher.getCalculatedTotalAmount()).isEqualByComparingTo(DEFAULT_CALCULATED_TOTAL_AMOUNT);
+        assertThat(testVoucher.getVat()).isEqualByComparingTo(DEFAULT_VAT);
+        assertThat(testVoucher.getDisountAmount()).isEqualByComparingTo(DEFAULT_DISOUNT_AMOUNT);
         assertThat(testVoucher.getStatus()).isEqualTo(DEFAULT_STATUS);
-        assertThat(testVoucher.getTotalPayableAmount()).isEqualTo(DEFAULT_TOTAL_PAYABLE_AMOUNT);
+        assertThat(testVoucher.getTotalPayableAmount()).isEqualByComparingTo(DEFAULT_TOTAL_PAYABLE_AMOUNT);
         assertThat(testVoucher.getDateCreated()).isEqualTo(DEFAULT_DATE_CREATED);
         assertThat(testVoucher.getAddedBy()).isEqualTo(DEFAULT_ADDED_BY);
         assertThat(testVoucher.getBoxNumber()).isEqualTo(DEFAULT_BOX_NUMBER);
         assertThat(testVoucher.getDeliveryDate()).isEqualTo(DEFAULT_DELIVERY_DATE);
-        assertThat(testVoucher.isDeliveryStatus()).isEqualTo(DEFAULT_DELIVERY_STATUS);
+        assertThat(testVoucher.getDeliveryStatus()).isEqualTo(DEFAULT_DELIVERY_STATUS);
     }
 
     @Test
     @Transactional
-    public void createVoucherWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = voucherRepository.findAll().size();
-
+    void createVoucherWithExistingId() throws Exception {
         // Create the Voucher with an existing ID
         voucher.setId(1L);
 
+        int databaseSizeBeforeCreate = voucherRepository.findAll().size();
+
         // An entity with an existing ID cannot be created, so this API call must fail
-        restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(voucher)))
+        restVoucherMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
         // Validate the Voucher in the database
@@ -192,20 +190,17 @@ public class VoucherResourceIT {
         assertThat(voucherList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkCalculatedTotalAmountIsRequired() throws Exception {
+    void checkCalculatedTotalAmountIsRequired() throws Exception {
         int databaseSizeBeforeTest = voucherRepository.findAll().size();
         // set the field null
         voucher.setCalculatedTotalAmount(null);
 
         // Create the Voucher, which fails.
 
-
-        restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(voucher)))
+        restVoucherMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
         List<Voucher> voucherList = voucherRepository.findAll();
@@ -214,17 +209,15 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void checkStatusIsRequired() throws Exception {
+    void checkStatusIsRequired() throws Exception {
         int databaseSizeBeforeTest = voucherRepository.findAll().size();
         // set the field null
         voucher.setStatus(null);
 
         // Create the Voucher, which fails.
 
-
-        restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(voucher)))
+        restVoucherMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
         List<Voucher> voucherList = voucherRepository.findAll();
@@ -233,17 +226,15 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void checkTotalPayableAmountIsRequired() throws Exception {
+    void checkTotalPayableAmountIsRequired() throws Exception {
         int databaseSizeBeforeTest = voucherRepository.findAll().size();
         // set the field null
         voucher.setTotalPayableAmount(null);
 
         // Create the Voucher, which fails.
 
-
-        restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(voucher)))
+        restVoucherMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
         List<Voucher> voucherList = voucherRepository.findAll();
@@ -252,17 +243,15 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void checkAddedByIsRequired() throws Exception {
+    void checkAddedByIsRequired() throws Exception {
         int databaseSizeBeforeTest = voucherRepository.findAll().size();
         // set the field null
         voucher.setAddedBy(null);
 
         // Create the Voucher, which fails.
 
-
-        restVoucherMockMvc.perform(post("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(voucher)))
+        restVoucherMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(voucher)))
             .andExpect(status().isBadRequest());
 
         List<Voucher> voucherList = voucherRepository.findAll();
@@ -271,47 +260,49 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchers() throws Exception {
+    void getAllVouchers() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
         // Get all the voucherList
-        restVoucherMockMvc.perform(get("/api/vouchers?sort=id,desc"))
+        restVoucherMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(voucher.getId().intValue())))
             .andExpect(jsonPath("$.[*].voucherNo").value(hasItem(DEFAULT_VOUCHER_NO)))
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
-            .andExpect(jsonPath("$.[*].calculatedTotalAmount").value(hasItem(DEFAULT_CALCULATED_TOTAL_AMOUNT.intValue())))
-            .andExpect(jsonPath("$.[*].vat").value(hasItem(DEFAULT_VAT.intValue())))
-            .andExpect(jsonPath("$.[*].disountAmount").value(hasItem(DEFAULT_DISOUNT_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].calculatedTotalAmount").value(hasItem(sameNumber(DEFAULT_CALCULATED_TOTAL_AMOUNT))))
+            .andExpect(jsonPath("$.[*].vat").value(hasItem(sameNumber(DEFAULT_VAT))))
+            .andExpect(jsonPath("$.[*].disountAmount").value(hasItem(sameNumber(DEFAULT_DISOUNT_AMOUNT))))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].totalPayableAmount").value(hasItem(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].totalPayableAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_PAYABLE_AMOUNT))))
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)))
             .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER)))
             .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())))
             .andExpect(jsonPath("$.[*].deliveryStatus").value(hasItem(DEFAULT_DELIVERY_STATUS.booleanValue())));
     }
-    
+
     @Test
     @Transactional
-    public void getVoucher() throws Exception {
+    void getVoucher() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
         // Get the voucher
-        restVoucherMockMvc.perform(get("/api/vouchers/{id}", voucher.getId()))
+        restVoucherMockMvc
+            .perform(get(ENTITY_API_URL_ID, voucher.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(voucher.getId().intValue()))
             .andExpect(jsonPath("$.voucherNo").value(DEFAULT_VOUCHER_NO))
             .andExpect(jsonPath("$.customerId").value(DEFAULT_CUSTOMER_ID.intValue()))
-            .andExpect(jsonPath("$.calculatedTotalAmount").value(DEFAULT_CALCULATED_TOTAL_AMOUNT.intValue()))
-            .andExpect(jsonPath("$.vat").value(DEFAULT_VAT.intValue()))
-            .andExpect(jsonPath("$.disountAmount").value(DEFAULT_DISOUNT_AMOUNT.intValue()))
+            .andExpect(jsonPath("$.calculatedTotalAmount").value(sameNumber(DEFAULT_CALCULATED_TOTAL_AMOUNT)))
+            .andExpect(jsonPath("$.vat").value(sameNumber(DEFAULT_VAT)))
+            .andExpect(jsonPath("$.disountAmount").value(sameNumber(DEFAULT_DISOUNT_AMOUNT)))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
-            .andExpect(jsonPath("$.totalPayableAmount").value(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue()))
+            .andExpect(jsonPath("$.totalPayableAmount").value(sameNumber(DEFAULT_TOTAL_PAYABLE_AMOUNT)))
             .andExpect(jsonPath("$.dateCreated").value(DEFAULT_DATE_CREATED.toString()))
             .andExpect(jsonPath("$.addedBy").value(DEFAULT_ADDED_BY))
             .andExpect(jsonPath("$.boxNumber").value(DEFAULT_BOX_NUMBER))
@@ -319,10 +310,9 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.deliveryStatus").value(DEFAULT_DELIVERY_STATUS.booleanValue()));
     }
 
-
     @Test
     @Transactional
-    public void getVouchersByIdFiltering() throws Exception {
+    void getVouchersByIdFiltering() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -338,10 +328,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldNotBeFound("id.lessThan=" + id);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByVoucherNoIsEqualToSomething() throws Exception {
+    void getAllVouchersByVoucherNoIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -354,20 +343,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVoucherNoIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where voucherNo not equals to DEFAULT_VOUCHER_NO
-        defaultVoucherShouldNotBeFound("voucherNo.notEquals=" + DEFAULT_VOUCHER_NO);
-
-        // Get all the voucherList where voucherNo not equals to UPDATED_VOUCHER_NO
-        defaultVoucherShouldBeFound("voucherNo.notEquals=" + UPDATED_VOUCHER_NO);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByVoucherNoIsInShouldWork() throws Exception {
+    void getAllVouchersByVoucherNoIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -380,7 +356,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVoucherNoIsNullOrNotNull() throws Exception {
+    void getAllVouchersByVoucherNoIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -390,9 +366,10 @@ public class VoucherResourceIT {
         // Get all the voucherList where voucherNo is null
         defaultVoucherShouldNotBeFound("voucherNo.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllVouchersByVoucherNoContainsSomething() throws Exception {
+    void getAllVouchersByVoucherNoContainsSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -405,7 +382,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVoucherNoNotContainsSomething() throws Exception {
+    void getAllVouchersByVoucherNoNotContainsSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -416,10 +393,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("voucherNo.doesNotContain=" + UPDATED_VOUCHER_NO);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByCustomerIdIsEqualToSomething() throws Exception {
+    void getAllVouchersByCustomerIdIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -432,20 +408,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCustomerIdIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where customerId not equals to DEFAULT_CUSTOMER_ID
-        defaultVoucherShouldNotBeFound("customerId.notEquals=" + DEFAULT_CUSTOMER_ID);
-
-        // Get all the voucherList where customerId not equals to UPDATED_CUSTOMER_ID
-        defaultVoucherShouldBeFound("customerId.notEquals=" + UPDATED_CUSTOMER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByCustomerIdIsInShouldWork() throws Exception {
+    void getAllVouchersByCustomerIdIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -458,7 +421,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCustomerIdIsNullOrNotNull() throws Exception {
+    void getAllVouchersByCustomerIdIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -471,7 +434,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCustomerIdIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByCustomerIdIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -484,7 +447,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCustomerIdIsLessThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByCustomerIdIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -497,7 +460,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCustomerIdIsLessThanSomething() throws Exception {
+    void getAllVouchersByCustomerIdIsLessThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -510,7 +473,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCustomerIdIsGreaterThanSomething() throws Exception {
+    void getAllVouchersByCustomerIdIsGreaterThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -521,10 +484,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("customerId.greaterThan=" + SMALLER_CUSTOMER_ID);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsEqualToSomething() throws Exception {
+    void getAllVouchersByCalculatedTotalAmountIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -537,20 +499,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where calculatedTotalAmount not equals to DEFAULT_CALCULATED_TOTAL_AMOUNT
-        defaultVoucherShouldNotBeFound("calculatedTotalAmount.notEquals=" + DEFAULT_CALCULATED_TOTAL_AMOUNT);
-
-        // Get all the voucherList where calculatedTotalAmount not equals to UPDATED_CALCULATED_TOTAL_AMOUNT
-        defaultVoucherShouldBeFound("calculatedTotalAmount.notEquals=" + UPDATED_CALCULATED_TOTAL_AMOUNT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsInShouldWork() throws Exception {
+    void getAllVouchersByCalculatedTotalAmountIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -563,7 +512,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsNullOrNotNull() throws Exception {
+    void getAllVouchersByCalculatedTotalAmountIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -576,7 +525,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByCalculatedTotalAmountIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -589,7 +538,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsLessThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByCalculatedTotalAmountIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -602,7 +551,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsLessThanSomething() throws Exception {
+    void getAllVouchersByCalculatedTotalAmountIsLessThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -615,7 +564,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByCalculatedTotalAmountIsGreaterThanSomething() throws Exception {
+    void getAllVouchersByCalculatedTotalAmountIsGreaterThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -626,10 +575,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("calculatedTotalAmount.greaterThan=" + SMALLER_CALCULATED_TOTAL_AMOUNT);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByVatIsEqualToSomething() throws Exception {
+    void getAllVouchersByVatIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -642,20 +590,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVatIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where vat not equals to DEFAULT_VAT
-        defaultVoucherShouldNotBeFound("vat.notEquals=" + DEFAULT_VAT);
-
-        // Get all the voucherList where vat not equals to UPDATED_VAT
-        defaultVoucherShouldBeFound("vat.notEquals=" + UPDATED_VAT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByVatIsInShouldWork() throws Exception {
+    void getAllVouchersByVatIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -668,7 +603,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVatIsNullOrNotNull() throws Exception {
+    void getAllVouchersByVatIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -681,7 +616,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVatIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByVatIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -694,7 +629,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVatIsLessThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByVatIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -707,7 +642,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVatIsLessThanSomething() throws Exception {
+    void getAllVouchersByVatIsLessThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -720,7 +655,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByVatIsGreaterThanSomething() throws Exception {
+    void getAllVouchersByVatIsGreaterThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -731,10 +666,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("vat.greaterThan=" + SMALLER_VAT);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByDisountAmountIsEqualToSomething() throws Exception {
+    void getAllVouchersByDisountAmountIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -747,20 +681,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDisountAmountIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where disountAmount not equals to DEFAULT_DISOUNT_AMOUNT
-        defaultVoucherShouldNotBeFound("disountAmount.notEquals=" + DEFAULT_DISOUNT_AMOUNT);
-
-        // Get all the voucherList where disountAmount not equals to UPDATED_DISOUNT_AMOUNT
-        defaultVoucherShouldBeFound("disountAmount.notEquals=" + UPDATED_DISOUNT_AMOUNT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDisountAmountIsInShouldWork() throws Exception {
+    void getAllVouchersByDisountAmountIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -773,7 +694,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDisountAmountIsNullOrNotNull() throws Exception {
+    void getAllVouchersByDisountAmountIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -786,7 +707,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDisountAmountIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByDisountAmountIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -799,7 +720,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDisountAmountIsLessThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByDisountAmountIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -812,7 +733,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDisountAmountIsLessThanSomething() throws Exception {
+    void getAllVouchersByDisountAmountIsLessThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -825,7 +746,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDisountAmountIsGreaterThanSomething() throws Exception {
+    void getAllVouchersByDisountAmountIsGreaterThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -836,10 +757,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("disountAmount.greaterThan=" + SMALLER_DISOUNT_AMOUNT);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByStatusIsEqualToSomething() throws Exception {
+    void getAllVouchersByStatusIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -852,20 +772,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByStatusIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where status not equals to DEFAULT_STATUS
-        defaultVoucherShouldNotBeFound("status.notEquals=" + DEFAULT_STATUS);
-
-        // Get all the voucherList where status not equals to UPDATED_STATUS
-        defaultVoucherShouldBeFound("status.notEquals=" + UPDATED_STATUS);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByStatusIsInShouldWork() throws Exception {
+    void getAllVouchersByStatusIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -878,7 +785,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByStatusIsNullOrNotNull() throws Exception {
+    void getAllVouchersByStatusIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -891,7 +798,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByTotalPayableAmountIsEqualToSomething() throws Exception {
+    void getAllVouchersByTotalPayableAmountIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -904,20 +811,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByTotalPayableAmountIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where totalPayableAmount not equals to DEFAULT_TOTAL_PAYABLE_AMOUNT
-        defaultVoucherShouldNotBeFound("totalPayableAmount.notEquals=" + DEFAULT_TOTAL_PAYABLE_AMOUNT);
-
-        // Get all the voucherList where totalPayableAmount not equals to UPDATED_TOTAL_PAYABLE_AMOUNT
-        defaultVoucherShouldBeFound("totalPayableAmount.notEquals=" + UPDATED_TOTAL_PAYABLE_AMOUNT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByTotalPayableAmountIsInShouldWork() throws Exception {
+    void getAllVouchersByTotalPayableAmountIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -930,7 +824,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByTotalPayableAmountIsNullOrNotNull() throws Exception {
+    void getAllVouchersByTotalPayableAmountIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -943,7 +837,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByTotalPayableAmountIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByTotalPayableAmountIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -956,7 +850,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByTotalPayableAmountIsLessThanOrEqualToSomething() throws Exception {
+    void getAllVouchersByTotalPayableAmountIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -969,7 +863,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByTotalPayableAmountIsLessThanSomething() throws Exception {
+    void getAllVouchersByTotalPayableAmountIsLessThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -982,7 +876,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByTotalPayableAmountIsGreaterThanSomething() throws Exception {
+    void getAllVouchersByTotalPayableAmountIsGreaterThanSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -993,10 +887,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("totalPayableAmount.greaterThan=" + SMALLER_TOTAL_PAYABLE_AMOUNT);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByDateCreatedIsEqualToSomething() throws Exception {
+    void getAllVouchersByDateCreatedIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1009,20 +902,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDateCreatedIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where dateCreated not equals to DEFAULT_DATE_CREATED
-        defaultVoucherShouldNotBeFound("dateCreated.notEquals=" + DEFAULT_DATE_CREATED);
-
-        // Get all the voucherList where dateCreated not equals to UPDATED_DATE_CREATED
-        defaultVoucherShouldBeFound("dateCreated.notEquals=" + UPDATED_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDateCreatedIsInShouldWork() throws Exception {
+    void getAllVouchersByDateCreatedIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1035,7 +915,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDateCreatedIsNullOrNotNull() throws Exception {
+    void getAllVouchersByDateCreatedIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1048,7 +928,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByAddedByIsEqualToSomething() throws Exception {
+    void getAllVouchersByAddedByIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1061,20 +941,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByAddedByIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where addedBy not equals to DEFAULT_ADDED_BY
-        defaultVoucherShouldNotBeFound("addedBy.notEquals=" + DEFAULT_ADDED_BY);
-
-        // Get all the voucherList where addedBy not equals to UPDATED_ADDED_BY
-        defaultVoucherShouldBeFound("addedBy.notEquals=" + UPDATED_ADDED_BY);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByAddedByIsInShouldWork() throws Exception {
+    void getAllVouchersByAddedByIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1087,7 +954,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByAddedByIsNullOrNotNull() throws Exception {
+    void getAllVouchersByAddedByIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1097,9 +964,10 @@ public class VoucherResourceIT {
         // Get all the voucherList where addedBy is null
         defaultVoucherShouldNotBeFound("addedBy.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllVouchersByAddedByContainsSomething() throws Exception {
+    void getAllVouchersByAddedByContainsSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1112,7 +980,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByAddedByNotContainsSomething() throws Exception {
+    void getAllVouchersByAddedByNotContainsSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1123,10 +991,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("addedBy.doesNotContain=" + UPDATED_ADDED_BY);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByBoxNumberIsEqualToSomething() throws Exception {
+    void getAllVouchersByBoxNumberIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1139,20 +1006,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByBoxNumberIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where boxNumber not equals to DEFAULT_BOX_NUMBER
-        defaultVoucherShouldNotBeFound("boxNumber.notEquals=" + DEFAULT_BOX_NUMBER);
-
-        // Get all the voucherList where boxNumber not equals to UPDATED_BOX_NUMBER
-        defaultVoucherShouldBeFound("boxNumber.notEquals=" + UPDATED_BOX_NUMBER);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByBoxNumberIsInShouldWork() throws Exception {
+    void getAllVouchersByBoxNumberIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1165,7 +1019,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByBoxNumberIsNullOrNotNull() throws Exception {
+    void getAllVouchersByBoxNumberIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1175,9 +1029,10 @@ public class VoucherResourceIT {
         // Get all the voucherList where boxNumber is null
         defaultVoucherShouldNotBeFound("boxNumber.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllVouchersByBoxNumberContainsSomething() throws Exception {
+    void getAllVouchersByBoxNumberContainsSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1190,7 +1045,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByBoxNumberNotContainsSomething() throws Exception {
+    void getAllVouchersByBoxNumberNotContainsSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1201,10 +1056,9 @@ public class VoucherResourceIT {
         defaultVoucherShouldBeFound("boxNumber.doesNotContain=" + UPDATED_BOX_NUMBER);
     }
 
-
     @Test
     @Transactional
-    public void getAllVouchersByDeliveryDateIsEqualToSomething() throws Exception {
+    void getAllVouchersByDeliveryDateIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1217,20 +1071,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDeliveryDateIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where deliveryDate not equals to DEFAULT_DELIVERY_DATE
-        defaultVoucherShouldNotBeFound("deliveryDate.notEquals=" + DEFAULT_DELIVERY_DATE);
-
-        // Get all the voucherList where deliveryDate not equals to UPDATED_DELIVERY_DATE
-        defaultVoucherShouldBeFound("deliveryDate.notEquals=" + UPDATED_DELIVERY_DATE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDeliveryDateIsInShouldWork() throws Exception {
+    void getAllVouchersByDeliveryDateIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1243,7 +1084,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDeliveryDateIsNullOrNotNull() throws Exception {
+    void getAllVouchersByDeliveryDateIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1256,7 +1097,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDeliveryStatusIsEqualToSomething() throws Exception {
+    void getAllVouchersByDeliveryStatusIsEqualToSomething() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1269,20 +1110,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDeliveryStatusIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-
-        // Get all the voucherList where deliveryStatus not equals to DEFAULT_DELIVERY_STATUS
-        defaultVoucherShouldNotBeFound("deliveryStatus.notEquals=" + DEFAULT_DELIVERY_STATUS);
-
-        // Get all the voucherList where deliveryStatus not equals to UPDATED_DELIVERY_STATUS
-        defaultVoucherShouldBeFound("deliveryStatus.notEquals=" + UPDATED_DELIVERY_STATUS);
-    }
-
-    @Test
-    @Transactional
-    public void getAllVouchersByDeliveryStatusIsInShouldWork() throws Exception {
+    void getAllVouchersByDeliveryStatusIsInShouldWork() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1295,7 +1123,7 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByDeliveryStatusIsNullOrNotNull() throws Exception {
+    void getAllVouchersByDeliveryStatusIsNullOrNotNull() throws Exception {
         // Initialize the database
         voucherRepository.saveAndFlush(voucher);
 
@@ -1308,10 +1136,14 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getAllVouchersByAurumServiceIsEqualToSomething() throws Exception {
-        // Initialize the database
-        voucherRepository.saveAndFlush(voucher);
-        AurumService aurumService = AurumServiceResourceIT.createEntity(em);
+    void getAllVouchersByAurumServiceIsEqualToSomething() throws Exception {
+        AurumService aurumService;
+        if (TestUtil.findAll(em, AurumService.class).isEmpty()) {
+            voucherRepository.saveAndFlush(voucher);
+            aurumService = AurumServiceResourceIT.createEntity(em);
+        } else {
+            aurumService = TestUtil.findAll(em, AurumService.class).get(0);
+        }
         em.persist(aurumService);
         em.flush();
         voucher.addAurumService(aurumService);
@@ -1321,7 +1153,7 @@ public class VoucherResourceIT {
         // Get all the voucherList where aurumService equals to aurumServiceId
         defaultVoucherShouldBeFound("aurumServiceId.equals=" + aurumServiceId);
 
-        // Get all the voucherList where aurumService equals to aurumServiceId + 1
+        // Get all the voucherList where aurumService equals to (aurumServiceId + 1)
         defaultVoucherShouldNotBeFound("aurumServiceId.equals=" + (aurumServiceId + 1));
     }
 
@@ -1329,17 +1161,18 @@ public class VoucherResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultVoucherShouldBeFound(String filter) throws Exception {
-        restVoucherMockMvc.perform(get("/api/vouchers?sort=id,desc&" + filter))
+        restVoucherMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(voucher.getId().intValue())))
             .andExpect(jsonPath("$.[*].voucherNo").value(hasItem(DEFAULT_VOUCHER_NO)))
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
-            .andExpect(jsonPath("$.[*].calculatedTotalAmount").value(hasItem(DEFAULT_CALCULATED_TOTAL_AMOUNT.intValue())))
-            .andExpect(jsonPath("$.[*].vat").value(hasItem(DEFAULT_VAT.intValue())))
-            .andExpect(jsonPath("$.[*].disountAmount").value(hasItem(DEFAULT_DISOUNT_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].calculatedTotalAmount").value(hasItem(sameNumber(DEFAULT_CALCULATED_TOTAL_AMOUNT))))
+            .andExpect(jsonPath("$.[*].vat").value(hasItem(sameNumber(DEFAULT_VAT))))
+            .andExpect(jsonPath("$.[*].disountAmount").value(hasItem(sameNumber(DEFAULT_DISOUNT_AMOUNT))))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].totalPayableAmount").value(hasItem(DEFAULT_TOTAL_PAYABLE_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].totalPayableAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_PAYABLE_AMOUNT))))
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)))
             .andExpect(jsonPath("$.[*].boxNumber").value(hasItem(DEFAULT_BOX_NUMBER)))
@@ -1347,7 +1180,8 @@ public class VoucherResourceIT {
             .andExpect(jsonPath("$.[*].deliveryStatus").value(hasItem(DEFAULT_DELIVERY_STATUS.booleanValue())));
 
         // Check, that the count call also returns 1
-        restVoucherMockMvc.perform(get("/api/vouchers/count?sort=id,desc&" + filter))
+        restVoucherMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("1"));
@@ -1357,14 +1191,16 @@ public class VoucherResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultVoucherShouldNotBeFound(String filter) throws Exception {
-        restVoucherMockMvc.perform(get("/api/vouchers?sort=id,desc&" + filter))
+        restVoucherMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restVoucherMockMvc.perform(get("/api/vouchers/count?sort=id,desc&" + filter))
+        restVoucherMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"));
@@ -1372,17 +1208,16 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void getNonExistingVoucher() throws Exception {
+    void getNonExistingVoucher() throws Exception {
         // Get the voucher
-        restVoucherMockMvc.perform(get("/api/vouchers/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restVoucherMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateVoucher() throws Exception {
+    void putExistingVoucher() throws Exception {
         // Initialize the database
-        voucherService.save(voucher);
+        voucherRepository.saveAndFlush(voucher);
 
         int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
 
@@ -1404,9 +1239,12 @@ public class VoucherResourceIT {
             .deliveryDate(UPDATED_DELIVERY_DATE)
             .deliveryStatus(UPDATED_DELIVERY_STATUS);
 
-        restVoucherMockMvc.perform(put("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedVoucher)))
+        restVoucherMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedVoucher.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedVoucher))
+            )
             .andExpect(status().isOk());
 
         // Validate the Voucher in the database
@@ -1415,27 +1253,31 @@ public class VoucherResourceIT {
         Voucher testVoucher = voucherList.get(voucherList.size() - 1);
         assertThat(testVoucher.getVoucherNo()).isEqualTo(UPDATED_VOUCHER_NO);
         assertThat(testVoucher.getCustomerId()).isEqualTo(UPDATED_CUSTOMER_ID);
-        assertThat(testVoucher.getCalculatedTotalAmount()).isEqualTo(UPDATED_CALCULATED_TOTAL_AMOUNT);
-        assertThat(testVoucher.getVat()).isEqualTo(UPDATED_VAT);
-        assertThat(testVoucher.getDisountAmount()).isEqualTo(UPDATED_DISOUNT_AMOUNT);
+        assertThat(testVoucher.getCalculatedTotalAmount()).isEqualByComparingTo(UPDATED_CALCULATED_TOTAL_AMOUNT);
+        assertThat(testVoucher.getVat()).isEqualByComparingTo(UPDATED_VAT);
+        assertThat(testVoucher.getDisountAmount()).isEqualByComparingTo(UPDATED_DISOUNT_AMOUNT);
         assertThat(testVoucher.getStatus()).isEqualTo(UPDATED_STATUS);
-        assertThat(testVoucher.getTotalPayableAmount()).isEqualTo(UPDATED_TOTAL_PAYABLE_AMOUNT);
+        assertThat(testVoucher.getTotalPayableAmount()).isEqualByComparingTo(UPDATED_TOTAL_PAYABLE_AMOUNT);
         assertThat(testVoucher.getDateCreated()).isEqualTo(UPDATED_DATE_CREATED);
         assertThat(testVoucher.getAddedBy()).isEqualTo(UPDATED_ADDED_BY);
         assertThat(testVoucher.getBoxNumber()).isEqualTo(UPDATED_BOX_NUMBER);
         assertThat(testVoucher.getDeliveryDate()).isEqualTo(UPDATED_DELIVERY_DATE);
-        assertThat(testVoucher.isDeliveryStatus()).isEqualTo(UPDATED_DELIVERY_STATUS);
+        assertThat(testVoucher.getDeliveryStatus()).isEqualTo(UPDATED_DELIVERY_STATUS);
     }
 
     @Test
     @Transactional
-    public void updateNonExistingVoucher() throws Exception {
+    void putNonExistingVoucher() throws Exception {
         int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+        voucher.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restVoucherMockMvc.perform(put("/api/vouchers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(voucher)))
+        restVoucherMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, voucher.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(voucher))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Voucher in the database
@@ -1445,15 +1287,205 @@ public class VoucherResourceIT {
 
     @Test
     @Transactional
-    public void deleteVoucher() throws Exception {
+    void putWithIdMismatchVoucher() throws Exception {
+        int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+        voucher.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restVoucherMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(voucher))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Voucher in the database
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithMissingIdPathParamVoucher() throws Exception {
+        int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+        voucher.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restVoucherMockMvc
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(voucher)))
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Voucher in the database
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateVoucherWithPatch() throws Exception {
         // Initialize the database
-        voucherService.save(voucher);
+        voucherRepository.saveAndFlush(voucher);
+
+        int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+
+        // Update the voucher using partial update
+        Voucher partialUpdatedVoucher = new Voucher();
+        partialUpdatedVoucher.setId(voucher.getId());
+
+        partialUpdatedVoucher
+            .customerId(UPDATED_CUSTOMER_ID)
+            .vat(UPDATED_VAT)
+            .disountAmount(UPDATED_DISOUNT_AMOUNT)
+            .status(UPDATED_STATUS)
+            .totalPayableAmount(UPDATED_TOTAL_PAYABLE_AMOUNT)
+            .boxNumber(UPDATED_BOX_NUMBER);
+
+        restVoucherMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedVoucher.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedVoucher))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Voucher in the database
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).hasSize(databaseSizeBeforeUpdate);
+        Voucher testVoucher = voucherList.get(voucherList.size() - 1);
+        assertThat(testVoucher.getVoucherNo()).isEqualTo(DEFAULT_VOUCHER_NO);
+        assertThat(testVoucher.getCustomerId()).isEqualTo(UPDATED_CUSTOMER_ID);
+        assertThat(testVoucher.getCalculatedTotalAmount()).isEqualByComparingTo(DEFAULT_CALCULATED_TOTAL_AMOUNT);
+        assertThat(testVoucher.getVat()).isEqualByComparingTo(UPDATED_VAT);
+        assertThat(testVoucher.getDisountAmount()).isEqualByComparingTo(UPDATED_DISOUNT_AMOUNT);
+        assertThat(testVoucher.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testVoucher.getTotalPayableAmount()).isEqualByComparingTo(UPDATED_TOTAL_PAYABLE_AMOUNT);
+        assertThat(testVoucher.getDateCreated()).isEqualTo(DEFAULT_DATE_CREATED);
+        assertThat(testVoucher.getAddedBy()).isEqualTo(DEFAULT_ADDED_BY);
+        assertThat(testVoucher.getBoxNumber()).isEqualTo(UPDATED_BOX_NUMBER);
+        assertThat(testVoucher.getDeliveryDate()).isEqualTo(DEFAULT_DELIVERY_DATE);
+        assertThat(testVoucher.getDeliveryStatus()).isEqualTo(DEFAULT_DELIVERY_STATUS);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateVoucherWithPatch() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
+
+        int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+
+        // Update the voucher using partial update
+        Voucher partialUpdatedVoucher = new Voucher();
+        partialUpdatedVoucher.setId(voucher.getId());
+
+        partialUpdatedVoucher
+            .voucherNo(UPDATED_VOUCHER_NO)
+            .customerId(UPDATED_CUSTOMER_ID)
+            .calculatedTotalAmount(UPDATED_CALCULATED_TOTAL_AMOUNT)
+            .vat(UPDATED_VAT)
+            .disountAmount(UPDATED_DISOUNT_AMOUNT)
+            .status(UPDATED_STATUS)
+            .totalPayableAmount(UPDATED_TOTAL_PAYABLE_AMOUNT)
+            .dateCreated(UPDATED_DATE_CREATED)
+            .addedBy(UPDATED_ADDED_BY)
+            .boxNumber(UPDATED_BOX_NUMBER)
+            .deliveryDate(UPDATED_DELIVERY_DATE)
+            .deliveryStatus(UPDATED_DELIVERY_STATUS);
+
+        restVoucherMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedVoucher.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedVoucher))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Voucher in the database
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).hasSize(databaseSizeBeforeUpdate);
+        Voucher testVoucher = voucherList.get(voucherList.size() - 1);
+        assertThat(testVoucher.getVoucherNo()).isEqualTo(UPDATED_VOUCHER_NO);
+        assertThat(testVoucher.getCustomerId()).isEqualTo(UPDATED_CUSTOMER_ID);
+        assertThat(testVoucher.getCalculatedTotalAmount()).isEqualByComparingTo(UPDATED_CALCULATED_TOTAL_AMOUNT);
+        assertThat(testVoucher.getVat()).isEqualByComparingTo(UPDATED_VAT);
+        assertThat(testVoucher.getDisountAmount()).isEqualByComparingTo(UPDATED_DISOUNT_AMOUNT);
+        assertThat(testVoucher.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testVoucher.getTotalPayableAmount()).isEqualByComparingTo(UPDATED_TOTAL_PAYABLE_AMOUNT);
+        assertThat(testVoucher.getDateCreated()).isEqualTo(UPDATED_DATE_CREATED);
+        assertThat(testVoucher.getAddedBy()).isEqualTo(UPDATED_ADDED_BY);
+        assertThat(testVoucher.getBoxNumber()).isEqualTo(UPDATED_BOX_NUMBER);
+        assertThat(testVoucher.getDeliveryDate()).isEqualTo(UPDATED_DELIVERY_DATE);
+        assertThat(testVoucher.getDeliveryStatus()).isEqualTo(UPDATED_DELIVERY_STATUS);
+    }
+
+    @Test
+    @Transactional
+    void patchNonExistingVoucher() throws Exception {
+        int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+        voucher.setId(count.incrementAndGet());
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restVoucherMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, voucher.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(voucher))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Voucher in the database
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithIdMismatchVoucher() throws Exception {
+        int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+        voucher.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restVoucherMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(voucher))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Voucher in the database
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithMissingIdPathParamVoucher() throws Exception {
+        int databaseSizeBeforeUpdate = voucherRepository.findAll().size();
+        voucher.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restVoucherMockMvc
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(voucher)))
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Voucher in the database
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void deleteVoucher() throws Exception {
+        // Initialize the database
+        voucherRepository.saveAndFlush(voucher);
 
         int databaseSizeBeforeDelete = voucherRepository.findAll().size();
 
         // Delete the voucher
-        restVoucherMockMvc.perform(delete("/api/vouchers/{id}", voucher.getId())
-            .accept(MediaType.APPLICATION_JSON))
+        restVoucherMockMvc
+            .perform(delete(ENTITY_API_URL_ID, voucher.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

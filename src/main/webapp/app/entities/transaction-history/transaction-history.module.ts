@@ -1,21 +1,18 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { TransactionHistoryComponent } from './transaction-history.component';
-import { TransactionHistoryDetailComponent } from './transaction-history-detail.component';
-import { TransactionHistoryUpdateComponent } from './transaction-history-update.component';
-import { TransactionHistoryDeleteDialogComponent } from './transaction-history-delete-dialog.component';
-import { transactionHistoryRoute } from './transaction-history.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { TransactionHistoryComponent } from './list/transaction-history.component';
+import { TransactionHistoryDetailComponent } from './detail/transaction-history-detail.component';
+import { TransactionHistoryUpdateComponent } from './update/transaction-history-update.component';
+import { TransactionHistoryDeleteDialogComponent } from './delete/transaction-history-delete-dialog.component';
+import { TransactionHistoryRoutingModule } from './route/transaction-history-routing.module';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(transactionHistoryRoute)],
+  imports: [SharedModule, TransactionHistoryRoutingModule],
   declarations: [
     TransactionHistoryComponent,
     TransactionHistoryDetailComponent,
     TransactionHistoryUpdateComponent,
     TransactionHistoryDeleteDialogComponent,
   ],
-  entryComponents: [TransactionHistoryDeleteDialogComponent],
 })
-export class AurumTransactionHistoryModule {}
+export class TransactionHistoryModule {}

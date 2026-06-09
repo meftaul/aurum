@@ -1,13 +1,14 @@
 package com.meftaul.aurum.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.meftaul.aurum.web.rest.TestUtil;
 
-public class VoucherTest {
+import com.meftaul.aurum.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class VoucherTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Voucher.class);
         Voucher voucher1 = new Voucher();
         voucher1.setId(1L);

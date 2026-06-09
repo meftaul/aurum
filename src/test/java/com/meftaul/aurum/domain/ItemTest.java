@@ -1,13 +1,14 @@
 package com.meftaul.aurum.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.meftaul.aurum.web.rest.TestUtil;
 
-public class ItemTest {
+import com.meftaul.aurum.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class ItemTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Item.class);
         Item item1 = new Item();
         item1.setId(1L);

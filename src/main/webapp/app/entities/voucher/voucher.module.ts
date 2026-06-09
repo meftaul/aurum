@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { VoucherComponent } from './voucher.component';
-import { VoucherDetailComponent } from './voucher-detail.component';
-import { VoucherUpdateComponent } from './voucher-update.component';
-import { VoucherDeleteDialogComponent } from './voucher-delete-dialog.component';
-import { voucherRoute } from './voucher.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { VoucherComponent } from './list/voucher.component';
+import { VoucherDetailComponent } from './detail/voucher-detail.component';
+import { VoucherUpdateComponent } from './update/voucher-update.component';
+import { VoucherDeleteDialogComponent } from './delete/voucher-delete-dialog.component';
+import { VoucherRoutingModule } from './route/voucher-routing.module';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(voucherRoute)],
+  imports: [SharedModule, VoucherRoutingModule],
   declarations: [VoucherComponent, VoucherDetailComponent, VoucherUpdateComponent, VoucherDeleteDialogComponent],
-  entryComponents: [VoucherDeleteDialogComponent],
 })
-export class AurumVoucherModule {}
+export class VoucherModule {}

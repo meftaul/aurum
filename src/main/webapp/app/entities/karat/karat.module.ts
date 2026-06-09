@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { KaratComponent } from './karat.component';
-import { KaratDetailComponent } from './karat-detail.component';
-import { KaratUpdateComponent } from './karat-update.component';
-import { KaratDeleteDialogComponent } from './karat-delete-dialog.component';
-import { karatRoute } from './karat.route';
+import { SharedModule } from 'app/shared/shared.module';
+import { KaratComponent } from './list/karat.component';
+import { KaratDetailComponent } from './detail/karat-detail.component';
+import { KaratUpdateComponent } from './update/karat-update.component';
+import { KaratDeleteDialogComponent } from './delete/karat-delete-dialog.component';
+import { KaratRoutingModule } from './route/karat-routing.module';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(karatRoute)],
+  imports: [SharedModule, KaratRoutingModule],
   declarations: [KaratComponent, KaratDetailComponent, KaratUpdateComponent, KaratDeleteDialogComponent],
-  entryComponents: [KaratDeleteDialogComponent],
 })
-export class AurumKaratModule {}
+export class KaratModule {}
