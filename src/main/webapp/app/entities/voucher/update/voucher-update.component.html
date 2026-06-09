@@ -1,0 +1,182 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-voucher-heading" data-cy="VoucherCreateUpdateHeading">Create or edit a Voucher</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_voucherNo">Voucher No</label>
+          <input type="text" class="form-control" name="voucherNo" id="field_voucherNo" data-cy="voucherNo" formControlName="voucherNo" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_customerId">Customer Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="customerId"
+            id="field_customerId"
+            data-cy="customerId"
+            formControlName="customerId"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_calculatedTotalAmount">Calculated Total Amount</label>
+          <input
+            type="number"
+            class="form-control"
+            name="calculatedTotalAmount"
+            id="field_calculatedTotalAmount"
+            data-cy="calculatedTotalAmount"
+            formControlName="calculatedTotalAmount"
+          />
+          <div
+            *ngIf="
+              editForm.get('calculatedTotalAmount')!.invalid &&
+              (editForm.get('calculatedTotalAmount')!.dirty || editForm.get('calculatedTotalAmount')!.touched)
+            "
+          >
+            <small class="form-text text-danger" *ngIf="editForm.get('calculatedTotalAmount')?.errors?.required">
+              This field is required.
+            </small>
+            <small class="form-text text-danger" [hidden]="!editForm.get('calculatedTotalAmount')?.errors?.number">
+              This field should be a number.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_vat">Vat</label>
+          <input type="number" class="form-control" name="vat" id="field_vat" data-cy="vat" formControlName="vat" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_disountAmount">Disount Amount</label>
+          <input
+            type="number"
+            class="form-control"
+            name="disountAmount"
+            id="field_disountAmount"
+            data-cy="disountAmount"
+            formControlName="disountAmount"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null"></option>
+            <option *ngFor="let voucherStatus of voucherStatusValues" [value]="voucherStatus">voucherStatus</option>
+          </select>
+          <div *ngIf="editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('status')?.errors?.required"> This field is required. </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_totalPayableAmount">Total Payable Amount</label>
+          <input
+            type="number"
+            class="form-control"
+            name="totalPayableAmount"
+            id="field_totalPayableAmount"
+            data-cy="totalPayableAmount"
+            formControlName="totalPayableAmount"
+          />
+          <div
+            *ngIf="
+              editForm.get('totalPayableAmount')!.invalid &&
+              (editForm.get('totalPayableAmount')!.dirty || editForm.get('totalPayableAmount')!.touched)
+            "
+          >
+            <small class="form-text text-danger" *ngIf="editForm.get('totalPayableAmount')?.errors?.required">
+              This field is required.
+            </small>
+            <small class="form-text text-danger" [hidden]="!editForm.get('totalPayableAmount')?.errors?.number">
+              This field should be a number.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_dateCreated">Date Created</label>
+          <div class="d-flex">
+            <input
+              id="field_dateCreated"
+              data-cy="dateCreated"
+              type="datetime-local"
+              class="form-control"
+              name="dateCreated"
+              formControlName="dateCreated"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_addedBy">Added By</label>
+          <input type="text" class="form-control" name="addedBy" id="field_addedBy" data-cy="addedBy" formControlName="addedBy" />
+          <div *ngIf="editForm.get('addedBy')!.invalid && (editForm.get('addedBy')!.dirty || editForm.get('addedBy')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('addedBy')?.errors?.required"> This field is required. </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_boxNumber">Box Number</label>
+          <input type="text" class="form-control" name="boxNumber" id="field_boxNumber" data-cy="boxNumber" formControlName="boxNumber" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_deliveryDate">Delivery Date</label>
+          <div class="d-flex">
+            <input
+              id="field_deliveryDate"
+              data-cy="deliveryDate"
+              type="datetime-local"
+              class="form-control"
+              name="deliveryDate"
+              formControlName="deliveryDate"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_deliveryStatus">Delivery Status</label>
+          <input
+            type="checkbox"
+            class="form-check"
+            name="deliveryStatus"
+            id="field_deliveryStatus"
+            data-cy="deliveryStatus"
+            formControlName="deliveryStatus"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

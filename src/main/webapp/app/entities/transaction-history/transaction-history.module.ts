@@ -1,49 +1,18 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { TransactionHistoryComponent } from './transaction-history.component';
-import { TransactionHistoryDetailComponent } from './transaction-history-detail.component';
-import { TransactionHistoryUpdateComponent } from './transaction-history-update.component';
-import {
-  TransactionHistoryDeleteDialogComponent
-} from './transaction-history-delete-dialog.component';
-import { transactionHistoryRoute } from './transaction-history.route';
-
-const ENTITY_STATES = [...transactionHistoryRoute];
+import { SharedModule } from 'app/shared/shared.module';
+import { TransactionHistoryComponent } from './list/transaction-history.component';
+import { TransactionHistoryDetailComponent } from './detail/transaction-history-detail.component';
+import { TransactionHistoryUpdateComponent } from './update/transaction-history-update.component';
+import { TransactionHistoryDeleteDialogComponent } from './delete/transaction-history-delete-dialog.component';
+import { TransactionHistoryRoutingModule } from './route/transaction-history-routing.module';
 
 @NgModule({
-  imports: [
-    AurumSharedModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatTableModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    RouterModule.forChild(ENTITY_STATES)
-  ],
+  imports: [SharedModule, TransactionHistoryRoutingModule],
   declarations: [
     TransactionHistoryComponent,
     TransactionHistoryDetailComponent,
     TransactionHistoryUpdateComponent,
-    TransactionHistoryDeleteDialogComponent
+    TransactionHistoryDeleteDialogComponent,
   ],
-  entryComponents: [TransactionHistoryDeleteDialogComponent]
 })
-export class AurumTransactionHistoryModule {}
+export class TransactionHistoryModule {}

@@ -1,12 +1,16 @@
 package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.domain.Karat;
+import com.meftaul.aurum.repository.KaratRepository;
 import com.meftaul.aurum.service.KaratService;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,15 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.meftaul.aurum.domain.Karat}.
@@ -40,8 +41,11 @@ public class KaratResource {
 
     private final KaratService karatService;
 
-    public KaratResource(KaratService karatService) {
+    private final KaratRepository karatRepository;
+
+    public KaratResource(KaratService karatService, KaratRepository karatRepository) {
         this.karatService = karatService;
+        this.karatRepository = karatRepository;
     }
 
     /**
@@ -58,30 +62,78 @@ public class KaratResource {
             throw new BadRequestAlertException("A new karat cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Karat result = karatService.save(karat);
-        return ResponseEntity.created(new URI("/api/karats/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/karats/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /karats} : Updates an existing karat.
+     * {@code PUT  /karats/:id} : Updates an existing karat.
      *
+     * @param id the id of the karat to save.
      * @param karat the karat to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated karat,
      * or with status {@code 400 (Bad Request)} if the karat is not valid,
      * or with status {@code 500 (Internal Server Error)} if the karat couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/karats")
-    public ResponseEntity<Karat> updateKarat(@Valid @RequestBody Karat karat) throws URISyntaxException {
-        log.debug("REST request to update Karat : {}", karat);
+    @PutMapping("/karats/{id}")
+    public ResponseEntity<Karat> updateKarat(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Karat karat)
+        throws URISyntaxException {
+        log.debug("REST request to update Karat : {}, {}", id, karat);
         if (karat.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Karat result = karatService.save(karat);
-        return ResponseEntity.ok()
+        if (!Objects.equals(id, karat.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!karatRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Karat result = karatService.update(karat);
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, karat.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /karats/:id} : Partial updates given fields of an existing karat, field will ignore if it is null
+     *
+     * @param id the id of the karat to save.
+     * @param karat the karat to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated karat,
+     * or with status {@code 400 (Bad Request)} if the karat is not valid,
+     * or with status {@code 404 (Not Found)} if the karat is not found,
+     * or with status {@code 500 (Internal Server Error)} if the karat couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/karats/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Karat> partialUpdateKarat(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody Karat karat
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Karat partially : {}, {}", id, karat);
+        if (karat.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, karat.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!karatRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<Karat> result = karatService.partialUpdate(karat);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, karat.getId().toString())
+        );
     }
 
     /**
@@ -91,7 +143,7 @@ public class KaratResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of karats in body.
      */
     @GetMapping("/karats")
-    public ResponseEntity<List<Karat>> getAllKarats(Pageable pageable) {
+    public ResponseEntity<List<Karat>> getAllKarats(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Karats");
         Page<Karat> page = karatService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -121,6 +173,9 @@ public class KaratResource {
     public ResponseEntity<Void> deleteKarat(@PathVariable Long id) {
         log.debug("REST request to delete Karat : {}", id);
         karatService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

@@ -16,6 +16,5 @@ public final class ErrorConstants {
     public static final URI EMAIL_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/email-not-found");
     public static final URI VOUCHER_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/voucher-not-found");
 
-    private ErrorConstants() {
-    }
+    private ErrorConstants() {}
 }

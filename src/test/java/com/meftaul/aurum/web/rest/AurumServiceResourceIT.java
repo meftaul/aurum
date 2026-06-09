@@ -1,39 +1,48 @@
 package com.meftaul.aurum.web.rest;
 
-import com.meftaul.aurum.AurumApp;
+import static com.meftaul.aurum.web.rest.TestUtil.sameNumber;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.meftaul.aurum.IntegrationTest;
 import com.meftaul.aurum.domain.AurumService;
 import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.domain.enumeration.Alloy;
 import com.meftaul.aurum.repository.AurumServiceRepository;
 import com.meftaul.aurum.service.AurumServiceService;
-import com.meftaul.aurum.service.dto.AurumServiceCriteria;
-import com.meftaul.aurum.service.AurumServiceQueryService;
-
+import com.meftaul.aurum.service.criteria.AurumServiceCriteria;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import com.meftaul.aurum.domain.enumeration.Alloy;
 /**
  * Integration tests for the {@link AurumServiceResource} REST controller.
  */
-@SpringBootTest(classes = AurumApp.class)
+@IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
-public class AurumServiceResourceIT {
+class AurumServiceResourceIT {
 
     private static final String DEFAULT_SERVICE_TYPE = "AAAAAAAAAA";
     private static final String UPDATED_SERVICE_TYPE = "BBBBBBBBBB";
@@ -87,14 +96,20 @@ public class AurumServiceResourceIT {
     private static final String DEFAULT_WEIGHT_OF_FREE_CHECK = "AAAAAAAAAA";
     private static final String UPDATED_WEIGHT_OF_FREE_CHECK = "BBBBBBBBBB";
 
+    private static final String ENTITY_API_URL = "/api/aurum-services";
+    private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
     @Autowired
     private AurumServiceRepository aurumServiceRepository;
 
-    @Autowired
-    private AurumServiceService aurumServiceService;
+    @Mock
+    private AurumServiceRepository aurumServiceRepositoryMock;
 
-    @Autowired
-    private AurumServiceQueryService aurumServiceQueryService;
+    @Mock
+    private AurumServiceService aurumServiceServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -129,6 +144,7 @@ public class AurumServiceResourceIT {
             .weightOfFreeCheck(DEFAULT_WEIGHT_OF_FREE_CHECK);
         return aurumService;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -162,12 +178,11 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void createAurumService() throws Exception {
+    void createAurumService() throws Exception {
         int databaseSizeBeforeCreate = aurumServiceRepository.findAll().size();
         // Create the AurumService
-        restAurumServiceMockMvc.perform(post("/api/aurum-services")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(aurumService)))
+        restAurumServiceMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(aurumService)))
             .andExpect(status().isCreated());
 
         // Validate the AurumService in the database
@@ -177,32 +192,31 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getServiceType()).isEqualTo(DEFAULT_SERVICE_TYPE);
         assertThat(testAurumService.getItemName()).isEqualTo(DEFAULT_ITEM_NAME);
         assertThat(testAurumService.getQuantity()).isEqualTo(DEFAULT_QUANTITY);
-        assertThat(testAurumService.getWeight()).isEqualTo(DEFAULT_WEIGHT);
-        assertThat(testAurumService.getRate()).isEqualTo(DEFAULT_RATE);
-        assertThat(testAurumService.getAmount()).isEqualTo(DEFAULT_AMOUNT);
+        assertThat(testAurumService.getWeight()).isEqualByComparingTo(DEFAULT_WEIGHT);
+        assertThat(testAurumService.getRate()).isEqualByComparingTo(DEFAULT_RATE);
+        assertThat(testAurumService.getAmount()).isEqualByComparingTo(DEFAULT_AMOUNT);
         assertThat(testAurumService.getServiceName()).isEqualTo(DEFAULT_SERVICE_NAME);
         assertThat(testAurumService.getKaratType()).isEqualTo(DEFAULT_KARAT_TYPE);
         assertThat(testAurumService.getExpectedKaratType()).isEqualTo(DEFAULT_EXPECTED_KARAT_TYPE);
         assertThat(testAurumService.getAddedAlloy()).isEqualTo(DEFAULT_ADDED_ALLOY);
-        assertThat(testAurumService.getAlloyQuantity()).isEqualTo(DEFAULT_ALLOY_QUANTITY);
-        assertThat(testAurumService.getServiceCharge()).isEqualTo(DEFAULT_SERVICE_CHARGE);
-        assertThat(testAurumService.getFreeCheck()).isEqualTo(DEFAULT_FREE_CHECK);
+        assertThat(testAurumService.getAlloyQuantity()).isEqualByComparingTo(DEFAULT_ALLOY_QUANTITY);
+        assertThat(testAurumService.getServiceCharge()).isEqualByComparingTo(DEFAULT_SERVICE_CHARGE);
+        assertThat(testAurumService.getFreeCheck()).isEqualByComparingTo(DEFAULT_FREE_CHECK);
         assertThat(testAurumService.getHallMarkedText()).isEqualTo(DEFAULT_HALL_MARKED_TEXT);
         assertThat(testAurumService.getWeightOfFreeCheck()).isEqualTo(DEFAULT_WEIGHT_OF_FREE_CHECK);
     }
 
     @Test
     @Transactional
-    public void createAurumServiceWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = aurumServiceRepository.findAll().size();
-
+    void createAurumServiceWithExistingId() throws Exception {
         // Create the AurumService with an existing ID
         aurumService.setId(1L);
 
+        int databaseSizeBeforeCreate = aurumServiceRepository.findAll().size();
+
         // An entity with an existing ID cannot be created, so this API call must fail
-        restAurumServiceMockMvc.perform(post("/api/aurum-services")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(aurumService)))
+        restAurumServiceMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(aurumService)))
             .andExpect(status().isBadRequest());
 
         // Validate the AurumService in the database
@@ -210,67 +224,84 @@ public class AurumServiceResourceIT {
         assertThat(aurumServiceList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServices() throws Exception {
+    void getAllAurumServices() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
         // Get all the aurumServiceList
-        restAurumServiceMockMvc.perform(get("/api/aurum-services?sort=id,desc"))
+        restAurumServiceMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(aurumService.getId().intValue())))
             .andExpect(jsonPath("$.[*].serviceType").value(hasItem(DEFAULT_SERVICE_TYPE)))
             .andExpect(jsonPath("$.[*].itemName").value(hasItem(DEFAULT_ITEM_NAME)))
             .andExpect(jsonPath("$.[*].quantity").value(hasItem(DEFAULT_QUANTITY)))
-            .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.intValue())))
-            .andExpect(jsonPath("$.[*].rate").value(hasItem(DEFAULT_RATE.intValue())))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].weight").value(hasItem(sameNumber(DEFAULT_WEIGHT))))
+            .andExpect(jsonPath("$.[*].rate").value(hasItem(sameNumber(DEFAULT_RATE))))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(sameNumber(DEFAULT_AMOUNT))))
             .andExpect(jsonPath("$.[*].serviceName").value(hasItem(DEFAULT_SERVICE_NAME)))
             .andExpect(jsonPath("$.[*].karatType").value(hasItem(DEFAULT_KARAT_TYPE)))
             .andExpect(jsonPath("$.[*].expectedKaratType").value(hasItem(DEFAULT_EXPECTED_KARAT_TYPE)))
             .andExpect(jsonPath("$.[*].addedAlloy").value(hasItem(DEFAULT_ADDED_ALLOY.toString())))
-            .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(DEFAULT_ALLOY_QUANTITY.intValue())))
-            .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(DEFAULT_SERVICE_CHARGE.intValue())))
-            .andExpect(jsonPath("$.[*].freeCheck").value(hasItem(DEFAULT_FREE_CHECK.intValue())))
+            .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(sameNumber(DEFAULT_ALLOY_QUANTITY))))
+            .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(sameNumber(DEFAULT_SERVICE_CHARGE))))
+            .andExpect(jsonPath("$.[*].freeCheck").value(hasItem(sameNumber(DEFAULT_FREE_CHECK))))
             .andExpect(jsonPath("$.[*].hallMarkedText").value(hasItem(DEFAULT_HALL_MARKED_TEXT)))
             .andExpect(jsonPath("$.[*].weightOfFreeCheck").value(hasItem(DEFAULT_WEIGHT_OF_FREE_CHECK)));
     }
-    
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllAurumServicesWithEagerRelationshipsIsEnabled() throws Exception {
+        when(aurumServiceServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restAurumServiceMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(aurumServiceServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllAurumServicesWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(aurumServiceServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restAurumServiceMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(aurumServiceRepositoryMock, times(1)).findAll(any(Pageable.class));
+    }
+
     @Test
     @Transactional
-    public void getAurumService() throws Exception {
+    void getAurumService() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
         // Get the aurumService
-        restAurumServiceMockMvc.perform(get("/api/aurum-services/{id}", aurumService.getId()))
+        restAurumServiceMockMvc
+            .perform(get(ENTITY_API_URL_ID, aurumService.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(aurumService.getId().intValue()))
             .andExpect(jsonPath("$.serviceType").value(DEFAULT_SERVICE_TYPE))
             .andExpect(jsonPath("$.itemName").value(DEFAULT_ITEM_NAME))
             .andExpect(jsonPath("$.quantity").value(DEFAULT_QUANTITY))
-            .andExpect(jsonPath("$.weight").value(DEFAULT_WEIGHT.intValue()))
-            .andExpect(jsonPath("$.rate").value(DEFAULT_RATE.intValue()))
-            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.intValue()))
+            .andExpect(jsonPath("$.weight").value(sameNumber(DEFAULT_WEIGHT)))
+            .andExpect(jsonPath("$.rate").value(sameNumber(DEFAULT_RATE)))
+            .andExpect(jsonPath("$.amount").value(sameNumber(DEFAULT_AMOUNT)))
             .andExpect(jsonPath("$.serviceName").value(DEFAULT_SERVICE_NAME))
             .andExpect(jsonPath("$.karatType").value(DEFAULT_KARAT_TYPE))
             .andExpect(jsonPath("$.expectedKaratType").value(DEFAULT_EXPECTED_KARAT_TYPE))
             .andExpect(jsonPath("$.addedAlloy").value(DEFAULT_ADDED_ALLOY.toString()))
-            .andExpect(jsonPath("$.alloyQuantity").value(DEFAULT_ALLOY_QUANTITY.intValue()))
-            .andExpect(jsonPath("$.serviceCharge").value(DEFAULT_SERVICE_CHARGE.intValue()))
-            .andExpect(jsonPath("$.freeCheck").value(DEFAULT_FREE_CHECK.intValue()))
+            .andExpect(jsonPath("$.alloyQuantity").value(sameNumber(DEFAULT_ALLOY_QUANTITY)))
+            .andExpect(jsonPath("$.serviceCharge").value(sameNumber(DEFAULT_SERVICE_CHARGE)))
+            .andExpect(jsonPath("$.freeCheck").value(sameNumber(DEFAULT_FREE_CHECK)))
             .andExpect(jsonPath("$.hallMarkedText").value(DEFAULT_HALL_MARKED_TEXT))
             .andExpect(jsonPath("$.weightOfFreeCheck").value(DEFAULT_WEIGHT_OF_FREE_CHECK));
     }
 
-
     @Test
     @Transactional
-    public void getAurumServicesByIdFiltering() throws Exception {
+    void getAurumServicesByIdFiltering() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -286,10 +317,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldNotBeFound("id.lessThan=" + id);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceTypeIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByServiceTypeIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -302,20 +332,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceTypeIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where serviceType not equals to DEFAULT_SERVICE_TYPE
-        defaultAurumServiceShouldNotBeFound("serviceType.notEquals=" + DEFAULT_SERVICE_TYPE);
-
-        // Get all the aurumServiceList where serviceType not equals to UPDATED_SERVICE_TYPE
-        defaultAurumServiceShouldBeFound("serviceType.notEquals=" + UPDATED_SERVICE_TYPE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByServiceTypeIsInShouldWork() throws Exception {
+    void getAllAurumServicesByServiceTypeIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -328,7 +345,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceTypeIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByServiceTypeIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -338,9 +355,10 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where serviceType is null
         defaultAurumServiceShouldNotBeFound("serviceType.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllAurumServicesByServiceTypeContainsSomething() throws Exception {
+    void getAllAurumServicesByServiceTypeContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -353,7 +371,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceTypeNotContainsSomething() throws Exception {
+    void getAllAurumServicesByServiceTypeNotContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -364,10 +382,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("serviceType.doesNotContain=" + UPDATED_SERVICE_TYPE);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByItemNameIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByItemNameIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -380,20 +397,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByItemNameIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where itemName not equals to DEFAULT_ITEM_NAME
-        defaultAurumServiceShouldNotBeFound("itemName.notEquals=" + DEFAULT_ITEM_NAME);
-
-        // Get all the aurumServiceList where itemName not equals to UPDATED_ITEM_NAME
-        defaultAurumServiceShouldBeFound("itemName.notEquals=" + UPDATED_ITEM_NAME);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByItemNameIsInShouldWork() throws Exception {
+    void getAllAurumServicesByItemNameIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -406,7 +410,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByItemNameIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByItemNameIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -416,9 +420,10 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where itemName is null
         defaultAurumServiceShouldNotBeFound("itemName.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllAurumServicesByItemNameContainsSomething() throws Exception {
+    void getAllAurumServicesByItemNameContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -431,7 +436,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByItemNameNotContainsSomething() throws Exception {
+    void getAllAurumServicesByItemNameNotContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -442,10 +447,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("itemName.doesNotContain=" + UPDATED_ITEM_NAME);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByQuantityIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByQuantityIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -458,20 +462,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByQuantityIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where quantity not equals to DEFAULT_QUANTITY
-        defaultAurumServiceShouldNotBeFound("quantity.notEquals=" + DEFAULT_QUANTITY);
-
-        // Get all the aurumServiceList where quantity not equals to UPDATED_QUANTITY
-        defaultAurumServiceShouldBeFound("quantity.notEquals=" + UPDATED_QUANTITY);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByQuantityIsInShouldWork() throws Exception {
+    void getAllAurumServicesByQuantityIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -484,7 +475,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByQuantityIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByQuantityIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -497,7 +488,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByQuantityIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByQuantityIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -510,7 +501,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByQuantityIsLessThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByQuantityIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -523,7 +514,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByQuantityIsLessThanSomething() throws Exception {
+    void getAllAurumServicesByQuantityIsLessThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -536,7 +527,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByQuantityIsGreaterThanSomething() throws Exception {
+    void getAllAurumServicesByQuantityIsGreaterThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -547,10 +538,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("quantity.greaterThan=" + SMALLER_QUANTITY);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByWeightIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -563,20 +553,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where weight not equals to DEFAULT_WEIGHT
-        defaultAurumServiceShouldNotBeFound("weight.notEquals=" + DEFAULT_WEIGHT);
-
-        // Get all the aurumServiceList where weight not equals to UPDATED_WEIGHT
-        defaultAurumServiceShouldBeFound("weight.notEquals=" + UPDATED_WEIGHT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByWeightIsInShouldWork() throws Exception {
+    void getAllAurumServicesByWeightIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -589,7 +566,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByWeightIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -602,7 +579,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByWeightIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -615,7 +592,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightIsLessThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByWeightIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -628,7 +605,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightIsLessThanSomething() throws Exception {
+    void getAllAurumServicesByWeightIsLessThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -641,7 +618,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightIsGreaterThanSomething() throws Exception {
+    void getAllAurumServicesByWeightIsGreaterThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -652,10 +629,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("weight.greaterThan=" + SMALLER_WEIGHT);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByRateIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByRateIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -668,20 +644,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByRateIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where rate not equals to DEFAULT_RATE
-        defaultAurumServiceShouldNotBeFound("rate.notEquals=" + DEFAULT_RATE);
-
-        // Get all the aurumServiceList where rate not equals to UPDATED_RATE
-        defaultAurumServiceShouldBeFound("rate.notEquals=" + UPDATED_RATE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByRateIsInShouldWork() throws Exception {
+    void getAllAurumServicesByRateIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -694,7 +657,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByRateIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByRateIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -707,7 +670,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByRateIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByRateIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -720,7 +683,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByRateIsLessThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByRateIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -733,7 +696,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByRateIsLessThanSomething() throws Exception {
+    void getAllAurumServicesByRateIsLessThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -746,7 +709,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByRateIsGreaterThanSomething() throws Exception {
+    void getAllAurumServicesByRateIsGreaterThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -757,10 +720,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("rate.greaterThan=" + SMALLER_RATE);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByAmountIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByAmountIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -773,20 +735,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAmountIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where amount not equals to DEFAULT_AMOUNT
-        defaultAurumServiceShouldNotBeFound("amount.notEquals=" + DEFAULT_AMOUNT);
-
-        // Get all the aurumServiceList where amount not equals to UPDATED_AMOUNT
-        defaultAurumServiceShouldBeFound("amount.notEquals=" + UPDATED_AMOUNT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByAmountIsInShouldWork() throws Exception {
+    void getAllAurumServicesByAmountIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -799,7 +748,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAmountIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByAmountIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -812,7 +761,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAmountIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByAmountIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -825,7 +774,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAmountIsLessThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByAmountIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -838,7 +787,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAmountIsLessThanSomething() throws Exception {
+    void getAllAurumServicesByAmountIsLessThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -851,7 +800,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAmountIsGreaterThanSomething() throws Exception {
+    void getAllAurumServicesByAmountIsGreaterThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -862,10 +811,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("amount.greaterThan=" + SMALLER_AMOUNT);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceNameIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByServiceNameIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -878,20 +826,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceNameIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where serviceName not equals to DEFAULT_SERVICE_NAME
-        defaultAurumServiceShouldNotBeFound("serviceName.notEquals=" + DEFAULT_SERVICE_NAME);
-
-        // Get all the aurumServiceList where serviceName not equals to UPDATED_SERVICE_NAME
-        defaultAurumServiceShouldBeFound("serviceName.notEquals=" + UPDATED_SERVICE_NAME);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByServiceNameIsInShouldWork() throws Exception {
+    void getAllAurumServicesByServiceNameIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -904,7 +839,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceNameIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByServiceNameIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -914,9 +849,10 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where serviceName is null
         defaultAurumServiceShouldNotBeFound("serviceName.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllAurumServicesByServiceNameContainsSomething() throws Exception {
+    void getAllAurumServicesByServiceNameContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -929,7 +865,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceNameNotContainsSomething() throws Exception {
+    void getAllAurumServicesByServiceNameNotContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -940,10 +876,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("serviceName.doesNotContain=" + UPDATED_SERVICE_NAME);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByKaratTypeIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByKaratTypeIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -956,20 +891,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByKaratTypeIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where karatType not equals to DEFAULT_KARAT_TYPE
-        defaultAurumServiceShouldNotBeFound("karatType.notEquals=" + DEFAULT_KARAT_TYPE);
-
-        // Get all the aurumServiceList where karatType not equals to UPDATED_KARAT_TYPE
-        defaultAurumServiceShouldBeFound("karatType.notEquals=" + UPDATED_KARAT_TYPE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByKaratTypeIsInShouldWork() throws Exception {
+    void getAllAurumServicesByKaratTypeIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -982,7 +904,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByKaratTypeIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByKaratTypeIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -992,9 +914,10 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where karatType is null
         defaultAurumServiceShouldNotBeFound("karatType.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllAurumServicesByKaratTypeContainsSomething() throws Exception {
+    void getAllAurumServicesByKaratTypeContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1007,7 +930,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByKaratTypeNotContainsSomething() throws Exception {
+    void getAllAurumServicesByKaratTypeNotContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1018,10 +941,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("karatType.doesNotContain=" + UPDATED_KARAT_TYPE);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByExpectedKaratTypeIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByExpectedKaratTypeIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1034,20 +956,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByExpectedKaratTypeIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where expectedKaratType not equals to DEFAULT_EXPECTED_KARAT_TYPE
-        defaultAurumServiceShouldNotBeFound("expectedKaratType.notEquals=" + DEFAULT_EXPECTED_KARAT_TYPE);
-
-        // Get all the aurumServiceList where expectedKaratType not equals to UPDATED_EXPECTED_KARAT_TYPE
-        defaultAurumServiceShouldBeFound("expectedKaratType.notEquals=" + UPDATED_EXPECTED_KARAT_TYPE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByExpectedKaratTypeIsInShouldWork() throws Exception {
+    void getAllAurumServicesByExpectedKaratTypeIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1060,7 +969,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByExpectedKaratTypeIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByExpectedKaratTypeIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1070,9 +979,10 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where expectedKaratType is null
         defaultAurumServiceShouldNotBeFound("expectedKaratType.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllAurumServicesByExpectedKaratTypeContainsSomething() throws Exception {
+    void getAllAurumServicesByExpectedKaratTypeContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1085,7 +995,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByExpectedKaratTypeNotContainsSomething() throws Exception {
+    void getAllAurumServicesByExpectedKaratTypeNotContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1096,10 +1006,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("expectedKaratType.doesNotContain=" + UPDATED_EXPECTED_KARAT_TYPE);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByAddedAlloyIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByAddedAlloyIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1112,20 +1021,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAddedAlloyIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where addedAlloy not equals to DEFAULT_ADDED_ALLOY
-        defaultAurumServiceShouldNotBeFound("addedAlloy.notEquals=" + DEFAULT_ADDED_ALLOY);
-
-        // Get all the aurumServiceList where addedAlloy not equals to UPDATED_ADDED_ALLOY
-        defaultAurumServiceShouldBeFound("addedAlloy.notEquals=" + UPDATED_ADDED_ALLOY);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByAddedAlloyIsInShouldWork() throws Exception {
+    void getAllAurumServicesByAddedAlloyIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1138,7 +1034,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAddedAlloyIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByAddedAlloyIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1151,7 +1047,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByAlloyQuantityIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1164,20 +1060,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where alloyQuantity not equals to DEFAULT_ALLOY_QUANTITY
-        defaultAurumServiceShouldNotBeFound("alloyQuantity.notEquals=" + DEFAULT_ALLOY_QUANTITY);
-
-        // Get all the aurumServiceList where alloyQuantity not equals to UPDATED_ALLOY_QUANTITY
-        defaultAurumServiceShouldBeFound("alloyQuantity.notEquals=" + UPDATED_ALLOY_QUANTITY);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsInShouldWork() throws Exception {
+    void getAllAurumServicesByAlloyQuantityIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1190,7 +1073,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByAlloyQuantityIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1203,7 +1086,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByAlloyQuantityIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1216,7 +1099,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsLessThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByAlloyQuantityIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1229,7 +1112,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsLessThanSomething() throws Exception {
+    void getAllAurumServicesByAlloyQuantityIsLessThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1242,7 +1125,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByAlloyQuantityIsGreaterThanSomething() throws Exception {
+    void getAllAurumServicesByAlloyQuantityIsGreaterThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1253,10 +1136,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("alloyQuantity.greaterThan=" + SMALLER_ALLOY_QUANTITY);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceChargeIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByServiceChargeIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1269,20 +1151,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceChargeIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where serviceCharge not equals to DEFAULT_SERVICE_CHARGE
-        defaultAurumServiceShouldNotBeFound("serviceCharge.notEquals=" + DEFAULT_SERVICE_CHARGE);
-
-        // Get all the aurumServiceList where serviceCharge not equals to UPDATED_SERVICE_CHARGE
-        defaultAurumServiceShouldBeFound("serviceCharge.notEquals=" + UPDATED_SERVICE_CHARGE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByServiceChargeIsInShouldWork() throws Exception {
+    void getAllAurumServicesByServiceChargeIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1295,7 +1164,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceChargeIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByServiceChargeIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1308,7 +1177,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceChargeIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByServiceChargeIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1321,7 +1190,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceChargeIsLessThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByServiceChargeIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1334,7 +1203,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceChargeIsLessThanSomething() throws Exception {
+    void getAllAurumServicesByServiceChargeIsLessThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1347,7 +1216,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByServiceChargeIsGreaterThanSomething() throws Exception {
+    void getAllAurumServicesByServiceChargeIsGreaterThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1358,10 +1227,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("serviceCharge.greaterThan=" + SMALLER_SERVICE_CHARGE);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByFreeCheckIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByFreeCheckIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1374,20 +1242,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByFreeCheckIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where freeCheck not equals to DEFAULT_FREE_CHECK
-        defaultAurumServiceShouldNotBeFound("freeCheck.notEquals=" + DEFAULT_FREE_CHECK);
-
-        // Get all the aurumServiceList where freeCheck not equals to UPDATED_FREE_CHECK
-        defaultAurumServiceShouldBeFound("freeCheck.notEquals=" + UPDATED_FREE_CHECK);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByFreeCheckIsInShouldWork() throws Exception {
+    void getAllAurumServicesByFreeCheckIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1400,7 +1255,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByFreeCheckIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByFreeCheckIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1413,7 +1268,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByFreeCheckIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByFreeCheckIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1426,7 +1281,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByFreeCheckIsLessThanOrEqualToSomething() throws Exception {
+    void getAllAurumServicesByFreeCheckIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1439,7 +1294,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByFreeCheckIsLessThanSomething() throws Exception {
+    void getAllAurumServicesByFreeCheckIsLessThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1452,7 +1307,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByFreeCheckIsGreaterThanSomething() throws Exception {
+    void getAllAurumServicesByFreeCheckIsGreaterThanSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1463,10 +1318,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("freeCheck.greaterThan=" + SMALLER_FREE_CHECK);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByHallMarkedTextIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByHallMarkedTextIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1479,20 +1333,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByHallMarkedTextIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where hallMarkedText not equals to DEFAULT_HALL_MARKED_TEXT
-        defaultAurumServiceShouldNotBeFound("hallMarkedText.notEquals=" + DEFAULT_HALL_MARKED_TEXT);
-
-        // Get all the aurumServiceList where hallMarkedText not equals to UPDATED_HALL_MARKED_TEXT
-        defaultAurumServiceShouldBeFound("hallMarkedText.notEquals=" + UPDATED_HALL_MARKED_TEXT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByHallMarkedTextIsInShouldWork() throws Exception {
+    void getAllAurumServicesByHallMarkedTextIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1505,7 +1346,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByHallMarkedTextIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByHallMarkedTextIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1515,9 +1356,10 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where hallMarkedText is null
         defaultAurumServiceShouldNotBeFound("hallMarkedText.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllAurumServicesByHallMarkedTextContainsSomething() throws Exception {
+    void getAllAurumServicesByHallMarkedTextContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1530,7 +1372,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByHallMarkedTextNotContainsSomething() throws Exception {
+    void getAllAurumServicesByHallMarkedTextNotContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1541,10 +1383,9 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("hallMarkedText.doesNotContain=" + UPDATED_HALL_MARKED_TEXT);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightOfFreeCheckIsEqualToSomething() throws Exception {
+    void getAllAurumServicesByWeightOfFreeCheckIsEqualToSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1557,20 +1398,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightOfFreeCheckIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-
-        // Get all the aurumServiceList where weightOfFreeCheck not equals to DEFAULT_WEIGHT_OF_FREE_CHECK
-        defaultAurumServiceShouldNotBeFound("weightOfFreeCheck.notEquals=" + DEFAULT_WEIGHT_OF_FREE_CHECK);
-
-        // Get all the aurumServiceList where weightOfFreeCheck not equals to UPDATED_WEIGHT_OF_FREE_CHECK
-        defaultAurumServiceShouldBeFound("weightOfFreeCheck.notEquals=" + UPDATED_WEIGHT_OF_FREE_CHECK);
-    }
-
-    @Test
-    @Transactional
-    public void getAllAurumServicesByWeightOfFreeCheckIsInShouldWork() throws Exception {
+    void getAllAurumServicesByWeightOfFreeCheckIsInShouldWork() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1583,7 +1411,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightOfFreeCheckIsNullOrNotNull() throws Exception {
+    void getAllAurumServicesByWeightOfFreeCheckIsNullOrNotNull() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1593,9 +1421,10 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where weightOfFreeCheck is null
         defaultAurumServiceShouldNotBeFound("weightOfFreeCheck.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllAurumServicesByWeightOfFreeCheckContainsSomething() throws Exception {
+    void getAllAurumServicesByWeightOfFreeCheckContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1608,7 +1437,7 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getAllAurumServicesByWeightOfFreeCheckNotContainsSomething() throws Exception {
+    void getAllAurumServicesByWeightOfFreeCheckNotContainsSomething() throws Exception {
         // Initialize the database
         aurumServiceRepository.saveAndFlush(aurumService);
 
@@ -1619,13 +1448,16 @@ public class AurumServiceResourceIT {
         defaultAurumServiceShouldBeFound("weightOfFreeCheck.doesNotContain=" + UPDATED_WEIGHT_OF_FREE_CHECK);
     }
 
-
     @Test
     @Transactional
-    public void getAllAurumServicesByVoucherIsEqualToSomething() throws Exception {
-        // Initialize the database
-        aurumServiceRepository.saveAndFlush(aurumService);
-        Voucher voucher = VoucherResourceIT.createEntity(em);
+    void getAllAurumServicesByVoucherIsEqualToSomething() throws Exception {
+        Voucher voucher;
+        if (TestUtil.findAll(em, Voucher.class).isEmpty()) {
+            aurumServiceRepository.saveAndFlush(aurumService);
+            voucher = VoucherResourceIT.createEntity(em);
+        } else {
+            voucher = TestUtil.findAll(em, Voucher.class).get(0);
+        }
         em.persist(voucher);
         em.flush();
         aurumService.setVoucher(voucher);
@@ -1635,7 +1467,7 @@ public class AurumServiceResourceIT {
         // Get all the aurumServiceList where voucher equals to voucherId
         defaultAurumServiceShouldBeFound("voucherId.equals=" + voucherId);
 
-        // Get all the aurumServiceList where voucher equals to voucherId + 1
+        // Get all the aurumServiceList where voucher equals to (voucherId + 1)
         defaultAurumServiceShouldNotBeFound("voucherId.equals=" + (voucherId + 1));
     }
 
@@ -1643,28 +1475,30 @@ public class AurumServiceResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultAurumServiceShouldBeFound(String filter) throws Exception {
-        restAurumServiceMockMvc.perform(get("/api/aurum-services?sort=id,desc&" + filter))
+        restAurumServiceMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(aurumService.getId().intValue())))
             .andExpect(jsonPath("$.[*].serviceType").value(hasItem(DEFAULT_SERVICE_TYPE)))
             .andExpect(jsonPath("$.[*].itemName").value(hasItem(DEFAULT_ITEM_NAME)))
             .andExpect(jsonPath("$.[*].quantity").value(hasItem(DEFAULT_QUANTITY)))
-            .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.intValue())))
-            .andExpect(jsonPath("$.[*].rate").value(hasItem(DEFAULT_RATE.intValue())))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].weight").value(hasItem(sameNumber(DEFAULT_WEIGHT))))
+            .andExpect(jsonPath("$.[*].rate").value(hasItem(sameNumber(DEFAULT_RATE))))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(sameNumber(DEFAULT_AMOUNT))))
             .andExpect(jsonPath("$.[*].serviceName").value(hasItem(DEFAULT_SERVICE_NAME)))
             .andExpect(jsonPath("$.[*].karatType").value(hasItem(DEFAULT_KARAT_TYPE)))
             .andExpect(jsonPath("$.[*].expectedKaratType").value(hasItem(DEFAULT_EXPECTED_KARAT_TYPE)))
             .andExpect(jsonPath("$.[*].addedAlloy").value(hasItem(DEFAULT_ADDED_ALLOY.toString())))
-            .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(DEFAULT_ALLOY_QUANTITY.intValue())))
-            .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(DEFAULT_SERVICE_CHARGE.intValue())))
-            .andExpect(jsonPath("$.[*].freeCheck").value(hasItem(DEFAULT_FREE_CHECK.intValue())))
+            .andExpect(jsonPath("$.[*].alloyQuantity").value(hasItem(sameNumber(DEFAULT_ALLOY_QUANTITY))))
+            .andExpect(jsonPath("$.[*].serviceCharge").value(hasItem(sameNumber(DEFAULT_SERVICE_CHARGE))))
+            .andExpect(jsonPath("$.[*].freeCheck").value(hasItem(sameNumber(DEFAULT_FREE_CHECK))))
             .andExpect(jsonPath("$.[*].hallMarkedText").value(hasItem(DEFAULT_HALL_MARKED_TEXT)))
             .andExpect(jsonPath("$.[*].weightOfFreeCheck").value(hasItem(DEFAULT_WEIGHT_OF_FREE_CHECK)));
 
         // Check, that the count call also returns 1
-        restAurumServiceMockMvc.perform(get("/api/aurum-services/count?sort=id,desc&" + filter))
+        restAurumServiceMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("1"));
@@ -1674,14 +1508,16 @@ public class AurumServiceResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultAurumServiceShouldNotBeFound(String filter) throws Exception {
-        restAurumServiceMockMvc.perform(get("/api/aurum-services?sort=id,desc&" + filter))
+        restAurumServiceMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restAurumServiceMockMvc.perform(get("/api/aurum-services/count?sort=id,desc&" + filter))
+        restAurumServiceMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"));
@@ -1689,17 +1525,16 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void getNonExistingAurumService() throws Exception {
+    void getNonExistingAurumService() throws Exception {
         // Get the aurumService
-        restAurumServiceMockMvc.perform(get("/api/aurum-services/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restAurumServiceMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateAurumService() throws Exception {
+    void putExistingAurumService() throws Exception {
         // Initialize the database
-        aurumServiceService.save(aurumService);
+        aurumServiceRepository.saveAndFlush(aurumService);
 
         int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
 
@@ -1724,9 +1559,12 @@ public class AurumServiceResourceIT {
             .hallMarkedText(UPDATED_HALL_MARKED_TEXT)
             .weightOfFreeCheck(UPDATED_WEIGHT_OF_FREE_CHECK);
 
-        restAurumServiceMockMvc.perform(put("/api/aurum-services")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedAurumService)))
+        restAurumServiceMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedAurumService.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedAurumService))
+            )
             .andExpect(status().isOk());
 
         // Validate the AurumService in the database
@@ -1736,29 +1574,33 @@ public class AurumServiceResourceIT {
         assertThat(testAurumService.getServiceType()).isEqualTo(UPDATED_SERVICE_TYPE);
         assertThat(testAurumService.getItemName()).isEqualTo(UPDATED_ITEM_NAME);
         assertThat(testAurumService.getQuantity()).isEqualTo(UPDATED_QUANTITY);
-        assertThat(testAurumService.getWeight()).isEqualTo(UPDATED_WEIGHT);
-        assertThat(testAurumService.getRate()).isEqualTo(UPDATED_RATE);
-        assertThat(testAurumService.getAmount()).isEqualTo(UPDATED_AMOUNT);
+        assertThat(testAurumService.getWeight()).isEqualByComparingTo(UPDATED_WEIGHT);
+        assertThat(testAurumService.getRate()).isEqualByComparingTo(UPDATED_RATE);
+        assertThat(testAurumService.getAmount()).isEqualByComparingTo(UPDATED_AMOUNT);
         assertThat(testAurumService.getServiceName()).isEqualTo(UPDATED_SERVICE_NAME);
         assertThat(testAurumService.getKaratType()).isEqualTo(UPDATED_KARAT_TYPE);
         assertThat(testAurumService.getExpectedKaratType()).isEqualTo(UPDATED_EXPECTED_KARAT_TYPE);
         assertThat(testAurumService.getAddedAlloy()).isEqualTo(UPDATED_ADDED_ALLOY);
-        assertThat(testAurumService.getAlloyQuantity()).isEqualTo(UPDATED_ALLOY_QUANTITY);
-        assertThat(testAurumService.getServiceCharge()).isEqualTo(UPDATED_SERVICE_CHARGE);
-        assertThat(testAurumService.getFreeCheck()).isEqualTo(UPDATED_FREE_CHECK);
+        assertThat(testAurumService.getAlloyQuantity()).isEqualByComparingTo(UPDATED_ALLOY_QUANTITY);
+        assertThat(testAurumService.getServiceCharge()).isEqualByComparingTo(UPDATED_SERVICE_CHARGE);
+        assertThat(testAurumService.getFreeCheck()).isEqualByComparingTo(UPDATED_FREE_CHECK);
         assertThat(testAurumService.getHallMarkedText()).isEqualTo(UPDATED_HALL_MARKED_TEXT);
         assertThat(testAurumService.getWeightOfFreeCheck()).isEqualTo(UPDATED_WEIGHT_OF_FREE_CHECK);
     }
 
     @Test
     @Transactional
-    public void updateNonExistingAurumService() throws Exception {
+    void putNonExistingAurumService() throws Exception {
         int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+        aurumService.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restAurumServiceMockMvc.perform(put("/api/aurum-services")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(aurumService)))
+        restAurumServiceMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, aurumService.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(aurumService))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the AurumService in the database
@@ -1768,15 +1610,217 @@ public class AurumServiceResourceIT {
 
     @Test
     @Transactional
-    public void deleteAurumService() throws Exception {
+    void putWithIdMismatchAurumService() throws Exception {
+        int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+        aurumService.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAurumServiceMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(aurumService))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the AurumService in the database
+        List<AurumService> aurumServiceList = aurumServiceRepository.findAll();
+        assertThat(aurumServiceList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithMissingIdPathParamAurumService() throws Exception {
+        int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+        aurumService.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAurumServiceMockMvc
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(aurumService)))
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the AurumService in the database
+        List<AurumService> aurumServiceList = aurumServiceRepository.findAll();
+        assertThat(aurumServiceList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateAurumServiceWithPatch() throws Exception {
         // Initialize the database
-        aurumServiceService.save(aurumService);
+        aurumServiceRepository.saveAndFlush(aurumService);
+
+        int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+
+        // Update the aurumService using partial update
+        AurumService partialUpdatedAurumService = new AurumService();
+        partialUpdatedAurumService.setId(aurumService.getId());
+
+        partialUpdatedAurumService
+            .weight(UPDATED_WEIGHT)
+            .serviceName(UPDATED_SERVICE_NAME)
+            .expectedKaratType(UPDATED_EXPECTED_KARAT_TYPE)
+            .alloyQuantity(UPDATED_ALLOY_QUANTITY)
+            .serviceCharge(UPDATED_SERVICE_CHARGE)
+            .hallMarkedText(UPDATED_HALL_MARKED_TEXT)
+            .weightOfFreeCheck(UPDATED_WEIGHT_OF_FREE_CHECK);
+
+        restAurumServiceMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedAurumService.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedAurumService))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the AurumService in the database
+        List<AurumService> aurumServiceList = aurumServiceRepository.findAll();
+        assertThat(aurumServiceList).hasSize(databaseSizeBeforeUpdate);
+        AurumService testAurumService = aurumServiceList.get(aurumServiceList.size() - 1);
+        assertThat(testAurumService.getServiceType()).isEqualTo(DEFAULT_SERVICE_TYPE);
+        assertThat(testAurumService.getItemName()).isEqualTo(DEFAULT_ITEM_NAME);
+        assertThat(testAurumService.getQuantity()).isEqualTo(DEFAULT_QUANTITY);
+        assertThat(testAurumService.getWeight()).isEqualByComparingTo(UPDATED_WEIGHT);
+        assertThat(testAurumService.getRate()).isEqualByComparingTo(DEFAULT_RATE);
+        assertThat(testAurumService.getAmount()).isEqualByComparingTo(DEFAULT_AMOUNT);
+        assertThat(testAurumService.getServiceName()).isEqualTo(UPDATED_SERVICE_NAME);
+        assertThat(testAurumService.getKaratType()).isEqualTo(DEFAULT_KARAT_TYPE);
+        assertThat(testAurumService.getExpectedKaratType()).isEqualTo(UPDATED_EXPECTED_KARAT_TYPE);
+        assertThat(testAurumService.getAddedAlloy()).isEqualTo(DEFAULT_ADDED_ALLOY);
+        assertThat(testAurumService.getAlloyQuantity()).isEqualByComparingTo(UPDATED_ALLOY_QUANTITY);
+        assertThat(testAurumService.getServiceCharge()).isEqualByComparingTo(UPDATED_SERVICE_CHARGE);
+        assertThat(testAurumService.getFreeCheck()).isEqualByComparingTo(DEFAULT_FREE_CHECK);
+        assertThat(testAurumService.getHallMarkedText()).isEqualTo(UPDATED_HALL_MARKED_TEXT);
+        assertThat(testAurumService.getWeightOfFreeCheck()).isEqualTo(UPDATED_WEIGHT_OF_FREE_CHECK);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateAurumServiceWithPatch() throws Exception {
+        // Initialize the database
+        aurumServiceRepository.saveAndFlush(aurumService);
+
+        int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+
+        // Update the aurumService using partial update
+        AurumService partialUpdatedAurumService = new AurumService();
+        partialUpdatedAurumService.setId(aurumService.getId());
+
+        partialUpdatedAurumService
+            .serviceType(UPDATED_SERVICE_TYPE)
+            .itemName(UPDATED_ITEM_NAME)
+            .quantity(UPDATED_QUANTITY)
+            .weight(UPDATED_WEIGHT)
+            .rate(UPDATED_RATE)
+            .amount(UPDATED_AMOUNT)
+            .serviceName(UPDATED_SERVICE_NAME)
+            .karatType(UPDATED_KARAT_TYPE)
+            .expectedKaratType(UPDATED_EXPECTED_KARAT_TYPE)
+            .addedAlloy(UPDATED_ADDED_ALLOY)
+            .alloyQuantity(UPDATED_ALLOY_QUANTITY)
+            .serviceCharge(UPDATED_SERVICE_CHARGE)
+            .freeCheck(UPDATED_FREE_CHECK)
+            .hallMarkedText(UPDATED_HALL_MARKED_TEXT)
+            .weightOfFreeCheck(UPDATED_WEIGHT_OF_FREE_CHECK);
+
+        restAurumServiceMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedAurumService.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedAurumService))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the AurumService in the database
+        List<AurumService> aurumServiceList = aurumServiceRepository.findAll();
+        assertThat(aurumServiceList).hasSize(databaseSizeBeforeUpdate);
+        AurumService testAurumService = aurumServiceList.get(aurumServiceList.size() - 1);
+        assertThat(testAurumService.getServiceType()).isEqualTo(UPDATED_SERVICE_TYPE);
+        assertThat(testAurumService.getItemName()).isEqualTo(UPDATED_ITEM_NAME);
+        assertThat(testAurumService.getQuantity()).isEqualTo(UPDATED_QUANTITY);
+        assertThat(testAurumService.getWeight()).isEqualByComparingTo(UPDATED_WEIGHT);
+        assertThat(testAurumService.getRate()).isEqualByComparingTo(UPDATED_RATE);
+        assertThat(testAurumService.getAmount()).isEqualByComparingTo(UPDATED_AMOUNT);
+        assertThat(testAurumService.getServiceName()).isEqualTo(UPDATED_SERVICE_NAME);
+        assertThat(testAurumService.getKaratType()).isEqualTo(UPDATED_KARAT_TYPE);
+        assertThat(testAurumService.getExpectedKaratType()).isEqualTo(UPDATED_EXPECTED_KARAT_TYPE);
+        assertThat(testAurumService.getAddedAlloy()).isEqualTo(UPDATED_ADDED_ALLOY);
+        assertThat(testAurumService.getAlloyQuantity()).isEqualByComparingTo(UPDATED_ALLOY_QUANTITY);
+        assertThat(testAurumService.getServiceCharge()).isEqualByComparingTo(UPDATED_SERVICE_CHARGE);
+        assertThat(testAurumService.getFreeCheck()).isEqualByComparingTo(UPDATED_FREE_CHECK);
+        assertThat(testAurumService.getHallMarkedText()).isEqualTo(UPDATED_HALL_MARKED_TEXT);
+        assertThat(testAurumService.getWeightOfFreeCheck()).isEqualTo(UPDATED_WEIGHT_OF_FREE_CHECK);
+    }
+
+    @Test
+    @Transactional
+    void patchNonExistingAurumService() throws Exception {
+        int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+        aurumService.setId(count.incrementAndGet());
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restAurumServiceMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, aurumService.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(aurumService))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the AurumService in the database
+        List<AurumService> aurumServiceList = aurumServiceRepository.findAll();
+        assertThat(aurumServiceList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithIdMismatchAurumService() throws Exception {
+        int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+        aurumService.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAurumServiceMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(aurumService))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the AurumService in the database
+        List<AurumService> aurumServiceList = aurumServiceRepository.findAll();
+        assertThat(aurumServiceList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithMissingIdPathParamAurumService() throws Exception {
+        int databaseSizeBeforeUpdate = aurumServiceRepository.findAll().size();
+        aurumService.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restAurumServiceMockMvc
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(aurumService))
+            )
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the AurumService in the database
+        List<AurumService> aurumServiceList = aurumServiceRepository.findAll();
+        assertThat(aurumServiceList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void deleteAurumService() throws Exception {
+        // Initialize the database
+        aurumServiceRepository.saveAndFlush(aurumService);
 
         int databaseSizeBeforeDelete = aurumServiceRepository.findAll().size();
 
         // Delete the aurumService
-        restAurumServiceMockMvc.perform(delete("/api/aurum-services/{id}", aurumService.getId())
-            .accept(MediaType.APPLICATION_JSON))
+        restAurumServiceMockMvc
+            .perform(delete(ENTITY_API_URL_ID, aurumService.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

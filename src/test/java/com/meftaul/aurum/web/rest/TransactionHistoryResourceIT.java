@@ -1,40 +1,39 @@
 package com.meftaul.aurum.web.rest;
 
-import com.meftaul.aurum.AurumApp;
-import com.meftaul.aurum.domain.TransactionHistory;
-import com.meftaul.aurum.repository.TransactionHistoryRepository;
-import com.meftaul.aurum.service.TransactionHistoryService;
-import com.meftaul.aurum.service.dto.TransactionHistoryCriteria;
-import com.meftaul.aurum.service.TransactionHistoryQueryService;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
+import static com.meftaul.aurum.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.meftaul.aurum.IntegrationTest;
+import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import com.meftaul.aurum.repository.TransactionHistoryRepository;
+import com.meftaul.aurum.service.criteria.TransactionHistoryCriteria;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Integration tests for the {@link TransactionHistoryResource} REST controller.
  */
-@SpringBootTest(classes = AurumApp.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-public class TransactionHistoryResourceIT {
+class TransactionHistoryResourceIT {
 
     private static final String DEFAULT_VOUCHER_NO = "AAAAAAAAAA";
     private static final String UPDATED_VOUCHER_NO = "BBBBBBBBBB";
@@ -56,14 +55,14 @@ public class TransactionHistoryResourceIT {
     private static final String DEFAULT_ADDED_BY = "AAAAAAAAAA";
     private static final String UPDATED_ADDED_BY = "BBBBBBBBBB";
 
+    private static final String ENTITY_API_URL = "/api/transaction-histories";
+    private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
     @Autowired
     private TransactionHistoryRepository transactionHistoryRepository;
-
-    @Autowired
-    private TransactionHistoryService transactionHistoryService;
-
-    @Autowired
-    private TransactionHistoryQueryService transactionHistoryQueryService;
 
     @Autowired
     private EntityManager em;
@@ -89,6 +88,7 @@ public class TransactionHistoryResourceIT {
             .addedBy(DEFAULT_ADDED_BY);
         return transactionHistory;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -113,12 +113,13 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void createTransactionHistory() throws Exception {
+    void createTransactionHistory() throws Exception {
         int databaseSizeBeforeCreate = transactionHistoryRepository.findAll().size();
         // Create the TransactionHistory
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isCreated());
 
         // Validate the TransactionHistory in the database
@@ -126,7 +127,7 @@ public class TransactionHistoryResourceIT {
         assertThat(transactionHistoryList).hasSize(databaseSizeBeforeCreate + 1);
         TransactionHistory testTransactionHistory = transactionHistoryList.get(transactionHistoryList.size() - 1);
         assertThat(testTransactionHistory.getVoucherNo()).isEqualTo(DEFAULT_VOUCHER_NO);
-        assertThat(testTransactionHistory.getAmount()).isEqualTo(DEFAULT_AMOUNT);
+        assertThat(testTransactionHistory.getAmount()).isEqualByComparingTo(DEFAULT_AMOUNT);
         assertThat(testTransactionHistory.getDateCreated()).isEqualTo(DEFAULT_DATE_CREATED);
         assertThat(testTransactionHistory.getTag()).isEqualTo(DEFAULT_TAG);
         assertThat(testTransactionHistory.getCustomerId()).isEqualTo(DEFAULT_CUSTOMER_ID);
@@ -135,16 +136,17 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void createTransactionHistoryWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = transactionHistoryRepository.findAll().size();
-
+    void createTransactionHistoryWithExistingId() throws Exception {
         // Create the TransactionHistory with an existing ID
         transactionHistory.setId(1L);
 
+        int databaseSizeBeforeCreate = transactionHistoryRepository.findAll().size();
+
         // An entity with an existing ID cannot be created, so this API call must fail
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the TransactionHistory in the database
@@ -152,20 +154,19 @@ public class TransactionHistoryResourceIT {
         assertThat(transactionHistoryList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkVoucherNoIsRequired() throws Exception {
+    void checkVoucherNoIsRequired() throws Exception {
         int databaseSizeBeforeTest = transactionHistoryRepository.findAll().size();
         // set the field null
         transactionHistory.setVoucherNo(null);
 
         // Create the TransactionHistory, which fails.
 
-
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
@@ -174,17 +175,17 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void checkAmountIsRequired() throws Exception {
+    void checkAmountIsRequired() throws Exception {
         int databaseSizeBeforeTest = transactionHistoryRepository.findAll().size();
         // set the field null
         transactionHistory.setAmount(null);
 
         // Create the TransactionHistory, which fails.
 
-
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
@@ -193,17 +194,17 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void checkDateCreatedIsRequired() throws Exception {
+    void checkDateCreatedIsRequired() throws Exception {
         int databaseSizeBeforeTest = transactionHistoryRepository.findAll().size();
         // set the field null
         transactionHistory.setDateCreated(null);
 
         // Create the TransactionHistory, which fails.
 
-
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
@@ -212,17 +213,17 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void checkTagIsRequired() throws Exception {
+    void checkTagIsRequired() throws Exception {
         int databaseSizeBeforeTest = transactionHistoryRepository.findAll().size();
         // set the field null
         transactionHistory.setTag(null);
 
         // Create the TransactionHistory, which fails.
 
-
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
@@ -231,17 +232,17 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void checkCustomerIdIsRequired() throws Exception {
+    void checkCustomerIdIsRequired() throws Exception {
         int databaseSizeBeforeTest = transactionHistoryRepository.findAll().size();
         // set the field null
         transactionHistory.setCustomerId(null);
 
         // Create the TransactionHistory, which fails.
 
-
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
@@ -250,17 +251,17 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void checkAddedByIsRequired() throws Exception {
+    void checkAddedByIsRequired() throws Exception {
         int databaseSizeBeforeTest = transactionHistoryRepository.findAll().size();
         // set the field null
         transactionHistory.setAddedBy(null);
 
         // Create the TransactionHistory, which fails.
 
-
-        restTransactionHistoryMockMvc.perform(post("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
@@ -269,46 +270,47 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistories() throws Exception {
+    void getAllTransactionHistories() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
         // Get all the transactionHistoryList
-        restTransactionHistoryMockMvc.perform(get("/api/transaction-histories?sort=id,desc"))
+        restTransactionHistoryMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(transactionHistory.getId().intValue())))
             .andExpect(jsonPath("$.[*].voucherNo").value(hasItem(DEFAULT_VOUCHER_NO)))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(sameNumber(DEFAULT_AMOUNT))))
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
             .andExpect(jsonPath("$.[*].tag").value(hasItem(DEFAULT_TAG.toString())))
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)));
     }
-    
+
     @Test
     @Transactional
-    public void getTransactionHistory() throws Exception {
+    void getTransactionHistory() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
         // Get the transactionHistory
-        restTransactionHistoryMockMvc.perform(get("/api/transaction-histories/{id}", transactionHistory.getId()))
+        restTransactionHistoryMockMvc
+            .perform(get(ENTITY_API_URL_ID, transactionHistory.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(transactionHistory.getId().intValue()))
             .andExpect(jsonPath("$.voucherNo").value(DEFAULT_VOUCHER_NO))
-            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.intValue()))
+            .andExpect(jsonPath("$.amount").value(sameNumber(DEFAULT_AMOUNT)))
             .andExpect(jsonPath("$.dateCreated").value(DEFAULT_DATE_CREATED.toString()))
             .andExpect(jsonPath("$.tag").value(DEFAULT_TAG.toString()))
             .andExpect(jsonPath("$.customerId").value(DEFAULT_CUSTOMER_ID.intValue()))
             .andExpect(jsonPath("$.addedBy").value(DEFAULT_ADDED_BY));
     }
 
-
     @Test
     @Transactional
-    public void getTransactionHistoriesByIdFiltering() throws Exception {
+    void getTransactionHistoriesByIdFiltering() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -324,10 +326,9 @@ public class TransactionHistoryResourceIT {
         defaultTransactionHistoryShouldNotBeFound("id.lessThan=" + id);
     }
 
-
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByVoucherNoIsEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByVoucherNoIsEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -340,20 +341,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByVoucherNoIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where voucherNo not equals to DEFAULT_VOUCHER_NO
-        defaultTransactionHistoryShouldNotBeFound("voucherNo.notEquals=" + DEFAULT_VOUCHER_NO);
-
-        // Get all the transactionHistoryList where voucherNo not equals to UPDATED_VOUCHER_NO
-        defaultTransactionHistoryShouldBeFound("voucherNo.notEquals=" + UPDATED_VOUCHER_NO);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByVoucherNoIsInShouldWork() throws Exception {
+    void getAllTransactionHistoriesByVoucherNoIsInShouldWork() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -366,7 +354,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByVoucherNoIsNullOrNotNull() throws Exception {
+    void getAllTransactionHistoriesByVoucherNoIsNullOrNotNull() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -376,9 +364,10 @@ public class TransactionHistoryResourceIT {
         // Get all the transactionHistoryList where voucherNo is null
         defaultTransactionHistoryShouldNotBeFound("voucherNo.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllTransactionHistoriesByVoucherNoContainsSomething() throws Exception {
+    void getAllTransactionHistoriesByVoucherNoContainsSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -391,7 +380,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByVoucherNoNotContainsSomething() throws Exception {
+    void getAllTransactionHistoriesByVoucherNoNotContainsSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -402,10 +391,9 @@ public class TransactionHistoryResourceIT {
         defaultTransactionHistoryShouldBeFound("voucherNo.doesNotContain=" + UPDATED_VOUCHER_NO);
     }
 
-
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAmountIsEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByAmountIsEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -418,20 +406,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAmountIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where amount not equals to DEFAULT_AMOUNT
-        defaultTransactionHistoryShouldNotBeFound("amount.notEquals=" + DEFAULT_AMOUNT);
-
-        // Get all the transactionHistoryList where amount not equals to UPDATED_AMOUNT
-        defaultTransactionHistoryShouldBeFound("amount.notEquals=" + UPDATED_AMOUNT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByAmountIsInShouldWork() throws Exception {
+    void getAllTransactionHistoriesByAmountIsInShouldWork() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -444,7 +419,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAmountIsNullOrNotNull() throws Exception {
+    void getAllTransactionHistoriesByAmountIsNullOrNotNull() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -457,7 +432,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAmountIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByAmountIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -470,7 +445,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAmountIsLessThanOrEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByAmountIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -483,7 +458,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAmountIsLessThanSomething() throws Exception {
+    void getAllTransactionHistoriesByAmountIsLessThanSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -496,7 +471,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAmountIsGreaterThanSomething() throws Exception {
+    void getAllTransactionHistoriesByAmountIsGreaterThanSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -507,10 +482,9 @@ public class TransactionHistoryResourceIT {
         defaultTransactionHistoryShouldBeFound("amount.greaterThan=" + SMALLER_AMOUNT);
     }
 
-
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByDateCreatedIsEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -523,20 +497,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where dateCreated not equals to DEFAULT_DATE_CREATED
-        defaultTransactionHistoryShouldNotBeFound("dateCreated.notEquals=" + DEFAULT_DATE_CREATED);
-
-        // Get all the transactionHistoryList where dateCreated not equals to UPDATED_DATE_CREATED
-        defaultTransactionHistoryShouldBeFound("dateCreated.notEquals=" + UPDATED_DATE_CREATED);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsInShouldWork() throws Exception {
+    void getAllTransactionHistoriesByDateCreatedIsInShouldWork() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -549,7 +510,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByDateCreatedIsNullOrNotNull() throws Exception {
+    void getAllTransactionHistoriesByDateCreatedIsNullOrNotNull() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -562,7 +523,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByTagIsEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByTagIsEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -575,20 +536,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByTagIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where tag not equals to DEFAULT_TAG
-        defaultTransactionHistoryShouldNotBeFound("tag.notEquals=" + DEFAULT_TAG);
-
-        // Get all the transactionHistoryList where tag not equals to UPDATED_TAG
-        defaultTransactionHistoryShouldBeFound("tag.notEquals=" + UPDATED_TAG);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByTagIsInShouldWork() throws Exception {
+    void getAllTransactionHistoriesByTagIsInShouldWork() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -601,7 +549,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByTagIsNullOrNotNull() throws Exception {
+    void getAllTransactionHistoriesByTagIsNullOrNotNull() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -614,7 +562,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByCustomerIdIsEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -627,20 +575,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where customerId not equals to DEFAULT_CUSTOMER_ID
-        defaultTransactionHistoryShouldNotBeFound("customerId.notEquals=" + DEFAULT_CUSTOMER_ID);
-
-        // Get all the transactionHistoryList where customerId not equals to UPDATED_CUSTOMER_ID
-        defaultTransactionHistoryShouldBeFound("customerId.notEquals=" + UPDATED_CUSTOMER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsInShouldWork() throws Exception {
+    void getAllTransactionHistoriesByCustomerIdIsInShouldWork() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -653,7 +588,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsNullOrNotNull() throws Exception {
+    void getAllTransactionHistoriesByCustomerIdIsNullOrNotNull() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -666,7 +601,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByCustomerIdIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -679,7 +614,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsLessThanOrEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByCustomerIdIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -692,7 +627,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsLessThanSomething() throws Exception {
+    void getAllTransactionHistoriesByCustomerIdIsLessThanSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -705,7 +640,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByCustomerIdIsGreaterThanSomething() throws Exception {
+    void getAllTransactionHistoriesByCustomerIdIsGreaterThanSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -716,10 +651,9 @@ public class TransactionHistoryResourceIT {
         defaultTransactionHistoryShouldBeFound("customerId.greaterThan=" + SMALLER_CUSTOMER_ID);
     }
 
-
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAddedByIsEqualToSomething() throws Exception {
+    void getAllTransactionHistoriesByAddedByIsEqualToSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -732,20 +666,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAddedByIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        transactionHistoryRepository.saveAndFlush(transactionHistory);
-
-        // Get all the transactionHistoryList where addedBy not equals to DEFAULT_ADDED_BY
-        defaultTransactionHistoryShouldNotBeFound("addedBy.notEquals=" + DEFAULT_ADDED_BY);
-
-        // Get all the transactionHistoryList where addedBy not equals to UPDATED_ADDED_BY
-        defaultTransactionHistoryShouldBeFound("addedBy.notEquals=" + UPDATED_ADDED_BY);
-    }
-
-    @Test
-    @Transactional
-    public void getAllTransactionHistoriesByAddedByIsInShouldWork() throws Exception {
+    void getAllTransactionHistoriesByAddedByIsInShouldWork() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -758,7 +679,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAddedByIsNullOrNotNull() throws Exception {
+    void getAllTransactionHistoriesByAddedByIsNullOrNotNull() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -768,9 +689,10 @@ public class TransactionHistoryResourceIT {
         // Get all the transactionHistoryList where addedBy is null
         defaultTransactionHistoryShouldNotBeFound("addedBy.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllTransactionHistoriesByAddedByContainsSomething() throws Exception {
+    void getAllTransactionHistoriesByAddedByContainsSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -783,7 +705,7 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getAllTransactionHistoriesByAddedByNotContainsSomething() throws Exception {
+    void getAllTransactionHistoriesByAddedByNotContainsSomething() throws Exception {
         // Initialize the database
         transactionHistoryRepository.saveAndFlush(transactionHistory);
 
@@ -798,19 +720,21 @@ public class TransactionHistoryResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultTransactionHistoryShouldBeFound(String filter) throws Exception {
-        restTransactionHistoryMockMvc.perform(get("/api/transaction-histories?sort=id,desc&" + filter))
+        restTransactionHistoryMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(transactionHistory.getId().intValue())))
             .andExpect(jsonPath("$.[*].voucherNo").value(hasItem(DEFAULT_VOUCHER_NO)))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(sameNumber(DEFAULT_AMOUNT))))
             .andExpect(jsonPath("$.[*].dateCreated").value(hasItem(DEFAULT_DATE_CREATED.toString())))
             .andExpect(jsonPath("$.[*].tag").value(hasItem(DEFAULT_TAG.toString())))
             .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.intValue())))
             .andExpect(jsonPath("$.[*].addedBy").value(hasItem(DEFAULT_ADDED_BY)));
 
         // Check, that the count call also returns 1
-        restTransactionHistoryMockMvc.perform(get("/api/transaction-histories/count?sort=id,desc&" + filter))
+        restTransactionHistoryMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("1"));
@@ -820,14 +744,16 @@ public class TransactionHistoryResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultTransactionHistoryShouldNotBeFound(String filter) throws Exception {
-        restTransactionHistoryMockMvc.perform(get("/api/transaction-histories?sort=id,desc&" + filter))
+        restTransactionHistoryMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restTransactionHistoryMockMvc.perform(get("/api/transaction-histories/count?sort=id,desc&" + filter))
+        restTransactionHistoryMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"));
@@ -835,17 +761,16 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void getNonExistingTransactionHistory() throws Exception {
+    void getNonExistingTransactionHistory() throws Exception {
         // Get the transactionHistory
-        restTransactionHistoryMockMvc.perform(get("/api/transaction-histories/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restTransactionHistoryMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateTransactionHistory() throws Exception {
+    void putExistingTransactionHistory() throws Exception {
         // Initialize the database
-        transactionHistoryService.save(transactionHistory);
+        transactionHistoryRepository.saveAndFlush(transactionHistory);
 
         int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
 
@@ -861,9 +786,12 @@ public class TransactionHistoryResourceIT {
             .customerId(UPDATED_CUSTOMER_ID)
             .addedBy(UPDATED_ADDED_BY);
 
-        restTransactionHistoryMockMvc.perform(put("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedTransactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedTransactionHistory.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedTransactionHistory))
+            )
             .andExpect(status().isOk());
 
         // Validate the TransactionHistory in the database
@@ -871,7 +799,7 @@ public class TransactionHistoryResourceIT {
         assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
         TransactionHistory testTransactionHistory = transactionHistoryList.get(transactionHistoryList.size() - 1);
         assertThat(testTransactionHistory.getVoucherNo()).isEqualTo(UPDATED_VOUCHER_NO);
-        assertThat(testTransactionHistory.getAmount()).isEqualTo(UPDATED_AMOUNT);
+        assertThat(testTransactionHistory.getAmount()).isEqualByComparingTo(UPDATED_AMOUNT);
         assertThat(testTransactionHistory.getDateCreated()).isEqualTo(UPDATED_DATE_CREATED);
         assertThat(testTransactionHistory.getTag()).isEqualTo(UPDATED_TAG);
         assertThat(testTransactionHistory.getCustomerId()).isEqualTo(UPDATED_CUSTOMER_ID);
@@ -880,13 +808,17 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void updateNonExistingTransactionHistory() throws Exception {
+    void putNonExistingTransactionHistory() throws Exception {
         int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+        transactionHistory.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restTransactionHistoryMockMvc.perform(put("/api/transaction-histories")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(transactionHistory)))
+        restTransactionHistoryMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, transactionHistory.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the TransactionHistory in the database
@@ -896,15 +828,187 @@ public class TransactionHistoryResourceIT {
 
     @Test
     @Transactional
-    public void deleteTransactionHistory() throws Exception {
+    void putWithIdMismatchTransactionHistory() throws Exception {
+        int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+        transactionHistory.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restTransactionHistoryMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the TransactionHistory in the database
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
+        assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithMissingIdPathParamTransactionHistory() throws Exception {
+        int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+        transactionHistory.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restTransactionHistoryMockMvc
+            .perform(
+                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the TransactionHistory in the database
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
+        assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateTransactionHistoryWithPatch() throws Exception {
         // Initialize the database
-        transactionHistoryService.save(transactionHistory);
+        transactionHistoryRepository.saveAndFlush(transactionHistory);
+
+        int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+
+        // Update the transactionHistory using partial update
+        TransactionHistory partialUpdatedTransactionHistory = new TransactionHistory();
+        partialUpdatedTransactionHistory.setId(transactionHistory.getId());
+
+        partialUpdatedTransactionHistory.dateCreated(UPDATED_DATE_CREATED).addedBy(UPDATED_ADDED_BY);
+
+        restTransactionHistoryMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedTransactionHistory.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedTransactionHistory))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the TransactionHistory in the database
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
+        assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
+        TransactionHistory testTransactionHistory = transactionHistoryList.get(transactionHistoryList.size() - 1);
+        assertThat(testTransactionHistory.getVoucherNo()).isEqualTo(DEFAULT_VOUCHER_NO);
+        assertThat(testTransactionHistory.getAmount()).isEqualByComparingTo(DEFAULT_AMOUNT);
+        assertThat(testTransactionHistory.getDateCreated()).isEqualTo(UPDATED_DATE_CREATED);
+        assertThat(testTransactionHistory.getTag()).isEqualTo(DEFAULT_TAG);
+        assertThat(testTransactionHistory.getCustomerId()).isEqualTo(DEFAULT_CUSTOMER_ID);
+        assertThat(testTransactionHistory.getAddedBy()).isEqualTo(UPDATED_ADDED_BY);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateTransactionHistoryWithPatch() throws Exception {
+        // Initialize the database
+        transactionHistoryRepository.saveAndFlush(transactionHistory);
+
+        int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+
+        // Update the transactionHistory using partial update
+        TransactionHistory partialUpdatedTransactionHistory = new TransactionHistory();
+        partialUpdatedTransactionHistory.setId(transactionHistory.getId());
+
+        partialUpdatedTransactionHistory
+            .voucherNo(UPDATED_VOUCHER_NO)
+            .amount(UPDATED_AMOUNT)
+            .dateCreated(UPDATED_DATE_CREATED)
+            .tag(UPDATED_TAG)
+            .customerId(UPDATED_CUSTOMER_ID)
+            .addedBy(UPDATED_ADDED_BY);
+
+        restTransactionHistoryMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedTransactionHistory.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedTransactionHistory))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the TransactionHistory in the database
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
+        assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
+        TransactionHistory testTransactionHistory = transactionHistoryList.get(transactionHistoryList.size() - 1);
+        assertThat(testTransactionHistory.getVoucherNo()).isEqualTo(UPDATED_VOUCHER_NO);
+        assertThat(testTransactionHistory.getAmount()).isEqualByComparingTo(UPDATED_AMOUNT);
+        assertThat(testTransactionHistory.getDateCreated()).isEqualTo(UPDATED_DATE_CREATED);
+        assertThat(testTransactionHistory.getTag()).isEqualTo(UPDATED_TAG);
+        assertThat(testTransactionHistory.getCustomerId()).isEqualTo(UPDATED_CUSTOMER_ID);
+        assertThat(testTransactionHistory.getAddedBy()).isEqualTo(UPDATED_ADDED_BY);
+    }
+
+    @Test
+    @Transactional
+    void patchNonExistingTransactionHistory() throws Exception {
+        int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+        transactionHistory.setId(count.incrementAndGet());
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restTransactionHistoryMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, transactionHistory.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the TransactionHistory in the database
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
+        assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithIdMismatchTransactionHistory() throws Exception {
+        int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+        transactionHistory.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restTransactionHistoryMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the TransactionHistory in the database
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
+        assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithMissingIdPathParamTransactionHistory() throws Exception {
+        int databaseSizeBeforeUpdate = transactionHistoryRepository.findAll().size();
+        transactionHistory.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restTransactionHistoryMockMvc
+            .perform(
+                patch(ENTITY_API_URL)
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(transactionHistory))
+            )
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the TransactionHistory in the database
+        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll();
+        assertThat(transactionHistoryList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void deleteTransactionHistory() throws Exception {
+        // Initialize the database
+        transactionHistoryRepository.saveAndFlush(transactionHistory);
 
         int databaseSizeBeforeDelete = transactionHistoryRepository.findAll().size();
 
         // Delete the transactionHistory
-        restTransactionHistoryMockMvc.perform(delete("/api/transaction-histories/{id}", transactionHistory.getId())
-            .accept(MediaType.APPLICATION_JSON))
+        restTransactionHistoryMockMvc
+            .perform(delete(ENTITY_API_URL_ID, transactionHistory.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

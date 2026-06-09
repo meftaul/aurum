@@ -1,9 +1,11 @@
 package com.meftaul.aurum.service;
 
+import com.meftaul.aurum.domain.*; // for static metamodels
+import com.meftaul.aurum.domain.AurumService;
+import com.meftaul.aurum.repository.AurumServiceRepository;
+import com.meftaul.aurum.service.criteria.AurumServiceCriteria;
 import java.util.List;
-
 import javax.persistence.criteria.JoinType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,13 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.jhipster.service.QueryService;
-
-import com.meftaul.aurum.domain.AurumService;
-import com.meftaul.aurum.domain.*; // for static metamodels
-import com.meftaul.aurum.repository.AurumServiceRepository;
-import com.meftaul.aurum.service.dto.AurumServiceCriteria;
+import tech.jhipster.service.QueryService;
 
 /**
  * Service for executing complex queries for {@link AurumService} entities in the database.
@@ -82,6 +78,10 @@ public class AurumServiceQueryService extends QueryService<AurumService> {
     protected Specification<AurumService> createSpecification(AurumServiceCriteria criteria) {
         Specification<AurumService> specification = Specification.where(null);
         if (criteria != null) {
+            // This has to be called first, because the distinct method returns null
+            if (criteria.getDistinct() != null) {
+                specification = specification.and(distinct(criteria.getDistinct()));
+            }
             if (criteria.getId() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), AurumService_.id));
             }
@@ -110,7 +110,8 @@ public class AurumServiceQueryService extends QueryService<AurumService> {
                 specification = specification.and(buildStringSpecification(criteria.getKaratType(), AurumService_.karatType));
             }
             if (criteria.getExpectedKaratType() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getExpectedKaratType(), AurumService_.expectedKaratType));
+                specification =
+                    specification.and(buildStringSpecification(criteria.getExpectedKaratType(), AurumService_.expectedKaratType));
             }
             if (criteria.getAddedAlloy() != null) {
                 specification = specification.and(buildSpecification(criteria.getAddedAlloy(), AurumService_.addedAlloy));
@@ -128,11 +129,17 @@ public class AurumServiceQueryService extends QueryService<AurumService> {
                 specification = specification.and(buildStringSpecification(criteria.getHallMarkedText(), AurumService_.hallMarkedText));
             }
             if (criteria.getWeightOfFreeCheck() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getWeightOfFreeCheck(), AurumService_.weightOfFreeCheck));
+                specification =
+                    specification.and(buildStringSpecification(criteria.getWeightOfFreeCheck(), AurumService_.weightOfFreeCheck));
             }
             if (criteria.getVoucherId() != null) {
-                specification = specification.and(buildSpecification(criteria.getVoucherId(),
-                    root -> root.join(AurumService_.voucher, JoinType.LEFT).get(Voucher_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.getVoucherId(),
+                            root -> root.join(AurumService_.voucher, JoinType.LEFT).get(Voucher_.id)
+                        )
+                    );
             }
         }
         return specification;

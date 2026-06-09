@@ -1,14 +1,9 @@
 {
-  "fluentMethods": true,
+  "changelogDate": "20191023082216",
   "clientRootFolder": "",
-  "relationships": [
-    {
-      "relationshipName": "aurumService",
-      "otherEntityName": "aurumService",
-      "relationshipType": "one-to-many",
-      "otherEntityRelationshipName": "voucher"
-    }
-  ],
+  "databaseType": "sql",
+  "dto": "no",
+  "entityTableName": "voucher",
   "fields": [
     {
       "fieldName": "voucherNo",
@@ -37,8 +32,8 @@
     {
       "fieldName": "status",
       "fieldType": "VoucherStatus",
-      "fieldValues": "PAID,DUE,CANCEL",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PAID,DUE,CANCEL"
     },
     {
       "fieldName": "totalPayableAmount",
@@ -67,12 +62,18 @@
       "fieldType": "Boolean"
     }
   ],
-  "changelogDate": "20191023082216",
-  "dto": "no",
-  "searchEngine": false,
-  "service": "serviceImpl",
-  "entityTableName": "voucher",
-  "databaseType": "sql",
+  "fluentMethods": true,
   "jpaMetamodelFiltering": true,
-  "pagination": "pagination"
+  "name": "Voucher",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "aurumService",
+      "otherEntityRelationshipName": "voucher",
+      "relationshipName": "aurumService",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": false,
+  "service": "serviceImpl"
 }

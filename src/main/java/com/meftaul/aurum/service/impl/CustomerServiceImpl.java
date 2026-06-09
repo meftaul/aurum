@@ -1,17 +1,15 @@
 package com.meftaul.aurum.service.impl;
 
-import com.meftaul.aurum.service.CustomerService;
 import com.meftaul.aurum.domain.Customer;
 import com.meftaul.aurum.repository.CustomerRepository;
+import com.meftaul.aurum.service.CustomerService;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Customer}.
@@ -35,12 +33,54 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer update(Customer customer) {
+        log.debug("Request to update Customer : {}", customer);
+        return customerRepository.save(customer);
+    }
+
+    @Override
+    public Optional<Customer> partialUpdate(Customer customer) {
+        log.debug("Request to partially update Customer : {}", customer);
+
+        return customerRepository
+            .findById(customer.getId())
+            .map(existingCustomer -> {
+                if (customer.getFirstName() != null) {
+                    existingCustomer.setFirstName(customer.getFirstName());
+                }
+                if (customer.getLastName() != null) {
+                    existingCustomer.setLastName(customer.getLastName());
+                }
+                if (customer.getPhone() != null) {
+                    existingCustomer.setPhone(customer.getPhone());
+                }
+                if (customer.getEmail() != null) {
+                    existingCustomer.setEmail(customer.getEmail());
+                }
+                if (customer.getAddress() != null) {
+                    existingCustomer.setAddress(customer.getAddress());
+                }
+                if (customer.getTotalPoint() != null) {
+                    existingCustomer.setTotalPoint(customer.getTotalPoint());
+                }
+                if (customer.getReference() != null) {
+                    existingCustomer.setReference(customer.getReference());
+                }
+                if (customer.getCustomId() != null) {
+                    existingCustomer.setCustomId(customer.getCustomId());
+                }
+
+                return existingCustomer;
+            })
+            .map(customerRepository::save);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<Customer> findAll(Pageable pageable) {
         log.debug("Request to get all Customers");
         return customerRepository.findAll(pageable);
     }
-
 
     @Override
     @Transactional(readOnly = true)

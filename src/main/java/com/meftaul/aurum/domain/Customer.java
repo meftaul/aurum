@@ -1,12 +1,10 @@
 package com.meftaul.aurum.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import java.io.Serializable;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Customer.
@@ -14,12 +12,14 @@ import java.io.Serializable;
 @Entity
 @Table(name = "customer")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "first_name")
@@ -45,13 +45,18 @@ public class Customer implements Serializable {
     @Column(name = "reference")
     private String reference;
 
-    
     @Column(name = "custom_id", unique = true)
     private String customId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Customer id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -59,11 +64,11 @@ public class Customer implements Serializable {
     }
 
     public String getFirstName() {
-        return firstName;
+        return this.firstName;
     }
 
     public Customer firstName(String firstName) {
-        this.firstName = firstName;
+        this.setFirstName(firstName);
         return this;
     }
 
@@ -72,11 +77,11 @@ public class Customer implements Serializable {
     }
 
     public String getLastName() {
-        return lastName;
+        return this.lastName;
     }
 
     public Customer lastName(String lastName) {
-        this.lastName = lastName;
+        this.setLastName(lastName);
         return this;
     }
 
@@ -85,11 +90,11 @@ public class Customer implements Serializable {
     }
 
     public String getPhone() {
-        return phone;
+        return this.phone;
     }
 
     public Customer phone(String phone) {
-        this.phone = phone;
+        this.setPhone(phone);
         return this;
     }
 
@@ -98,11 +103,11 @@ public class Customer implements Serializable {
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public Customer email(String email) {
-        this.email = email;
+        this.setEmail(email);
         return this;
     }
 
@@ -111,11 +116,11 @@ public class Customer implements Serializable {
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public Customer address(String address) {
-        this.address = address;
+        this.setAddress(address);
         return this;
     }
 
@@ -124,11 +129,11 @@ public class Customer implements Serializable {
     }
 
     public Long getTotalPoint() {
-        return totalPoint;
+        return this.totalPoint;
     }
 
     public Customer totalPoint(Long totalPoint) {
-        this.totalPoint = totalPoint;
+        this.setTotalPoint(totalPoint);
         return this;
     }
 
@@ -137,11 +142,11 @@ public class Customer implements Serializable {
     }
 
     public String getReference() {
-        return reference;
+        return this.reference;
     }
 
     public Customer reference(String reference) {
-        this.reference = reference;
+        this.setReference(reference);
         return this;
     }
 
@@ -150,17 +155,18 @@ public class Customer implements Serializable {
     }
 
     public String getCustomId() {
-        return customId;
+        return this.customId;
     }
 
     public Customer customId(String customId) {
-        this.customId = customId;
+        this.setCustomId(customId);
         return this;
     }
 
     public void setCustomId(String customId) {
         this.customId = customId;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -176,7 +182,8 @@ public class Customer implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

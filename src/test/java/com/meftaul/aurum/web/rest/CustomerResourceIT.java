@@ -1,36 +1,34 @@
 package com.meftaul.aurum.web.rest;
 
-import com.meftaul.aurum.AurumApp;
-import com.meftaul.aurum.domain.Customer;
-import com.meftaul.aurum.repository.CustomerRepository;
-import com.meftaul.aurum.service.CustomerService;
-import com.meftaul.aurum.service.dto.CustomerCriteria;
-import com.meftaul.aurum.service.CustomerQueryService;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.meftaul.aurum.IntegrationTest;
+import com.meftaul.aurum.domain.Customer;
+import com.meftaul.aurum.repository.CustomerRepository;
+import com.meftaul.aurum.service.criteria.CustomerCriteria;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Integration tests for the {@link CustomerResource} REST controller.
  */
-@SpringBootTest(classes = AurumApp.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-public class CustomerResourceIT {
+class CustomerResourceIT {
 
     private static final String DEFAULT_FIRST_NAME = "AAAAAAAAAA";
     private static final String UPDATED_FIRST_NAME = "BBBBBBBBBB";
@@ -57,14 +55,14 @@ public class CustomerResourceIT {
     private static final String DEFAULT_CUSTOM_ID = "AAAAAAAAAA";
     private static final String UPDATED_CUSTOM_ID = "BBBBBBBBBB";
 
+    private static final String ENTITY_API_URL = "/api/customers";
+    private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
     @Autowired
     private CustomerRepository customerRepository;
-
-    @Autowired
-    private CustomerService customerService;
-
-    @Autowired
-    private CustomerQueryService customerQueryService;
 
     @Autowired
     private EntityManager em;
@@ -92,6 +90,7 @@ public class CustomerResourceIT {
             .customId(DEFAULT_CUSTOM_ID);
         return customer;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -118,12 +117,11 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void createCustomer() throws Exception {
+    void createCustomer() throws Exception {
         int databaseSizeBeforeCreate = customerRepository.findAll().size();
         // Create the Customer
-        restCustomerMockMvc.perform(post("/api/customers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(customer)))
+        restCustomerMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
             .andExpect(status().isCreated());
 
         // Validate the Customer in the database
@@ -142,16 +140,15 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void createCustomerWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = customerRepository.findAll().size();
-
+    void createCustomerWithExistingId() throws Exception {
         // Create the Customer with an existing ID
         customer.setId(1L);
 
+        int databaseSizeBeforeCreate = customerRepository.findAll().size();
+
         // An entity with an existing ID cannot be created, so this API call must fail
-        restCustomerMockMvc.perform(post("/api/customers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(customer)))
+        restCustomerMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
             .andExpect(status().isBadRequest());
 
         // Validate the Customer in the database
@@ -159,20 +156,17 @@ public class CustomerResourceIT {
         assertThat(customerList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkPhoneIsRequired() throws Exception {
+    void checkPhoneIsRequired() throws Exception {
         int databaseSizeBeforeTest = customerRepository.findAll().size();
         // set the field null
         customer.setPhone(null);
 
         // Create the Customer, which fails.
 
-
-        restCustomerMockMvc.perform(post("/api/customers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(customer)))
+        restCustomerMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -181,12 +175,13 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomers() throws Exception {
+    void getAllCustomers() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
         // Get all the customerList
-        restCustomerMockMvc.perform(get("/api/customers?sort=id,desc"))
+        restCustomerMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(customer.getId().intValue())))
@@ -199,15 +194,16 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.[*].reference").value(hasItem(DEFAULT_REFERENCE)))
             .andExpect(jsonPath("$.[*].customId").value(hasItem(DEFAULT_CUSTOM_ID)));
     }
-    
+
     @Test
     @Transactional
-    public void getCustomer() throws Exception {
+    void getCustomer() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
         // Get the customer
-        restCustomerMockMvc.perform(get("/api/customers/{id}", customer.getId()))
+        restCustomerMockMvc
+            .perform(get(ENTITY_API_URL_ID, customer.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(customer.getId().intValue()))
@@ -221,10 +217,9 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.customId").value(DEFAULT_CUSTOM_ID));
     }
 
-
     @Test
     @Transactional
-    public void getCustomersByIdFiltering() throws Exception {
+    void getCustomersByIdFiltering() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -240,10 +235,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldNotBeFound("id.lessThan=" + id);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByFirstNameIsEqualToSomething() throws Exception {
+    void getAllCustomersByFirstNameIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -256,20 +250,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByFirstNameIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where firstName not equals to DEFAULT_FIRST_NAME
-        defaultCustomerShouldNotBeFound("firstName.notEquals=" + DEFAULT_FIRST_NAME);
-
-        // Get all the customerList where firstName not equals to UPDATED_FIRST_NAME
-        defaultCustomerShouldBeFound("firstName.notEquals=" + UPDATED_FIRST_NAME);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByFirstNameIsInShouldWork() throws Exception {
+    void getAllCustomersByFirstNameIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -282,7 +263,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByFirstNameIsNullOrNotNull() throws Exception {
+    void getAllCustomersByFirstNameIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -292,9 +273,10 @@ public class CustomerResourceIT {
         // Get all the customerList where firstName is null
         defaultCustomerShouldNotBeFound("firstName.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllCustomersByFirstNameContainsSomething() throws Exception {
+    void getAllCustomersByFirstNameContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -307,7 +289,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByFirstNameNotContainsSomething() throws Exception {
+    void getAllCustomersByFirstNameNotContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -318,10 +300,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldBeFound("firstName.doesNotContain=" + UPDATED_FIRST_NAME);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByLastNameIsEqualToSomething() throws Exception {
+    void getAllCustomersByLastNameIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -334,20 +315,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByLastNameIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where lastName not equals to DEFAULT_LAST_NAME
-        defaultCustomerShouldNotBeFound("lastName.notEquals=" + DEFAULT_LAST_NAME);
-
-        // Get all the customerList where lastName not equals to UPDATED_LAST_NAME
-        defaultCustomerShouldBeFound("lastName.notEquals=" + UPDATED_LAST_NAME);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByLastNameIsInShouldWork() throws Exception {
+    void getAllCustomersByLastNameIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -360,7 +328,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByLastNameIsNullOrNotNull() throws Exception {
+    void getAllCustomersByLastNameIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -370,9 +338,10 @@ public class CustomerResourceIT {
         // Get all the customerList where lastName is null
         defaultCustomerShouldNotBeFound("lastName.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllCustomersByLastNameContainsSomething() throws Exception {
+    void getAllCustomersByLastNameContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -385,7 +354,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByLastNameNotContainsSomething() throws Exception {
+    void getAllCustomersByLastNameNotContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -396,10 +365,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldBeFound("lastName.doesNotContain=" + UPDATED_LAST_NAME);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByPhoneIsEqualToSomething() throws Exception {
+    void getAllCustomersByPhoneIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -412,20 +380,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByPhoneIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where phone not equals to DEFAULT_PHONE
-        defaultCustomerShouldNotBeFound("phone.notEquals=" + DEFAULT_PHONE);
-
-        // Get all the customerList where phone not equals to UPDATED_PHONE
-        defaultCustomerShouldBeFound("phone.notEquals=" + UPDATED_PHONE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByPhoneIsInShouldWork() throws Exception {
+    void getAllCustomersByPhoneIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -438,7 +393,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByPhoneIsNullOrNotNull() throws Exception {
+    void getAllCustomersByPhoneIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -448,9 +403,10 @@ public class CustomerResourceIT {
         // Get all the customerList where phone is null
         defaultCustomerShouldNotBeFound("phone.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllCustomersByPhoneContainsSomething() throws Exception {
+    void getAllCustomersByPhoneContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -463,7 +419,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByPhoneNotContainsSomething() throws Exception {
+    void getAllCustomersByPhoneNotContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -474,10 +430,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldBeFound("phone.doesNotContain=" + UPDATED_PHONE);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByEmailIsEqualToSomething() throws Exception {
+    void getAllCustomersByEmailIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -490,20 +445,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByEmailIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where email not equals to DEFAULT_EMAIL
-        defaultCustomerShouldNotBeFound("email.notEquals=" + DEFAULT_EMAIL);
-
-        // Get all the customerList where email not equals to UPDATED_EMAIL
-        defaultCustomerShouldBeFound("email.notEquals=" + UPDATED_EMAIL);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByEmailIsInShouldWork() throws Exception {
+    void getAllCustomersByEmailIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -516,7 +458,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByEmailIsNullOrNotNull() throws Exception {
+    void getAllCustomersByEmailIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -526,9 +468,10 @@ public class CustomerResourceIT {
         // Get all the customerList where email is null
         defaultCustomerShouldNotBeFound("email.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllCustomersByEmailContainsSomething() throws Exception {
+    void getAllCustomersByEmailContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -541,7 +484,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByEmailNotContainsSomething() throws Exception {
+    void getAllCustomersByEmailNotContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -552,10 +495,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldBeFound("email.doesNotContain=" + UPDATED_EMAIL);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByAddressIsEqualToSomething() throws Exception {
+    void getAllCustomersByAddressIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -568,20 +510,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByAddressIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where address not equals to DEFAULT_ADDRESS
-        defaultCustomerShouldNotBeFound("address.notEquals=" + DEFAULT_ADDRESS);
-
-        // Get all the customerList where address not equals to UPDATED_ADDRESS
-        defaultCustomerShouldBeFound("address.notEquals=" + UPDATED_ADDRESS);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByAddressIsInShouldWork() throws Exception {
+    void getAllCustomersByAddressIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -594,7 +523,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByAddressIsNullOrNotNull() throws Exception {
+    void getAllCustomersByAddressIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -604,9 +533,10 @@ public class CustomerResourceIT {
         // Get all the customerList where address is null
         defaultCustomerShouldNotBeFound("address.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllCustomersByAddressContainsSomething() throws Exception {
+    void getAllCustomersByAddressContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -619,7 +549,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByAddressNotContainsSomething() throws Exception {
+    void getAllCustomersByAddressNotContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -630,10 +560,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldBeFound("address.doesNotContain=" + UPDATED_ADDRESS);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByTotalPointIsEqualToSomething() throws Exception {
+    void getAllCustomersByTotalPointIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -646,20 +575,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByTotalPointIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where totalPoint not equals to DEFAULT_TOTAL_POINT
-        defaultCustomerShouldNotBeFound("totalPoint.notEquals=" + DEFAULT_TOTAL_POINT);
-
-        // Get all the customerList where totalPoint not equals to UPDATED_TOTAL_POINT
-        defaultCustomerShouldBeFound("totalPoint.notEquals=" + UPDATED_TOTAL_POINT);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByTotalPointIsInShouldWork() throws Exception {
+    void getAllCustomersByTotalPointIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -672,7 +588,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByTotalPointIsNullOrNotNull() throws Exception {
+    void getAllCustomersByTotalPointIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -685,7 +601,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByTotalPointIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllCustomersByTotalPointIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -698,7 +614,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByTotalPointIsLessThanOrEqualToSomething() throws Exception {
+    void getAllCustomersByTotalPointIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -711,7 +627,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByTotalPointIsLessThanSomething() throws Exception {
+    void getAllCustomersByTotalPointIsLessThanSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -724,7 +640,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByTotalPointIsGreaterThanSomething() throws Exception {
+    void getAllCustomersByTotalPointIsGreaterThanSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -735,10 +651,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldBeFound("totalPoint.greaterThan=" + SMALLER_TOTAL_POINT);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByReferenceIsEqualToSomething() throws Exception {
+    void getAllCustomersByReferenceIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -751,20 +666,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByReferenceIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where reference not equals to DEFAULT_REFERENCE
-        defaultCustomerShouldNotBeFound("reference.notEquals=" + DEFAULT_REFERENCE);
-
-        // Get all the customerList where reference not equals to UPDATED_REFERENCE
-        defaultCustomerShouldBeFound("reference.notEquals=" + UPDATED_REFERENCE);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByReferenceIsInShouldWork() throws Exception {
+    void getAllCustomersByReferenceIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -777,7 +679,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByReferenceIsNullOrNotNull() throws Exception {
+    void getAllCustomersByReferenceIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -787,9 +689,10 @@ public class CustomerResourceIT {
         // Get all the customerList where reference is null
         defaultCustomerShouldNotBeFound("reference.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllCustomersByReferenceContainsSomething() throws Exception {
+    void getAllCustomersByReferenceContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -802,7 +705,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByReferenceNotContainsSomething() throws Exception {
+    void getAllCustomersByReferenceNotContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -813,10 +716,9 @@ public class CustomerResourceIT {
         defaultCustomerShouldBeFound("reference.doesNotContain=" + UPDATED_REFERENCE);
     }
 
-
     @Test
     @Transactional
-    public void getAllCustomersByCustomIdIsEqualToSomething() throws Exception {
+    void getAllCustomersByCustomIdIsEqualToSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -829,20 +731,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByCustomIdIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        customerRepository.saveAndFlush(customer);
-
-        // Get all the customerList where customId not equals to DEFAULT_CUSTOM_ID
-        defaultCustomerShouldNotBeFound("customId.notEquals=" + DEFAULT_CUSTOM_ID);
-
-        // Get all the customerList where customId not equals to UPDATED_CUSTOM_ID
-        defaultCustomerShouldBeFound("customId.notEquals=" + UPDATED_CUSTOM_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCustomersByCustomIdIsInShouldWork() throws Exception {
+    void getAllCustomersByCustomIdIsInShouldWork() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -855,7 +744,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByCustomIdIsNullOrNotNull() throws Exception {
+    void getAllCustomersByCustomIdIsNullOrNotNull() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -865,9 +754,10 @@ public class CustomerResourceIT {
         // Get all the customerList where customId is null
         defaultCustomerShouldNotBeFound("customId.specified=false");
     }
-                @Test
+
+    @Test
     @Transactional
-    public void getAllCustomersByCustomIdContainsSomething() throws Exception {
+    void getAllCustomersByCustomIdContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -880,7 +770,7 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getAllCustomersByCustomIdNotContainsSomething() throws Exception {
+    void getAllCustomersByCustomIdNotContainsSomething() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -895,7 +785,8 @@ public class CustomerResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultCustomerShouldBeFound(String filter) throws Exception {
-        restCustomerMockMvc.perform(get("/api/customers?sort=id,desc&" + filter))
+        restCustomerMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(customer.getId().intValue())))
@@ -909,7 +800,8 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.[*].customId").value(hasItem(DEFAULT_CUSTOM_ID)));
 
         // Check, that the count call also returns 1
-        restCustomerMockMvc.perform(get("/api/customers/count?sort=id,desc&" + filter))
+        restCustomerMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("1"));
@@ -919,14 +811,16 @@ public class CustomerResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultCustomerShouldNotBeFound(String filter) throws Exception {
-        restCustomerMockMvc.perform(get("/api/customers?sort=id,desc&" + filter))
+        restCustomerMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restCustomerMockMvc.perform(get("/api/customers/count?sort=id,desc&" + filter))
+        restCustomerMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"));
@@ -934,17 +828,16 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void getNonExistingCustomer() throws Exception {
+    void getNonExistingCustomer() throws Exception {
         // Get the customer
-        restCustomerMockMvc.perform(get("/api/customers/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restCustomerMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateCustomer() throws Exception {
+    void putExistingCustomer() throws Exception {
         // Initialize the database
-        customerService.save(customer);
+        customerRepository.saveAndFlush(customer);
 
         int databaseSizeBeforeUpdate = customerRepository.findAll().size();
 
@@ -962,9 +855,12 @@ public class CustomerResourceIT {
             .reference(UPDATED_REFERENCE)
             .customId(UPDATED_CUSTOM_ID);
 
-        restCustomerMockMvc.perform(put("/api/customers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedCustomer)))
+        restCustomerMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedCustomer.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedCustomer))
+            )
             .andExpect(status().isOk());
 
         // Validate the Customer in the database
@@ -983,13 +879,17 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void updateNonExistingCustomer() throws Exception {
+    void putNonExistingCustomer() throws Exception {
         int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+        customer.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restCustomerMockMvc.perform(put("/api/customers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(customer)))
+        restCustomerMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, customer.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Customer in the database
@@ -999,15 +899,187 @@ public class CustomerResourceIT {
 
     @Test
     @Transactional
-    public void deleteCustomer() throws Exception {
+    void putWithIdMismatchCustomer() throws Exception {
+        int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+        customer.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCustomerMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Customer in the database
+        List<Customer> customerList = customerRepository.findAll();
+        assertThat(customerList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithMissingIdPathParamCustomer() throws Exception {
+        int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+        customer.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCustomerMockMvc
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Customer in the database
+        List<Customer> customerList = customerRepository.findAll();
+        assertThat(customerList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateCustomerWithPatch() throws Exception {
         // Initialize the database
-        customerService.save(customer);
+        customerRepository.saveAndFlush(customer);
+
+        int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+
+        // Update the customer using partial update
+        Customer partialUpdatedCustomer = new Customer();
+        partialUpdatedCustomer.setId(customer.getId());
+
+        partialUpdatedCustomer.firstName(UPDATED_FIRST_NAME).address(UPDATED_ADDRESS).customId(UPDATED_CUSTOM_ID);
+
+        restCustomerMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedCustomer.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedCustomer))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Customer in the database
+        List<Customer> customerList = customerRepository.findAll();
+        assertThat(customerList).hasSize(databaseSizeBeforeUpdate);
+        Customer testCustomer = customerList.get(customerList.size() - 1);
+        assertThat(testCustomer.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
+        assertThat(testCustomer.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
+        assertThat(testCustomer.getPhone()).isEqualTo(DEFAULT_PHONE);
+        assertThat(testCustomer.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testCustomer.getAddress()).isEqualTo(UPDATED_ADDRESS);
+        assertThat(testCustomer.getTotalPoint()).isEqualTo(DEFAULT_TOTAL_POINT);
+        assertThat(testCustomer.getReference()).isEqualTo(DEFAULT_REFERENCE);
+        assertThat(testCustomer.getCustomId()).isEqualTo(UPDATED_CUSTOM_ID);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateCustomerWithPatch() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
+
+        int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+
+        // Update the customer using partial update
+        Customer partialUpdatedCustomer = new Customer();
+        partialUpdatedCustomer.setId(customer.getId());
+
+        partialUpdatedCustomer
+            .firstName(UPDATED_FIRST_NAME)
+            .lastName(UPDATED_LAST_NAME)
+            .phone(UPDATED_PHONE)
+            .email(UPDATED_EMAIL)
+            .address(UPDATED_ADDRESS)
+            .totalPoint(UPDATED_TOTAL_POINT)
+            .reference(UPDATED_REFERENCE)
+            .customId(UPDATED_CUSTOM_ID);
+
+        restCustomerMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedCustomer.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedCustomer))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Customer in the database
+        List<Customer> customerList = customerRepository.findAll();
+        assertThat(customerList).hasSize(databaseSizeBeforeUpdate);
+        Customer testCustomer = customerList.get(customerList.size() - 1);
+        assertThat(testCustomer.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
+        assertThat(testCustomer.getLastName()).isEqualTo(UPDATED_LAST_NAME);
+        assertThat(testCustomer.getPhone()).isEqualTo(UPDATED_PHONE);
+        assertThat(testCustomer.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testCustomer.getAddress()).isEqualTo(UPDATED_ADDRESS);
+        assertThat(testCustomer.getTotalPoint()).isEqualTo(UPDATED_TOTAL_POINT);
+        assertThat(testCustomer.getReference()).isEqualTo(UPDATED_REFERENCE);
+        assertThat(testCustomer.getCustomId()).isEqualTo(UPDATED_CUSTOM_ID);
+    }
+
+    @Test
+    @Transactional
+    void patchNonExistingCustomer() throws Exception {
+        int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+        customer.setId(count.incrementAndGet());
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restCustomerMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, customer.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Customer in the database
+        List<Customer> customerList = customerRepository.findAll();
+        assertThat(customerList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithIdMismatchCustomer() throws Exception {
+        int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+        customer.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCustomerMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Customer in the database
+        List<Customer> customerList = customerRepository.findAll();
+        assertThat(customerList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithMissingIdPathParamCustomer() throws Exception {
+        int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+        customer.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCustomerMockMvc
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(customer)))
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Customer in the database
+        List<Customer> customerList = customerRepository.findAll();
+        assertThat(customerList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void deleteCustomer() throws Exception {
+        // Initialize the database
+        customerRepository.saveAndFlush(customer);
 
         int databaseSizeBeforeDelete = customerRepository.findAll().size();
 
         // Delete the customer
-        restCustomerMockMvc.perform(delete("/api/customers/{id}", customer.getId())
-            .accept(MediaType.APPLICATION_JSON))
+        restCustomerMockMvc
+            .perform(delete(ENTITY_API_URL_ID, customer.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

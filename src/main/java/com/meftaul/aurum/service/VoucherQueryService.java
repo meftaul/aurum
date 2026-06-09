@@ -1,9 +1,11 @@
 package com.meftaul.aurum.service;
 
+import com.meftaul.aurum.domain.*; // for static metamodels
+import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.repository.VoucherRepository;
+import com.meftaul.aurum.service.criteria.VoucherCriteria;
 import java.util.List;
-
 import javax.persistence.criteria.JoinType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,13 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.jhipster.service.QueryService;
-
-import com.meftaul.aurum.domain.Voucher;
-import com.meftaul.aurum.domain.*; // for static metamodels
-import com.meftaul.aurum.repository.VoucherRepository;
-import com.meftaul.aurum.service.dto.VoucherCriteria;
+import tech.jhipster.service.QueryService;
 
 /**
  * Service for executing complex queries for {@link Voucher} entities in the database.
@@ -82,6 +78,10 @@ public class VoucherQueryService extends QueryService<Voucher> {
     protected Specification<Voucher> createSpecification(VoucherCriteria criteria) {
         Specification<Voucher> specification = Specification.where(null);
         if (criteria != null) {
+            // This has to be called first, because the distinct method returns null
+            if (criteria.getDistinct() != null) {
+                specification = specification.and(distinct(criteria.getDistinct()));
+            }
             if (criteria.getId() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), Voucher_.id));
             }
@@ -92,7 +92,8 @@ public class VoucherQueryService extends QueryService<Voucher> {
                 specification = specification.and(buildRangeSpecification(criteria.getCustomerId(), Voucher_.customerId));
             }
             if (criteria.getCalculatedTotalAmount() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getCalculatedTotalAmount(), Voucher_.calculatedTotalAmount));
+                specification =
+                    specification.and(buildRangeSpecification(criteria.getCalculatedTotalAmount(), Voucher_.calculatedTotalAmount));
             }
             if (criteria.getVat() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getVat(), Voucher_.vat));
@@ -122,8 +123,13 @@ public class VoucherQueryService extends QueryService<Voucher> {
                 specification = specification.and(buildSpecification(criteria.getDeliveryStatus(), Voucher_.deliveryStatus));
             }
             if (criteria.getAurumServiceId() != null) {
-                specification = specification.and(buildSpecification(criteria.getAurumServiceId(),
-                    root -> root.join(Voucher_.aurumServices, JoinType.LEFT).get(AurumService_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.getAurumServiceId(),
+                            root -> root.join(Voucher_.aurumServices, JoinType.LEFT).get(AurumService_.id)
+                        )
+                    );
             }
         }
         return specification;

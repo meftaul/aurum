@@ -1,25 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-
-import { AurumSharedModule } from 'app/shared/shared.module';
-import { CustomerComponent } from './customer.component';
-import { CustomerDetailComponent } from './customer-detail.component';
-import { CustomerUpdateComponent } from './customer-update.component';
-import { CustomerDeleteDialogComponent } from './customer-delete-dialog.component';
-import { customerRoute } from './customer.route';
-
-const ENTITY_STATES = [...customerRoute];
+import { SharedModule } from 'app/shared/shared.module';
+import { CustomerComponent } from './list/customer.component';
+import { CustomerDetailComponent } from './detail/customer-detail.component';
+import { CustomerUpdateComponent } from './update/customer-update.component';
+import { CustomerDeleteDialogComponent } from './delete/customer-delete-dialog.component';
+import { CustomerRoutingModule } from './route/customer-routing.module';
 
 @NgModule({
-  imports: [AurumSharedModule, RouterModule.forChild(ENTITY_STATES), MatFormFieldModule, MatInputModule],
-  declarations: [
-    CustomerComponent,
-    CustomerDetailComponent,
-    CustomerUpdateComponent,
-    CustomerDeleteDialogComponent
-  ],
-  entryComponents: [CustomerDeleteDialogComponent]
+  imports: [SharedModule, CustomerRoutingModule],
+  declarations: [CustomerComponent, CustomerDetailComponent, CustomerUpdateComponent, CustomerDeleteDialogComponent],
 })
-export class AurumCustomerModule {}
+export class CustomerModule {}

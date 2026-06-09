@@ -2,17 +2,16 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <!--
         Added the constraints for entity AurumService.
     -->
     <changeSet id="20191026063357-2" author="jhipster">
-        
+
         <addForeignKeyConstraint baseColumnNames="voucher_id"
                                  baseTableName="aurum_service"
-                                 constraintName="fk_aurum_service_voucher_id"
+                                 constraintName="fk_aurum_service__voucher_id"
                                  referencedColumnNames="id"
                                  referencedTableName="voucher"/>
-
     </changeSet>
 </databaseChangeLog>

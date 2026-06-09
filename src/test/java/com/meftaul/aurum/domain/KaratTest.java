@@ -1,13 +1,14 @@
 package com.meftaul.aurum.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.meftaul.aurum.web.rest.TestUtil;
 
-public class KaratTest {
+import com.meftaul.aurum.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class KaratTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Karat.class);
         Karat karat1 = new Karat();
         karat1.setId(1L);

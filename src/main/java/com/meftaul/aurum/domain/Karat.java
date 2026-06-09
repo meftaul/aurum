@@ -1,13 +1,11 @@
 package com.meftaul.aurum.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Karat.
@@ -15,12 +13,14 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "karat")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Karat implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "karat_type")
@@ -31,8 +31,14 @@ public class Karat implements Serializable {
     private BigDecimal purityPercent;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Karat id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -40,11 +46,11 @@ public class Karat implements Serializable {
     }
 
     public String getKaratType() {
-        return karatType;
+        return this.karatType;
     }
 
     public Karat karatType(String karatType) {
-        this.karatType = karatType;
+        this.setKaratType(karatType);
         return this;
     }
 
@@ -53,17 +59,18 @@ public class Karat implements Serializable {
     }
 
     public BigDecimal getPurityPercent() {
-        return purityPercent;
+        return this.purityPercent;
     }
 
     public Karat purityPercent(BigDecimal purityPercent) {
-        this.purityPercent = purityPercent;
+        this.setPurityPercent(purityPercent);
         return this;
     }
 
     public void setPurityPercent(BigDecimal purityPercent) {
         this.purityPercent = purityPercent;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -79,7 +86,8 @@ public class Karat implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

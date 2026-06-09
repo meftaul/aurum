@@ -1,7 +1,9 @@
 {
-  "fluentMethods": true,
+  "changelogDate": "20191023070656",
   "clientRootFolder": "",
-  "relationships": [],
+  "databaseType": "sql",
+  "dto": "no",
+  "entityTableName": "customer",
   "fields": [
     {
       "fieldName": "firstName",
@@ -40,12 +42,11 @@
       "fieldValidateRules": ["unique"]
     }
   ],
-  "changelogDate": "20191023070656",
-  "dto": "no",
-  "searchEngine": false,
-  "service": "serviceImpl",
-  "entityTableName": "customer",
-  "databaseType": "sql",
+  "fluentMethods": true,
   "jpaMetamodelFiltering": true,
-  "pagination": "pagination"
+  "name": "Customer",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": false,
+  "service": "serviceImpl"
 }

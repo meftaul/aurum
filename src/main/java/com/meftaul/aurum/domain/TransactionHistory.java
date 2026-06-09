@@ -1,16 +1,13 @@
 package com.meftaul.aurum.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-
-import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A TransactionHistory.
@@ -18,12 +15,14 @@ import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 @Entity
 @Table(name = "transaction_history")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class TransactionHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -52,8 +51,14 @@ public class TransactionHistory implements Serializable {
     private String addedBy;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public TransactionHistory id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -61,11 +66,11 @@ public class TransactionHistory implements Serializable {
     }
 
     public String getVoucherNo() {
-        return voucherNo;
+        return this.voucherNo;
     }
 
     public TransactionHistory voucherNo(String voucherNo) {
-        this.voucherNo = voucherNo;
+        this.setVoucherNo(voucherNo);
         return this;
     }
 
@@ -74,11 +79,11 @@ public class TransactionHistory implements Serializable {
     }
 
     public BigDecimal getAmount() {
-        return amount;
+        return this.amount;
     }
 
     public TransactionHistory amount(BigDecimal amount) {
-        this.amount = amount;
+        this.setAmount(amount);
         return this;
     }
 
@@ -87,11 +92,11 @@ public class TransactionHistory implements Serializable {
     }
 
     public Instant getDateCreated() {
-        return dateCreated;
+        return this.dateCreated;
     }
 
     public TransactionHistory dateCreated(Instant dateCreated) {
-        this.dateCreated = dateCreated;
+        this.setDateCreated(dateCreated);
         return this;
     }
 
@@ -100,11 +105,11 @@ public class TransactionHistory implements Serializable {
     }
 
     public TransactionStatus getTag() {
-        return tag;
+        return this.tag;
     }
 
     public TransactionHistory tag(TransactionStatus tag) {
-        this.tag = tag;
+        this.setTag(tag);
         return this;
     }
 
@@ -113,11 +118,11 @@ public class TransactionHistory implements Serializable {
     }
 
     public Long getCustomerId() {
-        return customerId;
+        return this.customerId;
     }
 
     public TransactionHistory customerId(Long customerId) {
-        this.customerId = customerId;
+        this.setCustomerId(customerId);
         return this;
     }
 
@@ -126,17 +131,18 @@ public class TransactionHistory implements Serializable {
     }
 
     public String getAddedBy() {
-        return addedBy;
+        return this.addedBy;
     }
 
     public TransactionHistory addedBy(String addedBy) {
-        this.addedBy = addedBy;
+        this.setAddedBy(addedBy);
         return this;
     }
 
     public void setAddedBy(String addedBy) {
         this.addedBy = addedBy;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -152,7 +158,8 @@ public class TransactionHistory implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

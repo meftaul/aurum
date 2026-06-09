@@ -1,30 +1,30 @@
 package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.domain.Customer;
-import com.meftaul.aurum.service.CustomerService;
-import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
-import com.meftaul.aurum.service.dto.CustomerCriteria;
+import com.meftaul.aurum.repository.CustomerRepository;
 import com.meftaul.aurum.service.CustomerQueryService;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import com.meftaul.aurum.service.CustomerService;
+import com.meftaul.aurum.service.criteria.CustomerCriteria;
+import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.meftaul.aurum.domain.Customer}.
@@ -42,10 +42,17 @@ public class CustomerResource {
 
     private final CustomerService customerService;
 
+    private final CustomerRepository customerRepository;
+
     private final CustomerQueryService customerQueryService;
 
-    public CustomerResource(CustomerService customerService, CustomerQueryService customerQueryService) {
+    public CustomerResource(
+        CustomerService customerService,
+        CustomerRepository customerRepository,
+        CustomerQueryService customerQueryService
+    ) {
         this.customerService = customerService;
+        this.customerRepository = customerRepository;
         this.customerQueryService = customerQueryService;
     }
 
@@ -63,30 +70,80 @@ public class CustomerResource {
             throw new BadRequestAlertException("A new customer cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Customer result = customerService.save(customer);
-        return ResponseEntity.created(new URI("/api/customers/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/customers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /customers} : Updates an existing customer.
+     * {@code PUT  /customers/:id} : Updates an existing customer.
      *
+     * @param id the id of the customer to save.
      * @param customer the customer to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customer,
      * or with status {@code 400 (Bad Request)} if the customer is not valid,
      * or with status {@code 500 (Internal Server Error)} if the customer couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/customers")
-    public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody Customer customer) throws URISyntaxException {
-        log.debug("REST request to update Customer : {}", customer);
+    @PutMapping("/customers/{id}")
+    public ResponseEntity<Customer> updateCustomer(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody Customer customer
+    ) throws URISyntaxException {
+        log.debug("REST request to update Customer : {}, {}", id, customer);
         if (customer.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Customer result = customerService.save(customer);
-        return ResponseEntity.ok()
+        if (!Objects.equals(id, customer.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!customerRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Customer result = customerService.update(customer);
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, customer.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /customers/:id} : Partial updates given fields of an existing customer, field will ignore if it is null
+     *
+     * @param id the id of the customer to save.
+     * @param customer the customer to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customer,
+     * or with status {@code 400 (Bad Request)} if the customer is not valid,
+     * or with status {@code 404 (Not Found)} if the customer is not found,
+     * or with status {@code 500 (Internal Server Error)} if the customer couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/customers/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Customer> partialUpdateCustomer(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody Customer customer
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Customer partially : {}, {}", id, customer);
+        if (customer.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, customer.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!customerRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<Customer> result = customerService.partialUpdate(customer);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, customer.getId().toString())
+        );
     }
 
     /**
@@ -97,7 +154,10 @@ public class CustomerResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
      */
     @GetMapping("/customers")
-    public ResponseEntity<List<Customer>> getAllCustomers(CustomerCriteria criteria, Pageable pageable) {
+    public ResponseEntity<List<Customer>> getAllCustomers(
+        CustomerCriteria criteria,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
         log.debug("REST request to get Customers by criteria: {}", criteria);
         Page<Customer> page = customerQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -139,6 +199,9 @@ public class CustomerResource {
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         log.debug("REST request to delete Customer : {}", id);
         customerService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

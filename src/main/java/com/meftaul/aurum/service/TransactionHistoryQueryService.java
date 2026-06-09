@@ -3,9 +3,13 @@ package com.meftaul.aurum.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.criteria.JoinType;
 
+import com.meftaul.aurum.domain.*; // for static metamodels
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
+import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.repository.VoucherRepository;
+import com.meftaul.aurum.service.criteria.TransactionHistoryCriteria;
 import com.meftaul.aurum.service.dto.TxnReportDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.jhipster.service.QueryService;
-
-import com.meftaul.aurum.domain.TransactionHistory;
-import com.meftaul.aurum.domain.*; // for static metamodels
-import com.meftaul.aurum.repository.TransactionHistoryRepository;
-import com.meftaul.aurum.service.dto.TransactionHistoryCriteria;
+import tech.jhipster.service.QueryService;
 
 /**
  * Service for executing complex queries for {@link TransactionHistory} entities in the database.
@@ -153,6 +151,10 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
     protected Specification<TransactionHistory> createSpecification(TransactionHistoryCriteria criteria) {
         Specification<TransactionHistory> specification = Specification.where(null);
         if (criteria != null) {
+            // This has to be called first, because the distinct method returns null
+            if (criteria.getDistinct() != null) {
+                specification = specification.and(distinct(criteria.getDistinct()));
+            }
             if (criteria.getId() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), TransactionHistory_.id));
             }

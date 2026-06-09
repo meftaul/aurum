@@ -1,15 +1,9 @@
 {
-  "fluentMethods": true,
+  "changelogDate": "20191026063357",
   "clientRootFolder": "",
-  "relationships": [
-    {
-      "relationshipName": "voucher",
-      "otherEntityName": "voucher",
-      "relationshipType": "many-to-one",
-      "otherEntityField": "voucherNo",
-      "otherEntityRelationshipName": "aurumService"
-    }
-  ],
+  "databaseType": "sql",
+  "dto": "no",
+  "entityTableName": "aurum_service",
   "fields": [
     {
       "fieldName": "serviceType",
@@ -85,12 +79,19 @@
       "fieldType": "String"
     }
   ],
-  "changelogDate": "20191026063357",
-  "dto": "no",
-  "searchEngine": false,
-  "service": "serviceImpl",
-  "entityTableName": "aurum_service",
-  "databaseType": "sql",
+  "fluentMethods": true,
   "jpaMetamodelFiltering": true,
-  "pagination": "pagination"
+  "name": "AurumService",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "voucherNo",
+      "otherEntityName": "voucher",
+      "otherEntityRelationshipName": "aurumService",
+      "relationshipName": "voucher",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": false,
+  "service": "serviceImpl"
 }

@@ -1,18 +1,16 @@
 package com.meftaul.aurum.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.meftaul.aurum.domain.enumeration.VoucherStatus;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.meftaul.aurum.domain.enumeration.VoucherStatus;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Voucher.
@@ -20,12 +18,14 @@ import com.meftaul.aurum.domain.enumeration.VoucherStatus;
 @Entity
 @Table(name = "voucher")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Voucher implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "voucher_no")
@@ -71,11 +71,18 @@ public class Voucher implements Serializable {
 
     @OneToMany(mappedBy = "voucher")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "voucher" }, allowSetters = true)
     private Set<AurumService> aurumServices = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Voucher id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -83,11 +90,11 @@ public class Voucher implements Serializable {
     }
 
     public String getVoucherNo() {
-        return voucherNo;
+        return this.voucherNo;
     }
 
     public Voucher voucherNo(String voucherNo) {
-        this.voucherNo = voucherNo;
+        this.setVoucherNo(voucherNo);
         return this;
     }
 
@@ -96,11 +103,11 @@ public class Voucher implements Serializable {
     }
 
     public Long getCustomerId() {
-        return customerId;
+        return this.customerId;
     }
 
     public Voucher customerId(Long customerId) {
-        this.customerId = customerId;
+        this.setCustomerId(customerId);
         return this;
     }
 
@@ -109,11 +116,11 @@ public class Voucher implements Serializable {
     }
 
     public BigDecimal getCalculatedTotalAmount() {
-        return calculatedTotalAmount;
+        return this.calculatedTotalAmount;
     }
 
     public Voucher calculatedTotalAmount(BigDecimal calculatedTotalAmount) {
-        this.calculatedTotalAmount = calculatedTotalAmount;
+        this.setCalculatedTotalAmount(calculatedTotalAmount);
         return this;
     }
 
@@ -122,11 +129,11 @@ public class Voucher implements Serializable {
     }
 
     public BigDecimal getVat() {
-        return vat;
+        return this.vat;
     }
 
     public Voucher vat(BigDecimal vat) {
-        this.vat = vat;
+        this.setVat(vat);
         return this;
     }
 
@@ -135,11 +142,11 @@ public class Voucher implements Serializable {
     }
 
     public BigDecimal getDisountAmount() {
-        return disountAmount;
+        return this.disountAmount;
     }
 
     public Voucher disountAmount(BigDecimal disountAmount) {
-        this.disountAmount = disountAmount;
+        this.setDisountAmount(disountAmount);
         return this;
     }
 
@@ -148,11 +155,11 @@ public class Voucher implements Serializable {
     }
 
     public VoucherStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public Voucher status(VoucherStatus status) {
-        this.status = status;
+        this.setStatus(status);
         return this;
     }
 
@@ -161,11 +168,11 @@ public class Voucher implements Serializable {
     }
 
     public BigDecimal getTotalPayableAmount() {
-        return totalPayableAmount;
+        return this.totalPayableAmount;
     }
 
     public Voucher totalPayableAmount(BigDecimal totalPayableAmount) {
-        this.totalPayableAmount = totalPayableAmount;
+        this.setTotalPayableAmount(totalPayableAmount);
         return this;
     }
 
@@ -174,11 +181,11 @@ public class Voucher implements Serializable {
     }
 
     public Instant getDateCreated() {
-        return dateCreated;
+        return this.dateCreated;
     }
 
     public Voucher dateCreated(Instant dateCreated) {
-        this.dateCreated = dateCreated;
+        this.setDateCreated(dateCreated);
         return this;
     }
 
@@ -187,11 +194,11 @@ public class Voucher implements Serializable {
     }
 
     public String getAddedBy() {
-        return addedBy;
+        return this.addedBy;
     }
 
     public Voucher addedBy(String addedBy) {
-        this.addedBy = addedBy;
+        this.setAddedBy(addedBy);
         return this;
     }
 
@@ -200,11 +207,11 @@ public class Voucher implements Serializable {
     }
 
     public String getBoxNumber() {
-        return boxNumber;
+        return this.boxNumber;
     }
 
     public Voucher boxNumber(String boxNumber) {
-        this.boxNumber = boxNumber;
+        this.setBoxNumber(boxNumber);
         return this;
     }
 
@@ -213,11 +220,11 @@ public class Voucher implements Serializable {
     }
 
     public Instant getDeliveryDate() {
-        return deliveryDate;
+        return this.deliveryDate;
     }
 
     public Voucher deliveryDate(Instant deliveryDate) {
-        this.deliveryDate = deliveryDate;
+        this.setDeliveryDate(deliveryDate);
         return this;
     }
 
@@ -225,12 +232,12 @@ public class Voucher implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
-    public Boolean isDeliveryStatus() {
-        return deliveryStatus;
+    public Boolean getDeliveryStatus() {
+        return this.deliveryStatus;
     }
 
     public Voucher deliveryStatus(Boolean deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
+        this.setDeliveryStatus(deliveryStatus);
         return this;
     }
 
@@ -239,11 +246,21 @@ public class Voucher implements Serializable {
     }
 
     public Set<AurumService> getAurumServices() {
-        return aurumServices;
+        return this.aurumServices;
+    }
+
+    public void setAurumServices(Set<AurumService> aurumServices) {
+        if (this.aurumServices != null) {
+            this.aurumServices.forEach(i -> i.setVoucher(null));
+        }
+        if (aurumServices != null) {
+            aurumServices.forEach(i -> i.setVoucher(this));
+        }
+        this.aurumServices = aurumServices;
     }
 
     public Voucher aurumServices(Set<AurumService> aurumServices) {
-        this.aurumServices = aurumServices;
+        this.setAurumServices(aurumServices);
         return this;
     }
 
@@ -259,9 +276,6 @@ public class Voucher implements Serializable {
         return this;
     }
 
-    public void setAurumServices(Set<AurumService> aurumServices) {
-        this.aurumServices = aurumServices;
-    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -277,7 +291,8 @@ public class Voucher implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore
@@ -296,7 +311,7 @@ public class Voucher implements Serializable {
             ", addedBy='" + getAddedBy() + "'" +
             ", boxNumber='" + getBoxNumber() + "'" +
             ", deliveryDate='" + getDeliveryDate() + "'" +
-            ", deliveryStatus='" + isDeliveryStatus() + "'" +
+            ", deliveryStatus='" + getDeliveryStatus() + "'" +
             "}";
     }
 }

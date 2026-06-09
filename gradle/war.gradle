@@ -1,7 +1,7 @@
 apply plugin: "war"
 
 bootWar {
-    mainClassName = "com.meftaul.aurum.AurumApp"
+    mainClass = "com.meftaul.aurum.AurumApp"
     includes = ["WEB-INF/**", "META-INF/**"]
     webXml = file("${project.rootDir}/src/main/webapp/WEB-INF/web.xml")
 }
