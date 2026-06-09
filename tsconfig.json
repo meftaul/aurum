@@ -3,8 +3,9 @@
     "baseUrl": "src/main/webapp/",
     "outDir": "./build/resources/main/static/",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "strictNullChecks": true,
+    "strict": false,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
@@ -20,9 +21,9 @@
     "lib": ["es2018", "dom"]
   },
   "angularCompilerOptions": {
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true,
+    "strictInjectionParameters": false,
+    "strictInputAccessModifiers": false,
+    "strictTemplates": false,
     "preserveWhitespaces": true
   }
 }

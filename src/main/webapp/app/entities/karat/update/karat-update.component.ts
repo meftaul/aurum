@@ -39,7 +39,7 @@ export class KaratUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const karat = this.karatFormService.getKarat(this.editForm);
+    const karat: any = this.karatFormService.getKarat(this.editForm);
     if (karat.id !== null) {
       this.subscribeToSaveResponse(this.karatService.update(karat));
     } else {

@@ -1,23 +1,24 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { ICustomer, Customer } from 'app/shared/model/customer.model';
+import { ICustomer } from 'app/entities/customer/customer.model';
 import { TransactionService } from '../services/service-api/transaction.service';
 import { VOUCHER_STATUS, SERVICE_LIST_COLUMNS, AURUM_SERVICE_LIST, ALLOY_TYPE } from '../services/domain/transaction.models';
 import { Subscription } from 'rxjs';
-import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
-import { CustomerService } from 'app/entities/customer/customer.service';
-import { Voucher } from 'app/shared/model/voucher.model';
-import { AurumService } from 'app/shared/model/aurum-service.model';
-import * as moment from 'moment';
-import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
-import { KaratService } from 'app/entities/karat/karat.service';
-import { RateService } from 'app/entities/rate/rate.service';
+import { EventManager } from 'app/core/util/event-manager.service';
+import { AlertService } from 'app/core/util/alert.service';
+import { CustomerService } from 'app/entities/customer/service/customer.service';
+import { IVoucher } from 'app/entities/voucher/voucher.model';
+import { IAurumService } from 'app/entities/aurum-service/aurum-service.model';
+import moment from 'moment';
+import { VoucherStatus } from 'app/entities/enumerations/voucher-status.model';
+import { KaratService } from 'app/entities/karat/service/karat.service';
+import { RateService } from 'app/entities/rate/service/rate.service';
 import { AccountService } from 'app/core/auth/account.service';
-import { Account } from 'app/core/user/account.model';
-import { ItemService } from 'app/entities/item/item.service';
-import { CustomVoucherDto } from 'app/shared/model/custom.voucher.model';
-import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
+import { Account } from 'app/core/auth/account.model';
+import { ItemService } from 'app/entities/item/service/item.service';
+import { CustomVoucherDto } from 'app/entities/custom.voucher.model';
+import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 
@@ -51,7 +52,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   isReportChargeDisabled = true;
   reportCharge = 50;
 
-  aurumServiceList: AurumService[] = [];
+  aurumServiceList: IAurumService[] = [];
   calculateTotalAmount = 0;
   totalAmount = 0;
   payableTotalAmount = 0;
@@ -86,21 +87,21 @@ export class TransactionComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    protected jhiAlertService: JhiAlertService,
+    protected jhiAlertService: AlertService,
     private transactionService: TransactionService,
     protected customerService: CustomerService,
     protected karatService: KaratService,
     protected rateService: RateService,
     protected itemService: ItemService,
     private accountService: AccountService,
-    protected eventManager: JhiEventManager,
+    protected eventManager: EventManager,
     private modalService: NgbModal
   ) {}
 
   ngOnInit() {
     this.prepareAurumServiceForm();
     this.prepareVoucherForm();
-    this.prepareCustomerForm(new Customer());
+    this.prepareCustomerForm(({} as ICustomer));
     this.searchCategory = 'phone';
 
     this.fetchKaratList();
@@ -117,31 +118,31 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (this.searchCategory === 'id') {
       this.customerService.query({ 'customId.equals': this.cusromerSearchingValue }).subscribe(
         data => {
-          if (data.body && data.body.length === 0) this.jhiAlertService.warning('Customer not found.');
+          if (data.body && data.body.length === 0) this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
           this.customer = data.body[0];
           this.customerID = this.customer ? this.customer.id : 0;
         },
         error => {
           this.customer = null;
-          this.jhiAlertService.warning('Customer not found.');
+          this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
         }
       );
     } else {
       this.customerService.query({ 'phone.equals': this.cusromerSearchingValue }).subscribe(
         data => {
-          if (data.body && data.body.length === 0) this.jhiAlertService.warning('Customer not found.');
+          if (data.body && data.body.length === 0) this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
           this.customer = data.body[0];
           this.customerID = this.customer ? this.customer.id : 0;
         },
         error => {
           this.customer = null;
-          this.jhiAlertService.warning('Customer not found.');
+          this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
         }
       );
     }
   }
 
-  prepareCustomerForm(customerData: Customer) {
+  prepareCustomerForm(customerData: ICustomer) {
     this.customerForm = this.formBuilder.group({
       firstName: [customerData.firstName, [Validators.required]],
       lastName: [customerData.lastName],
@@ -168,7 +169,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let customer = new Customer();
+    let customer: any = {};
     customer = this.customerForm.value;
     this.customerService.create(customer).subscribe(
       response => {
@@ -179,7 +180,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
           this.customerForm.reset();
         } else {
           this.customer = null;
-          this.jhiAlertService.warning('Customer not found.');
+          this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
         }
       },
       error => {
@@ -216,7 +217,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   addService() {
     this.markFormGroupAsTouched(this.aurumServiceForm);
     if (this.aurumServiceForm.invalid) {
-      this.jhiAlertService.warning('Form Invalid.');
+      this.jhiAlertService.addAlert({ type: 'warning', message: 'Form Invalid.' });
       return;
     }
 
@@ -228,7 +229,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceForm.controls.quantity.setValue(1);
     }
 
-    const aurumServiceTemp = new AurumService();
+    const aurumServiceTemp = ({} as IAurumService);
     aurumServiceTemp.serviceType = this.aurumServiceForm.controls.serviceType.value;
     aurumServiceTemp.itemName = this.aurumServiceForm.controls.itemName.value;
     aurumServiceTemp.karatType = this.aurumServiceForm.controls.karatType.value;
@@ -261,7 +262,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.calculateTotalServiceCharge(this.aurumServiceList);
   }
 
-  calculateTotalServiceCharge(serviceList: AurumService[]) {
+  calculateTotalServiceCharge(serviceList: IAurumService[]) {
     this.calculateTotalAmount = 0;
     this.totalAmount = 0;
     this.payableTotalAmount = 0;
@@ -505,15 +506,15 @@ export class TransactionComponent implements OnInit, OnDestroy {
   confirmMakePayment(confirmDialog) {
     this.markFormGroupAsTouched(this.voucherForm);
     if (!this.customerID || this.customerID === 0) {
-      this.jhiAlertService.warning('Customer not found.');
+      this.jhiAlertService.addAlert({ type: 'warning', message: 'Customer not found.' });
       return;
     }
     if (this.aurumServiceList.length === 0) {
-      this.jhiAlertService.warning('Add atleast one service.');
+      this.jhiAlertService.addAlert({ type: 'warning', message: 'Add atleast one service.' });
       return;
     }
     if (this.voucherForm.invalid) {
-      this.jhiAlertService.warning('Invalid Data.');
+      this.jhiAlertService.addAlert({ type: 'warning', message: 'Invalid Data.' });
       return;
     }
     this.modalService.open(confirmDialog, { centered: true });
@@ -528,7 +529,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     if (+this.voucherForm.controls.paidAmount.value > this.payableTotalAmount) {
-      this.jhiAlertService.error('Paid amount can not be greater than payable amount');
+      this.jhiAlertService.addAlert({ type: 'danger', message: 'Paid amount can not be greater than payable amount' });
       this.loading = false;
       return;
     }
@@ -537,7 +538,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.aurumServiceList[0].serviceCharge = +this.reportCharge;
     }
 
-    const voucherTemp = new Voucher();
+    const voucherTemp: any = {};
     voucherTemp.voucherNo = moment().toString();
     voucherTemp.customerId = this.customerID;
     voucherTemp.boxNumber = this.voucherForm.controls.boxNumber.value;
@@ -564,10 +565,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
     // window.print();
     this.transactionService.create(customVoucherDto).subscribe(
       data => {
-        // method return Voucher not CustomVoucher
+        // method return IVoucher not CustomVoucher
         this.savedVoucherNumber = data.body.voucherNo;
         this.resetVoucherForm();
-        this.jhiAlertService.success('Transaction completed with voucher number '.concat(this.savedVoucherNumber));
+        this.jhiAlertService.addAlert({ type: 'success', message: 'Transaction completed with voucher number '.concat(this.savedVoucherNumber) });
         this.loading = false;
         this.router.navigate(['/invoice', this.savedVoucherNumber]);
       },

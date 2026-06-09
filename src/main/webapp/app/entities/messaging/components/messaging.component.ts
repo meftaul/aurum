@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { MessageService } from 'app/entities/messaging/services/messaging.service';
-import { CustomerService } from 'app/entities/customer/customer.service';
-import { ICustomer } from 'app/shared/model/customer.model';
-import { JhiAlertService } from 'ng-jhipster';
+import { CustomerService } from 'app/entities/customer/service/customer.service';
+import { ICustomer } from 'app/entities/customer/customer.model';
+import { AlertService } from 'app/core/util/alert.service';
 
 @Component({
   selector: 'jhi-aurum-messaging',
@@ -19,7 +19,7 @@ export class MessagingComponent implements OnInit, OnDestroy {
   constructor(
     private messageService: MessageService,
     private customerService: CustomerService,
-    protected jhiAlertService: JhiAlertService
+    protected jhiAlertService: AlertService
   ) {}
 
   ngOnInit() {
@@ -63,6 +63,6 @@ export class MessagingComponent implements OnInit, OnDestroy {
   }
 
   protected onError(errorMessage: string) {
-    this.jhiAlertService.error(errorMessage, null, null);
+    this.jhiAlertService.addAlert({ type: 'danger', message: errorMessage });
   }
 }

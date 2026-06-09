@@ -1,4 +1,4 @@
-export class Customer {
+export class ICustomer {
   id: number;
   name: string;
   mobileNumber: string;

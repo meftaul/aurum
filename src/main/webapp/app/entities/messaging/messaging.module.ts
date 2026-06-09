@@ -4,12 +4,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { AurumSharedModule } from 'app/shared/shared.module';
+import { SharedModule } from 'app/shared/shared.module';
 import { MessagingComponent } from './components/messaging.component';
 import { MESSAGING_ROUTE } from './messaging.routes';
 
 @NgModule({
-  imports: [AurumSharedModule, MatFormFieldModule, MatInputModule, RouterModule.forChild(MESSAGING_ROUTE)],
+  imports: [SharedModule, MatFormFieldModule, MatInputModule, RouterModule.forChild(MESSAGING_ROUTE)],
   declarations: [MessagingComponent],
   providers: [MatDatepickerModule]
 })

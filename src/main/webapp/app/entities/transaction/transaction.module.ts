@@ -12,7 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
-import { AurumSharedModule } from 'app/shared/shared.module';
+import { SharedModule } from 'app/shared/shared.module';
 
 import { TransactionComponent } from './components/transaction.component';
 import { TRANSACTION_ROUTE } from './transaction.routes';
@@ -20,7 +20,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
-    AurumSharedModule,
+    SharedModule,
     RouterModule.forChild(TRANSACTION_ROUTE),
     MatButtonModule,
     MatIconModule,

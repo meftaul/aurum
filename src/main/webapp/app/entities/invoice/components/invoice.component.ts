@@ -1,19 +1,19 @@
 // import { Component, OnInit, OnDestroy } from '@angular/core';
 // import { ActivatedRoute } from '@angular/router';
-// import { Voucher } from 'app/shared/model/voucher.model';
-// import { CustomerService } from 'app/entities/customer/customer.service';
-// import { AurumServiceService } from 'app/entities/aurum-service/aurum-service.service';
-// import { Customer } from 'app/shared/model/customer.model';
-// import { AurumService } from 'app/shared/model/aurum-service.model';
-// import { VoucherService } from 'app/entities/voucher/voucher.service';
-// import { TransactionHistoryService } from 'app/entities/transaction-history/transaction-history.service';
-// import { TransactionHistory } from 'app/shared/model/transaction-history.model';
+// import { IVoucher } from 'app/entities/voucher/voucher.model';
+// import { CustomerService } from 'app/entities/customer/service/customer.service';
+// import { AurumServiceService } from 'app/entities/aurum-service/service/aurum-service.service';
+// import { ICustomer } from 'app/entities/customer/customer.model';
+// import { IAurumService } from 'app/entities/aurum-service/aurum-service.model';
+// import { VoucherService } from 'app/entities/voucher/service/voucher.service';
+// import { TransactionHistoryService } from 'app/entities/transaction-history/service/transaction-history.service';
+// import { ITransactionHistory } from 'app/entities/transaction-history/transaction-history.model';
 // import { AmountInWords } from '../util/amount.in.words';
-// import { RateService } from 'app/entities/rate/rate.service';
+// import { RateService } from 'app/entities/rate/service/rate.service';
 
 // export class TypedAurumService {
 //   serviceType: string;
-//   serviceList: AurumService[];
+//   serviceList: IAurumService[];
 // }
 
 // @Component({
@@ -23,12 +23,12 @@
 // })
 // export class InvoiceComponent implements OnInit, OnDestroy {
 //   voucherNumber: string;
-//   voucher: Voucher;
-//   customer: Customer;
-//   aurumServices: AurumService[];
+//   voucher: IVoucher;
+//   customer: ICustomer;
+//   aurumServices: IAurumService[];
 //   typedAurumServiceList: TypedAurumService[];
-//   serviceTypeToServiceListMap: Map<string, AurumService[]>;
-//   txnHitoryList: TransactionHistory[];
+//   serviceTypeToServiceListMap: Map<string, IAurumService[]>;
+//   txnHitoryList: ITransactionHistory[];
 //   paidAmount: number;
 //   distinctServiceType: string[];
 //   invoiceTitle: string;

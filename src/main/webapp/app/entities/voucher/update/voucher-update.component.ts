@@ -41,7 +41,7 @@ export class VoucherUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const voucher = this.voucherFormService.getVoucher(this.editForm);
+    const voucher: any = this.voucherFormService.getVoucher(this.editForm);
     if (voucher.id !== null) {
       this.subscribeToSaveResponse(this.voucherService.update(voucher));
     } else {

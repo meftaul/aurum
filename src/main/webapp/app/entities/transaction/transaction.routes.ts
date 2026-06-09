@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { TransactionComponent } from './components/transaction.component';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 
 export const TRANSACTION_ROUTE: Routes = [
   {

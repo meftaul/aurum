@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { InvoiceNewComponent } from './component-new/invoice.component';
 // import { InvoiceComponent } from './components/invoice.component';
 

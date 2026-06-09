@@ -1,6 +1,6 @@
-import { Voucher } from './voucher.model';
+import { IVoucher } from './voucher/voucher.model';
 
 export class CustomVoucherDto {
-  voucher: Voucher;
+  voucher: IVoucher;
   paidAmount: number;
 }

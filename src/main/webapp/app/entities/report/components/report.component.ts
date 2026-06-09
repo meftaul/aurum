@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { JhiAlertService } from 'ng-jhipster';
-// import * as moment from 'moment';
-// import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
+import { AlertService } from 'app/core/util/alert.service';
+// import moment from 'moment';
+// import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { ReportService } from 'app/entities/report/service-api/report.service';
 import { Report } from 'app/entities/report/domain/report.model';
 // import {Report} from "app/entities/report/domain/report.model";
@@ -26,7 +26,7 @@ export class ReportComponent implements OnInit, OnDestroy {
 
   reportData: Report[];
 
-  constructor(protected jhiAlertService: JhiAlertService, protected reportService: ReportService) {}
+  constructor(protected jhiAlertService: AlertService, protected reportService: ReportService) {}
 
   ngOnInit(): void {
     this.getReportData('RECEIVE');

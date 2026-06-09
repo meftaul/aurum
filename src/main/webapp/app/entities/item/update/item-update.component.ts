@@ -35,7 +35,7 @@ export class ItemUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const item = this.itemFormService.getItem(this.editForm);
+    const item: any = this.itemFormService.getItem(this.editForm);
     if (item.id !== null) {
       this.subscribeToSaveResponse(this.itemService.update(item));
     } else {

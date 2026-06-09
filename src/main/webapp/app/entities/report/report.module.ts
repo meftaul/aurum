@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { AurumSharedModule } from 'app/shared/shared.module';
+import { SharedModule } from 'app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +17,7 @@ PlotlyModule.plotlyjs = PlotlyJS;*/
 
 @NgModule({
   imports: [
-    AurumSharedModule,
+    SharedModule,
     RouterModule.forChild(REPORT_ROUTE),
     MatButtonModule,
     MatIconModule,

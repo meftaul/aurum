@@ -1,21 +1,21 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { JhiAlertService } from 'ng-jhipster';
-import * as moment from 'moment';
+import { AlertService } from 'app/core/util/alert.service';
+import moment from 'moment';
 import { VoucherViewerService } from '../services/service-api/voucher.viewer.service';
 import { VoucherViewer, TransactionDto } from '../services/domain/voucher.viewer.models';
 import { AccountService } from 'app/core/auth/account.service';
-import { Account } from 'app/core/user/account.model';
+import { Account } from 'app/core/auth/account.model';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { TransactionHistory } from 'app/shared/model/transaction-history.model';
-import { TransactionHistoryService } from 'app/entities/transaction-history/transaction-history.service';
-import { TransactionStatus } from 'app/shared/model/enumerations/transaction-status.model';
-import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
-import { CustomerService } from 'app/entities/customer/customer.service';
-import { AurumServiceService } from 'app/entities/aurum-service/aurum-service.service';
-import { AurumService } from 'app/shared/model/aurum-service.model';
-import { VoucherService } from 'app/entities/voucher/voucher.service';
+import { ITransactionHistory } from 'app/entities/transaction-history/transaction-history.model';
+import { TransactionHistoryService } from 'app/entities/transaction-history/service/transaction-history.service';
+import { TransactionStatus } from 'app/entities/enumerations/transaction-status.model';
+import { DATE_TIME_FORMAT } from 'app/config/input.constants';
+import { CustomerService } from 'app/entities/customer/service/customer.service';
+import { AurumServiceService } from 'app/entities/aurum-service/service/aurum-service.service';
+import { IAurumService } from 'app/entities/aurum-service/aurum-service.model';
+import { VoucherService } from 'app/entities/voucher/service/voucher.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
+import { VoucherStatus } from 'app/entities/enumerations/voucher-status.model';
 
 @Component({
   selector: 'jhi-aurum-voucher-viewer',
@@ -28,13 +28,13 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   voucherFieldValue: string;
   voucherNumber: string;
   voucherViewer = new VoucherViewer();
-  aurumServices: AurumService[] = [];
+  aurumServices: IAurumService[] = [];
 
   transactionHistoryForm: FormGroup;
 
   constructor(
     private formBuilder: FormBuilder,
-    protected jhiAlertService: JhiAlertService,
+    protected jhiAlertService: AlertService,
     protected transactionHistoryService: TransactionHistoryService,
     protected customerService: CustomerService,
     protected aurumServiceService: AurumServiceService,
@@ -58,7 +58,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
       this.voucherViewerService.find(this.voucherFieldValue).subscribe(
         data => {
           if (!this.voucherViewer) {
-            this.jhiAlertService.warning('Voucher not found.');
+            this.jhiAlertService.addAlert({ type: 'warning', message: 'Voucher not found.' });
           } else {
             this.voucherViewer = data.body;
             this.voucherNumber = this.voucherViewer.voucherInfo.voucherNo;
@@ -74,11 +74,11 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
           this.voucherNumber = null;
           this.customerName = null;
           this.aurumServices = [];
-          this.jhiAlertService.warning('Voucher not found.');
+          this.jhiAlertService.addAlert({ type: 'warning', message: 'Voucher not found.' });
         }
       );
     } else {
-      this.jhiAlertService.info('Please provide voucher number.');
+      this.jhiAlertService.addAlert({ type: 'info', message: 'Please provide voucher number.' });
     }
   }
 
@@ -103,11 +103,11 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog) {
     this.markFormGroupAsTouched(this.transactionHistoryForm);
     if (!this.transactionHistoryForm.controls.amount.value) {
-      this.jhiAlertService.warning('Amount not found.');
+      this.jhiAlertService.addAlert({ type: 'warning', message: 'Amount not found.' });
       return;
     }
     if (this.transactionHistoryForm.invalid) {
-      this.jhiAlertService.warning("Amount can't be greater then due.");
+      this.jhiAlertService.addAlert({ type: 'warning', message: "Amount can't be greater then due." });
       return;
     }
 
@@ -122,7 +122,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
   }
 
   makePayment(deliveryStatus: boolean, isPaid: boolean) {
-    const transactionHistoryTemp = new TransactionHistory();
+    const transactionHistoryTemp: any = {};
     transactionHistoryTemp.voucherNo = this.voucherNumber;
     transactionHistoryTemp.amount = this.transactionHistoryForm.controls.amount.value;
     transactionHistoryTemp.tag = TransactionStatus.RECEIVE;
@@ -165,7 +165,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
       this.voucherViewerService.deleteVoucher(this.voucherFieldValue).subscribe(data => {
         this.voucherViewer = new VoucherViewer();
         this.voucherFieldValue = null;
-        this.jhiAlertService.success('Voucher deleted successfully.');
+        this.jhiAlertService.addAlert({ type: 'success', message: 'Voucher deleted successfully.' });
       });
     }
   }
@@ -175,7 +175,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     voucher.deliveryStatus = true;
 
     this.voucherService.update(voucher).subscribe(data => {
-      this.jhiAlertService.success('Delivery Completed.');
+      this.jhiAlertService.addAlert({ type: 'success', message: 'Delivery Completed.' });
     });
   }
 

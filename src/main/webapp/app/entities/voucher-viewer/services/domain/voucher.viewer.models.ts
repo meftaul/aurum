@@ -1,21 +1,21 @@
-import { Voucher } from 'app/shared/model/voucher.model';
-import { TransactionHistory } from 'app/shared/model/transaction-history.model';
-import { VoucherStatus } from 'app/shared/model/enumerations/voucher-status.model';
+import { IVoucher } from 'app/entities/voucher/voucher.model';
+import { ITransactionHistory } from 'app/entities/transaction-history/transaction-history.model';
+import { VoucherStatus } from 'app/entities/enumerations/voucher-status.model';
 
 export class VoucherViewer {
-  voucherInfo: Voucher;
-  txnHistory: TransactionHistory[];
+  voucherInfo: IVoucher;
+  txnHistory: ITransactionHistory[];
   totalAmount: number;
   dueAmount: number;
 
   constructor() {
-    this.voucherInfo = new Voucher();
+    this.voucherInfo = ({} as IVoucher);
     this.txnHistory = [];
   }
 }
 
 export class TransactionDto {
-  transactionHistory: TransactionHistory;
+  transactionHistory: ITransactionHistory;
   deliveryStatus: boolean;
   voucherStatus: VoucherStatus;
 }
