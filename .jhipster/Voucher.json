@@ -1,0 +1,86 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+            "relationshipName": "aurumService",
+            "otherEntityName": "aurumService",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "voucher"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "voucherNo",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "customerId",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "calculatedTotalAmount",
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+                "required"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "vat",
+            "fieldType": "BigDecimal",
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "disountAmount",
+            "fieldType": "BigDecimal",
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "VoucherStatus",
+            "fieldValues": "PAID,DUE,CANCEL",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "totalPayableAmount",
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "dateCreated",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "addedBy",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "boxNumber",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "deliveryDate",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "deliveryStatus",
+            "fieldType": "Boolean"
+        }
+    ],
+    "changelogDate": "20191023082216",
+    "dto": "no",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "voucher",
+    "databaseType": "sql",
+    "jpaMetamodelFiltering": true,
+    "pagination": "pagination"
+}
