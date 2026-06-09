@@ -1,62 +1,158 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (customer(); as customerRef) {
-      <div>
-        <h2 data-cy="customerDetailsHeading"><span>Customer</span></h2>
+@if (customer(); as customerRef) {
+  <div class="customer-detail">
+    <jhi-alert-error />
+    <jhi-alert />
 
-        <hr />
-
-        <jhi-alert-error />
-
-        <jhi-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span>ID</span></dt>
-          <dd>
-            <span>{{ customerRef.id }}</span>
-          </dd>
-          <dt><span>First Name</span></dt>
-          <dd>
-            <span>{{ customerRef.firstName }}</span>
-          </dd>
-          <dt><span>Last Name</span></dt>
-          <dd>
-            <span>{{ customerRef.lastName }}</span>
-          </dd>
-          <dt><span>Phone</span></dt>
-          <dd>
-            <span>{{ customerRef.phone }}</span>
-          </dd>
-          <dt><span>Email</span></dt>
-          <dd>
-            <span>{{ customerRef.email }}</span>
-          </dd>
-          <dt><span>Address</span></dt>
-          <dd>
-            <span>{{ customerRef.address }}</span>
-          </dd>
-          <dt><span>Total Point</span></dt>
-          <dd>
-            <span>{{ customerRef.totalPoint }}</span>
-          </dd>
-          <dt><span>Reference</span></dt>
-          <dd>
-            <span>{{ customerRef.reference }}</span>
-          </dd>
-          <dt><span>Custom Id</span></dt>
-          <dd>
-            <span>{{ customerRef.customId }}</span>
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
-        </button>
-
-        <button type="button" [routerLink]="['/customer', customerRef.id, 'edit']" class="btn btn-primary">
-          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
-        </button>
+    <div class="customer-detail__header" data-cy="customerDetailsHeading">
+      <div class="customer-detail__identity">
+        <div class="customer-detail__avatar">
+          {{ (customerRef.firstName || customerRef.phone || '?').charAt(0) | uppercase }}
+        </div>
+        <div>
+          <h2 class="customer-detail__name">{{ customerRef.firstName }} {{ customerRef.lastName }}</h2>
+          <p class="customer-detail__meta">
+            @if (customerRef.phone) {
+              <span><fa-icon icon="phone"></fa-icon> {{ customerRef.phone }}</span>
+            }
+            @if (customerRef.email) {
+              <span><fa-icon icon="envelope"></fa-icon> {{ customerRef.email }}</span>
+            }
+            @if (customerRef.customId) {
+              <span><fa-icon icon="hashtag"></fa-icon> {{ customerRef.customId }}</span>
+            }
+          </p>
+        </div>
       </div>
-    }
+
+      <div class="customer-detail__points">
+        <span class="customer-detail__points-value">{{ customerRef.totalPoint ?? 0 }}</span>
+        <span class="customer-detail__points-label">Total Points</span>
+      </div>
+    </div>
+
+    <div class="customer-detail__actions">
+      <button type="button" (click)="previousState()" class="btn btn-outline-secondary" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+      <button type="button" [routerLink]="['/customer', customerRef.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+
+    <div class="customer-card">
+      <h3 class="customer-card__title">Details</h3>
+      <dl class="customer-detail__info">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ customerRef.id }}</dd>
+        </div>
+        <div>
+          <dt>First Name</dt>
+          <dd>{{ customerRef.firstName || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Last Name</dt>
+          <dd>{{ customerRef.lastName || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd>{{ customerRef.phone || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Email</dt>
+          <dd>{{ customerRef.email || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Address</dt>
+          <dd>{{ customerRef.address || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Reference</dt>
+          <dd>{{ customerRef.reference || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Custom Id</dt>
+          <dd>{{ customerRef.customId || '—' }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="customer-card">
+      <h3 class="customer-card__title">Recent Transactions</h3>
+      @if (transactions().length === 0) {
+        <p class="customer-card__empty">No transactions for this customer.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="table customer-card__table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Voucher No</th>
+                <th scope="col">Type</th>
+                <th scope="col" class="text-end">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (tx of transactions(); track tx.id) {
+                <tr>
+                  <td>{{ tx.dateCreated | formatMediumDatetime }}</td>
+                  <td>
+                    <a [routerLink]="['/transaction-history', tx.id, 'view']">{{ tx.voucherNo || tx.id }}</a>
+                  </td>
+                  <td>
+                    @if (tx.tag) {
+                      <span class="chip chip--neutral">{{ tx.tag }}</span>
+                    }
+                  </td>
+                  <td class="text-end">{{ tx.amount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <div class="customer-card">
+      <h3 class="customer-card__title">Recent Vouchers</h3>
+      @if (vouchers().length === 0) {
+        <p class="customer-card__empty">No vouchers for this customer.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="table customer-card__table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Voucher No</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-end">Payable</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (voucher of vouchers(); track voucher.id) {
+                <tr>
+                  <td>{{ voucher.dateCreated | formatMediumDatetime }}</td>
+                  <td>
+                    <a [routerLink]="['/voucher', voucher.id, 'view']">{{ voucher.voucherNo || voucher.id }}</a>
+                  </td>
+                  <td>
+                    @if (voucher.status) {
+                      <span
+                        class="chip"
+                        [class.chip--success]="voucher.status === 'PAID'"
+                        [class.chip--danger]="voucher.status === 'CANCEL'"
+                        [class.chip--warning]="voucher.status === 'DUE'"
+                        >{{ voucher.status }}</span
+                      >
+                    }
+                  </td>
+                  <td class="text-end">{{ voucher.totalPayableAmount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
   </div>
-</div>
+}

@@ -10,16 +10,26 @@ import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
-import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
 import { ICustomer } from '../customer.model';
 
 import { CustomerService, EntityArrayResponseType } from '../service/customer.service';
 import { CustomerDeleteDialogComponent } from '../delete/customer-delete-dialog.component';
 
+interface CustomerSearchCriteria {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  reference: string;
+  customId: string;
+}
+
+const SEARCH_FIELDS: (keyof CustomerSearchCriteria)[] = ['firstName', 'lastName', 'phone', 'reference', 'customId'];
+
 @Component({
   selector: 'jhi-customer',
   templateUrl: './customer.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FilterComponent, ItemCountComponent],
+  styleUrl: './customer.component.scss',
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, ItemCountComponent],
 })
 export class CustomerComponent implements OnInit {
   subscription: Subscription | null = null;
@@ -27,7 +37,7 @@ export class CustomerComponent implements OnInit {
   isLoading = false;
 
   sortState = sortStateSignal({});
-  filters: IFilterOptions = new FilterOptions();
+  searchCriteria: CustomerSearchCriteria = { firstName: '', lastName: '', phone: '', reference: '', customId: '' };
 
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
@@ -49,8 +59,19 @@ export class CustomerComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+  }
 
-    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
+  search(): void {
+    this.handleNavigation(1, this.sortState());
+  }
+
+  clearSearch(): void {
+    this.searchCriteria = { firstName: '', lastName: '', phone: '', reference: '', customId: '' };
+    this.handleNavigation(1, this.sortState());
+  }
+
+  hasActiveSearch(): boolean {
+    return SEARCH_FIELDS.some(field => this.searchCriteria[field].trim() !== '');
   }
 
   delete(customer: ICustomer): void {
@@ -74,18 +95,20 @@ export class CustomerComponent implements OnInit {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(this.page, event, this.filters.filterOptions);
+    this.handleNavigation(this.page, event);
   }
 
   navigateToPage(page: number): void {
-    this.handleNavigation(page, this.sortState(), this.filters.filterOptions);
+    this.handleNavigation(page, this.sortState());
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
-    this.filters.initializeFromParams(params);
+    SEARCH_FIELDS.forEach(field => {
+      this.searchCriteria[field] = params.get(`${field}.contains`) ?? '';
+    });
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -103,7 +126,7 @@ export class CustomerComponent implements OnInit {
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
-    const { page, filters } = this;
+    const { page } = this;
 
     this.isLoading = true;
     const pageToLoad: number = page;
@@ -112,21 +135,25 @@ export class CustomerComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
-    filters.filterOptions.forEach(filterOption => {
-      queryObject[filterOption.name] = filterOption.values;
+    SEARCH_FIELDS.forEach(field => {
+      const value = this.searchCriteria[field].trim();
+      if (value !== '') {
+        queryObject[`${field}.contains`] = value;
+      }
     });
     return this.customerService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(page: number, sortState: SortState, filterOptions?: IFilterOption[]): void {
+  protected handleNavigation(page: number, sortState: SortState): void {
     const queryParamsObj: any = {
       page,
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(sortState),
     };
 
-    filterOptions?.forEach(filterOption => {
-      queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
+    SEARCH_FIELDS.forEach(field => {
+      const value = this.searchCriteria[field].trim();
+      queryParamsObj[`${field}.contains`] = value !== '' ? value : null;
     });
 
     this.ngZone.run(() => {

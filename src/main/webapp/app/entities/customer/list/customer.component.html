@@ -1,11 +1,14 @@
-<div>
-  <h2 id="page-heading" data-cy="CustomerHeading">
-    <span>Customers</span>
+<div class="customer-list">
+  <div class="customer-list__head" id="page-heading" data-cy="CustomerHeading">
+    <div>
+      <h2 class="customer-list__title">Customers</h2>
+      <p class="customer-list__subtitle">Search, browse and manage your customers</p>
+    </div>
 
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+    <div class="customer-list__actions">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span>Refresh list</span>
+        <span>Refresh</span>
       </button>
 
       <button
@@ -15,24 +18,58 @@
         [routerLink]="['/customer/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span>Create a new Customer</span>
+        <span>New Customer</span>
       </button>
     </div>
-  </h2>
+  </div>
 
   <jhi-alert-error />
 
   <jhi-alert />
 
-  <jhi-filter [filters]="filters" />
+  <form class="customer-search" (ngSubmit)="search()" novalidate>
+    <div class="customer-search__fields">
+      <div class="customer-search__field">
+        <label for="search-firstName">First name</label>
+        <input id="search-firstName" name="firstName" type="text" class="form-control" [(ngModel)]="searchCriteria.firstName" />
+      </div>
+      <div class="customer-search__field">
+        <label for="search-lastName">Last name</label>
+        <input id="search-lastName" name="lastName" type="text" class="form-control" [(ngModel)]="searchCriteria.lastName" />
+      </div>
+      <div class="customer-search__field">
+        <label for="search-phone">Phone</label>
+        <input id="search-phone" name="phone" type="text" class="form-control" [(ngModel)]="searchCriteria.phone" />
+      </div>
+      <div class="customer-search__field">
+        <label for="search-reference">Reference</label>
+        <input id="search-reference" name="reference" type="text" class="form-control" [(ngModel)]="searchCriteria.reference" />
+      </div>
+      <div class="customer-search__field">
+        <label for="search-customId">Custom Id</label>
+        <input id="search-customId" name="customId" type="text" class="form-control" [(ngModel)]="searchCriteria.customId" />
+      </div>
+    </div>
+
+    <div class="customer-search__buttons">
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading" data-cy="customerSearchButton">
+        <fa-icon icon="search"></fa-icon>
+        <span>Search</span>
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="clearSearch()" [disabled]="!hasActiveSearch()">
+        <span>Clear</span>
+      </button>
+    </div>
+  </form>
 
   @if (customers().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span>No Customers found</span>
+    <div class="customer-list__empty" id="no-result">
+      <fa-icon icon="users" class="customer-list__empty-icon"></fa-icon>
+      <span>No customers found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
+    <div class="table-responsive table-entities customer-list__table" id="entities">
+      <table class="table" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
             <th scope="col" jhiSortBy="id">

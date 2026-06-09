@@ -32,7 +32,7 @@ describe('Customer Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-                'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
+                'firstName.contains': 'john',
               }),
             ),
             snapshot: {
@@ -41,7 +41,7 @@ describe('Customer Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-                'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
+                'firstName.contains': 'john',
               }),
             },
           },
@@ -130,12 +130,29 @@ describe('Customer Management Component', () => {
     expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['id,desc'] }));
   });
 
-  it('should calculate the filter attribute', () => {
+  it('should read the search criteria from the route and pass it as a contains filter', () => {
     // WHEN
     comp.ngOnInit();
 
     // THEN
-    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ 'someId.in': ['dc4279ea-cfb9-11ec-9d64-0242ac120002'] }));
+    expect(comp.searchCriteria.firstName).toBe('john');
+    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ 'firstName.contains': 'john' }));
+  });
+
+  it('should navigate with the search criteria when searching', () => {
+    // GIVEN
+    comp.searchCriteria.phone = '0171';
+
+    // WHEN
+    comp.search();
+
+    // THEN
+    expect(routerNavigateSpy).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        queryParams: expect.objectContaining({ 'phone.contains': '0171', page: 1 }),
+      }),
+    );
   });
 
   describe('delete', () => {

@@ -1,0 +1,110 @@
+.customer-list {
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--aurum-text);
+  }
+
+  &__subtitle {
+    margin: 0.35rem 0 0;
+    color: var(--aurum-text-muted);
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 240px;
+    padding: 2rem;
+    border: 1px dashed var(--aurum-border);
+    border-radius: 18px;
+    color: var(--aurum-text-muted);
+  }
+
+  &__empty-icon {
+    font-size: 2rem;
+    color: var(--aurum-primary);
+  }
+
+  &__table {
+    border: 1px solid var(--aurum-border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px var(--aurum-shadow);
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    .table > thead th {
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--aurum-text-muted);
+      border-bottom: 1px solid var(--aurum-border);
+      padding: 0.85rem 1rem;
+      white-space: nowrap;
+    }
+
+    .table > tbody td {
+      padding: 0.85rem 1rem;
+      vertical-align: middle;
+      border-top: 1px solid var(--aurum-border);
+    }
+
+    .table > tbody tr:hover {
+      background: var(--aurum-primary-subtle);
+    }
+  }
+}
+
+.customer-search {
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background: var(--aurum-surface-2);
+  border: 1px solid var(--aurum-border);
+  border-radius: 18px;
+
+  &__fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--aurum-text-muted);
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+}

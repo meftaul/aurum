@@ -1,8 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
+import { TransactionHistoryService } from 'app/entities/transaction-history/service/transaction-history.service';
+import { VoucherService } from 'app/entities/voucher/service/voucher.service';
 import { CustomerDetailComponent } from './customer-detail.component';
 
 describe('Customer Management Detail Component', () => {
@@ -13,6 +16,7 @@ describe('Customer Management Detail Component', () => {
     await TestBed.configureTestingModule({
       imports: [CustomerDetailComponent],
       providers: [
+        provideHttpClient(),
         provideRouter(
           [
             {
@@ -27,6 +31,9 @@ describe('Customer Management Detail Component', () => {
     })
       .overrideTemplate(CustomerDetailComponent, '')
       .compileComponents();
+
+    jest.spyOn(TestBed.inject(TransactionHistoryService), 'query').mockReturnValue(of(new HttpResponse({ body: [] })));
+    jest.spyOn(TestBed.inject(VoucherService), 'query').mockReturnValue(of(new HttpResponse({ body: [] })));
   });
 
   beforeEach(() => {
