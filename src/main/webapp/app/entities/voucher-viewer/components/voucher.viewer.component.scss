@@ -2,13 +2,18 @@
   max-width: 1040px;
   margin: 0 auto;
 
-  /* ---- Search bar (themed, replaces the old mat-form-field) -------------- */
+  /* ---- Search bar (themed, sticky so it stays in reach) ----------------- */
   &__search {
+    position: sticky;
+    top: 56px; /* sits below the app topbar */
+    z-index: 5;
     display: flex;
     gap: 0.5rem;
     align-items: stretch;
     flex-wrap: wrap;
-    margin-bottom: 1rem;
+    padding: 0.75rem 0;
+    margin-bottom: 0.5rem;
+    background: var(--aurum-bg);
   }
 
   &__search-field {
@@ -52,12 +57,38 @@
     }
   }
 
-  /* ---- Stacked result cards --------------------------------------------- */
+  /* ---- Result cards: compact dashboard, less vertical scroll ------------ */
   &__body {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    margin-top: 1.25rem;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* Short Payment panel beside the taller Voucher Information panel. */
+  &__top {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+
+    @media screen and (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Tighten the shared card padding so more fits above the fold. */
+  &__section.aurum-card {
+    padding: 1.25rem 1.25rem 1.1rem;
+  }
+
+  &__section--pay {
+    position: sticky;
+    top: 124px; /* below the sticky search bar */
+
+    @media screen and (max-width: 900px) {
+      position: static;
+    }
   }
 
   &__section-head {
@@ -70,16 +101,11 @@
     border-bottom: 1px solid var(--aurum-gold-soft);
   }
 
-  /* ---- Payment block: facts beside the payment form --------------------- */
+  /* ---- Payment block: facts stacked above the payment form -------------- */
   &__pay {
-    display: grid;
-    grid-template-columns: minmax(220px, 1fr) minmax(240px, 1.2fr);
-    gap: 1.5rem 2rem;
-    align-items: start;
-
-    @media screen and (max-width: 720px) {
-      grid-template-columns: 1fr;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
   }
 
   &__pay-form {

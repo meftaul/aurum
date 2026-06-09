@@ -29,132 +29,134 @@
   <jhi-alert></jhi-alert>
 
   <div class="voucher-viewer__body" *ngIf="voucherViewer && voucherViewer.voucherInfo && voucherViewer.voucherInfo.id">
-    <!-- Payment Information -->
-    <section class="aurum-card voucher-viewer__section">
-      <div class="voucher-viewer__section-head">
-        <span class="atelier-section-label">Payment Information</span>
-      </div>
+    <div class="voucher-viewer__top">
+      <!-- Payment Information -->
+      <section class="aurum-card voucher-viewer__section voucher-viewer__section--pay">
+        <div class="voucher-viewer__section-head">
+          <span class="atelier-section-label">Payment Information</span>
+        </div>
 
-      <div class="voucher-viewer__pay">
-        <dl class="viewer-facts viewer-facts--pay">
+        <div class="voucher-viewer__pay">
+          <dl class="viewer-facts viewer-facts--pay">
+            <div>
+              <dt>Total Amount</dt>
+              <dd class="ledger__assay">{{ voucherViewer?.totalAmount | number: '1.2-2' }}</dd>
+            </div>
+            <div>
+              <dt>Due Amount</dt>
+              <dd class="ledger__assay" [class.text-danger]="voucherViewer.dueAmount > 0">
+                {{ voucherViewer?.dueAmount | number: '1.2-2' }}
+              </dd>
+            </div>
+          </dl>
+
+          <form [formGroup]="transactionHistoryForm" class="voucher-viewer__pay-form">
+            <div class="voucher-viewer__field" *ngIf="voucherViewer.dueAmount > 0">
+              <label class="form-label" for="field_payment_amount">Amount</label>
+              <input type="number" class="form-control" id="field_payment_amount" placeholder="Amount" formControlName="amount" />
+              @if (transactionHistoryForm.controls['amount'].errors && !transactionHistoryForm.controls['amount'].pristine) {
+                <div class="voucher-viewer__errors">
+                  <small class="form-text text-danger" [hidden]="!transactionHistoryForm.controls['amount'].errors?.required">
+                    Amount is required.
+                  </small>
+                  <small class="form-text text-danger" [hidden]="!transactionHistoryForm.controls['amount'].errors?.max">
+                    Amount can't be greater than due.
+                  </small>
+                </div>
+              }
+            </div>
+
+            <div class="voucher-viewer__pay-actions">
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog)"
+                *ngIf="voucherViewer.dueAmount > 0"
+              >
+                <fa-icon icon="wallet"></fa-icon>&nbsp;<span>Make Payment</span>
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="confirmDelivery(confirmDeliveryDialog)"
+                *ngIf="voucherViewer.dueAmount === 0 && !voucherViewer.voucherInfo.deliveryStatus"
+              >
+                <fa-icon icon="check"></fa-icon>&nbsp;<span>Make Delivery</span>
+              </button>
+
+              <button
+                type="button"
+                *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                class="btn btn-danger"
+                (click)="deleteVoucherDialog(confirmDeleteVoucherDialog)"
+              >
+                <fa-icon icon="times"></fa-icon>&nbsp;<span>Delete Voucher</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Voucher Information -->
+      <section class="aurum-card voucher-viewer__section">
+        <div class="voucher-viewer__section-head">
+          <span class="atelier-section-label">Voucher Information</span>
+          @if (voucherViewer.voucherInfo.status) {
+            <span
+              class="chip"
+              [class.chip--success]="voucherViewer.voucherInfo.status === 'PAID'"
+              [class.chip--danger]="voucherViewer.voucherInfo.status === 'CANCEL'"
+              [class.chip--warning]="voucherViewer.voucherInfo.status === 'DUE'"
+              >{{ voucherViewer.voucherInfo.status }}</span
+            >
+          }
+        </div>
+
+        <dl class="viewer-facts">
           <div>
-            <dt>Total Amount</dt>
-            <dd class="ledger__assay">{{ voucherViewer?.totalAmount | number: '1.2-2' }}</dd>
+            <dt>Customer Name</dt>
+            <dd>{{ customerName || '—' }}</dd>
           </div>
           <div>
-            <dt>Due Amount</dt>
-            <dd class="ledger__assay" [class.text-danger]="voucherViewer.dueAmount > 0">
-              {{ voucherViewer?.dueAmount | number: '1.2-2' }}
-            </dd>
+            <dt>Voucher Number</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.voucherNo }}</dd>
+          </div>
+          <div>
+            <dt>Calculated Total Amount</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.calculatedTotalAmount | number: '1.2-2' }}</dd>
+          </div>
+          <div>
+            <dt>Box Number</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.boxNumber || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Vat</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.vat | number: '1.2-2' }}</dd>
+          </div>
+          <div>
+            <dt>Delivery Status</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.deliveryStatus ? 'Delivered' : 'Not Delivered' }}</dd>
+          </div>
+          <div>
+            <dt>Disount Amount</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.disountAmount | number: '1.2-2' }}</dd>
+          </div>
+          <div>
+            <dt>Transaction Status</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.status || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Total Payable Amount</dt>
+            <dd class="ledger__assay">{{ voucherViewer?.voucherInfo?.totalPayableAmount | number: '1.2-2' }}</dd>
+          </div>
+          <div>
+            <dt>Delivery Date</dt>
+            <dd>{{ voucherViewer?.voucherInfo?.deliveryDate || '—' }}</dd>
           </div>
         </dl>
-
-        <form [formGroup]="transactionHistoryForm" class="voucher-viewer__pay-form">
-          <div class="voucher-viewer__field" *ngIf="voucherViewer.dueAmount > 0">
-            <label class="form-label" for="field_payment_amount">Amount</label>
-            <input type="number" class="form-control" id="field_payment_amount" placeholder="Amount" formControlName="amount" />
-            @if (transactionHistoryForm.controls['amount'].errors && !transactionHistoryForm.controls['amount'].pristine) {
-              <div class="voucher-viewer__errors">
-                <small class="form-text text-danger" [hidden]="!transactionHistoryForm.controls['amount'].errors?.required">
-                  Amount is required.
-                </small>
-                <small class="form-text text-danger" [hidden]="!transactionHistoryForm.controls['amount'].errors?.max">
-                  Amount can't be greater than due.
-                </small>
-              </div>
-            }
-          </div>
-
-          <div class="voucher-viewer__pay-actions">
-            <button
-              type="button"
-              class="btn btn-primary"
-              (click)="confirmMakePayment(confirmPaymentDialog, confirmPaymentWithDeliveryDialog)"
-              *ngIf="voucherViewer.dueAmount > 0"
-            >
-              <fa-icon icon="wallet"></fa-icon>&nbsp;<span>Make Payment</span>
-            </button>
-
-            <button
-              type="button"
-              class="btn btn-outline-primary"
-              (click)="confirmDelivery(confirmDeliveryDialog)"
-              *ngIf="voucherViewer.dueAmount === 0 && !voucherViewer.voucherInfo.deliveryStatus"
-            >
-              <fa-icon icon="check"></fa-icon>&nbsp;<span>Make Delivery</span>
-            </button>
-
-            <button
-              type="button"
-              *jhiHasAnyAuthority="['ROLE_ADMIN']"
-              class="btn btn-danger"
-              (click)="deleteVoucherDialog(confirmDeleteVoucherDialog)"
-            >
-              <fa-icon icon="times"></fa-icon>&nbsp;<span>Delete Voucher</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- Voucher Information -->
-    <section class="aurum-card voucher-viewer__section">
-      <div class="voucher-viewer__section-head">
-        <span class="atelier-section-label">Voucher Information</span>
-        @if (voucherViewer.voucherInfo.status) {
-          <span
-            class="chip"
-            [class.chip--success]="voucherViewer.voucherInfo.status === 'PAID'"
-            [class.chip--danger]="voucherViewer.voucherInfo.status === 'CANCEL'"
-            [class.chip--warning]="voucherViewer.voucherInfo.status === 'DUE'"
-            >{{ voucherViewer.voucherInfo.status }}</span
-          >
-        }
-      </div>
-
-      <dl class="viewer-facts">
-        <div>
-          <dt>Customer Name</dt>
-          <dd>{{ customerName || '—' }}</dd>
-        </div>
-        <div>
-          <dt>Voucher Number</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.voucherNo }}</dd>
-        </div>
-        <div>
-          <dt>Calculated Total Amount</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.calculatedTotalAmount | number: '1.2-2' }}</dd>
-        </div>
-        <div>
-          <dt>Box Number</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.boxNumber || '—' }}</dd>
-        </div>
-        <div>
-          <dt>Vat</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.vat | number: '1.2-2' }}</dd>
-        </div>
-        <div>
-          <dt>Delivery Status</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.deliveryStatus ? 'Delivered' : 'Not Delivered' }}</dd>
-        </div>
-        <div>
-          <dt>Disount Amount</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.disountAmount | number: '1.2-2' }}</dd>
-        </div>
-        <div>
-          <dt>Transaction Status</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.status || '—' }}</dd>
-        </div>
-        <div>
-          <dt>Total Payable Amount</dt>
-          <dd class="ledger__assay">{{ voucherViewer?.voucherInfo?.totalPayableAmount | number: '1.2-2' }}</dd>
-        </div>
-        <div>
-          <dt>Delivery Date</dt>
-          <dd>{{ voucherViewer?.voucherInfo?.deliveryDate || '—' }}</dd>
-        </div>
-      </dl>
-    </section>
+      </section>
+    </div>
 
     <!-- Services -->
     <section class="aurum-card voucher-viewer__section" *ngIf="aurumServices && aurumServices?.length !== 0">
