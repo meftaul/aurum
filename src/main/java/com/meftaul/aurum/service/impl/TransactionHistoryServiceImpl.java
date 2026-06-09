@@ -6,7 +6,7 @@ import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.service.TransactionHistoryService;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
-import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
+import com.meftaul.aurum.errors.BusinessValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
         Voucher voucher = voucherRepository.findByVoucherNo(transactionHistory.getVoucherNo());
 
         if (voucher == null) {
-            throw new BadRequestAlertException("Invalid voucher.", "transactionHistory", "invalidVoucher");
+            throw new BusinessValidationException("Invalid voucher.", "transactionHistory", "invalidVoucher");
         }
 
         TransactionHistory rcvHistory =
@@ -53,7 +53,7 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
             transactionHistoryRepository.findByVoucherNoAndTag(transactionHistory.getVoucherNo(), TransactionStatus.DISCOUNT);
 
         if (transactionHistory.getAmount().compareTo(rcvHistory.getAmount()) == 1) {
-            throw new BadRequestAlertException("Invalid amount.", "transactionHistory", "invalidAmount");
+            throw new BusinessValidationException("Invalid amount.", "transactionHistory", "invalidAmount");
         }
 
         rcvHistory.setAmount(rcvHistory.getAmount().add(discountHistory.getAmount()).subtract(transactionHistory.getAmount()));

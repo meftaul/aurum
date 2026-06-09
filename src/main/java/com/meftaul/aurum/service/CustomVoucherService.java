@@ -13,7 +13,7 @@ import com.meftaul.aurum.security.SecurityUtils;
 import com.meftaul.aurum.service.dto.CustomVoucherDto;
 import com.meftaul.aurum.service.dto.TransactionDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
-import com.meftaul.aurum.web.rest.errors.VoucherNotFoundException;
+import com.meftaul.aurum.errors.VoucherNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
