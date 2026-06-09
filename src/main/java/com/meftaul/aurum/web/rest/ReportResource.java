@@ -2,9 +2,9 @@ package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.service.MessageService;
 import com.meftaul.aurum.service.ReportService;
-import com.meftaul.aurum.service.dto.ReportProjection;
-import com.meftaul.aurum.service.dto.TransactionHistoryAmountByTag;
-import com.meftaul.aurum.service.dto.TransactionHistoryAmountByTagAndCustomer;
+import com.meftaul.aurum.repository.projection.ReportProjection;
+import com.meftaul.aurum.repository.projection.TransactionHistoryAmountByTag;
+import com.meftaul.aurum.repository.projection.TransactionHistoryAmountByTagAndCustomer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

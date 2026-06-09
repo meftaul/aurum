@@ -1,4 +1,4 @@
-package com.meftaul.aurum.service.dto;
+package com.meftaul.aurum.repository.projection;
 
 public interface TransactionHistoryAmountByTagAndCustomer extends TransactionHistoryAmountByTag {
     Long getCustomerId();

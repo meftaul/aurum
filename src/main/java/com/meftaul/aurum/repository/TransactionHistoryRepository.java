@@ -1,9 +1,9 @@
 package com.meftaul.aurum.repository;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
-import com.meftaul.aurum.service.dto.ReportProjection;
-import com.meftaul.aurum.service.dto.TransactionHistoryAmountByTag;
-import com.meftaul.aurum.service.dto.TransactionHistoryAmountByTagAndCustomer;
+import com.meftaul.aurum.repository.projection.ReportProjection;
+import com.meftaul.aurum.repository.projection.TransactionHistoryAmountByTag;
+import com.meftaul.aurum.repository.projection.TransactionHistoryAmountByTagAndCustomer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;

@@ -1,4 +1,4 @@
-package com.meftaul.aurum.service.dto;
+package com.meftaul.aurum.repository.projection;
 
 import java.math.BigDecimal;
 
