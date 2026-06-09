@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, NgZone, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
@@ -11,25 +11,47 @@ import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
-import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
 import { IVoucher } from '../voucher.model';
 
 import { EntityArrayResponseType, VoucherService } from '../service/voucher.service';
 import { VoucherDeleteDialogComponent } from '../delete/voucher-delete-dialog.component';
 
+interface VoucherSearchCriteria {
+  voucherNo: string;
+  customerId: string;
+  status: string;
+  boxNumber: string;
+}
+
+type VoucherSearchField = keyof VoucherSearchCriteria;
+
+const SEARCH_FIELDS: VoucherSearchField[] = ['voucherNo', 'customerId', 'status', 'boxNumber'];
+
+// Fields revealed by the "Advanced" disclosure (voucherNo is the always-visible primary search).
+const ADVANCED_FIELDS: VoucherSearchField[] = ['customerId', 'status', 'boxNumber'];
+
+const SEARCH_FIELD_LABELS: Record<VoucherSearchField, string> = {
+  voucherNo: 'Voucher No',
+  customerId: 'Customer Id',
+  status: 'Status',
+  boxNumber: 'Box Number',
+};
+
+// Map each criterion to its JHipster query param (operators differ per field type).
+const SEARCH_FIELD_PARAM: Record<VoucherSearchField, string> = {
+  voucherNo: 'voucherNo.contains',
+  customerId: 'customerId.equals',
+  status: 'status.equals',
+  boxNumber: 'boxNumber.contains',
+};
+
+const emptyCriteria = (): VoucherSearchCriteria => ({ voucherNo: '', customerId: '', status: '', boxNumber: '' });
+
 @Component({
   selector: 'jhi-voucher',
   templateUrl: './voucher.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatetimePipe,
-    FilterComponent,
-    ItemCountComponent,
-  ],
+  styleUrl: './voucher.component.scss',
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatetimePipe, ItemCountComponent],
 })
 export class VoucherComponent implements OnInit {
   subscription: Subscription | null = null;
@@ -37,7 +59,10 @@ export class VoucherComponent implements OnInit {
   isLoading = false;
 
   sortState = sortStateSignal({});
-  filters: IFilterOptions = new FilterOptions();
+  searchCriteria: VoucherSearchCriteria = emptyCriteria();
+  showAdvanced = false;
+
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
 
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
@@ -59,8 +84,52 @@ export class VoucherComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+  }
 
-    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
+  search(): void {
+    this.handleNavigation(1, this.sortState());
+  }
+
+  clearSearch(): void {
+    this.searchCriteria = emptyCriteria();
+    this.handleNavigation(1, this.sortState());
+  }
+
+  hasActiveSearch(): boolean {
+    return SEARCH_FIELDS.some(field => this.searchCriteria[field].trim() !== '');
+  }
+
+  toggleAdvanced(): void {
+    this.showAdvanced = !this.showAdvanced;
+  }
+
+  /** Active criteria as removable chips (label + trimmed value), in field order. */
+  activeFilters(): { key: VoucherSearchField; label: string; value: string }[] {
+    return SEARCH_FIELDS.filter(field => this.searchCriteria[field].trim() !== '').map(field => ({
+      key: field,
+      label: SEARCH_FIELD_LABELS[field],
+      value: this.searchCriteria[field].trim(),
+    }));
+  }
+
+  removeFilter(field: VoucherSearchField): void {
+    this.searchCriteria[field] = '';
+    this.search();
+  }
+
+  /** "/" focuses the search box; Escape clears the filters while focused in the bar. */
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement;
+    const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable;
+
+    if (event.key === '/' && !isTyping) {
+      event.preventDefault();
+      this.searchInput?.nativeElement.focus();
+    } else if (event.key === 'Escape' && target.closest('.voucher-filter') && this.hasActiveSearch()) {
+      this.clearSearch();
+      (target as HTMLElement).blur();
+    }
   }
 
   delete(voucher: IVoucher): void {
@@ -84,18 +153,24 @@ export class VoucherComponent implements OnInit {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(this.page, event, this.filters.filterOptions);
+    this.handleNavigation(this.page, event);
   }
 
   navigateToPage(page: number): void {
-    this.handleNavigation(page, this.sortState(), this.filters.filterOptions);
+    this.handleNavigation(page, this.sortState());
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
-    this.filters.initializeFromParams(params);
+    SEARCH_FIELDS.forEach(field => {
+      this.searchCriteria[field] = params.get(SEARCH_FIELD_PARAM[field]) ?? '';
+    });
+    // Keep the advanced panel open when an advanced criterion arrives via the URL.
+    if (ADVANCED_FIELDS.some(field => this.searchCriteria[field].trim() !== '')) {
+      this.showAdvanced = true;
+    }
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -113,7 +188,7 @@ export class VoucherComponent implements OnInit {
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
-    const { page, filters } = this;
+    const { page } = this;
 
     this.isLoading = true;
     const pageToLoad: number = page;
@@ -122,21 +197,25 @@ export class VoucherComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
-    filters.filterOptions.forEach(filterOption => {
-      queryObject[filterOption.name] = filterOption.values;
+    SEARCH_FIELDS.forEach(field => {
+      const value = this.searchCriteria[field].trim();
+      if (value !== '') {
+        queryObject[SEARCH_FIELD_PARAM[field]] = value;
+      }
     });
     return this.voucherService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(page: number, sortState: SortState, filterOptions?: IFilterOption[]): void {
+  protected handleNavigation(page: number, sortState: SortState): void {
     const queryParamsObj: any = {
       page,
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(sortState),
     };
 
-    filterOptions?.forEach(filterOption => {
-      queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
+    SEARCH_FIELDS.forEach(field => {
+      const value = this.searchCriteria[field].trim();
+      queryParamsObj[SEARCH_FIELD_PARAM[field]] = value !== '' ? value : null;
     });
 
     this.ngZone.run(() => {

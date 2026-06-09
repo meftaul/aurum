@@ -32,7 +32,7 @@ describe('Voucher Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-                'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
+                'voucherNo.contains': 'V-001',
               }),
             ),
             snapshot: {
@@ -41,7 +41,7 @@ describe('Voucher Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-                'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
+                'voucherNo.contains': 'V-001',
               }),
             },
           },
@@ -130,12 +130,29 @@ describe('Voucher Management Component', () => {
     expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['id,desc'] }));
   });
 
-  it('should calculate the filter attribute', () => {
+  it('should read the search criteria from the route and pass it as a contains filter', () => {
     // WHEN
     comp.ngOnInit();
 
     // THEN
-    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ 'someId.in': ['dc4279ea-cfb9-11ec-9d64-0242ac120002'] }));
+    expect(comp.searchCriteria.voucherNo).toBe('V-001');
+    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ 'voucherNo.contains': 'V-001' }));
+  });
+
+  it('should navigate with the search criteria when searching', () => {
+    // GIVEN
+    comp.searchCriteria.status = 'PAID';
+
+    // WHEN
+    comp.search();
+
+    // THEN
+    expect(routerNavigateSpy).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        queryParams: expect.objectContaining({ 'status.equals': 'PAID', page: 1 }),
+      }),
+    );
   });
 
   describe('delete', () => {

@@ -279,6 +279,44 @@
   color: var(--aurum-text-muted);
 }
 
+/* ---- Status / type chip — shared across detail & viewer pages ----------- */
+.chip {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 3px;
+  border: 1px solid var(--aurum-border);
+  font-family: var(--aurum-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--aurum-surface-2);
+  color: var(--aurum-text-muted);
+
+  &--neutral {
+    background: var(--aurum-primary-subtle);
+    border-color: var(--aurum-gold-soft);
+    color: var(--aurum-primary);
+  }
+
+  &--success {
+    background: rgba(62, 107, 58, 0.12);
+    border-color: rgba(62, 107, 58, 0.35);
+    color: var(--aurum-success);
+  }
+
+  &--danger {
+    background: rgba(155, 45, 32, 0.12);
+    border-color: rgba(155, 45, 32, 0.35);
+    color: var(--aurum-danger);
+  }
+
+  &--warning {
+    background: rgba(181, 120, 30, 0.12);
+    border-color: rgba(181, 120, 30, 0.35);
+    color: var(--aurum-warning);
+  }
+}
+
 /* ---- Ledger row interactions (shared across catalog entities) ----------- */
 .ledger__row {
   cursor: pointer;

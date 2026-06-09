@@ -1,24 +1,38 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-voucher-heading" data-cy="VoucherCreateUpdateHeading">Create or edit a Voucher</h2>
+<div class="atelier-form atelier-form--wide">
+  @let isEdit = editForm.controls.id.value !== null;
 
-      <div>
-        <jhi-alert-error />
+  <header class="registry-head">
+    <div class="registry-head__lede">
+      <span class="registry-head__eyebrow">Atelier Registry</span>
+      <h2 class="registry-head__title" id="jhi-voucher-heading" data-cy="VoucherCreateUpdateHeading">
+        {{ isEdit ? 'Edit Voucher' : 'New Voucher' }}
+      </h2>
+      <p class="registry-head__subtitle">
+        {{ isEdit ? 'Amend this voucher in the registry.' : 'Issue a new voucher into the registry.' }}
+      </p>
+    </div>
+    <hr class="registry-head__rule" />
+  </header>
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
+  <form name="editForm" class="atelier-form__sheet" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <jhi-alert-error />
 
-        <div class="mb-3">
+    @if (isEdit) {
+      <div class="atelier-form__id">
+        <label class="form-label" for="field_id">ID</label>
+        <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+      </div>
+    }
+
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Identity</legend>
+      <div class="atelier-form__grid">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_voucherNo">Voucher No</label>
           <input type="text" class="form-control" name="voucherNo" id="field_voucherNo" data-cy="voucherNo" formControlName="voucherNo" />
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_customerId">Customer Id</label>
           <input
             type="number"
@@ -29,9 +43,14 @@
             formControlName="customerId"
           />
         </div>
+      </div>
+    </fieldset>
 
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Amounts</legend>
+      <div class="atelier-form__grid">
         @let calculatedTotalAmountRef = editForm.get('calculatedTotalAmount')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_calculatedTotalAmount">Calculated Total Amount</label>
           <input
             type="number"
@@ -42,7 +61,7 @@
             formControlName="calculatedTotalAmount"
           />
           @if (calculatedTotalAmountRef.invalid && (calculatedTotalAmountRef.dirty || calculatedTotalAmountRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('calculatedTotalAmount')?.errors?.required) {
                 <small class="form-text text-danger">This field is required.</small>
               }
@@ -53,12 +72,12 @@
           }
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_vat">Vat</label>
           <input type="number" class="form-control" name="vat" id="field_vat" data-cy="vat" formControlName="vat" />
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_disountAmount">Disount Amount</label>
           <input
             type="number"
@@ -70,26 +89,8 @@
           />
         </div>
 
-        @let statusRef = editForm.get('status')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_status">Status</label>
-          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
-            <option [ngValue]="null"></option>
-            @for (voucherStatus of voucherStatusValues; track $index) {
-              <option [value]="voucherStatus">{{ { null: '', PAID: 'PAID', DUE: 'DUE', CANCEL: 'CANCEL' }[voucherStatus] }}</option>
-            }
-          </select>
-          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
-            <div>
-              @if (editForm.get('status')?.errors?.required) {
-                <small class="form-text text-danger">This field is required.</small>
-              }
-            </div>
-          }
-        </div>
-
         @let totalPayableAmountRef = editForm.get('totalPayableAmount')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_totalPayableAmount">Total Payable Amount</label>
           <input
             type="number"
@@ -100,7 +101,7 @@
             formControlName="totalPayableAmount"
           />
           @if (totalPayableAmountRef.invalid && (totalPayableAmountRef.dirty || totalPayableAmountRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('totalPayableAmount')?.errors?.required) {
                 <small class="form-text text-danger">This field is required.</small>
               }
@@ -110,28 +111,49 @@
             </div>
           }
         </div>
+      </div>
+    </fieldset>
 
-        <div class="mb-3">
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Status &amp; Tracking</legend>
+      <div class="atelier-form__grid">
+        @let statusRef = editForm.get('status')!;
+        <div class="atelier-form__field">
+          <label class="form-label" for="field_status">Status</label>
+          <select class="form-select" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null"></option>
+            @for (voucherStatus of voucherStatusValues; track $index) {
+              <option [value]="voucherStatus">{{ { null: '', PAID: 'PAID', DUE: 'DUE', CANCEL: 'CANCEL' }[voucherStatus] }}</option>
+            }
+          </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div class="atelier-form__errors">
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="atelier-form__field">
           <label class="form-label" for="field_dateCreated">Date Created</label>
-          <div class="d-flex">
-            <input
-              id="field_dateCreated"
-              data-cy="dateCreated"
-              type="datetime-local"
-              class="form-control"
-              name="dateCreated"
-              formControlName="dateCreated"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
+          <input
+            id="field_dateCreated"
+            data-cy="dateCreated"
+            type="datetime-local"
+            class="form-control"
+            name="dateCreated"
+            formControlName="dateCreated"
+            placeholder="YYYY-MM-DD HH:mm"
+          />
         </div>
 
         @let addedByRef = editForm.get('addedBy')!;
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_addedBy">Added By</label>
           <input type="text" class="form-control" name="addedBy" id="field_addedBy" data-cy="addedBy" formControlName="addedBy" />
           @if (addedByRef.invalid && (addedByRef.dirty || addedByRef.touched)) {
-            <div>
+            <div class="atelier-form__errors">
               @if (editForm.get('addedBy')?.errors?.required) {
                 <small class="form-text text-danger">This field is required.</small>
               }
@@ -139,54 +161,60 @@
           }
         </div>
 
-        <div class="mb-3">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_boxNumber">Box Number</label>
           <input type="text" class="form-control" name="boxNumber" id="field_boxNumber" data-cy="boxNumber" formControlName="boxNumber" />
         </div>
+      </div>
+    </fieldset>
 
-        <div class="mb-3">
+    <fieldset class="atelier-form__group">
+      <legend class="atelier-section-label">Delivery</legend>
+      <div class="atelier-form__grid">
+        <div class="atelier-form__field">
           <label class="form-label" for="field_deliveryDate">Delivery Date</label>
-          <div class="d-flex">
-            <input
-              id="field_deliveryDate"
-              data-cy="deliveryDate"
-              type="datetime-local"
-              class="form-control"
-              name="deliveryDate"
-              formControlName="deliveryDate"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_deliveryStatus">Delivery Status</label>
           <input
-            type="checkbox"
-            class="form-check"
-            name="deliveryStatus"
-            id="field_deliveryStatus"
-            data-cy="deliveryStatus"
-            formControlName="deliveryStatus"
+            id="field_deliveryDate"
+            data-cy="deliveryDate"
+            type="datetime-local"
+            class="form-control"
+            name="deliveryDate"
+            formControlName="deliveryDate"
+            placeholder="YYYY-MM-DD HH:mm"
           />
         </div>
-      </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
-        </button>
+        <div class="atelier-form__field">
+          <label class="form-label" for="field_deliveryStatus">Delivery Status</label>
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              name="deliveryStatus"
+              id="field_deliveryStatus"
+              data-cy="deliveryStatus"
+              formControlName="deliveryStatus"
+            />
+            <label class="form-check-label" for="field_deliveryStatus">Delivered</label>
+          </div>
+        </div>
       </div>
-    </form>
-  </div>
+    </fieldset>
+
+    <div class="atelier-form__actions">
+      <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+      </button>
+
+      <button
+        type="submit"
+        id="save-entity"
+        data-cy="entityCreateSaveButton"
+        [disabled]="editForm.invalid || isSaving"
+        class="btn btn-primary"
+      >
+        <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+      </button>
+    </div>
+  </form>
 </div>

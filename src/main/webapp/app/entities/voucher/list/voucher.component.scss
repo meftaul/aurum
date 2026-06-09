@@ -1,0 +1,348 @@
+.voucher-list {
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 240px;
+    padding: 2rem;
+    border: 1px dashed var(--aurum-gold-soft);
+    border-radius: 6px;
+    background: var(--aurum-surface);
+    color: var(--aurum-text-muted);
+    font-style: italic;
+  }
+
+  &__empty-icon {
+    font-size: 2rem;
+    color: var(--aurum-primary);
+  }
+
+  &__table {
+    margin-bottom: 0;
+  }
+
+  &__footer {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* ---- Sticky filter bar ---------------------------------------------------- */
+.voucher-filter {
+  position: sticky;
+  top: 56px; /* sits below the app topbar */
+  z-index: 5;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  background: var(--aurum-surface-2);
+  border: 1px solid var(--aurum-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px var(--aurum-shadow);
+
+  &__primary {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    position: relative;
+    flex: 1 1 260px;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 0.85rem;
+    color: var(--aurum-text-muted);
+    pointer-events: none;
+    font-size: 0.85rem;
+  }
+
+  &__input {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem 0.85rem 0.5rem 2.35rem;
+    background: var(--aurum-surface);
+    border: 1px solid var(--aurum-border);
+    border-radius: 4px;
+    color: var(--aurum-text);
+    font-family: var(--aurum-font-body);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: var(--aurum-text-muted);
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--aurum-gold);
+      box-shadow: 0 0 0 0.2rem var(--aurum-primary-subtle);
+    }
+  }
+
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* CSS chevron that rotates when the advanced panel is open */
+  &__chevron {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+    margin-bottom: 0.15rem;
+  }
+  &__toggle.is-open &__chevron {
+    transform: rotate(-135deg);
+    margin-bottom: -0.1rem;
+  }
+
+  &__advanced {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--aurum-border);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+      font-family: var(--aurum-font-mono);
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+      color: var(--aurum-text-muted);
+    }
+  }
+}
+
+/* ---- Ledger row specifics ------------------------------------------------- */
+.voucher-ledger {
+  &__num {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  &__row {
+    cursor: pointer;
+  }
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  &__lede {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 500;
+    color: var(--aurum-text);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--aurum-gold);
+    }
+  }
+
+  /* muted mono sub-line — box number, delivery date */
+  &__meta {
+    font-family: var(--aurum-font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    color: var(--aurum-text-muted);
+  }
+
+  &__delivery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    align-items: flex-start;
+  }
+
+  &__actions-head {
+    width: 1%;
+  }
+
+  /* Quiet the row actions until the row is hovered/focused (keyboard-reachable) */
+  &__actions .btn-group {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  &__row:hover &__actions .btn-group,
+  &__row:focus-within &__actions .btn-group {
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  /* Touch devices have no hover — always show the actions */
+  .voucher-ledger__actions .btn-group {
+    opacity: 1;
+  }
+}
+
+/* ---- Status pill — mono small-caps, keyed off the voucher status ---------- */
+.voucher-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 3px;
+  border: 1px solid var(--aurum-border);
+  background: var(--aurum-surface-2);
+  color: var(--aurum-text-muted);
+  font-family: var(--aurum-font-mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &--paid {
+    border-color: rgba(62, 107, 58, 0.4);
+    background: rgba(62, 107, 58, 0.12);
+    color: var(--aurum-success);
+  }
+
+  &--due {
+    border-color: rgba(181, 120, 30, 0.4);
+    background: rgba(181, 120, 30, 0.12);
+    color: var(--aurum-warning);
+  }
+
+  &--cancel {
+    border-color: rgba(155, 45, 32, 0.4);
+    background: rgba(155, 45, 32, 0.1);
+    color: var(--aurum-danger);
+  }
+
+  /* delivered → neutral gold; pending falls back to the muted default above */
+  &--delivered {
+    border-color: var(--aurum-gold-soft);
+    background: var(--aurum-primary-subtle);
+    color: var(--aurum-primary);
+  }
+}
+
+/* ---- Responsive: collapse the ledger into stacked registry cards ---------- */
+@media screen and (max-width: 720px) {
+  .voucher-list__table {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .voucher-ledger {
+    thead {
+      display: none;
+    }
+
+    tbody,
+    tr,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    tbody tr {
+      position: relative;
+      margin-bottom: 1rem;
+      padding: 1rem 1rem 0.75rem;
+      background: var(--aurum-surface);
+      border: 1px solid var(--aurum-border);
+      border-radius: 6px;
+      box-shadow: 0 1px 3px var(--aurum-shadow);
+    }
+
+    tbody tr::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--aurum-gold), var(--aurum-gold-soft) 70%, transparent);
+      border-radius: 6px 6px 0 0;
+    }
+
+    tbody td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.4rem 0;
+      border: 0;
+      text-align: right;
+    }
+
+    tbody td::before {
+      content: attr(data-label);
+      font-family: var(--aurum-font-mono);
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--aurum-text-muted);
+      text-align: left;
+    }
+
+    /* the gold marker is meaningless once rows are cards */
+    tbody tr:hover td:first-child::before,
+    tbody tr:focus-within td:first-child::before {
+      content: attr(data-label);
+      position: static;
+      width: auto;
+      background: none;
+    }
+
+    .voucher-ledger__identity,
+    .voucher-ledger__delivery {
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+
+    .voucher-ledger__actions {
+      justify-content: flex-end;
+      padding-top: 0.6rem;
+      margin-top: 0.4rem;
+      border-top: 1px solid var(--aurum-border);
+    }
+    .voucher-ledger__actions::before {
+      content: '';
+    }
+    .voucher-ledger__actions .btn-group {
+      opacity: 1;
+    }
+  }
+}

@@ -1,0 +1,168 @@
+.voucher-viewer {
+  max-width: 1040px;
+  margin: 0 auto;
+
+  /* ---- Search bar (themed, replaces the old mat-form-field) -------------- */
+  &__search {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  &__search-field {
+    position: relative;
+    flex: 1 1 280px;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 0.85rem;
+    color: var(--aurum-text-muted);
+    pointer-events: none;
+    font-size: 0.85rem;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.5rem 0.85rem 0.5rem 2.35rem;
+    background: var(--aurum-surface);
+    border: 1px solid var(--aurum-border);
+    border-radius: 4px;
+    color: var(--aurum-text);
+    font-family: var(--aurum-font-body);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: var(--aurum-text-muted);
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--aurum-gold);
+      box-shadow: 0 0 0 0.2rem var(--aurum-primary-subtle);
+    }
+  }
+
+  /* ---- Stacked result cards --------------------------------------------- */
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--aurum-gold-soft);
+  }
+
+  /* ---- Payment block: facts beside the payment form --------------------- */
+  &__pay {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(240px, 1.2fr);
+    gap: 1.5rem 2rem;
+    align-items: start;
+
+    @media screen and (max-width: 720px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__pay-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  &__pay-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    .form-label {
+      margin-bottom: 0;
+      font-family: var(--aurum-font-mono);
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--aurum-text-muted);
+      font-weight: 500;
+    }
+  }
+
+  &__errors {
+    margin-top: 0.15rem;
+  }
+
+  /* ---- Tables: lean on the shared ledger frame -------------------------- */
+  &__num {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  &__table {
+    margin-bottom: 0;
+  }
+
+  &__warning {
+    margin: 1rem 0 0;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--aurum-danger);
+    color: var(--aurum-danger);
+    font-size: 0.9rem;
+  }
+}
+
+/* ---- Definition-list facts grid (label over value) ---------------------- */
+.viewer-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem 1.5rem;
+  margin: 0;
+
+  &--pay {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  > div {
+    min-width: 0;
+  }
+
+  dt {
+    font-family: var(--aurum-font-mono);
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--aurum-text-muted);
+    margin: 0 0 0.2rem;
+  }
+
+  dd {
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--aurum-border);
+    color: var(--aurum-text);
+    word-break: break-word;
+    font-variant-numeric: tabular-nums;
+  }
+}

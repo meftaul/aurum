@@ -1,78 +1,91 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (voucher(); as voucherRef) {
-      <div>
-        <h2 data-cy="voucherDetailsHeading"><span>Voucher</span></h2>
+@if (voucher(); as voucherRef) {
+  <div class="record-sheet">
+    <jhi-alert-error />
+    <jhi-alert />
 
-        <hr />
+    <div class="record-sheet__card stagger" data-cy="voucherDetailsHeading">
+      <div class="record-sheet__identity">
+        <span class="seal seal--lg" aria-hidden="true">{{ (voucherRef.voucherNo || '?').charAt(0) | uppercase }}</span>
+        <div>
+          <h2 class="record-sheet__name">{{ voucherRef.voucherNo || 'Voucher' }}</h2>
+          <p class="record-sheet__subname">Voucher · No. {{ voucherRef.id }}</p>
+        </div>
+        @if (voucherRef.status) {
+          <span
+            class="chip ms-auto"
+            [class.chip--success]="voucherRef.status === 'PAID'"
+            [class.chip--danger]="voucherRef.status === 'CANCEL'"
+            [class.chip--warning]="voucherRef.status === 'DUE'"
+            >{{ voucherRef.status }}</span
+          >
+        }
+      </div>
 
-        <jhi-alert-error />
+      <dl class="record-sheet__facts">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ voucherRef.id }}</dd>
+        </div>
+        <div>
+          <dt>Voucher No</dt>
+          <dd>{{ voucherRef.voucherNo || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Customer Id</dt>
+          <dd>{{ voucherRef.customerId ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>{{ voucherRef.status || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Calculated Total Amount</dt>
+          <dd>{{ voucherRef.calculatedTotalAmount != null ? (voucherRef.calculatedTotalAmount | number: '1.2-2') : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Vat</dt>
+          <dd>{{ voucherRef.vat != null ? (voucherRef.vat | number: '1.2-2') : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Disount Amount</dt>
+          <dd>{{ voucherRef.disountAmount != null ? (voucherRef.disountAmount | number: '1.2-2') : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Total Payable Amount</dt>
+          <dd class="ledger__assay">
+            {{ voucherRef.totalPayableAmount != null ? (voucherRef.totalPayableAmount | number: '1.2-2') : '—' }}
+          </dd>
+        </div>
+        <div>
+          <dt>Date Created</dt>
+          <dd>{{ (voucherRef.dateCreated | formatMediumDatetime) || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Added By</dt>
+          <dd>{{ voucherRef.addedBy || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Box Number</dt>
+          <dd>{{ voucherRef.boxNumber || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Delivery Date</dt>
+          <dd>{{ (voucherRef.deliveryDate | formatMediumDatetime) || '—' }}</dd>
+        </div>
+        <div>
+          <dt>Delivery Status</dt>
+          <dd>{{ voucherRef.deliveryStatus ? 'Delivered' : 'Pending' }}</dd>
+        </div>
+      </dl>
 
-        <jhi-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span>ID</span></dt>
-          <dd>
-            <span>{{ voucherRef.id }}</span>
-          </dd>
-          <dt><span>Voucher No</span></dt>
-          <dd>
-            <span>{{ voucherRef.voucherNo }}</span>
-          </dd>
-          <dt><span>Customer Id</span></dt>
-          <dd>
-            <span>{{ voucherRef.customerId }}</span>
-          </dd>
-          <dt><span>Calculated Total Amount</span></dt>
-          <dd>
-            <span>{{ voucherRef.calculatedTotalAmount }}</span>
-          </dd>
-          <dt><span>Vat</span></dt>
-          <dd>
-            <span>{{ voucherRef.vat }}</span>
-          </dd>
-          <dt><span>Disount Amount</span></dt>
-          <dd>
-            <span>{{ voucherRef.disountAmount }}</span>
-          </dd>
-          <dt><span>Status</span></dt>
-          <dd>
-            <span>{{ { null: '', PAID: 'PAID', DUE: 'DUE', CANCEL: 'CANCEL' }[voucherRef.status ?? 'null'] }}</span>
-          </dd>
-          <dt><span>Total Payable Amount</span></dt>
-          <dd>
-            <span>{{ voucherRef.totalPayableAmount }}</span>
-          </dd>
-          <dt><span>Date Created</span></dt>
-          <dd>
-            <span>{{ voucherRef.dateCreated | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span>Added By</span></dt>
-          <dd>
-            <span>{{ voucherRef.addedBy }}</span>
-          </dd>
-          <dt><span>Box Number</span></dt>
-          <dd>
-            <span>{{ voucherRef.boxNumber }}</span>
-          </dd>
-          <dt><span>Delivery Date</span></dt>
-          <dd>
-            <span>{{ voucherRef.deliveryDate | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span>Delivery Status</span></dt>
-          <dd>
-            <span>{{ voucherRef.deliveryStatus }}</span>
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <div class="record-sheet__actions">
+        <button type="button" (click)="previousState()" class="btn btn-outline-secondary" data-cy="entityDetailsBackButton">
           <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
         </button>
-
         <button type="button" [routerLink]="['/voucher', voucherRef.id, 'edit']" class="btn btn-primary">
           <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
         </button>
       </div>
-    }
+    </div>
   </div>
-</div>
+}
