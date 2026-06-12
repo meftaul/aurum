@@ -1,6 +1,23 @@
 .dashboard__head {
   align-items: flex-start;
 }
+
+/* --- Quick actions + voucher search --- */
+.dashboard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+.dashboard__voucher-search {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 520px;
+  margin: 1.25rem 0 2rem;
+}
+.dashboard__voucher-search .form-control {
+  flex: 1 1 auto;
+}
 .dashboard__title {
   margin: 0;
   font-size: clamp(2.25rem, 4vw, 3rem);

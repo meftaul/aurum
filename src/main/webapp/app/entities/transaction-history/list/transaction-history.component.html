@@ -220,7 +220,11 @@
           @for (transactionHistory of transactionHistories(); track trackId(transactionHistory)) {
             <tr data-cy="entityTable">
               <td>
-                <a [routerLink]="['/transaction-history', transactionHistory.id, 'view']">{{ transactionHistory.id }}</a>
+                <a
+                  [routerLink]="['/transaction-history', transactionHistory.id, 'view']"
+                  style="font-weight: 700; color: #0a58ca; text-decoration: underline"
+                  >{{ transactionHistory.id }}</a
+                >
               </td>
               <td>{{ transactionHistory.voucherNo }}</td>
               <td>{{ transactionHistory.amount }}</td>

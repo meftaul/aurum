@@ -5,7 +5,23 @@
       <h1 class="dashboard__title">Dashboard</h1>
       <p class="dashboard__subtitle">An overview of your gold services at a glance.</p>
     </div>
+    <div class="dashboard__actions">
+      <a class="btn btn-primary" [routerLink]="['/transactions']"> <fa-icon icon="plus" /> New Transaction </a>
+      <a class="btn btn-outline-primary" [routerLink]="['/customer/new']"> <fa-icon icon="plus" /> New Customer </a>
+    </div>
   </header>
+
+  <form class="dashboard__voucher-search" (ngSubmit)="searchVoucher()">
+    <input
+      type="text"
+      class="form-control"
+      name="voucherSearch"
+      placeholder="Search voucher by number…"
+      [(ngModel)]="voucherSearch"
+      aria-label="Search voucher by number"
+    />
+    <button type="submit" class="btn btn-primary"><fa-icon icon="search" /> Search</button>
+  </form>
 
   <!-- TODO(owner): wire these tiles to live data -->
   <div class="dashboard__grid">

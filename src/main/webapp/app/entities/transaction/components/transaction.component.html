@@ -161,13 +161,13 @@
             <input type="text" class="form-control form-control-sm" formControlName="hallMarkedText" />
           </div>
 
-          <!-- Free check + weight (X-Ray) -->
+          <!-- Check + weight (X-Ray) -->
           <div class="atelier-form__field" *ngIf="selectedService === 'X-Ray'">
-            <label class="form-label">Free check (0/1)</label>
+            <label class="form-label">Check (0/1)</label>
             <input type="number" class="form-control form-control-sm" formControlName="freeCheck" min="0" max="1" />
           </div>
           <div class="atelier-form__field" *ngIf="selectedService === 'X-Ray'">
-            <label class="form-label">Free check weight</label>
+            <label class="form-label">Check weight</label>
             <input type="number" class="form-control form-control-sm" formControlName="weightOfFreeCheck" />
           </div>
 

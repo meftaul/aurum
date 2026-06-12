@@ -69,8 +69,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   loading = false;
 
   searchCategories: any[] = [
-    { value: 'phone', viewValue: 'Phone Number' },
     { value: 'id', viewValue: 'Customer ID' },
+    { value: 'phone', viewValue: 'Phone Number' },
   ];
 
   aurumServiceDropdownData: any[] = AURUM_SERVICE_LIST;
@@ -102,7 +102,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.prepareAurumServiceForm();
     this.prepareVoucherForm();
     this.prepareCustomerForm({} as ICustomer);
-    this.searchCategory = 'phone';
+    this.searchCategory = 'id';
 
     this.fetchKaratList();
     this.fetchRateList();
@@ -149,6 +149,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.customerID = customer ? customer.id : 0;
     this.customerResults = [];
     this.searched = false;
+    // If a karat is already chosen for Hallmark, refresh the auto-generated stamp text with the shop initials.
+    this.updateHallmarkText();
   }
 
   // Clear the selected customer so staff can look up a different one without leaving the page.
@@ -452,8 +454,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   // ****************************** VOUCHER ****************************** START
   prepareVoucherForm() {
-    let d = new Date().toISOString();
-    d = d.substring(0, d.length - 5);
+    const d = this.nowInBdDatetimeLocal();
 
     this.voucherForm = this.formBuilder.group({
       voucherNo: [''],
@@ -464,6 +465,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
       vat: [0, [Validators.required, Validators.maxLength(11)]],
       paidAmount: ['', [Validators.maxLength(11), Validators.required]],
     });
+  }
+
+  // Current date/time in Bangladesh (GMT+6) formatted for a datetime-local input (YYYY-MM-DDTHH:mm:ss),
+  // independent of the browser's own timezone.
+  private nowInBdDatetimeLocal(): string {
+    const bd = new Date(Date.now() + 6 * 60 * 60 * 1000);
+    return bd.toISOString().substring(0, 19);
   }
 
   // Pre-flight guards, shared by the confirm dialog and the direct "Take Payment" path.
@@ -647,6 +655,34 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   onKaratTypeChange(event) {
     this.recomputeAlloy();
+    this.updateHallmarkText();
+  }
+
+  // For Hallmark, auto-fill the stamp text as "<karatType> <shop initials>" (e.g. "22k AJ").
+  // Shop name comes from the selected customer's reference. The field stays editable.
+  private updateHallmarkText(): void {
+    const form = this.aurumServiceForm.controls;
+    if (form.serviceType.value !== 'Hallmark') {
+      return;
+    }
+    const karatType = form.karatType.value;
+    if (!karatType) {
+      return;
+    }
+    const shopInitials = this.getShopInitials(this.customer?.reference);
+    form.hallMarkedText.setValue(shopInitials ? `${karatType} ${shopInitials}` : `${karatType}`);
+  }
+
+  private getShopInitials(shopName: string | null | undefined): string {
+    if (!shopName) {
+      return '';
+    }
+    return shopName
+      .trim()
+      .split(/\s+/)
+      .filter(word => word.length > 0)
+      .map(word => word.charAt(0).toUpperCase())
+      .join('');
   }
 
   onExpectedKaratTypeChange(event) {

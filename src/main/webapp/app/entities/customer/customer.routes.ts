@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import CustomerResolve from './route/customer-routing-resolve.service';
 
 const customerRoute: Routes = [
@@ -9,7 +9,8 @@ const customerRoute: Routes = [
     path: '',
     loadComponent: () => import('./list/customer.component').then(m => m.CustomerComponent),
     data: {
-      defaultSort: `id,${ASC}`,
+      // Newest customers first (id is auto-increment, so highest id = most recently created)
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

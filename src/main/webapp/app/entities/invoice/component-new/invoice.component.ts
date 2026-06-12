@@ -20,7 +20,7 @@ export class TypedAurumService {
   standalone: false,
   selector: 'jhi-aurum-invoice-new',
   templateUrl: './invoice.component.html',
-  styleUrls: ['./invoice.component.scss']
+  styleUrls: ['./invoice.component.scss'],
 })
 export class InvoiceNewComponent implements OnInit, OnDestroy {
   voucherNumber: string;
@@ -50,6 +50,8 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
   totalWeight: number;
   totalAlloyWeight: number;
 
+  hallmarkImageUrl: string | null = null;
+
   constructor(
     private route: ActivatedRoute,
     protected router: Router,
@@ -58,7 +60,7 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
     protected voucherService: VoucherService,
     protected transactionHistoryService: TransactionHistoryService,
     private amountInWordsService: AmountInWords,
-    protected rateService: RateService
+    protected rateService: RateService,
   ) {
     this.isPrintFirstSection = true;
     this.isPrintCustomerSection = true;
@@ -79,6 +81,10 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
       this.fetchCustomer(this.voucher.customerId);
       this.fetchAurumServices(this.voucher.id);
       this.fetchTxnHistory(this.voucher.voucherNo);
+
+      if (this.voucher.hallmarkImage) {
+        this.hallmarkImageUrl = `data:${this.voucher.hallmarkImageContentType ?? 'image/png'};base64,${this.voucher.hallmarkImage}`;
+      }
 
       this.amountInWordsStr = this.amountInWordsService.convertNumberToWords(this.voucher.totalPayableAmount);
     });
@@ -159,6 +165,28 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
 
   adjustDiscount() {
     this.router.navigate(['transaction-history/' + this.discountId + '/edit']);
+  }
+
+  onHallmarkImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string; // data:<mime>;base64,<data>
+      this.hallmarkImageUrl = result;
+      const base64 = result.substring(result.indexOf(',') + 1);
+      this.voucherService
+        .partialUpdate({
+          id: this.voucher.id,
+          hallmarkImage: base64,
+          hallmarkImageContentType: file.type,
+        })
+        .subscribe();
+    };
+    reader.readAsDataURL(file);
   }
 
   ngOnDestroy() {}

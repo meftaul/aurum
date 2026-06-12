@@ -156,6 +156,7 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col"><span>Picture</span></th>
             <th scope="col" class="voucher-ledger__actions-head"></th>
           </tr>
         </thead>
@@ -195,6 +196,18 @@
                     <span class="voucher-ledger__meta">{{ voucher.deliveryDate | formatMediumDatetime }}</span>
                   }
                 </span>
+              </td>
+              <td data-label="Picture" class="voucher-ledger__upload" (click)="$event.stopPropagation()">
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="form-control form-control-sm"
+                  (change)="onPictureSelected($event, voucher)"
+                  aria-label="Upload voucher picture"
+                />
+                @if (voucher.hallmarkImage) {
+                  <span class="voucher-ledger__meta">Uploaded</span>
+                }
               </td>
               <td class="text-end voucher-ledger__actions" (click)="$event.stopPropagation()">
                 <div class="btn-group">

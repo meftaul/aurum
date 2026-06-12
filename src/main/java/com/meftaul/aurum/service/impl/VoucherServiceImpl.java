@@ -79,6 +79,10 @@ public class VoucherServiceImpl implements VoucherService {
                 if (voucher.getDeliveryStatus() != null) {
                     existingVoucher.setDeliveryStatus(voucher.getDeliveryStatus());
                 }
+                if (voucher.getHallmarkImage() != null) {
+                    existingVoucher.setHallmarkImage(voucher.getHallmarkImage());
+                    existingVoucher.setHallmarkImageContentType(voucher.getHallmarkImageContentType());
+                }
 
                 return existingVoucher;
             })

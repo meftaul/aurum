@@ -16,12 +16,13 @@ import { IAurumService } from 'app/entities/aurum-service/aurum-service.model';
 import { VoucherService } from 'app/entities/voucher/service/voucher.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VoucherStatus } from 'app/entities/enumerations/voucher-status.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   standalone: false,
   selector: 'jhi-aurum-voucher-viewer',
   templateUrl: './voucher.viewer.component.html',
-  styleUrls: ['./voucher.viewer.component.scss']
+  styleUrls: ['./voucher.viewer.component.scss'],
 })
 export class VoucherViewerComponent implements OnInit, OnDestroy {
   account: Account;
@@ -42,7 +43,8 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     protected voucherService: VoucherService,
     private voucherViewerService: VoucherViewerService,
     private accountService: AccountService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +52,15 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
 
     this.accountService.identity().subscribe((account: Account) => {
       this.account = account;
+    });
+
+    // Allow deep-linking from the dashboard search: /voucher-viewer?voucherNo=XYZ
+    this.route.queryParams.subscribe(params => {
+      const voucherNo = params['voucherNo'];
+      if (voucherNo) {
+        this.voucherFieldValue = voucherNo;
+        this.searchVoucherViewer();
+      }
     });
   }
 
@@ -76,7 +87,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
           this.customerName = null;
           this.aurumServices = [];
           this.jhiAlertService.addAlert({ type: 'warning', message: 'Voucher not found.' });
-        }
+        },
       );
     } else {
       this.jhiAlertService.addAlert({ type: 'info', message: 'Please provide voucher number.' });
@@ -97,7 +108,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
 
   prepareTransactionHistoryForm() {
     this.transactionHistoryForm = this.formBuilder.group({
-      amount: ['', [Validators.required]]
+      amount: ['', [Validators.required]],
     });
   }
 

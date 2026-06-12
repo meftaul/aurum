@@ -15,6 +15,7 @@ import { IVoucher } from '../voucher.model';
 
 import { EntityArrayResponseType, VoucherService } from '../service/voucher.service';
 import { VoucherDeleteDialogComponent } from '../delete/voucher-delete-dialog.component';
+import { AlertService } from 'app/core/util/alert.service';
 
 interface VoucherSearchCriteria {
   voucherNo: string;
@@ -74,6 +75,7 @@ export class VoucherComponent implements OnInit {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected alertService = inject(AlertService);
 
   trackId = (item: IVoucher): number => this.voucherService.getVoucherIdentifier(item);
 
@@ -142,6 +144,29 @@ export class VoucherComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+  }
+
+  // Persist a karat-stamp / delivery picture against the voucher (req 7 & 13).
+  onPictureSelected(event: Event, voucher: IVoucher): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string; // data:<mime>;base64,<data>
+      const base64 = result.substring(result.indexOf(',') + 1);
+      this.voucherService.partialUpdate({ id: voucher.id, hallmarkImage: base64, hallmarkImageContentType: file.type }).subscribe({
+        next: () => {
+          voucher.hallmarkImage = base64;
+          voucher.hallmarkImageContentType = file.type;
+          this.alertService.addAlert({ type: 'success', message: 'Picture uploaded.' });
+        },
+        error: () => this.alertService.addAlert({ type: 'danger', message: 'Picture upload failed.' }),
+      });
+    };
+    reader.readAsDataURL(file);
   }
 
   load(): void {

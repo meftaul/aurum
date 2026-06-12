@@ -4,7 +4,9 @@ import com.meftaul.aurum.domain.AurumService;
 import com.meftaul.aurum.domain.Customer;
 import com.meftaul.aurum.domain.TransactionHistory;
 import com.meftaul.aurum.domain.Voucher;
+import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import com.meftaul.aurum.domain.enumeration.VoucherStatus;
+import com.meftaul.aurum.errors.VoucherNotFoundException;
 import com.meftaul.aurum.repository.AurumServiceRepository;
 import com.meftaul.aurum.repository.CustomerRepository;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
@@ -13,13 +15,6 @@ import com.meftaul.aurum.security.SecurityUtils;
 import com.meftaul.aurum.service.dto.CustomVoucherDto;
 import com.meftaul.aurum.service.dto.TransactionDto;
 import com.meftaul.aurum.service.dto.VoucherViewerDto;
-import com.meftaul.aurum.errors.VoucherNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.meftaul.aurum.domain.enumeration.TransactionStatus;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -28,6 +23,10 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -40,7 +39,12 @@ public class CustomVoucherService {
     private final TransactionHistoryRepository transactionHistoryRepository;
     private final CustomerRepository customerRepository;
 
-    public CustomVoucherService(VoucherRepository voucherRepository, AurumServiceRepository aurumServiceRepository, TransactionHistoryRepository transactionHistoryRepository, CustomerRepository customerRepository) {
+    public CustomVoucherService(
+        VoucherRepository voucherRepository,
+        AurumServiceRepository aurumServiceRepository,
+        TransactionHistoryRepository transactionHistoryRepository,
+        CustomerRepository customerRepository
+    ) {
         this.voucherRepository = voucherRepository;
         this.aurumServiceRepository = aurumServiceRepository;
         this.transactionHistoryRepository = transactionHistoryRepository;
@@ -48,7 +52,6 @@ public class CustomVoucherService {
     }
 
     public Optional<VoucherViewerDto> findByVoucherNo(String voucherNo) {
-
         Voucher voucher = this.voucherRepository.findByVoucherNo(voucherNo);
 
         if (voucher == null) {
@@ -92,7 +95,8 @@ public class CustomVoucherService {
 
         voucher.setVoucherNo(generatedVoucherNo);
         voucher.setDateCreated(Instant.now());
-
+        // Always stamp the voucher with the real current user, not whatever the client sent.
+        voucher.setAddedBy(SecurityUtils.getCurrentUserLogin().orElse(voucher.getAddedBy()));
 
         Voucher savedVoucher = voucherRepository.save(voucher);
 
@@ -134,7 +138,7 @@ public class CustomVoucherService {
 
     @Transactional
     public String deleteVoucher(String voucherNo) {
-        Voucher voucher =  this.voucherRepository.findByVoucherNo(voucherNo);
+        Voucher voucher = this.voucherRepository.findByVoucherNo(voucherNo);
         if (voucher == null) {
             throw new RuntimeException("Invalid Voucher number");
         }
@@ -171,7 +175,6 @@ public class CustomVoucherService {
     }
 
     private TransactionHistory createTxnHistory(Voucher voucher, BigDecimal amount, TransactionStatus tag) {
-
         TransactionHistory transactionHistory = new TransactionHistory();
 
         transactionHistory.setAddedBy(SecurityUtils.getCurrentUserLogin().get());
@@ -184,7 +187,6 @@ public class CustomVoucherService {
         transactionHistory.setAmount(amount);
 
         return transactionHistoryRepository.save(transactionHistory);
-
     }
 
     private String getVoucherNumber() {
@@ -198,15 +200,15 @@ public class CustomVoucherService {
 
         /*Long todayCount = this.voucherRepository.countByDateCreatedAfter(instant) + 1;*/
         UUID uuid = UUID.randomUUID();
-        String uuidAsString = uuid.toString().replace("-","");
-        String generatedVoucherNo = String.valueOf(now.getYear() % 100)
-            + String.format("%02d", now.getMonthValue())
-            + String.format("%02d", now.getDayOfMonth())
-            + uuidAsString.substring(0, 10).toUpperCase();
+        String uuidAsString = uuid.toString().replace("-", "");
+        String generatedVoucherNo =
+            String.valueOf(now.getYear() % 100) +
+            String.format("%02d", now.getMonthValue()) +
+            String.format("%02d", now.getDayOfMonth()) +
+            uuidAsString.substring(0, 10).toUpperCase();
         if (voucherRepository.existsByVoucherNo(generatedVoucherNo)) {
             throw new RuntimeException();
         }
         return generatedVoucherNo;
     }
-
 }

@@ -69,6 +69,13 @@ public class Voucher implements Serializable {
     @Column(name = "delivery_status")
     private Boolean deliveryStatus;
 
+    @Lob
+    @Column(name = "hallmark_image")
+    private byte[] hallmarkImage;
+
+    @Column(name = "hallmark_image_content_type")
+    private String hallmarkImageContentType;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "voucher")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "voucher" }, allowSetters = true)
@@ -243,6 +250,32 @@ public class Voucher implements Serializable {
 
     public void setDeliveryStatus(Boolean deliveryStatus) {
         this.deliveryStatus = deliveryStatus;
+    }
+
+    public byte[] getHallmarkImage() {
+        return this.hallmarkImage;
+    }
+
+    public Voucher hallmarkImage(byte[] hallmarkImage) {
+        this.setHallmarkImage(hallmarkImage);
+        return this;
+    }
+
+    public void setHallmarkImage(byte[] hallmarkImage) {
+        this.hallmarkImage = hallmarkImage;
+    }
+
+    public String getHallmarkImageContentType() {
+        return this.hallmarkImageContentType;
+    }
+
+    public Voucher hallmarkImageContentType(String hallmarkImageContentType) {
+        this.setHallmarkImageContentType(hallmarkImageContentType);
+        return this;
+    }
+
+    public void setHallmarkImageContentType(String hallmarkImageContentType) {
+        this.hallmarkImageContentType = hallmarkImageContentType;
     }
 
     public Set<AurumService> getAurumServices() {

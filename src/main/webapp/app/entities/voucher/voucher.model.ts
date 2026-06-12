@@ -15,6 +15,8 @@ export interface IVoucher {
   boxNumber?: string | null;
   deliveryDate?: dayjs.Dayjs | null;
   deliveryStatus?: boolean | null;
+  hallmarkImage?: string | null;
+  hallmarkImageContentType?: string | null;
 }
 
 export type NewVoucher = Omit<IVoucher, 'id'> & { id: null };
