@@ -10,11 +10,24 @@ import { TransactionHistoryService } from 'app/entities/transaction-history/serv
 import { ITransactionHistory } from 'app/entities/transaction-history/transaction-history.model';
 import { AmountInWords } from '../util/amount.in.words';
 import { RateService } from 'app/entities/rate/service/rate.service';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export class TypedAurumService {
   serviceType: string;
   serviceList: IAurumService[];
 }
+
+/**
+ * Shop header printed at the top of the 78mm POS receipt.
+ * Single source of truth — edit these lines to change the receipt header.
+ * NOTE: address/phone are placeholders awaiting the exact text from the shop.
+ */
+export const SHOP_HEADER = {
+  name: 'Narayanganj Gold',
+  addressLines: ['<<ADDRESS LINE — please fill in>>'],
+  phone: '<<PHONE — please fill in>>',
+};
 
 @Component({
   standalone: false,
@@ -41,8 +54,8 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
   showMeltingNote: boolean;
   showCalculatedMeltingNote: boolean;
 
-  isPrintFirstSection: boolean;
-  isPrintCustomerSection: boolean;
+  shopHeader = SHOP_HEADER;
+  generatingPdf = false;
 
   amountInWordsStr: string;
 
@@ -61,10 +74,7 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
     protected transactionHistoryService: TransactionHistoryService,
     private amountInWordsService: AmountInWords,
     protected rateService: RateService,
-  ) {
-    this.isPrintFirstSection = true;
-    this.isPrintCustomerSection = true;
-  }
+  ) {}
 
   ngOnInit() {
     this.route.params.subscribe(param => {
@@ -147,20 +157,71 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
     });
   }
 
-  printPage() {
-    this.isPrintFirstSection = true;
-    this.isPrintCustomerSection = false;
-    setTimeout(() => {
-      window.print();
-    }, 100);
+  /** Download the narrow 78mm POS receipt as a single continuous-page PDF. */
+  downloadPosPdf() {
+    this.elementToPosPdf('posReceipt', 78, `POS-${this.voucherNumber}.pdf`);
   }
 
-  printForCustomer() {
-    this.isPrintFirstSection = false;
-    this.isPrintCustomerSection = true;
-    setTimeout(() => {
-      window.print();
-    }, 100);
+  /** Download the full detailed report as an A4 (multi-page) PDF. */
+  downloadReportPdf() {
+    this.elementToA4Pdf('reportSection', `Report-${this.voucherNumber}.pdf`);
+  }
+
+  /** Snapshot an element to a single continuous PDF page of the given width (mm). */
+  private elementToPosPdf(elementId: string, widthMm: number, fileName: string) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    this.generatingPdf = true;
+    // JPEG@0.85 + stream compression at scale 2 keeps the receipt crisp while
+    // shrinking the file dramatically (a lossless PNG here ran to several MB).
+    html2canvas(el, { scale: 2, backgroundColor: '#ffffff' })
+      .then(canvas => {
+        const imgHeightMm = (canvas.height * widthMm) / canvas.width;
+        const pdf = new jsPDF({ unit: 'mm', format: [widthMm, imgHeightMm], compress: true });
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, widthMm, imgHeightMm, undefined, 'FAST');
+        pdf.save(fileName);
+      })
+      .finally(() => (this.generatingPdf = false));
+  }
+
+  /** Snapshot an element and paginate it across A4 pages. */
+  private elementToA4Pdf(elementId: string, fileName: string) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    this.generatingPdf = true;
+    // Keep the file small: moderate raster scale, then embed each A4 page as its
+    // OWN compressed JPEG slice. (Re-adding the whole tall PNG per page produced
+    // multi-MB files; slicing + JPEG keeps a typical report well under ~300 KB.)
+    html2canvas(el, { scale: 1.5, backgroundColor: '#ffffff' })
+      .then(canvas => {
+        const pdf = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
+        const pageWidthMm = pdf.internal.pageSize.getWidth();
+        const pageHeightMm = pdf.internal.pageSize.getHeight();
+        // Pixel height of one A4 page at the canvas' resolution.
+        const pageHeightPx = Math.floor((canvas.width * pageHeightMm) / pageWidthMm);
+
+        const sliceCanvas = document.createElement('canvas');
+        const ctx = sliceCanvas.getContext('2d');
+        sliceCanvas.width = canvas.width;
+
+        let renderedPx = 0;
+        let firstPage = true;
+        while (renderedPx < canvas.height) {
+          const slicePx = Math.min(pageHeightPx, canvas.height - renderedPx);
+          sliceCanvas.height = slicePx;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, sliceCanvas.width, slicePx);
+          ctx.drawImage(canvas, 0, renderedPx, canvas.width, slicePx, 0, 0, canvas.width, slicePx);
+
+          if (!firstPage) pdf.addPage();
+          firstPage = false;
+          const sliceHeightMm = (slicePx * pageWidthMm) / canvas.width;
+          pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.8), 'JPEG', 0, 0, pageWidthMm, sliceHeightMm, undefined, 'FAST');
+          renderedPx += slicePx;
+        }
+        pdf.save(fileName);
+      })
+      .finally(() => (this.generatingPdf = false));
   }
 
   adjustDiscount() {

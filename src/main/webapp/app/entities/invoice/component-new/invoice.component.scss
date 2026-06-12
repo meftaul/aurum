@@ -1,62 +1,456 @@
-@media print {
-  .no-print,
-  .no-print * {
-    display: none !important;
-  }
-  .borderStyle {
-    border: 1px solid black;
-    text-align: center;
-    vertical-align: middle;
+// ============================================================================
+// Invoice page — speaks the Atelier design language.
+//
+// CHROME (page, column heads, frames, buttons) uses live --aurum-* tokens, so
+// it follows light/dark parity like the rest of the app.
+//
+// DOCUMENTS (.report-doc, .pos-receipt) use a FIXED light "paper" palette — they
+// are snapshotted by html2canvas onto white PDFs, so they must never inherit
+// dark-mode tokens (light text on white = invisible export). The fixed values
+// mirror the LIGHT theme, so on-screen in light mode they blend seamlessly.
+// ============================================================================
+
+// Fixed paper palette (mirrors the light --aurum-* tokens) for captured docs.
+$paper: #ffffff;
+$paper-ink: #2c3138;
+$paper-muted: #6a7078;
+$paper-border: #d7d5cc;
+$paper-gold: #9c7c3c;
+$paper-gold-soft: rgba(156, 124, 60, 0.4);
+$paper-rule: #1c1b17;
+
+:host {
+  display: block;
+  min-height: 100%;
+  background: var(--aurum-bg);
+  color: var(--aurum-text);
+}
+
+.invoice-page {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+// registry-head, atelier-section-label, btn etc. are global — only local tweaks:
+.registry-head__title {
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+}
+
+// ---- Two-column shell -----------------------------------------------------
+.invoice-cols {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.doc-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+
+  &--report {
+    flex: 1 1 520px;
+    max-width: 210mm;
   }
 
-  .cusBorderStyle {
-    border: 1px solid black;
-    text-align: left;
-    vertical-align: middle;
+  &--pos {
+    flex: 0 0 auto;
+    width: 320px;
+    max-width: 100%;
   }
 
-  .table th,
-  .table td {
-    padding: 5px;
-    line-height: 14px;
-    font-size: 14px;
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--aurum-border);
+
+    .btn {
+      white-space: nowrap;
+    }
   }
 
-  ul,
-  li {
-    line-height: 24px;
-    font-size: 14px;
+  // themed card frame around the (clean) captured document
+  &__frame {
+    position: relative;
+    padding: 1.1rem;
+    background: var(--aurum-surface);
+    border: 1px solid var(--aurum-border);
+    border-radius: 6px;
+    box-shadow: 0 10px 30px var(--aurum-shadow);
+    overflow: auto;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--aurum-gold), var(--aurum-gold-soft) 70%, transparent);
+      border-radius: 6px 6px 0 0;
+    }
+
+    &--pos {
+      display: flex;
+      justify-content: center;
+    }
   }
 }
 
-.borderStyle {
-  border: 1px solid black;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.cusBorderStyle {
-  border: 1px solid black;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.table th,
-.table td {
-  padding: 5px;
-  line-height: 14px;
-  font-size: 14px;
-}
-
-ul,
-li {
-  line-height: 24px;
-  font-size: 14px;
-}
-
-.printFooter {
-  position: fixed;
-  left: 0;
-  bottom: 0;
+// ============================================================================
+// A4 report document (fixed light paper palette)
+// ============================================================================
+.report-doc {
   width: 100%;
+  box-sizing: border-box;
+  padding: 14mm 12mm;
+  background: $paper;
+  color: $paper-ink;
+  font-family: var(--aurum-font-body);
+  font-size: 13px;
+  line-height: 1.5;
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  &__shop {
+    margin: 0;
+    font-family: var(--aurum-font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: $paper-ink;
+  }
+
+  &__contact {
+    margin: 0.35rem 0 0;
+    font-size: 12px;
+    color: $paper-muted;
+    line-height: 1.45;
+  }
+
+  &__title {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1;
+  }
+
+  &__title-kicker {
+    font-family: var(--aurum-font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.3em;
+    color: $paper-gold;
+    margin-bottom: 0.4rem;
+  }
+
+  &__title-main {
+    font-family: var(--aurum-font-display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: $paper-ink;
+  }
+
+  &__rule {
+    height: 2px;
+    background: $paper-rule;
+    margin: 14px 0 18px;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 64px;
+      height: 2px;
+      background: $paper-gold;
+    }
+  }
+}
+
+// meta grid
+.doc-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2.5rem;
+  margin: 0 0 18px;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 5px 0;
+    border-bottom: 1px dotted $paper-border;
+
+    &--wide {
+      grid-column: 1 / -1;
+    }
+
+    dt {
+      font-family: var(--aurum-font-mono);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 10px;
+      color: $paper-muted;
+      white-space: nowrap;
+    }
+
+    dd {
+      margin: 0;
+      font-weight: 600;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+// items table
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+
+  th,
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid $paper-border;
+    text-align: left;
+  }
+
+  thead th {
+    border-top: 1.5px solid $paper-gold-soft;
+    border-bottom: 1.5px solid $paper-gold-soft;
+    font-family: var(--aurum-font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 10px;
+    color: $paper-muted;
+    font-weight: 500;
+  }
+
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  tfoot td {
+    border-top: 1.5px solid $paper-rule;
+    border-bottom: none;
+    font-weight: 800;
+    font-size: 14px;
+  }
+}
+
+.doc-hallmark {
+  text-align: center;
+  margin: 6px 0 18px;
+
+  img {
+    max-width: 60%;
+    max-height: 220px;
+    border: 1px solid $paper-rule;
+  }
+
+  &__caption {
+    display: block;
+    margin-top: 6px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+}
+
+.doc-note {
+  margin-bottom: 24px;
+
+  &__label {
+    display: inline-block;
+    font-family: var(--aurum-font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: $paper-gold;
+    margin-bottom: 4px;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  li {
+    font-size: 12px;
+    color: $paper-muted;
+    line-height: 1.55;
+  }
+}
+
+.doc-sign {
+  display: flex;
+  justify-content: space-between;
+  gap: 3rem;
+  margin-top: 42px;
+
+  &__slot {
+    flex: 1;
+    text-align: center;
+    font-family: var(--aurum-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $paper-muted;
+  }
+
+  &__line {
+    display: block;
+    border-top: 1px solid $paper-rule;
+    margin-bottom: 6px;
+  }
+}
+
+// ============================================================================
+// 78mm thermal POS receipt (fixed light paper palette)
+// ============================================================================
+.pos-receipt {
+  width: 78mm;
+  box-sizing: border-box;
+  padding: 5mm 4mm 7mm;
+  background: $paper;
+  color: #000;
+  font-family: var(--aurum-font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+
+  &__head {
+    text-align: center;
+  }
+
+  &__shop {
+    font-family: var(--aurum-font-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  &__contact {
+    font-size: 10px;
+    margin-top: 2px;
+    line-height: 1.35;
+  }
+
+  &__title {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  &__meta {
+    margin: 2px 0;
+  }
+
+  &__foot {
+    text-align: center;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-size: 11px;
+    margin-top: 4px;
+  }
+}
+
+.pos-rule {
+  border-top: 1px solid #000;
+  margin: 6px 0;
+
+  &--dashed {
+    border-top: 1px dashed #000;
+  }
+}
+
+.pos-kv {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 1px 0;
+
+  span:first-child {
+    color: #000;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  span:last-child {
+    text-align: right;
+    font-weight: 700;
+    word-break: break-word;
+  }
+
+  &--stack {
+    flex-direction: column;
+    gap: 0;
+
+    span:last-child {
+      text-align: left;
+      font-weight: 700;
+    }
+  }
+}
+
+.pos-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 2px 2px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    border-bottom: 1px solid #000;
+    text-transform: uppercase;
+    font-size: 9.5px;
+    letter-spacing: 0.03em;
+  }
+
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}
+
+.pos-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+// ---- Responsive: stack the columns -----------------------------------------
+@media (max-width: 960px) {
+  .doc-col--report {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+  .doc-col--pos {
+    width: 100%;
+  }
+  .report-doc {
+    padding: 10mm 7mm;
+  }
 }
