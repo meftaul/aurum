@@ -1,5 +1,5 @@
 /* ==============================================================
-Parchment Atelier — global type, texture & components
+Quiet Ledger — global type, texture & components
 ===============================================================*/
 
 /* Shared "Atelier Registry" motifs for the customer experience
@@ -11,15 +11,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
-  /* Subtle paper grain for tactility — a faint fibrous wash over the parchment. */
+  /* Whisper-quiet atmospheric depth — two desaturated washes (teal + brass) over a faint grain. */
   background-image:
-    radial-gradient(circle at 18% 22%, rgba(201, 162, 39, 0.04), transparent 38%),
-    radial-gradient(circle at 82% 78%, rgba(201, 162, 39, 0.035), transparent 42%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    radial-gradient(circle at 18% 22%, rgba(47, 107, 94, 0.03), transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(156, 124, 60, 0.022), transparent 44%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");
   background-attachment: fixed;
 }
 
-/* Editorial display type: high-contrast Cormorant Garamond, generous tracking */
+/* Display type: Nunito set heavy and slightly tightened for a confident, readable header */
 h1,
 h2,
 h3,
@@ -27,13 +27,13 @@ h4,
 h5,
 h6 {
   font-family: var(--aurum-font-display);
-  font-weight: 600;
-  letter-spacing: 0;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--aurum-text);
 }
 
 h1 {
-  font-weight: 700;
+  font-weight: 800;
 }
 
 /* Tabular figures everywhere numbers matter (tables, detail values, amounts) */
@@ -124,18 +124,18 @@ Generic styles
     box-shadow 0.2s ease;
 }
 
-/* Primary = solid gold leaf with ink text */
+/* Primary = solid pine teal with light text — the calm, unambiguous action */
 .btn-primary {
-  --bs-btn-bg: var(--aurum-gold);
-  --bs-btn-border-color: var(--aurum-gold);
-  --bs-btn-color: #2b2017;
-  --bs-btn-hover-bg: var(--aurum-primary);
-  --bs-btn-hover-border-color: var(--aurum-primary);
-  --bs-btn-hover-color: #fbf7ef;
-  --bs-btn-active-bg: var(--aurum-primary);
-  --bs-btn-active-border-color: var(--aurum-primary);
-  --bs-btn-active-color: #fbf7ef;
-  box-shadow: 0 1px 0 rgba(43, 32, 23, 0.12);
+  --bs-btn-bg: var(--aurum-primary);
+  --bs-btn-border-color: var(--aurum-primary);
+  --bs-btn-color: var(--aurum-primary-contrast);
+  --bs-btn-hover-bg: var(--aurum-primary-hover);
+  --bs-btn-hover-border-color: var(--aurum-primary-hover);
+  --bs-btn-hover-color: var(--aurum-primary-contrast);
+  --bs-btn-active-bg: var(--aurum-primary-hover);
+  --bs-btn-active-border-color: var(--aurum-primary-hover);
+  --bs-btn-active-color: var(--aurum-primary-contrast);
+  box-shadow: 0 1px 2px var(--aurum-shadow);
 }
 
 /* Secondary = hairline-outlined ink button (atelier restraint) */
@@ -154,12 +154,12 @@ Generic styles
 .btn-outline-primary {
   --bs-btn-color: var(--aurum-primary);
   --bs-btn-border-color: var(--aurum-primary);
-  --bs-btn-hover-bg: var(--aurum-gold);
-  --bs-btn-hover-border-color: var(--aurum-gold);
-  --bs-btn-hover-color: #2b2017;
-  --bs-btn-active-bg: var(--aurum-gold);
-  --bs-btn-active-border-color: var(--aurum-gold);
-  --bs-btn-active-color: #2b2017;
+  --bs-btn-hover-bg: var(--aurum-primary);
+  --bs-btn-hover-border-color: var(--aurum-primary);
+  --bs-btn-hover-color: var(--aurum-primary-contrast);
+  --bs-btn-active-bg: var(--aurum-primary);
+  --bs-btn-active-border-color: var(--aurum-primary);
+  --bs-btn-active-color: var(--aurum-primary-contrast);
 }
 
 /* "Visit us ›" style text links */
@@ -397,9 +397,9 @@ h1#page-heading {
   }
 }
 .page-item.active .page-link {
-  background-color: var(--aurum-gold);
-  border-color: var(--aurum-gold);
-  color: #2b2017;
+  background-color: var(--aurum-primary);
+  border-color: var(--aurum-primary);
+  color: var(--aurum-primary-contrast);
 }
 
 /* ==========================================================================

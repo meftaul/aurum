@@ -177,7 +177,7 @@
   }
 
   tbody tr:nth-of-type(even) {
-    background: rgba(201, 162, 39, 0.045);
+    background: var(--bs-table-striped-bg);
   }
 
   tbody tr:hover,
@@ -264,7 +264,7 @@
 
     &:hover {
       background: var(--aurum-gold);
-      color: #2b2017;
+      color: var(--aurum-on-gold);
     }
   }
 }
@@ -299,20 +299,20 @@
   }
 
   &--success {
-    background: rgba(62, 107, 58, 0.12);
-    border-color: rgba(62, 107, 58, 0.35);
+    background: rgba(63, 125, 84, 0.12);
+    border-color: rgba(63, 125, 84, 0.35);
     color: var(--aurum-success);
   }
 
   &--danger {
-    background: rgba(155, 45, 32, 0.12);
-    border-color: rgba(155, 45, 32, 0.35);
+    background: rgba(176, 74, 61, 0.12);
+    border-color: rgba(176, 74, 61, 0.35);
     color: var(--aurum-danger);
   }
 
   &--warning {
-    background: rgba(181, 120, 30, 0.12);
-    border-color: rgba(181, 120, 30, 0.35);
+    background: rgba(185, 132, 47, 0.12);
+    border-color: rgba(185, 132, 47, 0.35);
     color: var(--aurum-warning);
   }
 }
@@ -669,14 +669,14 @@
     background: var(--aurum-surface-2);
   }
 
-  /* Garnet-framed seal — the mark about to be broken */
+  /* Brick-framed seal — the mark about to be broken */
   &__seal {
     border-color: var(--aurum-danger);
     color: var(--aurum-danger);
-    background: rgba(155, 45, 32, 0.1);
+    background: rgba(176, 74, 61, 0.1);
 
     &::after {
-      border-color: rgba(155, 45, 32, 0.4);
+      border-color: rgba(176, 74, 61, 0.4);
     }
   }
 

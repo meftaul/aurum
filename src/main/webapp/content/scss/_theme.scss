@@ -1,34 +1,41 @@
 /*
- * Aurum theme — runtime layer ("Parchment Atelier": warm parchment + gold leaf).
+ * Aurum theme — runtime layer ("Quiet Ledger": low-glare professional desk).
+ * Stone-grey paper, ink-slate text, a restful pine-teal as the primary action
+ * colour, and a restrained antique-brass accent that keeps Aurum's gold identity.
+ * Tuned for long working sessions: off-white (never pure white) surfaces, slate
+ * (never pure black) ink, desaturated semantics — comfortable, low-fatigue contrast.
+ *
  * Semantic --aurum-* tokens + overrides of Bootstrap's own --bs-* CSS variables.
  * These flip instantly when ThemeService toggles data-bs-theme on <html>.
  */
 
 :root {
-  /* --- Type system --- */
-  --aurum-font-display: 'Cormorant Garamond', Georgia, serif;
-  --aurum-font-body: 'Spectral', Georgia, 'Times New Roman', serif;
-  --aurum-font-mono: 'Spline Sans Mono', 'SFMono-Regular', ui-monospace, 'JetBrains Mono', monospace;
+  /* --- Type system — Nunito throughout, JetBrains Mono for figures --- */
+  --aurum-font-display: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+  --aurum-font-body: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --aurum-font-mono: 'JetBrains Mono', 'SFMono-Regular', ui-monospace, 'Spline Sans Mono', monospace;
 
-  /* --- Aurum semantic tokens (light — parchment) --- */
-  --aurum-bg: #f4eee1;
-  --aurum-surface: #fbf7ef;
-  --aurum-surface-2: #ebe2ce;
-  --aurum-text: #2b2017;
-  --aurum-text-muted: #7a6a55;
-  --aurum-border: #dcd0ba;
-  --aurum-primary: #9a7b1f;
-  --aurum-gold: #c9a227;
-  --aurum-gold-soft: rgba(201, 162, 39, 0.45);
-  --aurum-link: #8a6c1c;
-  --aurum-primary-contrast: #2b2017;
-  --aurum-primary-subtle: rgba(201, 162, 39, 0.12);
-  --aurum-success: #3e6b3a;
-  --aurum-danger: #9b2d20;
-  --aurum-warning: #b5781e;
-  --aurum-info: #6a5f3a;
-  --aurum-shadow: rgba(74, 54, 30, 0.1);
-  --aurum-nav-bg: rgba(228, 208, 150, 0.92);
+  /* --- Aurum semantic tokens (light — stone paper) --- */
+  --aurum-bg: #ecebe6;
+  --aurum-surface: #f7f6f2;
+  --aurum-surface-2: #e2e0d8;
+  --aurum-text: #2c3138;
+  --aurum-text-muted: #6a7078;
+  --aurum-border: #d7d5cc;
+  --aurum-primary: #2f6b5e;
+  --aurum-primary-hover: #25564b;
+  --aurum-primary-contrast: #f7f6f2;
+  --aurum-primary-subtle: rgba(47, 107, 94, 0.1);
+  --aurum-gold: #9c7c3c;
+  --aurum-gold-soft: rgba(156, 124, 60, 0.4);
+  --aurum-on-gold: #20242a;
+  --aurum-link: #2a5f54;
+  --aurum-success: #3f7d54;
+  --aurum-danger: #b04a3d;
+  --aurum-warning: #b9842f;
+  --aurum-info: #3d6f7a;
+  --aurum-shadow: rgba(44, 49, 56, 0.1);
+  --aurum-nav-bg: rgba(247, 246, 242, 0.85);
 
   /* --- Map onto Bootstrap runtime variables --- */
   --bs-body-bg: var(--aurum-bg);
@@ -39,46 +46,48 @@
   --bs-border-color: var(--aurum-border);
 
   --bs-primary: var(--aurum-primary);
-  --bs-primary-rgb: 154, 123, 31;
+  --bs-primary-rgb: 47, 107, 94;
   --bs-link-color: var(--aurum-link);
-  --bs-link-color-rgb: 138, 108, 28;
-  --bs-link-hover-color: var(--aurum-gold);
+  --bs-link-color-rgb: 42, 95, 84;
+  --bs-link-hover-color: var(--aurum-primary);
 
   --bs-card-bg: var(--aurum-surface);
   --bs-card-border-color: var(--aurum-border);
   --bs-tertiary-bg: var(--aurum-surface-2);
 
-  --bs-table-striped-bg: rgba(201, 162, 39, 0.05);
+  --bs-table-striped-bg: rgba(47, 107, 94, 0.045);
   --bs-table-hover-bg: var(--aurum-primary-subtle);
 
   --bs-dropdown-link-hover-color: var(--aurum-primary);
 
-  --bs-border-radius: 4px;
+  --bs-border-radius: 6px;
 
   --bs-font-sans-serif: var(--aurum-font-body);
   --bs-font-monospace: var(--aurum-font-mono);
 }
 
 [data-bs-theme='dark'] {
-  /* --- Aurum semantic tokens (dark — candle-lit atelier) --- */
-  --aurum-bg: #14110c;
-  --aurum-surface: #1c1812;
-  --aurum-surface-2: #221d15;
-  --aurum-text: #efe6d4;
-  --aurum-text-muted: #a99b82;
-  --aurum-border: #3a3325;
-  --aurum-primary: #d4af37;
-  --aurum-gold: #e0c463;
-  --aurum-gold-soft: rgba(224, 196, 99, 0.4);
-  --aurum-link: #e0c463;
-  --aurum-primary-contrast: #14110c;
-  --aurum-primary-subtle: rgba(212, 175, 55, 0.16);
-  --aurum-success: #6fa56a;
-  --aurum-danger: #d2685b;
-  --aurum-warning: #e0a53a;
-  --aurum-info: #b8a878;
-  --aurum-shadow: rgba(0, 0, 0, 0.55);
-  --aurum-nav-bg: rgba(40, 33, 18, 0.92);
+  /* --- Aurum semantic tokens (dark — dimmed slate, not black) --- */
+  --aurum-bg: #1a1d21;
+  --aurum-surface: #20242a;
+  --aurum-surface-2: #272c33;
+  --aurum-text: #d9dce0;
+  --aurum-text-muted: #9aa0a8;
+  --aurum-border: #353b43;
+  --aurum-primary: #5fa896;
+  --aurum-primary-hover: #74b9a8;
+  --aurum-primary-contrast: #15181c;
+  --aurum-primary-subtle: rgba(95, 168, 150, 0.16);
+  --aurum-gold: #c2a160;
+  --aurum-gold-soft: rgba(194, 161, 96, 0.38);
+  --aurum-on-gold: #20242a;
+  --aurum-link: #6fb3a1;
+  --aurum-success: #6fb083;
+  --aurum-danger: #d2776a;
+  --aurum-warning: #d6a652;
+  --aurum-info: #6fa6b3;
+  --aurum-shadow: rgba(0, 0, 0, 0.5);
+  --aurum-nav-bg: rgba(26, 29, 33, 0.85);
 
   /* --- Map onto Bootstrap runtime variables --- */
   --bs-body-bg: var(--aurum-bg);
@@ -89,16 +98,16 @@
   --bs-border-color: var(--aurum-border);
 
   --bs-primary: var(--aurum-primary);
-  --bs-primary-rgb: 212, 175, 55;
+  --bs-primary-rgb: 95, 168, 150;
   --bs-link-color: var(--aurum-link);
-  --bs-link-color-rgb: 224, 196, 99;
-  --bs-link-hover-color: var(--aurum-gold);
+  --bs-link-color-rgb: 111, 179, 161;
+  --bs-link-hover-color: var(--aurum-primary);
 
   --bs-card-bg: var(--aurum-surface);
   --bs-card-border-color: var(--aurum-border);
   --bs-tertiary-bg: var(--aurum-surface-2);
 
-  --bs-table-striped-bg: rgba(224, 196, 99, 0.05);
+  --bs-table-striped-bg: rgba(95, 168, 150, 0.05);
   --bs-table-hover-bg: var(--aurum-primary-subtle);
 
   --bs-dropdown-link-hover-color: var(--aurum-primary);
@@ -106,8 +115,8 @@
 
 /*
  * Print: always render ink-on-white, regardless of the active theme, so
- * vouchers, invoices and reports stay readable on paper. Gold accents
- * collapse to black hairlines.
+ * vouchers, invoices and reports stay readable on paper. Accents collapse
+ * to black hairlines.
  */
 @media print {
   :root,
@@ -120,6 +129,7 @@
     --aurum-border: #000000;
     --aurum-gold: #000000;
     --aurum-gold-soft: #000000;
+    --aurum-on-gold: #ffffff;
     --aurum-primary: #000000;
     --aurum-primary-subtle: transparent;
     --aurum-shadow: transparent;

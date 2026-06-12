@@ -31,7 +31,7 @@ const FS_SOURCE = `
   const float minorLineFrequency = 1.0;
   const vec4 gridColor = vec4(0.5);
   const float scale = 5.0;
-  const vec4 lineColor = vec4(0.78, 0.64, 0.30, 1.0);
+  const vec4 lineColor = vec4(0.37, 0.66, 0.59, 1.0);
   const float minLineWidth = 0.01;
   const float maxLineWidth = 0.2;
   const float lineSpeed = 1.0 * overallSpeed;
@@ -82,8 +82,8 @@ const FS_SOURCE = `
     space.x += random(space.y * warpFrequency + iTime * warpSpeed + 2.0) * warpAmplitude * horizontalFade;
 
     vec4 lines = vec4(0.0);
-    vec4 bgColor1 = vec4(0.10, 0.07, 0.03, 1.0);
-    vec4 bgColor2 = vec4(0.22, 0.13, 0.05, 1.0);
+    vec4 bgColor1 = vec4(0.10, 0.11, 0.13, 1.0);
+    vec4 bgColor2 = vec4(0.10, 0.17, 0.15, 1.0);
 
     for(int l = 0; l < linesPerGroup; l++) {
       float normalizedLineIndex = float(l) / float(linesPerGroup);
