@@ -111,6 +111,9 @@
               >{{ voucherViewer.voucherInfo.status }}</span
             >
           }
+          <a class="btn btn-outline-primary btn-sm ms-auto" [routerLink]="['/invoice', voucherViewer.voucherInfo.voucherNo]">
+            <fa-icon icon="file-alt"></fa-icon>&nbsp;<span>View Invoice</span>
+          </a>
         </div>
 
         <dl class="viewer-facts">

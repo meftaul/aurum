@@ -17,6 +17,7 @@ import { VoucherService } from 'app/entities/voucher/service/voucher.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VoucherStatus } from 'app/entities/enumerations/voucher-status.model';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   standalone: false,
@@ -45,6 +46,7 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +76,8 @@ export class VoucherViewerComponent implements OnInit, OnDestroy {
           } else {
             this.voucherViewer = data.body;
             this.voucherNumber = this.voucherViewer.voucherInfo.voucherNo;
+            // Persist the voucher number in the URL so browser Back from the invoice page returns to this voucher.
+            this.location.replaceState('/voucher-viewer', 'voucherNo=' + encodeURIComponent(this.voucherFieldValue));
             this.transactionHistoryForm.controls.amount.setValidators([Validators.required, Validators.max(this.voucherViewer.dueAmount)]);
             this.transactionHistoryForm.controls.amount.updateValueAndValidity();
 

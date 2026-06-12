@@ -167,6 +167,10 @@ export class InvoiceNewComponent implements OnInit, OnDestroy {
     this.router.navigate(['transaction-history/' + this.discountId + '/edit']);
   }
 
+  goBackToViewer() {
+    this.router.navigate(['/voucher-viewer'], { queryParams: { voucherNo: this.voucherNumber } });
+  }
+
   onHallmarkImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) {

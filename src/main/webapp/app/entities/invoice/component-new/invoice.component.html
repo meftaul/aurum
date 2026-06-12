@@ -1,6 +1,7 @@
 <div class="container" *jhiHasAnyAuthority="['ROLE_ADMIN']">
   <div class="row">
     <div class="col-md-12">
+      <button type="button" style="margin-top: -45px" class="btn btn-secondary float-left no-print" (click)="goBackToViewer()">Back</button>
       <button type="button" style="margin-top: -45px" class="btn btn-primary float-right no-print" (click)="adjustDiscount()">
         Adjust Discount
       </button>
