@@ -1,0 +1,7 @@
+/* Two-up layout for the due / deliveries panels; collapses to a single column on narrow screens. */
+.dashboard__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}

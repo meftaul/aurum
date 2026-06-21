@@ -1,0 +1,42 @@
+.dashboard__period {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dashboard__custom-range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin: 0 0 2rem;
+}
+.dashboard__custom-range label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--aurum-text-muted);
+}
+
+.dashboard__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* ngx-charts needs an explicitly-sized container to render responsively. */
+.chart-box {
+  height: 320px;
+  width: 100%;
+}
+.chart-box--wide {
+  height: 360px;
+}
+
+/* Nudge ngx-charts text toward the app's typography/colours. */
+.chart-box ::ng-deep text {
+  fill: var(--aurum-text-muted);
+  font-family: var(--aurum-font-mono);
+}

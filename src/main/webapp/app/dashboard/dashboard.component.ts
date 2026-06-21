@@ -1,27 +1,20 @@
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
 
-import SharedModule from 'app/shared/shared.module';
+import { AccountService } from 'app/core/auth/account.service';
+import { Authority } from 'app/config/authority.constants';
+import UserDashboardComponent from './user/user-dashboard.component';
+import AdminDashboardComponent from './admin/admin-dashboard.component';
 
+/**
+ * Dashboard shell: renders the analytical (admin) or operational (user) variant based on the
+ * logged-in role. Both variants live at the same /dashboard route.
+ */
 @Component({
   selector: 'jhi-dashboard',
   standalone: true,
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss',
-  imports: [SharedModule, RouterModule, FormsModule],
+  imports: [UserDashboardComponent, AdminDashboardComponent],
 })
 export default class DashboardComponent {
-  voucherSearch = '';
-
-  constructor(private router: Router) {}
-
-  // Jump straight to the voucher viewer, pre-loading the entered voucher number.
-  searchVoucher(): void {
-    const voucherNo = this.voucherSearch?.trim();
-    if (!voucherNo) {
-      return;
-    }
-    this.router.navigate(['/voucher-viewer'], { queryParams: { voucherNo } });
-  }
+  protected readonly isAdmin = inject(AccountService).hasAnyAuthority(Authority.ADMIN);
 }

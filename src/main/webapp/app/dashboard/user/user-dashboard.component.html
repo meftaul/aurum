@@ -1,0 +1,156 @@
+<div class="dashboard">
+  <header class="dashboard__head aurum-page-head">
+    <div>
+      <span class="eyebrow">Workshop ledger</span>
+      <h1 class="dashboard__title">Dashboard</h1>
+      <p class="dashboard__subtitle">What needs your attention right now.</p>
+    </div>
+    <div class="dashboard__actions">
+      <a class="btn btn-primary" [routerLink]="['/voucher/new']"> <fa-icon icon="plus" /> New Voucher </a>
+      <a class="btn btn-outline-primary" [routerLink]="['/transactions']"> <fa-icon icon="plus" /> New Transaction </a>
+      <a class="btn btn-outline-primary" [routerLink]="['/customer/new']"> <fa-icon icon="plus" /> New Customer </a>
+    </div>
+  </header>
+
+  <form class="dashboard__voucher-search" (ngSubmit)="searchVoucher()">
+    <input
+      type="text"
+      class="form-control"
+      name="voucherSearch"
+      placeholder="Search voucher by number…"
+      [(ngModel)]="voucherSearch"
+      aria-label="Search voucher by number"
+    />
+    <button type="submit" class="btn btn-primary"><fa-icon icon="search" /> Search</button>
+  </form>
+
+  <!-- Today's snapshot -->
+  <div class="dashboard__grid">
+    <article class="stat-tile">
+      <span class="stat-tile__label">Vouchers Today</span>
+      <span class="stat-tile__value">
+        @if (today().loading) {
+          —
+        } @else {
+          {{ today().data?.totalVoucherCount ?? 0 }}
+        }
+      </span>
+      <span class="stat-tile__hint">created since midnight</span>
+    </article>
+    <article class="stat-tile">
+      <span class="stat-tile__label">Received Today (৳)</span>
+      <span class="stat-tile__value">
+        @if (today().loading) {
+          —
+        } @else {
+          {{ today().data?.totalReceived ?? 0 | number: '1.0-0' }}
+        }
+      </span>
+      <span class="stat-tile__hint">total collected today</span>
+    </article>
+    <article class="stat-tile">
+      <span class="stat-tile__label">Vouchers Due</span>
+      <span class="stat-tile__value">{{ due().loading ? '—' : dueCount() }}</span>
+      <span class="stat-tile__hint">awaiting payment</span>
+    </article>
+    <article class="stat-tile">
+      <span class="stat-tile__label">Pending Deliveries</span>
+      <span class="stat-tile__value">{{ deliveries().loading ? '—' : deliveriesCount() }}</span>
+      <span class="stat-tile__hint">not yet delivered</span>
+    </article>
+  </div>
+
+  <div class="dashboard__columns">
+    <!-- Vouchers due -->
+    <section class="dashboard__panel">
+      <div class="dashboard__panel-head">
+        <h2 class="dashboard__panel-title">Vouchers Due</h2>
+        <hr class="rule-gold" />
+      </div>
+      @if (due().loading) {
+        <p class="dashboard__state">Loading…</p>
+      } @else if (due().error) {
+        <p class="dashboard__state dashboard__state--error">Could not load due vouchers.</p>
+      } @else if (due().data.length === 0) {
+        <p class="dashboard__state">No vouchers due. 🎉</p>
+      } @else {
+        <ul class="ledger-list">
+          @for (voucher of due().data; track voucher.id) {
+            <a class="ledger-list__row" [routerLink]="['/voucher-viewer']" [queryParams]="{ voucherNo: voucher.voucherNo }">
+              <span>
+                <span class="ledger-list__primary">#{{ voucher.voucherNo }}</span>
+                <span class="ledger-list__meta"> · {{ voucher.dateCreated | formatMediumDatetime }}</span>
+              </span>
+              <span class="ledger-list__amount">৳ {{ voucher.totalPayableAmount ?? 0 | number: '1.0-0' }}</span>
+            </a>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Pending deliveries -->
+    <section class="dashboard__panel">
+      <div class="dashboard__panel-head">
+        <h2 class="dashboard__panel-title">Pending Deliveries</h2>
+        <hr class="rule-gold" />
+      </div>
+      @if (deliveries().loading) {
+        <p class="dashboard__state">Loading…</p>
+      } @else if (deliveries().error) {
+        <p class="dashboard__state dashboard__state--error">Could not load pending deliveries.</p>
+      } @else if (deliveries().data.length === 0) {
+        <p class="dashboard__state">Nothing awaiting delivery.</p>
+      } @else {
+        <ul class="ledger-list">
+          @for (voucher of deliveries().data; track voucher.id) {
+            <a class="ledger-list__row" [routerLink]="['/voucher-viewer']" [queryParams]="{ voucherNo: voucher.voucherNo }">
+              <span>
+                <span class="ledger-list__primary">#{{ voucher.voucherNo }}</span>
+                @if (voucher.boxNumber) {
+                  <span class="ledger-list__meta"> · Box {{ voucher.boxNumber }}</span>
+                }
+              </span>
+              <span class="ledger-list__meta">
+                @if (voucher.deliveryDate) {
+                  due {{ voucher.deliveryDate | formatMediumDatetime }}
+                } @else {
+                  no date
+                }
+              </span>
+            </a>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <!-- Recent activity -->
+  <section class="dashboard__panel">
+    <div class="dashboard__panel-head">
+      <h2 class="dashboard__panel-title">Recent Activity</h2>
+      <hr class="rule-gold" />
+    </div>
+    @if (recent().loading) {
+      <p class="dashboard__state">Loading…</p>
+    } @else if (recent().error) {
+      <p class="dashboard__state dashboard__state--error">Could not load recent activity.</p>
+    } @else if (recent().data.length === 0) {
+      <div class="dashboard__placeholder">
+        <fa-icon icon="gauge-high" class="dashboard__placeholder-icon" />
+        <p>No transactions recorded yet.</p>
+      </div>
+    } @else {
+      <ul class="ledger-list">
+        @for (txn of recent().data; track txn.id) {
+          <a class="ledger-list__row" [routerLink]="['/voucher-viewer']" [queryParams]="{ voucherNo: txn.voucherNo }">
+            <span>
+              <span class="ledger-list__primary">{{ txn.tag }}</span>
+              <span class="ledger-list__meta"> · #{{ txn.voucherNo }} · {{ txn.dateCreated | formatMediumDatetime }}</span>
+            </span>
+            <span class="ledger-list__amount">৳ {{ txn.amount ?? 0 | number: '1.0-0' }}</span>
+          </a>
+        }
+      </ul>
+    }
+  </section>
+</div>

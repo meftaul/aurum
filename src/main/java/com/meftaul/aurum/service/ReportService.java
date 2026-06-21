@@ -6,13 +6,12 @@ import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.repository.projection.ReportProjection;
 import com.meftaul.aurum.repository.projection.TransactionHistoryAmountByTag;
 import com.meftaul.aurum.repository.projection.TransactionHistoryAmountByTagAndCustomer;
+import java.time.LocalDate;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @Transactional
@@ -54,15 +53,19 @@ public class ReportService {
         this.customerRepository = customerRepository;
     }
 
-    public List<ReportProjection> getReport(String tag){
+    public List<ReportProjection> getReport(String tag) {
         return transactionHistoryRepository.findReport(tag);
     }
 
-    public List<TransactionHistoryAmountByTag> getTxnHistoryAmountByTag(LocalDate startDate, LocalDate endDate){
+    public List<TransactionHistoryAmountByTag> getTxnHistoryAmountByTag(LocalDate startDate, LocalDate endDate) {
         return transactionHistoryRepository.totalAmountByTag(startDate, endDate);
     }
 
-    public List<TransactionHistoryAmountByTagAndCustomer> getTxnHistoryAmountByTagAndCustomer(LocalDate startDate, LocalDate endDate, String customerId){
+    public List<TransactionHistoryAmountByTagAndCustomer> getTxnHistoryAmountByTagAndCustomer(
+        LocalDate startDate,
+        LocalDate endDate,
+        String customerId
+    ) {
         Customer customer = customerRepository.findOneByCustomId(customerId).get();
         if (customer == null) {
             throw new RuntimeException();
@@ -70,9 +73,7 @@ public class ReportService {
         return transactionHistoryRepository.totalAmountByTagAndCustomerId(startDate, endDate, customer.getId());
     }
 
-    public List<TransactionHistoryAmountByTagAndCustomer> getTopTxnHistoryAmountByCustomer(String startDate, String endDate, String topN){
+    public List<TransactionHistoryAmountByTagAndCustomer> getTopTxnHistoryAmountByCustomer(String startDate, String endDate, int topN) {
         return transactionHistoryRepository.topNTotalAmountByCustomerId(startDate, endDate, topN);
     }
-
-
 }

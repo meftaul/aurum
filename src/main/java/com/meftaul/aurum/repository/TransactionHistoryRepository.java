@@ -78,7 +78,7 @@ public interface TransactionHistoryRepository
     List<TransactionHistoryAmountByTagAndCustomer> topNTotalAmountByCustomerId(
         @Param("startDate") String startDate,
         @Param("endDate") String endDate,
-        @Param("n") String topN
+        @Param("n") int topN
     );
 
     TransactionHistory findByVoucherNoAndTag(String voucherNo, TransactionStatus tag);

@@ -1,0 +1,150 @@
+<div class="dashboard">
+  <header class="dashboard__head aurum-page-head">
+    <div>
+      <span class="eyebrow">Business overview</span>
+      <h1 class="dashboard__title">Admin Dashboard</h1>
+      <p class="dashboard__subtitle">How the workshop is performing.</p>
+    </div>
+    <div class="dashboard__period" role="group" aria-label="Reporting period">
+      <button
+        type="button"
+        class="btn btn-sm"
+        [class.btn-primary]="period() === 'today'"
+        [class.btn-outline-primary]="period() !== 'today'"
+        (click)="selectPeriod('today')"
+      >
+        Today
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm"
+        [class.btn-primary]="period() === 'week'"
+        [class.btn-outline-primary]="period() !== 'week'"
+        (click)="selectPeriod('week')"
+      >
+        This Week
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm"
+        [class.btn-primary]="period() === 'month'"
+        [class.btn-outline-primary]="period() !== 'month'"
+        (click)="selectPeriod('month')"
+      >
+        This Month
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm"
+        [class.btn-primary]="period() === 'custom'"
+        [class.btn-outline-primary]="period() !== 'custom'"
+        (click)="selectPeriod('custom')"
+      >
+        Custom
+      </button>
+    </div>
+  </header>
+
+  @if (period() === 'custom') {
+    <form class="dashboard__custom-range" (ngSubmit)="applyCustomRange()">
+      <label>From <input type="date" class="form-control" name="customStart" [(ngModel)]="customStart" /></label>
+      <label>To <input type="date" class="form-control" name="customEnd" [(ngModel)]="customEnd" /></label>
+      <button type="submit" class="btn btn-primary btn-sm" [disabled]="!customStart || !customEnd">Apply</button>
+    </form>
+  }
+
+  <!-- KPI cards -->
+  @if (report().error) {
+    <p class="dashboard__state dashboard__state--error">Could not load report figures.</p>
+  } @else {
+    <div class="dashboard__grid">
+      <article class="stat-tile">
+        <span class="stat-tile__label">Received (৳)</span>
+        <span class="stat-tile__value">{{ report().loading ? '—' : (report().data?.totalReceived ?? 0 | number: '1.0-0') }}</span>
+        <span class="stat-tile__hint">{{ report().data?.receivedVoucherCount ?? 0 }} vouchers</span>
+      </article>
+      <article class="stat-tile">
+        <span class="stat-tile__label">Due (৳)</span>
+        <span class="stat-tile__value">{{ report().loading ? '—' : (report().data?.due ?? 0 | number: '1.0-0') }}</span>
+        <span class="stat-tile__hint">outstanding balance</span>
+      </article>
+      <article class="stat-tile">
+        <span class="stat-tile__label">VAT (৳)</span>
+        <span class="stat-tile__value">{{ report().loading ? '—' : (report().data?.totalVat ?? 0 | number: '1.0-0') }}</span>
+        <span class="stat-tile__hint">collected</span>
+      </article>
+      <article class="stat-tile">
+        <span class="stat-tile__label">Discount (৳)</span>
+        <span class="stat-tile__value">{{ report().loading ? '—' : (report().data?.totalDiscount ?? 0 | number: '1.0-0') }}</span>
+        <span class="stat-tile__hint">granted</span>
+      </article>
+      <article class="stat-tile">
+        <span class="stat-tile__label">Refund (৳)</span>
+        <span class="stat-tile__value">{{ report().loading ? '—' : (report().data?.totalRefund ?? 0 | number: '1.0-0') }}</span>
+        <span class="stat-tile__hint">returned</span>
+      </article>
+      <article class="stat-tile">
+        <span class="stat-tile__label">Vouchers</span>
+        <span class="stat-tile__value">{{ report().loading ? '—' : (report().data?.totalVoucherCount ?? 0) }}</span>
+        <span class="stat-tile__hint">in period</span>
+      </article>
+    </div>
+  }
+
+  <div class="dashboard__columns">
+    <!-- Service-type breakdown -->
+    <section class="dashboard__panel">
+      <div class="dashboard__panel-head">
+        <h2 class="dashboard__panel-title">Service Breakdown</h2>
+        <hr class="rule-gold" />
+      </div>
+      @if (report().loading) {
+        <p class="dashboard__state">Loading…</p>
+      } @else if (breakdown().length === 0) {
+        <p class="dashboard__state">No service activity in this period.</p>
+      } @else {
+        <div class="chart-box">
+          <ngx-charts-advanced-pie-chart [results]="breakdown()" [scheme]="colorScheme" />
+        </div>
+      }
+    </section>
+
+    <!-- Top customers -->
+    <section class="dashboard__panel">
+      <div class="dashboard__panel-head">
+        <h2 class="dashboard__panel-title">Top Customers</h2>
+        <hr class="rule-gold" />
+      </div>
+      @if (topCustomers().loading) {
+        <p class="dashboard__state">Loading…</p>
+      } @else if (topCustomers().error) {
+        <p class="dashboard__state dashboard__state--error">Could not load top customers.</p>
+      } @else if (topCustomers().data.length === 0) {
+        <p class="dashboard__state">No customer activity in this period.</p>
+      } @else {
+        <div class="chart-box">
+          <ngx-charts-bar-horizontal [results]="topCustomers().data" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true" />
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Revenue trend -->
+  <section class="dashboard__panel">
+    <div class="dashboard__panel-head">
+      <h2 class="dashboard__panel-title">Revenue Trend (received, last 30 days recorded)</h2>
+      <hr class="rule-gold" />
+    </div>
+    @if (trend().loading) {
+      <p class="dashboard__state">Loading…</p>
+    } @else if (trend().error) {
+      <p class="dashboard__state dashboard__state--error">Could not load revenue trend.</p>
+    } @else if (trend().data[0]?.series?.length === 0) {
+      <p class="dashboard__state">No received transactions recorded yet.</p>
+    } @else {
+      <div class="chart-box chart-box--wide">
+        <ngx-charts-line-chart [results]="trend().data" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true" [autoScale]="true" />
+      </div>
+    }
+  </section>
+</div>

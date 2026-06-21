@@ -1,3 +1,9 @@
+/* Shared dashboard styling — imported by both the user and admin variants. */
+
+.dashboard {
+  display: block;
+}
+
 .dashboard__head {
   align-items: flex-start;
 }
@@ -82,7 +88,10 @@
   color: var(--aurum-text-muted);
 }
 
-/* --- Recent-activity panel --- */
+/* --- Panels --- */
+.dashboard__panel {
+  margin-bottom: 2.5rem;
+}
 .dashboard__panel-head {
   margin-bottom: 1.25rem;
 }
@@ -97,7 +106,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  min-height: 280px;
+  min-height: 180px;
   padding: 2rem;
   border: 1px dashed var(--aurum-gold-soft);
   border-radius: 6px;
@@ -108,4 +117,55 @@
 .dashboard__placeholder-icon {
   font-size: 2rem;
   color: var(--aurum-primary);
+}
+
+/* --- Compact lists used inside panels (due vouchers, deliveries, recent activity) --- */
+.ledger-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--aurum-border);
+  border-radius: 6px;
+  background: var(--aurum-surface);
+  overflow: hidden;
+}
+.ledger-list__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--aurum-border);
+  text-decoration: none;
+  color: var(--aurum-text);
+  transition: background 0.2s ease;
+}
+.ledger-list__row:last-child {
+  border-bottom: none;
+}
+a.ledger-list__row:hover {
+  background: var(--aurum-gold-soft);
+}
+.ledger-list__primary {
+  font-weight: 600;
+}
+.ledger-list__meta {
+  font-size: 0.8rem;
+  color: var(--aurum-text-muted);
+}
+.ledger-list__amount {
+  font-family: var(--aurum-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --- Loading / error inline states --- */
+.dashboard__state {
+  padding: 1rem 0;
+  color: var(--aurum-text-muted);
+  font-style: italic;
+}
+.dashboard__state--error {
+  color: var(--bs-danger, #b02a37);
 }
