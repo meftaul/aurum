@@ -28,8 +28,7 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
 
     private final VoucherRepository voucherRepository;
 
-    public TransactionHistoryServiceImpl(TransactionHistoryRepository transactionHistoryRepository,
-                                         VoucherRepository voucherRepository) {
+    public TransactionHistoryServiceImpl(TransactionHistoryRepository transactionHistoryRepository, VoucherRepository voucherRepository) {
         this.transactionHistoryRepository = transactionHistoryRepository;
         this.voucherRepository = voucherRepository;
     }
@@ -38,17 +37,26 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
     public TransactionHistory save(TransactionHistory transactionHistory) {
         log.debug("Request to save TransactionHistory : {}", transactionHistory);
 
+        // save() only applies discount adjustments; reject anything else (mirrors HTTP 400 + error.notDiscount).
+        if (!TransactionStatus.DISCOUNT.equals(transactionHistory.getTag())) {
+            throw new BusinessValidationException("Only discount type is allowed.", "transactionHistory", "notDiscount");
+        }
+
         Voucher voucher = voucherRepository.findByVoucherNo(transactionHistory.getVoucherNo());
 
         if (voucher == null) {
             throw new BusinessValidationException("Invalid voucher.", "transactionHistory", "invalidVoucher");
         }
 
-        TransactionHistory rcvHistory =
-            transactionHistoryRepository.findByVoucherNoAndTag(transactionHistory.getVoucherNo(), TransactionStatus.RECEIVE);
+        TransactionHistory rcvHistory = transactionHistoryRepository.findByVoucherNoAndTag(
+            transactionHistory.getVoucherNo(),
+            TransactionStatus.RECEIVE
+        );
 
-        TransactionHistory discountHistory =
-            transactionHistoryRepository.findByVoucherNoAndTag(transactionHistory.getVoucherNo(), TransactionStatus.DISCOUNT);
+        TransactionHistory discountHistory = transactionHistoryRepository.findByVoucherNoAndTag(
+            transactionHistory.getVoucherNo(),
+            TransactionStatus.DISCOUNT
+        );
 
         if (transactionHistory.getAmount().compareTo(rcvHistory.getAmount()) == 1) {
             throw new BusinessValidationException("Invalid amount.", "transactionHistory", "invalidAmount");

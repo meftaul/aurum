@@ -8,6 +8,7 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { ITransactionHistory, NewTransactionHistory } from '../transaction-history.model';
+import { ITxnReport } from '../txn-report.model';
 
 export type PartialUpdateTransactionHistory = Partial<ITransactionHistory> & Pick<ITransactionHistory, 'id'>;
 
@@ -33,9 +34,9 @@ export class TransactionHistoryService {
   protected reportUrl = this.applicationConfigService.getEndpointFor('api/transaction-report');
 
   /** Returns the aggregated TxnReportDto for the given criteria (collection/due totals + per-service-type breakdown). */
-  queryReport(req?: any): Observable<HttpResponse<any>> {
+  queryReport(req?: any): Observable<HttpResponse<ITxnReport>> {
     const options = createRequestOption(req);
-    return this.http.get<any>(this.reportUrl, { params: options, observe: 'response' });
+    return this.http.get<ITxnReport>(this.reportUrl, { params: options, observe: 'response' });
   }
 
   create(transactionHistory: NewTransactionHistory): Observable<EntityResponseType> {

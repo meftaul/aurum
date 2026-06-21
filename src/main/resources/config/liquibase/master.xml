@@ -30,5 +30,6 @@
     <include file="config/liquibase/changelog/20191026063357_added_entity_constraints_AurumService.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20260612000000_added_hallmark_image_to_Voucher.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260621000000_added_indices_TransactionHistory.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

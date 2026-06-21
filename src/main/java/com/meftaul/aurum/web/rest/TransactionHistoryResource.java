@@ -1,21 +1,19 @@
 package com.meftaul.aurum.web.rest;
 
 import com.meftaul.aurum.domain.TransactionHistory;
-import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
 import com.meftaul.aurum.security.AuthoritiesConstants;
-import com.meftaul.aurum.service.dto.TxnReportDto;
 import com.meftaul.aurum.service.TransactionHistoryQueryService;
 import com.meftaul.aurum.service.TransactionHistoryService;
 import com.meftaul.aurum.service.criteria.TransactionHistoryCriteria;
+import com.meftaul.aurum.service.dto.TxnReportDto;
 import com.meftaul.aurum.web.rest.errors.BadRequestAlertException;
-import java.net.URI;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,26 +60,6 @@ public class TransactionHistoryResource {
     }
 
     /**
-     * {@code POST  /transaction-histories} : Create a new transactionHistory.
-     *
-     * @param transactionHistory the transactionHistory to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new transactionHistory, or with status {@code 400 (Bad Request)} if the transactionHistory has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    /*@PostMapping("/transaction-histories")
-    public ResponseEntity<TransactionHistory> createTransactionHistory(@Valid @RequestBody TransactionHistory transactionHistory) throws URISyntaxException {
-        log.debug("REST request to save TransactionHistory : {}", transactionHistory);
-        if (transactionHistory.getId() != null) {
-            throw new BadRequestAlertException("A new transactionHistory cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        TransactionHistory result = transactionHistoryService.save(transactionHistory);
-        return ResponseEntity
-            .created(new URI("/api/transaction-histories/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }*/
-
-    /**
      * {@code PUT  /transaction-histories/:id} : Updates an existing transactionHistory.
      *
      * @param id the id of the transactionHistory to save.
@@ -91,15 +69,13 @@ public class TransactionHistoryResource {
      * or with status {@code 500 (Internal Server Error)} if the transactionHistory couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @Secured({AuthoritiesConstants.ADMIN})
+    @Secured({ AuthoritiesConstants.ADMIN })
     @PutMapping("/transaction-histories")
-    public ResponseEntity<TransactionHistory> updateTransactionHistory(@Valid @RequestBody TransactionHistory transactionHistory) throws URISyntaxException {
+    public ResponseEntity<TransactionHistory> updateTransactionHistory(@Valid @RequestBody TransactionHistory transactionHistory)
+        throws URISyntaxException {
         log.debug("REST request to update TransactionHistory : {}", transactionHistory);
         if (transactionHistory.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!transactionHistory.getTag().equals(TransactionStatus.DISCOUNT)) {
-            throw new BadRequestAlertException("Only discount type is allowed.", ENTITY_NAME, "notDiscount");
         }
         TransactionHistory result = transactionHistoryService.save(transactionHistory);
         return ResponseEntity.ok()
@@ -165,7 +141,6 @@ public class TransactionHistoryResource {
     public ResponseEntity<TxnReportDto> getAllTransactionReport(TransactionHistoryCriteria criteria) {
         log.debug("REST request to get TransactionHistories by criteria: {}", criteria);
         TxnReportDto txnReportDto = transactionHistoryQueryService.reportByCriteria(criteria);
-        /*HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest());*/
         return ResponseEntity.ok().body(txnReportDto);
     }
 
@@ -193,17 +168,4 @@ public class TransactionHistoryResource {
         Optional<TransactionHistory> transactionHistory = transactionHistoryService.findOne(id);
         return ResponseUtil.wrapOrNotFound(transactionHistory);
     }
-
-    /**
-     * {@code DELETE  /transaction-histories/:id} : delete the "id" transactionHistory.
-     *
-     * @param id the id of the transactionHistory to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
-    /*@DeleteMapping("/transaction-histories/{id}")
-    public ResponseEntity<Void> deleteTransactionHistory(@PathVariable Long id) {
-        log.debug("REST request to delete TransactionHistory : {}", id);
-        transactionHistoryService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
-    }*/
 }
