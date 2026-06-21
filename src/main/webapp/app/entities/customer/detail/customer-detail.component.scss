@@ -162,6 +162,13 @@
     color: var(--aurum-text-muted);
     font-style: italic;
   }
+
+  &__pager {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
 }
 
 @media screen and (max-width: 860px) {

@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import SharedModule from 'app/shared/shared.module';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 // import { InvoiceComponent } from './components/invoice.component';
 import { INVOICE_ROUTE } from './invoice.routes';
 import { InvoiceNewComponent } from './component-new/invoice.component';
@@ -30,9 +31,10 @@ import { InvoiceNewComponent } from './component-new/invoice.component';
     MatNativeDateModule,
     MatTableModule,
     MatSelectModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    HasAnyAuthorityDirective,
   ],
   declarations: [InvoiceNewComponent],
-  providers: [MatDatepickerModule]
+  providers: [MatDatepickerModule],
 })
 export class AurumInvoiceModule {}
