@@ -1,16 +1,21 @@
 package com.meftaul.aurum.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import jakarta.persistence.criteria.JoinType;
-
 import com.meftaul.aurum.domain.*; // for static metamodels
 import com.meftaul.aurum.domain.enumeration.TransactionStatus;
 import com.meftaul.aurum.repository.TransactionHistoryRepository;
-import com.meftaul.aurum.repository.VoucherRepository;
 import com.meftaul.aurum.service.criteria.TransactionHistoryCriteria;
 import com.meftaul.aurum.service.dto.TxnReportDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
+import java.math.BigDecimal;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -34,11 +39,11 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
 
     private final TransactionHistoryRepository transactionHistoryRepository;
 
-    private final VoucherRepository voucherRepository;
+    private final EntityManager entityManager;
 
-    public TransactionHistoryQueryService(TransactionHistoryRepository transactionHistoryRepository, VoucherRepository voucherRepository) {
+    public TransactionHistoryQueryService(TransactionHistoryRepository transactionHistoryRepository, EntityManager entityManager) {
         this.transactionHistoryRepository = transactionHistoryRepository;
-        this.voucherRepository = voucherRepository;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -68,67 +73,142 @@ public class TransactionHistoryQueryService extends QueryService<TransactionHist
 
     @Transactional(readOnly = true)
     public TxnReportDto reportByCriteria(TransactionHistoryCriteria criteria) {
-        log.debug("find by criteria : {}, page: {}", criteria);
-        final Specification<TransactionHistory> specification = createSpecification(criteria);
-        List<TransactionHistory> transactionHistoryList = transactionHistoryRepository.findAll(specification);
-
+        log.debug("build report by criteria : {}", criteria);
 
         TxnReportDto txnReportDto = new TxnReportDto();
-        List<String> uniqueVouchers = new ArrayList<>();
 
-        for (TransactionHistory txn : transactionHistoryList) {
+        // 1) Per-tag count + amount totals over the filtered transactions.
+        applyTagAggregates(criteria, txnReportDto);
 
-            if (!uniqueVouchers.contains(txn.getVoucherNo())) {
-                uniqueVouchers.add(txn.getVoucherNo());
-                Voucher voucher = voucherRepository.findByVoucherNo(txn.getVoucherNo());
-                if (voucher != null) {
-                    for (AurumService aurumService : voucher.getAurumServices()) {
-                        if (aurumService.getServiceType().equals("X-Ray")){
-                            txnReportDto.setxRayAmount(txnReportDto.getxRayAmount().add(aurumService.getAmount()));
-                        } else if (aurumService.getServiceType().equals("Hallmark")){
-                            txnReportDto.setHallMarkAmount(txnReportDto.getHallMarkAmount().add(aurumService.getAmount()));
-                        } else if (aurumService.getServiceType().equals("Normal Melting")){
-                            txnReportDto.setNormalMeltingAmount(txnReportDto.getNormalMeltingAmount().add(aurumService.getAmount()));
-                            txnReportDto.setNormalMeltingServiceChargeAmount(txnReportDto.getNormalMeltingServiceChargeAmount().add(aurumService.getServiceCharge()));
-                        } else  if (aurumService.getServiceType().equals("Calculated Melting")){
-                            txnReportDto.setCalculatedMeltingAmount(txnReportDto.getCalculatedMeltingAmount().add(aurumService.getAmount()));
-                            txnReportDto.setCalculatedMeltingServiceChargeAmount(txnReportDto.getCalculatedMeltingServiceChargeAmount().add(aurumService.getServiceCharge()));
-                        }
-                    }
+        // 2) Distinct number of vouchers referenced by the filtered transactions.
+        txnReportDto.setTotalVoucherCount(countDistinctVouchers(criteria));
 
-                    txnReportDto.setTotalPayableAmount(txnReportDto.getTotalPayableAmount().add(voucher.getTotalPayableAmount()));
-                }
-            }
+        // 3) Per-service-type amount/service-charge breakdown over the vouchers behind those transactions.
+        applyServiceTypeAggregates(criteria, txnReportDto);
 
-            if (txn.getTag().equals(TransactionStatus.RECEIVE)) {
-                txnReportDto.setReceivedVoucherCount(txnReportDto.getReceivedVoucherCount() + 1l);
-                txnReportDto.setTotalReceived(txnReportDto.getTotalReceived().add(txn.getAmount()));
-            }
+        // 4) Total payable amount summed over those (distinct, existing) vouchers.
+        txnReportDto.setTotalPayableAmount(sumVoucherPayableAmount(criteria));
 
-            if (txn.getTag().equals(TransactionStatus.VAT)) {
-                txnReportDto.setVatVoucherCount(txnReportDto.getVatVoucherCount() + 1l);
-                txnReportDto.setTotalVat(txnReportDto.getTotalVat().add(txn.getAmount()));
-            }
-
-            if (txn.getTag().equals(TransactionStatus.REFUND)) {
-                txnReportDto.setRefundVoucherCount(txnReportDto.getRefundVoucherCount() + 1l);
-                txnReportDto.setTotalRefund(txnReportDto.getTotalRefund().add(txn.getAmount()));
-            }
-
-            if (txn.getTag().equals(TransactionStatus.DISCOUNT)) {
-                txnReportDto.setDiscountVoucherCount(txnReportDto.getDiscountVoucherCount() + 1l);
-                txnReportDto.setTotalDiscount(txnReportDto.getTotalDiscount().add(txn.getAmount()));
-            }
-
-        }
-
-        txnReportDto.setTotalVoucherCount(Long.valueOf(uniqueVouchers.size()));
-
-        txnReportDto.setDue(txnReportDto.getTotalPayableAmount()
-            .subtract(txnReportDto.getTotalReceived())
-            .subtract(txnReportDto.getTotalDiscount()));
+        txnReportDto.setDue(
+            txnReportDto.getTotalPayableAmount().subtract(txnReportDto.getTotalReceived()).subtract(txnReportDto.getTotalDiscount())
+        );
 
         return txnReportDto;
+    }
+
+    /** {@code SELECT tag, COUNT(*), SUM(amount) ... GROUP BY tag} over the criteria-filtered transactions. */
+    private void applyTagAggregates(TransactionHistoryCriteria criteria, TxnReportDto txnReportDto) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        Root<TransactionHistory> root = cq.from(TransactionHistory.class);
+
+        cq.multiselect(root.get(TransactionHistory_.tag), cb.count(root), cb.sum(root.get(TransactionHistory_.amount)));
+        Predicate predicate = createSpecification(criteria).toPredicate(root, cq, cb);
+        if (predicate != null) {
+            cq.where(predicate);
+        }
+        cq.groupBy(root.get(TransactionHistory_.tag));
+
+        for (Tuple row : entityManager.createQuery(cq).getResultList()) {
+            TransactionStatus tag = row.get(0, TransactionStatus.class);
+            long count = row.get(1, Long.class);
+            BigDecimal total = zeroIfNull(row.get(2, BigDecimal.class));
+            if (tag == TransactionStatus.RECEIVE) {
+                txnReportDto.setReceivedVoucherCount(count);
+                txnReportDto.setTotalReceived(total);
+            } else if (tag == TransactionStatus.VAT) {
+                txnReportDto.setVatVoucherCount(count);
+                txnReportDto.setTotalVat(total);
+            } else if (tag == TransactionStatus.REFUND) {
+                txnReportDto.setRefundVoucherCount(count);
+                txnReportDto.setTotalRefund(total);
+            } else if (tag == TransactionStatus.DISCOUNT) {
+                txnReportDto.setDiscountVoucherCount(count);
+                txnReportDto.setTotalDiscount(total);
+            }
+        }
+    }
+
+    /** {@code SELECT COUNT(DISTINCT voucherNo) ...} over the criteria-filtered transactions. */
+    private long countDistinctVouchers(TransactionHistoryCriteria criteria) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<TransactionHistory> root = cq.from(TransactionHistory.class);
+
+        cq.select(cb.countDistinct(root.get(TransactionHistory_.voucherNo)));
+        Predicate predicate = createSpecification(criteria).toPredicate(root, cq, cb);
+        if (predicate != null) {
+            cq.where(predicate);
+        }
+        Long count = entityManager.createQuery(cq).getSingleResult();
+        return count == null ? 0L : count;
+    }
+
+    /**
+     * {@code SELECT s.serviceType, SUM(s.amount), SUM(s.serviceCharge) FROM Voucher v JOIN v.aurumServices s
+     * WHERE v.voucherNo IN (distinct voucher numbers of the filtered transactions) GROUP BY s.serviceType}.
+     */
+    private void applyServiceTypeAggregates(TransactionHistoryCriteria criteria, TxnReportDto txnReportDto) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        Root<Voucher> voucher = cq.from(Voucher.class);
+        Join<Object, Object> service = voucher.join("aurumServices", JoinType.INNER);
+
+        cq.multiselect(
+            service.<String>get("serviceType"),
+            cb.sum(service.<BigDecimal>get("amount")),
+            cb.sum(service.<BigDecimal>get("serviceCharge"))
+        );
+        cq.where(cb.in(voucher.<String>get("voucherNo")).value(distinctVoucherNoSubquery(cb, cq, criteria)));
+        cq.groupBy(service.<String>get("serviceType"));
+
+        for (Tuple row : entityManager.createQuery(cq).getResultList()) {
+            String serviceType = row.get(0, String.class);
+            BigDecimal amount = zeroIfNull(row.get(1, BigDecimal.class));
+            BigDecimal serviceCharge = zeroIfNull(row.get(2, BigDecimal.class));
+            if ("X-Ray".equals(serviceType)) {
+                txnReportDto.setxRayAmount(amount);
+            } else if ("Hallmark".equals(serviceType)) {
+                txnReportDto.setHallMarkAmount(amount);
+            } else if ("Normal Melting".equals(serviceType)) {
+                txnReportDto.setNormalMeltingAmount(amount);
+                txnReportDto.setNormalMeltingServiceChargeAmount(serviceCharge);
+            } else if ("Calculated Melting".equals(serviceType)) {
+                txnReportDto.setCalculatedMeltingAmount(amount);
+                txnReportDto.setCalculatedMeltingServiceChargeAmount(serviceCharge);
+            }
+        }
+    }
+
+    /** {@code SELECT SUM(v.totalPayableAmount) FROM Voucher v WHERE v.voucherNo IN (...distinct filtered voucher numbers...)}. */
+    private BigDecimal sumVoucherPayableAmount(TransactionHistoryCriteria criteria) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<BigDecimal> cq = cb.createQuery(BigDecimal.class);
+        Root<Voucher> voucher = cq.from(Voucher.class);
+
+        cq.select(cb.sum(voucher.<BigDecimal>get("totalPayableAmount")));
+        cq.where(cb.in(voucher.<String>get("voucherNo")).value(distinctVoucherNoSubquery(cb, cq, criteria)));
+        return zeroIfNull(entityManager.createQuery(cq).getSingleResult());
+    }
+
+    /** Subquery yielding the distinct {@code voucherNo}s of the criteria-filtered transactions, for an {@code IN} clause. */
+    private Subquery<String> distinctVoucherNoSubquery(
+        CriteriaBuilder cb,
+        CriteriaQuery<?> outerQuery,
+        TransactionHistoryCriteria criteria
+    ) {
+        Subquery<String> subquery = outerQuery.subquery(String.class);
+        Root<TransactionHistory> subRoot = subquery.from(TransactionHistory.class);
+        subquery.select(subRoot.get(TransactionHistory_.voucherNo)).distinct(true);
+        Predicate predicate = createSpecification(criteria).toPredicate(subRoot, outerQuery, cb);
+        if (predicate != null) {
+            subquery.where(predicate);
+        }
+        return subquery;
+    }
+
+    private static BigDecimal zeroIfNull(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 
     /**

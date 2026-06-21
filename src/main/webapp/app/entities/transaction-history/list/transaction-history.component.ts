@@ -1,7 +1,8 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, NgZone, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, combineLatest, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import dayjs from 'dayjs/esm';
 
@@ -15,6 +16,7 @@ import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/co
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
 import { FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
 import { ITransactionHistory } from '../transaction-history.model';
+import { ITxnReport } from '../txn-report.model';
 
 import { EntityArrayResponseType, TransactionHistoryService } from '../service/transaction-history.service';
 import { TransactionHistoryDeleteDialogComponent } from '../delete/transaction-history-delete-dialog.component';
@@ -35,7 +37,6 @@ import { TransactionHistoryDeleteDialogComponent } from '../delete/transaction-h
   ],
 })
 export class TransactionHistoryComponent implements OnInit {
-  subscription: Subscription | null = null;
   transactionHistories = signal<ITransactionHistory[]>([]);
   isLoading = false;
 
@@ -59,7 +60,7 @@ export class TransactionHistoryComponent implements OnInit {
   endDate = dayjs().format('YYYY-MM-DD');
   tag = 'RECEIVE';
   title = "Today's Report";
-  txnReport: any = null;
+  txnReport: ITxnReport | null = null;
 
   public readonly router = inject(Router);
   protected readonly transactionHistoryService = inject(TransactionHistoryService);
@@ -67,18 +68,22 @@ export class TransactionHistoryComponent implements OnInit {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  private readonly destroyRef = inject(DestroyRef);
 
   trackId = (item: ITransactionHistory): number => this.transactionHistoryService.getTransactionHistoryIdentifier(item);
 
   ngOnInit(): void {
-    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
+    combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
         tap(() => this.load()),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
 
-    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
+    this.filters.filterChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
 
     this.loadReport();
   }
@@ -137,11 +142,16 @@ export class TransactionHistoryComponent implements OnInit {
   }
 
   load(): void {
-    this.queryBackend().subscribe({
-      next: (res: EntityArrayResponseType) => {
-        this.onResponseSuccess(res);
-      },
-    });
+    this.queryBackend()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: EntityArrayResponseType) => {
+          this.onResponseSuccess(res);
+        },
+        error: () => {
+          this.isLoading = false;
+        },
+      });
   }
 
   navigateToWithComponentValues(event: SortState): void {
@@ -191,11 +201,17 @@ export class TransactionHistoryComponent implements OnInit {
   }
 
   protected loadReport(): void {
-    this.transactionHistoryService.queryReport(this.buildReportFilter()).subscribe({
-      next: res => {
-        this.txnReport = res.body;
-      },
-    });
+    this.transactionHistoryService
+      .queryReport(this.buildReportFilter())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          this.txnReport = res.body;
+        },
+        error: () => {
+          this.txnReport = null;
+        },
+      });
   }
 
   /** Builds the TransactionHistoryCriteria query params shared by the table and the report endpoint. */

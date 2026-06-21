@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Indices backing the transaction history list filters/sort and the aggregated report queries
+        (date range + tag, voucher lookups, per-customer filtering).
+    -->
+    <changeSet id="20260621000000-1" author="aurum">
+        <createIndex indexName="idx_txn_history_date_created_tag" tableName="transaction_history">
+            <column name="date_created" />
+            <column name="tag" />
+        </createIndex>
+        <createIndex indexName="idx_txn_history_voucher_no" tableName="transaction_history">
+            <column name="voucher_no" />
+        </createIndex>
+        <createIndex indexName="idx_txn_history_customer_id" tableName="transaction_history">
+            <column name="customer_id" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

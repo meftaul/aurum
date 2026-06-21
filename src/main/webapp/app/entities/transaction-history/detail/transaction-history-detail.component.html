@@ -29,9 +29,7 @@
           </dd>
           <dt><span>Tag</span></dt>
           <dd>
-            <span>{{
-              { null: '', RECEIVE: 'RECEIVE', VAT: 'VAT', REFUND: 'REFUND', DISCOUNT: 'DISCOUNT' }[transactionHistoryRef.tag ?? 'null']
-            }}</span>
+            <span>{{ transactionHistoryRef.tag ?? '' }}</span>
           </dd>
           <dt><span>Customer Id</span></dt>
           <dd>

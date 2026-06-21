@@ -229,9 +229,7 @@
               <td>{{ transactionHistory.voucherNo }}</td>
               <td>{{ transactionHistory.amount }}</td>
               <td>{{ transactionHistory.dateCreated | formatMediumDatetime }}</td>
-              <td>
-                {{ { null: '', RECEIVE: 'RECEIVE', VAT: 'VAT', REFUND: 'REFUND', DISCOUNT: 'DISCOUNT' }[transactionHistory.tag ?? 'null'] }}
-              </td>
+              <td>{{ transactionHistory.tag ?? '' }}</td>
               <td>{{ transactionHistory.customerId }}</td>
               <td>{{ transactionHistory.addedBy }}</td>
               <td class="text-end">
