@@ -84,49 +84,10 @@
       <div class="dossier__ledgers">
         <section class="dossier__panel">
           <div class="dossier__panel-head">
-            <h3 class="dossier__panel-title">Recent Transactions</h3>
-            <span class="atelier-section-label">Last {{ transactions().length }}</span>
+            <h3 class="dossier__panel-title">Vouchers</h3>
+            <span class="atelier-section-label">{{ voucherTotalItems() }} total</span>
           </div>
-          @if (transactions().length === 0) {
-            <p class="dossier__empty">No transactions for this customer.</p>
-          } @else {
-            <div class="table-responsive">
-              <table class="table ledger">
-                <thead>
-                  <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Voucher No</th>
-                    <th scope="col">Type</th>
-                    <th scope="col" class="text-end">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (tx of transactions(); track tx.id) {
-                    <tr>
-                      <td>{{ tx.dateCreated | formatMediumDatetime }}</td>
-                      <td>
-                        <a [routerLink]="['/transaction-history', tx.id, 'view']">{{ tx.voucherNo || tx.id }}</a>
-                      </td>
-                      <td>
-                        @if (tx.tag) {
-                          <span class="chip chip--neutral">{{ tx.tag }}</span>
-                        }
-                      </td>
-                      <td class="text-end ledger__assay">{{ tx.amount }}</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          }
-        </section>
-
-        <section class="dossier__panel">
-          <div class="dossier__panel-head">
-            <h3 class="dossier__panel-title">Recent Vouchers</h3>
-            <span class="atelier-section-label">Last {{ vouchers().length }}</span>
-          </div>
-          @if (vouchers().length === 0) {
+          @if (voucherTotalItems() === 0) {
             <p class="dossier__empty">No vouchers for this customer.</p>
           } @else {
             <div class="table-responsive">
@@ -144,7 +105,9 @@
                     <tr>
                       <td>{{ voucher.dateCreated | formatMediumDatetime }}</td>
                       <td>
-                        <a [routerLink]="['/voucher', voucher.id, 'view']">{{ voucher.voucherNo || voucher.id }}</a>
+                        <a [routerLink]="['/voucher-viewer']" [queryParams]="{ voucherNo: voucher.voucherNo }">{{
+                          voucher.voucherNo || voucher.id
+                        }}</a>
                       </td>
                       <td>
                         @if (voucher.status) {
@@ -162,6 +125,23 @@
                   }
                 </tbody>
               </table>
+            </div>
+
+            <div class="dossier__pager">
+              <div class="d-flex justify-content-center">
+                <jhi-item-count [params]="{ page: voucherPage(), totalItems: voucherTotalItems(), itemsPerPage }" />
+              </div>
+              <div class="d-flex justify-content-center">
+                <ngb-pagination
+                  [collectionSize]="voucherTotalItems()"
+                  [page]="voucherPage()"
+                  [pageSize]="itemsPerPage"
+                  [maxSize]="5"
+                  [rotate]="true"
+                  [boundaryLinks]="true"
+                  (pageChange)="navigateVoucherPage($event)"
+                ></ngb-pagination>
+              </div>
             </div>
           }
         </section>
